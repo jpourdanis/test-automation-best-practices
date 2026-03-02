@@ -16,13 +16,8 @@ env:
   COMPOSE_DOCKER_CLI_BUILD: 1
 
 jobs:
-  test:
+  build:
     runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
-      matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
     steps:
       - uses: actions/checkout@v4
 
@@ -83,66 +78,13 @@ jobs:
           wait $PID_API $PID_APP $PID_PROXY
 
       - name: Run end-to-end tests (host Playwright)
-        run: npm test -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npm test
 
       - name: Run BDD tests (host Playwright)
-        run: npm run test:bdd -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npm run test:bdd
 
       - name: Run cross-browser compatibility tests (host Playwright)
-        run: npm run test:cross-browser -- --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-
-
-      - name: Run Playwright in Docker Compose for visual regression tests
-        run: |
-          # Ensure snapshot and test-results dirs exist on the host so the container
-          # can read/write them via the volume mounts.
-          mkdir -p e2e/snapshots
-          mkdir -p test-results
-          mkdir -p allure-results
-
-          # Run visual regression tests in the Playwright container.
-          docker compose run --rm playwright e2e/tests/visual.spec.ts --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-
-      - name: Save docker-compose logs
-        if: always()
-        run: |
-          mkdir -p $GITHUB_WORKSPACE/ci-logs
-          docker compose logs > $GITHUB_WORKSPACE/ci-logs/compose-logs.txt || true
-
-      - name: Upload test artifacts
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: test-artifacts-${{ matrix.shardIndex }}
-          path: |
-            test-results/**
-            e2e/snapshots/**
-            playwright-report/**
-            coverage/**
-            .nyc_output/**
-            ci-logs/**
-            allure-results/**
-
-  merge-reports:
-    if: always()
-    needs: [test]
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: 'npm'
-
-      - run: npm ci --legacy-peer-deps
-
-      - name: Download all test artifacts
-        uses: actions/download-artifact@v4
-        with:
-          pattern: test-artifacts-*
-          merge-multiple: true
+        run: npm run test:cross-browser
 
       - name: Generate LCOV from host-run coverage
         run: npx nyc report --reporter=lcovonly
@@ -161,6 +103,37 @@ jobs:
         uses: coverallsapp/github-action@master
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run Playwright in Docker Compose for visual regression tests
+        run: |
+          # Ensure snapshot and test-results dirs exist on the host so the container
+          # can read/write them via the volume mounts.
+          mkdir -p e2e/snapshots
+          mkdir -p test-results
+          mkdir -p allure-results
+
+          # Run visual regression tests in the Playwright container.
+          docker compose run --rm playwright e2e/tests/visual.spec.ts
+
+      - name: Save docker-compose logs
+        if: always()
+        run: |
+          mkdir -p $GITHUB_WORKSPACE/ci-logs
+          docker compose logs > $GITHUB_WORKSPACE/ci-logs/compose-logs.txt || true
+
+      - name: Upload test artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts
+          path: |
+            test-results/**
+            e2e/snapshots/**
+            playwright-report/**
+            coverage/**
+            .nyc_output/**
+            ci-logs/**
+            allure-results/**
 
       - name: Load test report history
         uses: actions/checkout@v4

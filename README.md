@@ -854,7 +854,7 @@ src/
 │   ├── en.json                  # English translation file (default)
 │   └── es.json                  # Spanish translation file
 server/
-├── index.js                     # Express API Backend with full CRUD & Swagger
+├── index.js                     # Express API Backend & MongoDB Seed
 ├── Dockerfile                   # Docker configuration for backend
 e2e/
 ├── features/
@@ -863,7 +863,6 @@ e2e/
 │   └── HomePage.ts              # Page Object Model
 ├── tests/
 │   ├── a11y.spec.ts             # Accessibility testing (with i18n support)
-│   ├── api.spec.ts              # Backend API Integration testing over React Proxy
 │   ├── bdd.spec.ts              # Step definitions for BDD tests
 │   ├── coverage.spec.ts         # E2E tests with code coverage
 │   ├── cross-browser.spec.ts    # Cross-browser testing strategy
@@ -872,8 +871,7 @@ e2e/
 │   ├── pom-refactored.spec.ts   # POM demonstration
 │   └── visual.spec.ts           # Visual regression & responsive testing
 ├── snapshots/
-│   ├── home-mobile.png          # Visual regression baseline for mobile
-│   └── home.png                 # Visual regression baseline for desktop
+│   └── home.png                 # Visual regression baseline
 ├── baseFixtures.ts              # Istanbul coverage fixture
 └── helper.ts                    # Utility functions
 ```
