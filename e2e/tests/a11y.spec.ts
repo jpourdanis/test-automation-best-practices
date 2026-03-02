@@ -58,7 +58,7 @@ test.describe("Accessibility Tests", () => {
     const contrastViolations = accessibilityScanResults.violations.filter(
       (v) => v.id === "color-contrast"
     );
-    expect(contrastViolations).toEqual([]);
+    expect(contrastViolations).toEqual([1]);
   });
 });
 
@@ -98,7 +98,7 @@ test.describe("i18n Accessibility Tests", () => {
 
       // Run Axe to check for accessibility violations in the translated state
       const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-      expect(accessibilityScanResults.violations).toEqual([]);
+      expect(accessibilityScanResults.violations).toEqual([1]);
     });
   }
 });
