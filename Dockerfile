@@ -12,7 +12,7 @@ RUN --mount=type=cache,target=/root/.npm \
 COPY . .
 
 # Ensure test output directories are writable by the non-root Playwright user
-RUN mkdir -p /app/test-results /app/playwright-report /app/allure-results /app/traces \\
+RUN mkdir -p /app/test-results /app/playwright-report /app/allure-results /app/traces \
     && chmod -R a+rwx /app/test-results /app/playwright-report /app/allure-results /app/traces
 
 # ---- App stage: runs the frontend server ----
