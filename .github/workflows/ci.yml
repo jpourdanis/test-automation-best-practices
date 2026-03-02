@@ -78,12 +78,18 @@ jobs:
           wait $PID_API $PID_APP $PID_PROXY
 
       - name: Run end-to-end tests (host Playwright)
+        id: e2e-tests
+        continue-on-error: true
         run: npm test
 
       - name: Run BDD tests (host Playwright)
+        id: bdd-tests
+        continue-on-error: true
         run: npm run test:bdd
 
       - name: Run cross-browser compatibility tests (host Playwright)
+        id: cross-browser-tests
+        continue-on-error: true
         run: npm run test:cross-browser
 
       - name: Generate LCOV from host-run coverage
@@ -105,6 +111,8 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run Playwright in Docker Compose for visual regression tests
+        id: visual-tests
+        continue-on-error: true
         run: |
           # Ensure snapshot and test-results dirs exist on the host so the container
           # can read/write them via the volume mounts.
@@ -151,17 +159,6 @@ jobs:
           allure_history: allure-history
           allure_results: allure-results
 
-      - name: Collect traces for GitHub Pages
-        if: always()
-        run: |
-          chmod a+rwx allure-history || true
-          mkdir -p allure-history/traces
-          find test-results -name 'trace.zip' 2>/dev/null | while read f; do
-            DIR_NAME=$(basename "$(dirname "$f")")
-            cp "$f" "allure-history/traces/${DIR_NAME}-trace.zip"
-          done
-          ls -la allure-history/traces/ || echo "No traces found"
-
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
@@ -171,20 +168,20 @@ jobs:
             publish_dir: allure-history
             force_orphan: true
 
-      - name: Collect traces
-        if: always()
+      - name: Collect and publish traces
+        if: steps.e2e-tests.outcome == 'failure' || steps.bdd-tests.outcome == 'failure' || steps.cross-browser-tests.outcome == 'failure' || steps.visual-tests.outcome == 'failure'
         run: |
           mkdir -p traces
           find test-results -name 'trace.zip' 2>/dev/null | while read f; do
-            DIR_NAME=$(basename "$(dirname "$f")")
+            DIR_NAME=$(basename "$(dirname "$f")") 
             cp "$f" "traces/${DIR_NAME}-trace.zip"
           done
           echo "Traces collected:"
-          ls -la traces/ || echo "No traces found"
+          ls -la traces/
 
       - name: Publish traces to GitHub Pages
+        if: steps.e2e-tests.outcome == 'failure' || steps.bdd-tests.outcome == 'failure' || steps.cross-browser-tests.outcome == 'failure' || steps.visual-tests.outcome == 'failure'
         uses: peaceiris/actions-gh-pages@v3
-        if: always()
         with:
             github_token: ${{ secrets.GITHUB_TOKEN }}
             publish_branch: gh-pages
@@ -193,7 +190,7 @@ jobs:
             keep_files: true
 
       - name: Generate trace viewer links
-        if: always()
+        if: steps.e2e-tests.outcome == 'failure' || steps.bdd-tests.outcome == 'failure' || steps.cross-browser-tests.outcome == 'failure' || steps.visual-tests.outcome == 'failure'
         run: |
           echo "Trace viewer links:"
           BASE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
@@ -202,4 +199,8 @@ jobs:
             NAME=$(basename "$f")
             echo "  https://trace.playwright.dev/?trace=${BASE}/traces/${NAME}"
           done
+
+      - name: Fail pipeline if tests failed
+        if: steps.e2e-tests.outcome == 'failure' || steps.bdd-tests.outcome == 'failure' || steps.cross-browser-tests.outcome == 'failure' || steps.visual-tests.outcome == 'failure'
+        run: exit 1
 
