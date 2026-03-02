@@ -24,7 +24,7 @@
     "build": "cross-env NODE_OPTIONS=--openssl-legacy-provider react-app-rewired build",
     "test": "cross-env npx playwright test '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'",
     "test:bdd": "npx bddgen && npx playwright test --project=BDD",
-    "test:cross-browser": "cross-env CROSS_BROWSER=true npx playwright test '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'",
+    "test:cross-browser": "cross-env CROSS_BROWSER=true npx playwright test e2e/tests/cross-browser.spec.ts",
     "coverage": "npm run test && nyc report --reporter=text",
     "test:e2e:docker": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts",
     "test:e2e:docker:update": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts --update-snapshots"
