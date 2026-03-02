@@ -154,6 +154,7 @@ jobs:
       - name: Collect traces for GitHub Pages
         if: always()
         run: |
+          chmod -R a+rwx allure-history || true
           mkdir -p allure-history/traces
           find test-results -name 'trace.zip' 2>/dev/null | while read f; do
             DIR_NAME=$(basename "$(dirname "$f")")
