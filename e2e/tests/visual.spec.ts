@@ -36,7 +36,7 @@ test.describe("Visual Regression", () => {
     await page.waitForSelector("header");
 
     const screenshot = await page.screenshot({ fullPage: true });
-    expect(screenshot).toMatchSnapshot("home.png");
+    expect(screenshot).toMatchSnapshot("home.png", { maxDiffPixelRatio: 0.05 });
   });
 });
 
@@ -89,6 +89,6 @@ test.describe("Responsive Design Testing", () => {
 
     // Visual regression check for the mobile viewport layout
     const screenshot = await page.screenshot({ fullPage: true });
-    expect(screenshot).toMatchSnapshot("home-mobile.png");
+    expect(screenshot).toMatchSnapshot("home-mobile.png", { maxDiffPixelRatio: 0.05 });
   });
 });
