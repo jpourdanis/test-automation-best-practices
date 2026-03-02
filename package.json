@@ -26,8 +26,8 @@
     "test:bdd": "npx bddgen && npx playwright test --project=BDD",
     "test:cross-browser": "cross-env CROSS_BROWSER=true npx playwright test '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'",
     "coverage": "npm run test && nyc report --reporter=text",
-    "test:e2e:docker": "docker-compose run --rm playwright e2e/tests/visual.spec.ts",
-    "test:e2e:docker:update": "docker-compose run --rm playwright e2e/tests/visual.spec.ts --update-snapshots"
+    "test:e2e:docker": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts",
+    "test:e2e:docker:update": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts --update-snapshots"
   },
   "eslintConfig": {
     "extends": "react-app"

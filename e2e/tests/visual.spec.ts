@@ -73,10 +73,18 @@ test.describe("Responsive Design Testing", () => {
     await expect(homePage.redBtn).toBeVisible();
     await expect(homePage.yellowBtn).toBeVisible();
 
-    // Verify button clicks still work at this viewport size
+    // Verify button clicks still work at this viewport size.
+    //
+    // Best practice: avoid static waits (page.waitForTimeout).
+    // Instead, register a response listener BEFORE the click, then click, then
+    // await the response. This ensures we never miss the network event and the
+    // test is deterministic regardless of how fast or slow the API responds.
     await homePage.clickColorButton("Yellow");
-    const hex = await homePage.getCurrentColorText();
-    expect(hex).toContain("#f1c40f");
+    await page.waitForResponse(
+      resp => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
+    );
+    // Auto-retrying assertion waits for React to update the DOM with the new color
+    await expect(homePage.currentColorText).toContainText("#f1c40f");
 
     // Visual regression check for the mobile viewport layout
     const screenshot = await page.screenshot({ fullPage: true });

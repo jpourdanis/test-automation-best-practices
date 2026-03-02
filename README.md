@@ -22,6 +22,7 @@ A comprehensive reference project demonstrating **senior-level QA engineering be
   - [9. Cross-Browser Testing Strategy](#9-cross-browser-testing-strategy)
   - [10. Behavior-Driven Development (BDD) with Cucumber](#10-behavior-driven-development-bdd-with-cucumber)
   - [11. Nightly Builds & Scheduled Playwright Runs](#11-nightly-builds--scheduled-playwright-runs)
+  - [12. Avoiding Static Waits with waitForResponse](#12-avoiding-static-waits-with-waitforresponse)
 - [Getting Started](#getting-started)
 
 ---
@@ -733,6 +734,62 @@ on:
 ```
 
 This guarantees an autonomous system health check every day.
+
+---
+
+### 12. Avoiding Static Waits with `waitForResponse`
+
+**File:** [`e2e/tests/visual.spec.ts`](/e2e/tests/visual.spec.ts)
+
+#### What is it?
+
+Using Playwright's `page.waitForResponse()` to synchronise test execution with asynchronous network activity, instead of inserting arbitrary time delays (`page.waitForTimeout`).
+
+#### Why it matters
+
+`page.waitForTimeout(2000)` is the most common anti-pattern in Playwright. It has two failure modes:
+
+- **Too short** — the request hasn't completed yet, so the assertion fails on a fast machine
+- **Too long** — you're wasting seconds on every test run, even when the request resolves in 100ms
+
+A slow Docker network or a busy CI runner exaggerates both problems. The test becomes **non-deterministic**: it passes locally and fails in CI for no obvious reason.
+
+#### How to implement
+
+The key insight is: **register the listener before the action that fires the request**. This guarantees you never miss the network event, even if the response arrives before the `await` is reached.
+
+```typescript
+// ❌ Anti-pattern — arbitrary delay, non-deterministic
+await homePage.clickColorButton("Yellow");
+await page.waitForTimeout(2000); // Hope the API responds within 2s
+const hex = await homePage.getCurrentColorText();
+expect(hex).toContain("#f1c40f");
+
+// ✅ Best practice — deterministic, no wasted time
+// 1. Register the listener BEFORE the click
+const responsePromise = page.waitForResponse(
+  resp => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
+);
+// 2. Fire the action
+await homePage.clickColorButton("Yellow");
+// 3. Await the response (resolves as soon as it arrives)
+await responsePromise;
+// 4. Use auto-retrying assertion to handle React state update
+await expect(homePage.currentColorText).toContainText("#f1c40f");
+```
+
+This pattern:
+- **Eliminates flakiness** caused by network timing variance
+- **Speeds up tests** — no sleeping, the assertion runs the instant the response lands
+- **Self-documents the intent** — it's immediately clear the test is waiting for a specific API call
+
+> **Why not `Promise.all([waitForResponse, click])`?** That pattern is needed when action and response race simultaneously (e.g., navigation). For a button click that triggers a fetch, you have a small but safe window between registering the listener and firing the click — `waitForResponse` is set up before any network activity begins, so nothing is missed.
+
+#### How to verify
+
+```bash
+npm run test:e2e:docker
+```
 
 ---
 
