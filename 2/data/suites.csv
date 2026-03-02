@@ -1,6 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","61","GET /api/colors/Yellow should return the correct hex code","Chrome","Sun Mar 01 21:43:52 UTC 2026","failed","Sun Mar 01 21:43:52 UTC 2026","Backend API Integration","tests/api.spec.ts","",""
-"","45","GET /api/colors/Red should return the correct hex code","Chrome","Sun Mar 01 21:43:51 UTC 2026","failed","Sun Mar 01 21:43:51 UTC 2026","Backend API Integration","tests/api.spec.ts","",""
-"","246","GET /api/colors/Turquoise should return the correct hex code","Chrome","Sun Mar 01 21:43:49 UTC 2026","failed","Sun Mar 01 21:43:49 UTC 2026","Backend API Integration","tests/api.spec.ts","",""
-"","408","check Turquoise ( #1abc9c) is the default background color.","Chrome","Sun Mar 01 21:43:53 UTC 2026","passed","Sun Mar 01 21:43:54 UTC 2026","","tests/coverage.spec.ts","",""
-"","1286","should not have any automatically detectable accessibility issues","Chrome","Sun Mar 01 21:43:49 UTC 2026","passed","Sun Mar 01 21:43:51 UTC 2026","Accessibility Tests","tests/a11y.spec.ts","",""
