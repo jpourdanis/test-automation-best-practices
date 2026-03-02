@@ -54,6 +54,13 @@ const config: PlaywrightTestConfig = {
             },
             testMatch: /.*cross-browser\.spec\.ts/,
           },
+          {
+            name: "Chrome",
+            use: {
+              ...devices["Desktop Chrome"],
+            },
+            testMatch: /.*cross-browser\.spec\.ts/,
+          },
         ]
       : []),
   ],
