@@ -160,9 +160,35 @@ jobs:
             publish_dir: allure-history
             force_orphan: true
 
-      - name: Generate trace viewer link
+      - name: Collect traces
         if: always()
         run: |
-          TRACE_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/traces/trace.zip"
-          echo "Trace viewer:"
-          echo "https://trace.playwright.dev/?trace=$TRACE_URL"
+          mkdir -p traces
+          find test-results -name 'trace.zip' 2>/dev/null | while read f; do
+            DIR_NAME=$(basename "$(dirname "$f")")
+            cp "$f" "traces/${DIR_NAME}-trace.zip"
+          done
+          echo "Traces collected:"
+          ls -la traces/ || echo "No traces found"
+
+      - name: Publish traces to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+            github_token: ${{ secrets.GITHUB_TOKEN }}
+            publish_branch: gh-pages
+            publish_dir: traces
+            destination_dir: traces
+            keep_files: true
+
+      - name: Generate trace viewer links
+        if: always()
+        run: |
+          echo "Trace viewer links:"
+          BASE="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}"
+          for f in traces/*-trace.zip; do
+            [ -f "$f" ] || continue
+            NAME=$(basename "$f")
+            echo "  https://trace.playwright.dev/?trace=${BASE}/traces/${NAME}"
+          done
+
