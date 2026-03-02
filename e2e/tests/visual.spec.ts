@@ -75,15 +75,16 @@ test.describe("Responsive Design Testing", () => {
 
     // Verify button clicks still work at this viewport size.
     //
-    // Best practice: avoid static waits (page.waitForTimeout).
-    // Instead, register a response listener BEFORE the click, then click, then
-    // await the response. This ensures we never miss the network event and the
-    // test is deterministic regardless of how fast or slow the API responds.
-    await homePage.clickColorButton("Yellow");
-    await page.waitForResponse(
+    // ✅ Best practice — deterministic, no wasted time
+    // 1. Register the listener BEFORE the click
+    const responsePromise = page.waitForResponse(
       resp => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
     );
-    // Auto-retrying assertion waits for React to update the DOM with the new color
+    // 2. Fire the action
+    await homePage.clickColorButton("Yellow");
+    // 3. Await the response (resolves as soon as it arrives)
+    await responsePromise;
+    // 4. Use auto-retrying assertion to handle React state update
     await expect(homePage.currentColorText).toContainText("#f1c40f");
 
     // Visual regression check for the mobile viewport layout

@@ -10,63 +10,72 @@ permissions:
   contents: write
   pages: write
   id-token: write
+
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
+
       - name: Use Node.js
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
           node-version: 22
+          cache: 'npm'
+
       - run: npm ci --legacy-peer-deps
-      - name: Install the browsers
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            playwright-
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install
-      - name: Install the operating-system dependencies
+
+      - name: Install Playwright OS dependencies
         run: npx playwright install-deps
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:latest
+            network=host
 
       - name: Start app service (Docker Compose)
-        run: |
-          docker compose up -d --build app api mongo
+        run: docker compose up -d --build app api mongo
 
-      - name: Wait for http://127.0.0.1:3000 to be ready
+      - name: Wait for services to be ready
         run: |
-          echo "Waiting for http://127.0.0.1:3000 to be ready..."
-          for i in {1..60}; do
-            if curl -sSf http://127.0.0.1:3000 > /dev/null; then
-              echo "App is up"
-              break
-            fi
-            echo "Waiting... ($i)"
-            sleep 2
-          done
-
-      - name: Wait for http://127.0.0.1:5001/api/colors to be ready (API direct)
-        run: |
-          echo "Waiting for API on port 5001..."
-          for i in {1..60}; do
-            if curl -sSf http://127.0.0.1:5001/api/colors > /dev/null; then
-              echo "API is up on port 5001"
-              break
-            fi
-            echo "Waiting... ($i)"
-            sleep 2
-          done
-
-      - name: Wait for http://127.0.0.1:3000/api/colors to be ready
-        run: |
-          echo "Waiting for http://127.0.0.1:3000/api/colors to be ready..."
-          for i in {1..60}; do
-            if curl -sSf http://127.0.0.1:3000/api/colors > /dev/null; then
-              echo "API is up"
-              break
-            fi
-            echo "Waiting... ($i)"
-            sleep 2
-          done
+          wait_for() {
+            local url=$1
+            for i in {1..30}; do
+              if curl -sSf "$url" > /dev/null 2>&1; then
+                echo "✓ $url is ready"
+                return 0
+              fi
+              sleep 1
+            done
+            echo "✗ $url failed to start"
+            return 1
+          }
+          wait_for http://127.0.0.1:5001/api/colors &
+          PID_API=$!
+          wait_for http://127.0.0.1:3000 &
+          PID_APP=$!
+          wait_for http://127.0.0.1:3000/api/colors &
+          PID_PROXY=$!
+          wait $PID_API $PID_APP $PID_PROXY
 
       - name: Run end-to-end tests (host Playwright)
         run: npm test
@@ -97,17 +106,13 @@ jobs:
 
       - name: Run Playwright in Docker Compose for visual regression tests
         run: |
-          # Passing UID/GID variables to allow our container user to be the same as the host
-
           # Ensure snapshot and test-results dirs exist on the host so the container
           # can read/write them via the volume mounts.
           mkdir -p e2e/snapshots
           mkdir -p test-results
           mkdir -p allure-results
 
-          # Run visual regression tests in the Playwright container. Baseline
-          # snapshots should be committed to the repo beforehand; do not
-          # auto-generate or update snapshots in CI to avoid accidental changes.
+          # Run visual regression tests in the Playwright container.
           docker compose run --rm playwright e2e/tests/visual.spec.ts
 
       - name: Save docker-compose logs
@@ -129,10 +134,9 @@ jobs:
             .nyc_output/**
             ci-logs/**
             allure-results/**
-      # Coverage upload to Coveralls already performed after the host `npm test` step
-      
+
       - name: Load test report history
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         if: always()
         continue-on-error: true
         with:

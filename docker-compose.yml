@@ -1,9 +1,12 @@
-version: "3.8"
 services:
   app:
     build:
       context: .
       target: app
+      cache_from:
+        - type=gha,scope=app
+      cache_to:
+        - type=gha,mode=max,scope=app
     ports:
       - "3000:3000"
     depends_on:
@@ -21,6 +24,10 @@ services:
   api:
     build:
       context: ./server
+      cache_from:
+        - type=gha,scope=api
+      cache_to:
+        - type=gha,mode=max,scope=api
     ports:
       - "5001:5001"
     depends_on:
@@ -51,6 +58,10 @@ services:
     build:
       context: .
       target: playwright
+      cache_from:
+        - type=gha,scope=playwright
+      cache_to:
+        - type=gha,mode=max,scope=playwright
     depends_on:
       - app
     environment:
@@ -74,3 +85,4 @@ services:
 
 volumes:
   mongo_data:
+
