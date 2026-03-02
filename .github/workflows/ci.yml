@@ -151,6 +151,17 @@ jobs:
           allure_history: allure-history
           allure_results: allure-results
 
+      - name: Collect traces for GitHub Pages
+        if: always()
+        run: |
+          chmod a+rwx allure-history || true
+          mkdir -p allure-history/traces
+          find test-results -name 'trace.zip' 2>/dev/null | while read f; do
+            DIR_NAME=$(basename "$(dirname "$f")")
+            cp "$f" "allure-history/traces/${DIR_NAME}-trace.zip"
+          done
+          ls -la allure-history/traces/ || echo "No traces found"
+
       - name: Publish test report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
