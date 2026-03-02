@@ -68,7 +68,8 @@ const config: PlaywrightTestConfig = {
     headless: true,
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
-    video: "on-first-retry",
+    video: "retain-on-failure",
+    trace: "retain-on-failure",
     baseURL: process.env.BASE_URL || "http://localhost:3000",
   },
   reporter: process.env.CI
