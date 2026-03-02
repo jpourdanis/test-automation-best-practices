@@ -23,6 +23,7 @@ A comprehensive reference project demonstrating **senior-level QA engineering be
   - [10. Behavior-Driven Development (BDD) with Cucumber](#10-behavior-driven-development-bdd-with-cucumber)
   - [11. Nightly Builds & Scheduled Playwright Runs](#11-nightly-builds--scheduled-playwright-runs)
   - [12. Avoiding Static Waits with waitForResponse](#12-avoiding-static-waits-with-waitforresponse)
+  - [13. Hybrid E2E Testing](#13-hybrid-e2e-testing)
 - [Getting Started](#getting-started)
 
 ---
@@ -789,6 +790,58 @@ This pattern:
 
 ```bash
 npm run test:e2e:docker
+```
+
+---
+
+### 13. Hybrid E2E Testing
+
+**File:** [`e2e/tests/hybrid.spec.ts`](/e2e/tests/hybrid.spec.ts)
+
+#### What is it?
+
+A hybrid test leverages both backend API calls and frontend UI interactions in a single test case. Instead of clicking through the UI to create a resource or set up a specific state, the test uses the `request` fixture to interact directly with the API to set the system under test to the desired state. It then navigates to the UI to verify the required behavior.
+
+#### Why it matters
+
+- **Unmatched Speed** — Setting up test state via the UI involves waiting for pages to load, animations to finish, and multiple clicks to register. API setup takes milliseconds.
+- **Improved Reliability (Less Flake)** — The UI layer is inherently brittle. Bypassing the UI for the "arrange" phase of a test drastically reduces false negatives caused by UI flakiness in parts of the application that are not the primary focus of the test.
+- **True Isolation** — You can create and delete exact data permutations for the specific test without relying on existing database fixtures.
+
+#### How to implement
+
+**Step 1:** Use `request` (Playwright's APIRequestContext) to arrange the state directly.
+**Step 2:** Use `page` to act and assert on the frontend UI.
+**Step 3:** Use `request` to clean up the state to keep the environment stateless.
+
+```typescript
+// e2e/tests/hybrid.spec.ts
+import { test, expect } from "../baseFixtures";
+import { HomePage } from "../pages/HomePage";
+
+test("should create color via API and verify through UI", async ({ page, request }) => {
+  const newColor = { name: "Purple", hex: "#8e44ad" };
+  
+  // 1. Arrange - Fast state setup via API
+  const createResponse = await request.post("/api/colors", { data: newColor });
+  expect(createResponse.ok()).toBeTruthy();
+
+  // 2. Act - Navigate and interact via UI
+  const homePage = new HomePage(page);
+  await homePage.goto();
+  
+  const responsePromise = page.waitForResponse(
+    (resp) => resp.url().includes(`/api/colors/${newColor.name}`) && resp.status() === 200
+  );
+  await page.getByRole("button", { name: "colors.purple" }).click();
+  await responsePromise;
+
+  // 3. Assert - Validating UI reflects the state correctly
+  await expect(homePage.currentColorText).toContainText(newColor.hex);
+
+  // 4. Teardown - Clean up via API to maintain isolation
+  await request.delete(`/api/colors/${newColor.name}`);
+});
 ```
 
 ---

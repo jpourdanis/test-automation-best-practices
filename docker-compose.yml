@@ -41,6 +41,8 @@ services:
       retries: 10
     environment:
       - MONGO_URI=mongodb://mongo:27017/colorsdb
+    volumes:
+      - ./server:/app
 
   mongo:
     image: mongo:latest
