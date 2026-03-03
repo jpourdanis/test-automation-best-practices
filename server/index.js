@@ -3,8 +3,27 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerUi = require('swagger-ui-express');
+const { z } = require('zod');
 
 const app = express();
+
+// ---------------------------------------------------------------------------
+// Validation Schemas
+// ---------------------------------------------------------------------------
+
+const colorZodSchema = z.object({
+  name: z.string({ required_error: 'name is required' }).trim().min(1, 'name cannot be empty'),
+  hex: z.string({ required_error: 'hex is required' })
+    .trim()
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format (e.g., #1abc9c)'),
+});
+
+const updateColorZodSchema = z.object({
+  name: z.string().trim().min(1, 'name cannot be empty').optional(),
+  hex: z.string().trim().regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format').optional(),
+}).refine(data => data.name !== undefined || data.hex !== undefined, {
+  message: 'At least one field to update must be provided',
+});
 
 // ---------------------------------------------------------------------------
 // Middleware
@@ -238,12 +257,11 @@ app.get('/api/colors/:name', async (req, res) => {
  */
 app.post('/api/colors', async (req, res) => {
   try {
-    const { name, hex } = req.body;
-
-    // Validate required fields
-    if (!name || !hex) {
-      return res.status(400).json({ error: 'Both "name" and "hex" are required' });
+    const parseResult = colorZodSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      return res.status(400).json({ error: parseResult.error.issues[0].message });
     }
+    const { name, hex } = parseResult.data;
 
     // Prevent duplicate color names
     const existing = await Color.findOne({ name });
@@ -257,6 +275,7 @@ app.post('/api/colors', async (req, res) => {
     // Return the created color without internal fields
     res.status(201).json({ name: color.name, hex: color.hex });
   } catch (error) {
+    console.error("POST /api/colors error:", error);
     res.status(500).json({ error: 'Failed to create color' });
   }
 });
@@ -302,7 +321,11 @@ app.post('/api/colors', async (req, res) => {
  */
 app.put('/api/colors/:name', async (req, res) => {
   try {
-    const { name, hex } = req.body;
+    const parseResult = updateColorZodSchema.safeParse(req.body);
+    if (!parseResult.success) {
+      return res.status(400).json({ error: parseResult.error.issues[0].message });
+    }
+    const { name, hex } = parseResult.data;
 
     // Build the update payload – only include provided fields
     const update = {};
@@ -322,6 +345,7 @@ app.put('/api/colors/:name', async (req, res) => {
 
     res.json(color);
   } catch (error) {
+    console.error("PUT /api/colors/:name error:", error);
     res.status(500).json({ error: 'Failed to update color' });
   }
 });

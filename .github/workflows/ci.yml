@@ -77,9 +77,14 @@ jobs:
           PID_PROXY=$!
           wait $PID_API $PID_APP $PID_PROXY
 
+      - name: Run API tests (host Playwright)
+        id: api-tests
+        run: npm run test:api
+
       - name: Run end-to-end tests (host Playwright)
         id: e2e-tests
         continue-on-error: true
+        if: success()
         run: npm test
 
       - name: Run BDD tests (host Playwright)

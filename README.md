@@ -24,6 +24,8 @@ A comprehensive reference project demonstrating **senior-level QA engineering be
   - [11. Nightly Builds & Scheduled Playwright Runs](#11-nightly-builds--scheduled-playwright-runs)
   - [12. Avoiding Static Waits with waitForResponse](#12-avoiding-static-waits-with-waitforresponse)
   - [13. Hybrid E2E Testing](#13-hybrid-e2e-testing)
+  - [14. Test Automation Pyramid: API First](#14-test-automation-pyramid-api-first)
+  - [15. API Schema Validation with Zod](#15-api-schema-validation-with-zod)
 - [Getting Started](#getting-started)
 
 ---
@@ -846,6 +848,139 @@ test("should create color via API and verify through UI", async ({ page, request
 
 ---
 
+### 14. Test Automation Pyramid: API First
+
+**File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+
+#### What is it?
+
+A pipeline execution strategy based on the **Test Automation Pyramid**. It strictly enforces that fast, reliable API test suites must pass before any slower, brittle UI/E2E test suites are executed.
+
+#### Why it matters
+
+- **Fail-Fast Feedback Loop** — If the backend is broken, there is no point in waiting for UI tests to launch, inevitably timeout, and fail. Halting the pipeline immediately saves valuable CI runner minutes.
+- **Root Cause Isolation** — When UI tests fail but API tests pass, the regression is definitively isolated to the frontend presentation layer. Conversely, when API tests fail, it highlights a broken backend contract.
+- **Cost Efficiency** — End-to-end Playwright tests executing full browser automation are computationally expensive compared to executing raw HTTP requests against API endpoints.
+
+#### How to implement
+
+In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step *without* `continue-on-error`. This instantly fails the workflow if any API endpoints regress. The subsequent E2E steps declare an `if: success()` condition, ensuring they only trigger if the API test step completes flawlessly.
+
+```yaml
+      - name: Run API tests (host Playwright)
+        id: api-tests
+        run: npm run test:api
+
+      - name: Run end-to-end tests (host Playwright)
+        id: e2e-tests
+        continue-on-error: true
+        if: success()
+        run: npm test
+```
+
+---
+
+### 15. API Schema Validation with Zod
+
+**Files:** [`server/index.js`](/server/index.js) · [`e2e/tests/api.spec.ts`](/e2e/tests/api.spec.ts)
+
+#### What is it?
+
+Schema validation testing ensures that every request sent to and every response returned from an API endpoint conforms to a strictly defined data contract. In this project, **Zod** is used on both sides of the boundary:
+
+- **Server-side** — Express route handlers validate incoming payloads against Zod schemas (`colorZodSchema`, `updateColorZodSchema`) before any database operation is performed.
+- **Test-side** — Playwright API tests define a mirror `ColorSchema` and run every response through `ColorSchema.parse(data)` to guarantee the response structure hasn't drifted.
+
+This creates a **closed validation loop**: the server rejects malformed input, and the tests reject malformed output.
+
+#### Why it matters
+
+- **Contract Enforcement** — Without schema validation, a backend developer could accidentally add, remove, or rename a response field and no test would notice until a downstream consumer (the UI, a mobile app, a partner integration) breaks in production. Schema parsing in tests turns this into an immediate, deterministic failure.
+- **Shift-Left Testing** — Invalid payloads are caught at the API boundary before they ever reach the database layer or propagate to the frontend. A missing `name` field returns a clear `400 Bad Request` with a human-readable message (`"name is required"`) instead of a cryptic Mongoose `ValidationError` or, worse, a silent `null` stored in MongoDB.
+- **Regression Safety Net** — When refactoring validation logic (e.g., switching from manual `if (!name)` checks to Zod), the Playwright API tests act as an independent safety net. If the refactored schema accidentally tightens or loosens a constraint, the test suite catches it.
+- **Documentation-as-Code** — The Zod schemas serve as living, executable documentation of the API contract. Unlike an OpenAPI spec that can drift from reality, the Zod schema is enforced at runtime on every single request.
+- **Negative Testing Built In** — It's not enough to test that valid requests succeed. The test suite explicitly verifies that the server **rejects** missing fields, empty strings, and malformed hex codes with the correct HTTP status and error message. This prevents regressions where error handling is accidentally removed during refactoring.
+
+#### How to implement
+
+**Step 1:** Define Zod schemas on the server to validate incoming request bodies.
+
+```javascript
+// server/index.js
+const { z } = require('zod');
+
+const colorZodSchema = z.object({
+  name: z.string({ required_error: 'name is required' })
+    .trim().min(1, 'name cannot be empty'),
+  hex: z.string({ required_error: 'hex is required' })
+    .trim()
+    .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format (e.g., #1abc9c)'),
+});
+```
+
+**Step 2:** Use `safeParse` in route handlers to return structured error messages instead of crashing.
+
+```javascript
+app.post('/api/colors', async (req, res) => {
+  const parseResult = colorZodSchema.safeParse(req.body);
+  if (!parseResult.success) {
+    return res.status(400).json({ error: parseResult.error.issues[0].message });
+  }
+  const { name, hex } = parseResult.data;
+  // ... proceed with validated data
+});
+```
+
+**Step 3:** In Playwright tests, define a matching Zod schema and parse every API response through it.
+
+```typescript
+// e2e/tests/api.spec.ts
+import { z } from "zod";
+
+const ColorSchema = z.object({
+  name: z.string(),
+  hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+});
+
+test("should create a new color with valid schema", async ({ request }) => {
+  const newColor = { name: "Orange", hex: "#ffa500" };
+  const response = await request.post(`/api/colors`, { data: newColor });
+  expect(response.status()).toBe(201);
+
+  const data = await response.json();
+  ColorSchema.parse(data); // Throws if response shape is wrong
+  expect(data).toEqual(expect.objectContaining(newColor));
+});
+```
+
+**Step 4:** Write explicit **negative tests** for every validation rule to lock down the error contract.
+
+```typescript
+test("should reject missing name", async ({ request }) => {
+  const response = await request.post(`/api/colors`, { data: { hex: "#ffa500" } });
+  expect(response.status()).toBe(400);
+  const data = await response.json();
+  expect(data.error).toBe("name is required");
+});
+
+test("should reject invalid hex format", async ({ request }) => {
+  const response = await request.post(`/api/colors`, { data: { name: "Orange", hex: "ffa500" } });
+  expect(response.status()).toBe(400);
+  const data = await response.json();
+  expect(data.error).toContain("hex must be a valid 6-digit hex format");
+});
+```
+
+#### How to verify
+
+```bash
+npx playwright test e2e/tests/api.spec.ts
+```
+
+The output will list all schema validation test results, confirming both positive (valid data accepted) and negative (invalid data rejected with correct status codes and messages) scenarios pass.
+
+---
+
 ## Getting Started
 
 ### Prerequisites
@@ -916,10 +1051,12 @@ e2e/
 │   └── HomePage.ts              # Page Object Model
 ├── tests/
 │   ├── a11y.spec.ts             # Accessibility testing (with i18n support)
+│   ├── api.spec.ts              # API schema validation with Zod
 │   ├── bdd.spec.ts              # Step definitions for BDD tests
 │   ├── coverage.spec.ts         # E2E tests with code coverage
 │   ├── cross-browser.spec.ts    # Cross-browser testing strategy
 │   ├── data-driven.spec.ts      # Data-driven testing
+│   ├── hybrid.spec.ts           # Hybrid E2E testing (API + UI)
 │   ├── network-mocking.spec.ts  # Network mocking & interception
 │   ├── pom-refactored.spec.ts   # POM demonstration
 │   └── visual.spec.ts           # Visual regression & responsive testing

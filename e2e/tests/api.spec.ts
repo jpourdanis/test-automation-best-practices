@@ -1,5 +1,10 @@
 import { test, expect } from "@playwright/test";
+import { z } from "zod";
 
+const ColorSchema = z.object({
+  name: z.string(),
+  hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
+});
 test.describe("Backend API Integration", () => {
   const expectedColors = [
     { name: "Turquoise", hex: "#1abc9c" },
@@ -9,8 +14,6 @@ test.describe("Backend API Integration", () => {
 
   for (const color of expectedColors) {
     test(`GET /api/colors/${color.name} should return the correct hex code`, async ({ request }) => {
-      // The request fixture automatically uses baseURL (http://localhost:3000)
-      // The React proxy handles forwarding /api/colors/:name to the backend (port 5001)
       const response = await request.get(`/api/colors/${color.name}`);
       
       // Verify HTTP status code
@@ -22,10 +25,94 @@ test.describe("Backend API Integration", () => {
       // Parse the JSON payload
       const data = await response.json();
 
-      // Verify exact object schema and returned values
+      // Verify exact object schema using Zod
+      ColorSchema.parse(data);
+
       expect(data).toEqual(
         expect.objectContaining({ name: color.name, hex: color.hex })
       );
     });
   }
+
+  test.describe("POST /api/colors Schema Validation", () => {
+    test("should create a new color with valid schema", async ({ request }) => {
+      const newColor = { name: "Orange", hex: "#ffa500" };
+      const response = await request.post(`/api/colors`, { data: newColor });
+      expect(response.status()).toBe(201);
+      
+      const data = await response.json();
+      ColorSchema.parse(data);
+      expect(data).toEqual(expect.objectContaining(newColor));
+
+      // Cleanup
+      await request.delete(`/api/colors/${newColor.name}`);
+    });
+
+    test("should reject missing name", async ({ request }) => {
+      const response = await request.post(`/api/colors`, { data: { hex: "#ffa500" } });
+      expect(response.status()).toBe(400);
+      const data = await response.json();
+      expect(data.error).toBe("name is required");
+    });
+
+    test("should reject empty name", async ({ request }) => {
+      const response = await request.post(`/api/colors`, { data: { name: "", hex: "#ffa500" } });
+      expect(response.status()).toBe(400);
+      const data = await response.json();
+      expect(data.error).toBe("name cannot be empty");
+    });
+
+    test("should reject missing hex", async ({ request }) => {
+      const response = await request.post(`/api/colors`, { data: { name: "Orange" } });
+      expect(response.status()).toBe(400);
+      const data = await response.json();
+      expect(data.error).toBe("hex is required");
+    });
+
+    test("should reject invalid hex format", async ({ request }) => {
+      const response = await request.post(`/api/colors`, { data: { name: "Orange", hex: "ffa500" } });
+      expect(response.status()).toBe(400);
+      const data = await response.json();
+      expect(data.error).toContain("hex must be a valid 6-digit hex format");
+    });
+  });
+
+  test.describe("PUT /api/colors/:name Schema Validation", () => {
+    test("should update a color with valid schema", async ({ request }) => {
+      const tempColor = { name: "TempUpdate", hex: "#112233" };
+      await request.post(`/api/colors`, { data: tempColor });
+
+      const updateData = { hex: "#332211" };
+      const response = await request.put(`/api/colors/${tempColor.name}`, { data: updateData });
+      expect(response.status()).toBe(200);
+      
+      const data = await response.json();
+      ColorSchema.parse(data);
+      expect(data.hex).toBe(updateData.hex);
+
+      // Cleanup
+      await request.delete(`/api/colors/${tempColor.name}`);
+    });
+
+    test("should reject invalid hex format on update", async ({ request }) => {
+      const response = await request.put(`/api/colors/Turquoise`, { data: { hex: "112233" } });
+      expect(response.status()).toBe(400);
+      const data = await response.json();
+      expect(data.error).toContain("hex must be a valid 6-digit hex format");
+    });
+
+    test("should reject updating with empty name", async ({ request }) => {
+      const response = await request.put(`/api/colors/Turquoise`, { data: { name: "" } });
+      expect(response.status()).toBe(400);
+      const data = await response.json();
+      expect(data.error).toBe("name cannot be empty");
+    });
+
+    test("should reject omitting both name and hex on update", async ({ request }) => {
+      const response = await request.put(`/api/colors/Turquoise`, { data: {} });
+      expect(response.status()).toBe(400);
+      const data = await response.json();
+      expect(data.error).toBe("At least one field to update must be provided");
+    });
+  });
 });
