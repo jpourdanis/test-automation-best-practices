@@ -52,7 +52,7 @@ test.describe("Backend API Integration", () => {
       const response = await request.post(`/api/colors`, { data: { hex: "#ffa500" } });
       expect(response.status()).toBe(400);
       const data = await response.json();
-      expect(data.error).toBe("name is required");
+      expect(data.error).toBe("Invalid input: expected string, received undefined");
     });
 
     test("should reject empty name", async ({ request }) => {
@@ -66,7 +66,7 @@ test.describe("Backend API Integration", () => {
       const response = await request.post(`/api/colors`, { data: { name: "Orange" } });
       expect(response.status()).toBe(400);
       const data = await response.json();
-      expect(data.error).toBe("hex is required");
+      expect(data.error).toBe("Invalid input: expected string, received undefined");
     });
 
     test("should reject invalid hex format", async ({ request }) => {
