@@ -5,7 +5,7 @@
 
 ![Demo Animation](demo.webp)
 
-A comprehensive reference project demonstrating **senior-level QA engineering best practices** using [Playwright](https://playwright.dev). This repository goes beyond simple end-to-end tests to showcase the patterns, architectures, and strategies that make a test suite **robust, maintainable, and scalable**.
+A comprehensive reference project demonstrating **test automation engineering best practices** using [Playwright](https://playwright.dev). This repository goes beyond simple end-to-end tests to showcase the patterns, architectures, and strategies that make a test suite **robust, maintainable, and scalable**.
 
 ## Table of Contents
 
