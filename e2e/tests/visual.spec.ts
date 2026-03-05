@@ -35,7 +35,12 @@ test.describe("Visual Regression", () => {
     await page.goto("/");
     await page.waitForSelector("header");
 
-    const screenshot = await page.screenshot({ fullPage: true });
+    // Mask the animated React logo to prevent its CSS spin animation
+    // from producing non-deterministic pixel diffs between runs.
+    const screenshot = await page.screenshot({
+      fullPage: true,
+      mask: [page.locator(".App-logo")],
+    });
     expect(screenshot).toMatchSnapshot("home.png", { maxDiffPixelRatio: 0.05 });
   });
 });
@@ -87,8 +92,12 @@ test.describe("Responsive Design Testing", () => {
     // 4. Use auto-retrying assertion to handle React state update
     await expect(homePage.currentColorText).toContainText("#f1c40f");
 
-    // Visual regression check for the mobile viewport layout
-    const screenshot = await page.screenshot({ fullPage: true });
+    // Visual regression check for the mobile viewport layout.
+    // Mask the animated logo to avoid flaky diffs from its CSS animation.
+    const screenshot = await page.screenshot({
+      fullPage: true,
+      mask: [page.locator(".App-logo")],
+    });
     expect(screenshot).toMatchSnapshot("home-mobile.png", { maxDiffPixelRatio: 0.05 });
   });
 });

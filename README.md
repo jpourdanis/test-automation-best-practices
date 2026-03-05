@@ -323,11 +323,17 @@ test.describe("Visual Regression", () => {
     await page.goto("/");
     await page.waitForSelector("header");
 
-    const screenshot = await page.screenshot({ fullPage: true });
+    // Mask the animated logo so its CSS animation doesn't cause flaky diffs
+    const screenshot = await page.screenshot({
+      fullPage: true,
+      mask: [page.locator(".App-logo")],
+    });
     expect(screenshot).toMatchSnapshot("home.png");
   });
 });
 ```
+
+> **Tip — Masking animated elements:** The `mask` option accepts an array of locators. Playwright paints a solid-color block over each matched element before capturing the screenshot. Use it for any element with CSS animations, GIFs, or other non-deterministic visuals (e.g., carousels, loading spinners) that would otherwise produce false-positive pixel diffs between runs.
 
 > **Important:** Visual regression baselines should be generated inside Docker to avoid OS-specific rendering differences. See [Section 7: Consistent Cross-Platform Testing with Docker](#7-consistent-cross-platform-testing-with-docker).
 
