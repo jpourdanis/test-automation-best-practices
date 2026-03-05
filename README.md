@@ -26,6 +26,7 @@ A comprehensive reference project demonstrating **senior-level QA engineering be
   - [13. Hybrid E2E Testing](#13-hybrid-e2e-testing)
   - [14. Test Automation Pyramid: API First](#14-test-automation-pyramid-api-first)
   - [15. API Schema Validation with Zod](#15-api-schema-validation-with-zod)
+  - [16. Random Data Generation with faker.js](#16-random-data-generation-with-fakerjs)
 - [Getting Started](#getting-started)
 
 ---
@@ -984,6 +985,62 @@ npx playwright test e2e/tests/api.spec.ts
 ```
 
 The output will list all schema validation test results, confirming both positive (valid data accepted) and negative (invalid data rejected with correct status codes and messages) scenarios pass.
+
+---
+
+### 16. Random Data Generation with faker.js
+
+**File:** [`e2e/tests/random-data.spec.ts`](/e2e/tests/random-data.spec.ts)
+
+#### What is it?
+
+Using a library like [`@faker-js/faker`](https://fakerjs.dev/) to generate dynamic, randomized test data (names, emails, hex codes, UUIDs) during test execution, rather than using hardcoded static values like `"TestUser"` or `"#ff0000"`.
+
+#### Why it matters
+
+- **Discovers Edge Cases naturally** — Static data like `"John"` never breaks anything. But `faker.person.lastName()` might eventually generate `"O'Connor"`, exposing an unescaped SQL query or a UI component that doesn't handle apostrophes correctly.
+- **Prevents State Collisions** — Hardcoded entities (e.g., `email: "test@example.com"`) often conflict in parallel test executions or dirty databases. Random data guarantees uniqueness (`faker.internet.email()`), allowing tests to run safely in parallel without stomping on each other's state.
+- **Avoids Test Coupling** — Tests shouldn't pass just because they rely on a specific hardcoded shape in the database. Dynamic data forces the test to assert on *system behavior* rather than predefined constants.
+
+#### How to implement
+
+**Step 1:** Install faker:
+```bash
+npm install -D @faker-js/faker
+```
+
+**Step 2:** Generate the data in your test and inject it into the system:
+
+```typescript
+import { test, expect } from "../baseFixtures";
+import { faker } from "@faker-js/faker";
+
+test("should handle randomized color generation", async ({ page, request }) => {
+  // Generate random data
+  const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`;
+  const randomHex = faker.color.rgb();
+  
+  // Arrange via API
+  await request.post("/api/colors", {
+    data: { name: randomColorName, hex: randomHex },
+  });
+
+  // Act via UI
+  await page.goto("/");
+  // The system's robustness is tested because it must render 
+  // whatever string faker generated, regardless of length or content.
+  await page.getByRole("button", { name: `colors.${randomColorName}` }).click();
+
+  // Assert
+  await expect(page.locator("text=Current color:")).toContainText(randomHex);
+});
+```
+
+#### How to verify
+
+```bash
+npx playwright test e2e/tests/random-data.spec.ts
+```
 
 ---
 

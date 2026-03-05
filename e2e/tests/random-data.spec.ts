@@ -1,0 +1,57 @@
+import { test, expect } from "../baseFixtures";
+import { HomePage } from "../pages/HomePage";
+import { faker } from "@faker-js/faker";
+
+/**
+ * Test Suite: Random Data Generation Testing
+ *
+ * This suite builds upon Hybrid E2E Testing by injecting dynamic, randomized
+ * test data using faker.js. Instead of hardcoding "Purple", we dynamically 
+ * generate a color and assert that the system correctly renders whatever data
+ * the API provides.
+ *
+ * Random data testing is crucial to ensure tests don't become coupled to
+ * specific static data shapes, and to discover edge-cases naturally over time.
+ */
+test.describe("Random Data Testing with faker.js", () => {
+  let homePage: HomePage;
+
+  test("should create dynamic random color via API and verify through UI", async ({ page, request }) => {
+    // Generate a uniquely prefixed name to avoid any potential DB collisions
+    // e2e_random_<word>
+    const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`;
+    const randomHex = faker.color.rgb();
+    
+    const newColor = { name: randomColorName, hex: randomHex };
+    
+    // 1. Arrange - Use the API to set up the system's state before the test
+    const createResponse = await request.post("/api/colors", {
+      data: newColor,
+    });
+    expect(createResponse.ok()).toBeTruthy();
+
+    homePage = new HomePage(page);
+
+    // 2. Act - Navigate to the UI which will now fetch the new state
+    await homePage.goto();
+
+    // Since this random string isn't in our english translation file (en.json), 
+    // i18next falls back to the key "colors.<randomColorName>".
+    const customBtn = page.getByRole("button", { name: `colors.${newColor.name}` });
+    
+    // We use Playwright's waitForResponse to avoid static waits natively, 
+    // ensuring fast and deterministic execution.
+    const responsePromise = page.waitForResponse(
+      (resp) => resp.url().includes(`/api/colors/${newColor.name}`) && resp.status() === 200
+    );
+    await customBtn.click();
+    await responsePromise;
+
+    // 3. Assert - Verify the behavior entirely via the UI layer
+    await expect(homePage.currentColorText).toContainText(newColor.hex);
+    
+    // 4. Teardown - Clean the state up via API again, keeping the DB stateless
+    const deleteResponse = await request.delete(`/api/colors/${newColor.name}`);
+    expect(deleteResponse.ok()).toBeTruthy();
+  });
+});
