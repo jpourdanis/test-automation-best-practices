@@ -1,0 +1,155 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Visual Regression >> homepage should match snapshot
+- Location: /app/e2e/tests/visual.spec.ts:34:7
+
+# Error details
+
+```
+Error: expect(Buffer).toMatchSnapshot(expected)
+
+  122198 pixels (ratio 0.14 of all image pixels) are different.
+
+Expected: /app/e2e/snapshots/home.png
+Received: /app/test-results/tests-visual-Visual-Regres-5df09-epage-should-match-snapshot-Chrome/home-actual.png
+    Diff: /app/test-results/tests-visual-Visual-Regres-5df09-epage-should-match-snapshot-Chrome/home-diff.png
+
+    at /app/e2e/tests/visual.spec.ts:44:24
+```
+
+# Page snapshot
+
+```yaml
+- main:
+  - combobox "Select Language":
+    - option "English" [selected]
+    - option "Español"
+    - option "Ελληνικά"
+  - img "logo"
+  - heading "Color Chooser App" [level=1]
+  - paragraph:
+    - text: Edit
+    - code: src/App.js
+    - text: and save to reload.
+  - link "Learn React"
+  - text: "Current color: #1abc9c"
+  - button "Turquoise"
+  - button "Red"
+  - button "Yellow"
+```
+
+# Test source
+
+```ts
+   1 | import { test, expect } from "../baseFixtures";
+   2 | import { HomePage } from "../pages/HomePage";
+   3 |
+   4 | /**
+   5 |  * Test Suite: Visual Regression & Responsive Design Testing
+   6 |  *
+   7 |  * This suite combines two complementary testing practices:
+   8 |  *
+   9 |  * 1. Visual Regression — Captures full-page screenshots and compares them
+   10 |  *    pixel-by-pixel against approved baselines to catch unintended layout
+   11 |  *    or styling changes.
+   12 |  *
+   13 |  * 2. Responsive Design — Simulates smaller viewports (e.g., iPhone SE) to
+   14 |  *    verify that all critical UI elements remain visible, properly stacked,
+   15 |  *    and functional on mobile devices.
+   16 |  *
+   17 |  * Note: Visual regression baselines should be generated inside Docker to
+   18 |  * avoid OS-specific rendering differences (fonts, anti-aliasing, etc.).
+   19 |  */
+   20 |
+   21 | // ─────────────────────────────────────────────────────────────────────────────
+   22 | // Visual Regression Tests (default desktop viewport from playwright.config.ts)
+   23 | // ─────────────────────────────────────────────────────────────────────────────
+   24 |
+   25 | test.describe("Visual Regression", () => {
+   26 |   /**
+   27 |    * Test: Homepage visual baseline
+   28 |    *
+   29 |    * Takes a full-page screenshot of the homepage in its default state and
+   30 |    * compares it against the stored baseline (`e2e/snapshots/home.png`).
+   31 |    * Any pixel difference will cause the test to fail, highlighting exactly
+   32 |    * what changed in a visual diff report.
+   33 |    */
+   34 |   test("homepage should match snapshot", async ({ page }) => {
+   35 |     await page.goto("/");
+   36 |     await page.waitForSelector("header");
+   37 |
+   38 |     // Mask the animated React logo to prevent its CSS spin animation
+   39 |     // from producing non-deterministic pixel diffs between runs.
+   40 |     const screenshot = await page.screenshot({
+   41 |       fullPage: true,
+   42 |       mask: [page.locator(".App-logo")],
+   43 |     });
+>  44 |     expect(screenshot).toMatchSnapshot("home.png", { maxDiffPixelRatio: 0.05 });
+      |                        ^ Error: expect(Buffer).toMatchSnapshot(expected)
+   45 |   });
+   46 | });
+   47 |
+   48 | // ─────────────────────────────────────────────────────────────────────────────
+   49 | // Responsive Design Tests (constrained mobile viewport)
+   50 | // ─────────────────────────────────────────────────────────────────────────────
+   51 |
+   52 | test.describe("Responsive Design Testing", () => {
+   53 |   let homePage: HomePage;
+   54 |
+   55 |   test.beforeEach(async ({ page }) => {
+   56 |     homePage = new HomePage(page);
+   57 |     await homePage.goto();
+   58 |   });
+   59 |
+   60 |   // Simulate an iPhone SE viewport (375×667)
+   61 |   test.use({ viewport: { width: 375, height: 667 } });
+   62 |
+   63 |   /**
+   64 |    * Test: Render correctly on mobile viewport
+   65 |    *
+   66 |    * Runs the test within an iPhone SE viewport (375×667). Validates that
+   67 |    * critical UI components (header, color text, all buttons) remain visible
+   68 |    * and functional despite strict space constraints. Also verifies that
+   69 |    * clicking a color button still updates the displayed hex value.
+   70 |    */
+   71 |   test("should render correctly on mobile viewport", async ({ page }) => {
+   72 |     // Check that core elements remain visible on a small screen
+   73 |     await expect(homePage.header).toBeVisible();
+   74 |     await expect(homePage.currentColorText).toBeVisible();
+   75 |
+   76 |     // Check for proper stacking or visibility of buttons
+   77 |     await expect(homePage.turquoiseBtn).toBeVisible();
+   78 |     await expect(homePage.redBtn).toBeVisible();
+   79 |     await expect(homePage.yellowBtn).toBeVisible();
+   80 |
+   81 |     // Verify button clicks still work at this viewport size.
+   82 |     //
+   83 |     // ✅ Best practice — deterministic, no wasted time
+   84 |     // 1. Register the listener BEFORE the click
+   85 |     const responsePromise = page.waitForResponse(
+   86 |       resp => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
+   87 |     );
+   88 |     // 2. Fire the action
+   89 |     await homePage.clickColorButton("Yellow");
+   90 |     // 3. Await the response (resolves as soon as it arrives)
+   91 |     await responsePromise;
+   92 |     // 4. Use auto-retrying assertion to handle React state update
+   93 |     await expect(homePage.currentColorText).toContainText("#f1c40f");
+   94 |
+   95 |     // Visual regression check for the mobile viewport layout.
+   96 |     // Mask the animated logo to avoid flaky diffs from its CSS animation.
+   97 |     const screenshot = await page.screenshot({
+   98 |       fullPage: true,
+   99 |       mask: [page.locator(".App-logo")],
+  100 |     });
+  101 |     expect(screenshot).toMatchSnapshot("home-mobile.png", { maxDiffPixelRatio: 0.05 });
+  102 |   });
+  103 | });
+  104 |
+```
