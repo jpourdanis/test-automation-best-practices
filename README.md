@@ -27,6 +27,7 @@ A comprehensive reference project demonstrating **test automation engineering be
   - [14. Test Automation Pyramid: API First](#14-test-automation-pyramid-api-first)
   - [15. API Schema Validation with Zod](#15-api-schema-validation-with-zod)
   - [16. Random Data Generation with faker.js](#16-random-data-generation-with-fakerjs)
+  - [17. Static Code Analysis with MegaLinter](#17-static-code-analysis-with-megalinter)
 - [Getting Started](#getting-started)
 
 ---
@@ -1040,6 +1041,37 @@ test("should handle randomized color generation", async ({ page, request }) => {
 
 ```bash
 npx playwright test e2e/tests/random-data.spec.ts
+```
+
+---
+
+### 17. Static Code Analysis with MegaLinter
+
+**Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+
+#### What is it?
+
+Static code analysis is the practice of examining source code before it is run to find vulnerabilities, bugs, styling errors, and suspicious constructs. We use **[MegaLinter](https://megalinter.io/)**, an open-source framework that aggregates 100+ linters into a single tool to analyze our whole repository.
+
+#### Why it matters
+
+- **Security & Vulnerabilities** — MegaLinter scans for hardcoded secrets (Secretlint, Gitleaks), Docker misconfigurations (Checkov), and software bill of materials / vulnerabilities (Trivy SBOM).
+- **Code Quality** — Enforces consistent formatting (ESLint, Prettier, jsonlint) across all files, preventing bikeshedding in code reviews and ensuring syntactical correctness.
+- **Spell Checking** — Automatically checks for typos in the codebase (CSpell, Lychee), making the code look professional.
+- **Fail-Fast Feedback** — Catching these errors in the pipeline or locally before testing saves debugging time and prevents dirty code from reaching the main branch.
+
+#### How it works
+
+MegaLinter is configured via `.mega-linter.yml` where we specify which directories to include/exclude and which overlapping or overly noisy linters to disable. It runs automatically in our GitHub Actions pipeline (`.github/workflows/ci.yml`) on every pull request. 
+
+We purposely configured the CI workflow to run MegaLinter with `continue-on-error: true` so that linting warnings (like typos or formatting issues) do not block the test execution, while still reporting the issues for the team to fix.
+
+#### How to verify
+
+You can run MegaLinter locally using the official Docker wrapper to quickly lint the entire project before pushing (requires Docker engine to be running):
+
+```bash
+npx --yes mega-linter-runner@latest
 ```
 
 ---
