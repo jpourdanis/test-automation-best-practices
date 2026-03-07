@@ -237,7 +237,8 @@ jobs:
         run: cd server && npm ci
 
       - name: Start server
-        run: cd server && npm start
+        run: cd server && npm start &
+          npx wait-on http://localhost:5001
 
       - name: Run sharded e2e tests
         run: npx cross-env npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'
