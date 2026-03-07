@@ -1064,8 +1064,6 @@ Static code analysis is the practice of examining source code before it is run t
 
 MegaLinter is configured via `.mega-linter.yml` where we specify which directories to include/exclude and which overlapping or overly noisy linters to disable. It runs automatically in our GitHub Actions pipeline (`.github/workflows/ci.yml`) on every pull request. 
 
-We purposely configured the CI workflow to run MegaLinter with `continue-on-error: true` so that linting warnings (like typos or formatting issues) do not block the test execution, while still reporting the issues for the team to fix.
-
 #### How to verify
 
 You can run MegaLinter locally using the official Docker wrapper to quickly lint the entire project before pushing (requires Docker engine to be running):

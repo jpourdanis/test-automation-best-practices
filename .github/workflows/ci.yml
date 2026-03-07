@@ -16,8 +16,8 @@ env:
   COMPOSE_DOCKER_CLI_BUILD: 1
 
 jobs:
-  megalinter:
-    name: MegaLinter
+  static-code-analysis:
+    name: Static Code Analysis
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -28,7 +28,6 @@ jobs:
 
       - name: MegaLinter
         uses: oxsecurity/megalinter@v8
-        continue-on-error: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -71,7 +70,7 @@ jobs:
       - name: Start app service (Docker Compose)
         run: docker compose up -d --build app api mongo
 
-      - name: Wait for services to be ready
+      - name: Health Checks for service 
         run: |
           wait_for() {
             local url=$1
@@ -113,7 +112,7 @@ jobs:
         continue-on-error: true
         run: npm run test:cross-browser
 
-      - name: Generate LCOV from host-run coverage
+      - name: Generate code coverage
         run: npx nyc report --reporter=lcovonly
 
       - name: Upload host-run coverage to Coveralls
