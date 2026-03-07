@@ -193,7 +193,54 @@ jobs:
         if: steps.e2e-tests.outcome == 'failure' || steps.bdd-tests.outcome == 'failure' || steps.cross-browser-tests.outcome == 'failure' || steps.visual-tests.outcome == 'failure'
         run: exit 1
 
+  setup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # Cache root node_modules directly (faster than cache: 'npm')
+      - name: Cache Root node_modules
+        id: cache-root-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: root-nm-${{ hashFiles('package-lock.json') }}
+
+      # Cache server node_modules
+      - name: Cache Server node_modules
+        id: cache-server-nm
+        uses: actions/cache@v4
+        with:
+          path: server/node_modules
+          key: server-nm-${{ hashFiles('server/package-lock.json') }} # Assuming server has its own lock file
+
+      - name: Install Root Dependencies
+        if: steps.cache-root-nm.outputs.cache-hit != 'true'
+        run: npm ci --legacy-peer-deps
+
+      - name: Install Server Dependencies
+        if: steps.cache-server-nm.outputs.cache-hit != 'true'
+        run: cd server && npm ci
+
+      # Cache Playwright browsers
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
+
   e2e-sharded:
+    needs: setup # Forces this to wait for the setup job
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
@@ -213,32 +260,36 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
 
-      - run: npm ci --legacy-peer-deps
+      # Lightning-fast cache restores replacing npm ci
+      - name: Restore Root node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: root-nm-${{ hashFiles('package-lock.json') }}
 
-      - name: Cache Playwright browsers
-        id: playwright-cache
+      - name: Restore Server node_modules
+        uses: actions/cache@v4
+        with:
+          path: server/node_modules
+          key: server-nm-${{ hashFiles('server/package-lock.json') }}
+
+      - name: Restore Playwright browsers
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            playwright-
 
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
-
+      # We must still install OS deps per Ubuntu VM, but it's fast without the browser binaries
       - name: Install Playwright OS dependencies
         run: npx playwright install-deps
 
-      - name: Install server dependencies
-        run: cd server && npm ci
-
-      - name: Start server
-        run: cd server && npm start &
-          npx wait-on http://localhost:5001
+      # Fixed server start using background execution & wait-on
+      - name: Start server & wait
+        run: |
+          cd server
+          npm start & 
+          npx --yes wait-on http://localhost:5001 -t 60000
 
       - name: Run sharded e2e tests
         run: npx cross-env npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'
@@ -251,6 +302,9 @@ jobs:
           path: blob-report
           retention-days: 1
 
+  # ==========================================
+  # 3. MERGE REPORTS: Pull cache, merge blobs
+  # ==========================================
   e2e-merge-reports:
     if: ${{ !cancelled() }}
     needs: [e2e-sharded]
@@ -262,9 +316,13 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
 
-      - run: npm ci --legacy-peer-deps
+      # Restore root modules so we have access to Playwright CLI for merging
+      - name: Restore Root node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: root-nm-${{ hashFiles('package-lock.json') }}
 
       - name: Download blob reports
         uses: actions/download-artifact@v4
