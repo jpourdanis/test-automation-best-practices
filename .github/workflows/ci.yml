@@ -229,7 +229,7 @@ jobs:
         run: npx playwright install-deps
 
       - name: Run sharded e2e tests
-        run: cross-env npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'
+        run: npx cross-env npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'
 
       - name: Upload blob report
         if: ${{ !cancelled() }}
