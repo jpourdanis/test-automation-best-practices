@@ -226,7 +226,7 @@ jobs:
           wait $PID_API $PID_APP $PID_PROXY
 
       - name: Run sharded e2e tests
-        run: npx playwright test '^(?!.*visual\.spec\.ts).*\.spec\.ts$' --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+        run: npx playwright test '^(?!.*visual\.spec\.ts).*\.spec\.ts$' --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=blob,allure-playwright
 
       - name: Upload blob report
         if: always()
