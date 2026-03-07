@@ -11,7 +11,6 @@ FILTER_REGEX_EXCLUDE: '(node_modules|megalinter-reports)/.*'
 
 # Disable linters that conflict with existing setups or are too noisy
 DISABLE_LINTERS:
-  - TYPESCRIPT_STANDARD
   - CSS_STYLELINT
   - REPOSITORY_DEVSKIM
   - REPOSITORY_TRUFFLEHOG
