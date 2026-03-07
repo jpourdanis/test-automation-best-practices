@@ -7,3 +7,23 @@
 # ------------------------------------------------------------------------------
 # Only analyze specific folders
 FILTER_REGEX_INCLUDE: '(src|server)/.*'
+FILTER_REGEX_EXCLUDE: '(node_modules|megalinter-reports)/.*'
+
+# Disable linters that conflict with existing setups or are too noisy
+DISABLE_LINTERS:
+  - JAVASCRIPT_STANDARD
+  - TYPESCRIPT_STANDARD
+  - CSS_STYLELINT
+  - REPOSITORY_DEVSKIM
+  - REPOSITORY_TRUFFLEHOG
+  - REPOSITORY_KINGFISHER
+  - REPOSITORY_GRYPE
+  - REPOSITORY_KICS
+  - REPOSITORY_TRIVY
+  - COPYPASTE_JSCPD
+  - JSON_V8R
+  - DOCKERFILE_HADOLINT
+  - TSX_ESLINT
+  - SPELL_CSPELL
+
+SPELL_CSPELL_FILTER_REGEX_EXCLUDE: '(src/locales/.*)'

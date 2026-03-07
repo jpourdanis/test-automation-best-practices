@@ -10,4 +10,9 @@ COPY . .
 
 EXPOSE 5001
 
+HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
+  CMD wget --no-verbose --tries=1 --spider http://localhost:5001/ || exit 1
+
+USER node
+
 CMD ["node", "index.js"]
