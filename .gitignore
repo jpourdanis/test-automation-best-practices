@@ -11,3 +11,4 @@
 .vscode/
 /playwright-report/
 /allure-results/
+/megalinter-reports/
