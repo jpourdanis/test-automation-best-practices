@@ -16,6 +16,9 @@ env:
   COMPOSE_DOCKER_CLI_BUILD: 1
 
 jobs:
+  # ==========================================
+  # 1. STATIC ANALYSIS (Runs independently)
+  # ==========================================
   static-code-analysis:
     name: Static Code Analysis
     runs-on: ubuntu-latest
@@ -31,8 +34,11 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  build:
-    name: Run tests and publish report
+  # ==========================================
+  # 2. SETUP: Run once to cache everything
+  # ==========================================
+  setup:
+    name: Install & Cache Dependencies
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -41,9 +47,28 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
 
-      - run: npm ci --legacy-peer-deps
+      - name: Cache Root node_modules
+        id: cache-root-nm
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: root-nm-${{ hashFiles('package-lock.json') }}
+
+      - name: Cache Server node_modules
+        id: cache-server-nm
+        uses: actions/cache@v4
+        with:
+          path: server/node_modules
+          key: server-nm-${{ hashFiles('server/package-lock.json') }}
+
+      - name: Install Root Dependencies
+        if: steps.cache-root-nm.outputs.cache-hit != 'true'
+        run: npm ci --legacy-peer-deps
+
+      - name: Install Server Dependencies
+        if: steps.cache-server-nm.outputs.cache-hit != 'true'
+        run: cd server && npm ci
 
       - name: Cache Playwright browsers
         id: playwright-cache
@@ -51,12 +76,37 @@ jobs:
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
-          restore-keys: |
-            playwright-
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install
+
+  # ==========================================
+  # 3a. NON-E2E TESTS: Docker Compose Suites
+  # ==========================================
+  test-suites:
+    name: API, BDD, Visual & Cross-Browser
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Restore Root node_modules
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: root-nm-${{ hashFiles('package-lock.json') }}
+
+      - name: Restore Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
 
       - name: Install Playwright OS dependencies
         run: npx playwright install-deps
@@ -86,161 +136,47 @@ jobs:
             return 1
           }
           wait_for http://127.0.0.1:5001/api/colors &
-          PID_API=$!
           wait_for http://127.0.0.1:3000 &
-          PID_APP=$!
           wait_for http://127.0.0.1:3000/api/colors &
-          PID_PROXY=$!
-          wait $PID_API $PID_APP $PID_PROXY
+          wait
 
-      - name: Run API tests (host Playwright)
-        id: api-tests
+      - name: Run API tests
+        continue-on-error: true
         run: npm run test:api
 
-      - name: Run end-to-end tests (host Playwright)
-        id: e2e-tests
-        continue-on-error: true
-        if: success()
-        run: npm test
-
-      - name: Run BDD tests (host Playwright)
-        id: bdd-tests
+      - name: Run BDD tests
         continue-on-error: true
         run: npm run test:bdd
 
-      - name: Run cross-browser compatibility tests (host Playwright)
-        id: cross-browser-tests
+      - name: Run cross-browser compatibility tests
         continue-on-error: true
         run: npm run test:cross-browser
 
       - name: Generate code coverage
         run: npx nyc report --reporter=lcovonly
 
-      - name: Upload host-run coverage to Coveralls
-        id: check_lcov
-        run: |
-          if [ -f coverage/lcov.info ] && [ -s coverage/lcov.info ]; then
-            echo "lcov_present=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "lcov_present=false" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Upload host-run coverage to Coveralls
-        if: steps.check_lcov.outputs.lcov_present == 'true'
-        uses: coverallsapp/github-action@master
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Run Playwright in Docker Compose for visual regression tests
-        id: visual-tests
+      - name: Run visual regression tests (Docker)
         continue-on-error: true
         run: |
-          # Ensure snapshot and test-results dirs exist on the host so the container
-          # can read/write them via the volume mounts.
-          mkdir -p e2e/snapshots
-          mkdir -p test-results
-          mkdir -p allure-results
-
-          # Run visual regression tests in the Playwright container.
+          mkdir -p e2e/snapshots test-results allure-results
           docker compose run --rm playwright e2e/tests/visual.spec.ts
 
-      - name: Save docker-compose logs
-        if: always()
-        run: |
-          mkdir -p $GITHUB_WORKSPACE/ci-logs
-          docker compose logs > $GITHUB_WORKSPACE/ci-logs/compose-logs.txt || true
-
-      - name: Upload test artifacts
+      - name: Upload Suite Artifacts
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: test-artifacts
+          name: suite-artifacts
           path: |
             test-results/**
             e2e/snapshots/**
-            playwright-report/**
             coverage/**
-            .nyc_output/**
-            ci-logs/**
             allure-results/**
 
-      - name: Load test report history
-        uses: actions/checkout@v4
-        if: always()
-        continue-on-error: true
-        with:
-          ref: gh-pages
-          path: gh-pages
-
-      - name: Build test report
-        uses: simple-elf/allure-report-action@v1.13
-        if: always()
-        with:
-          gh_pages: gh-pages
-          allure_history: allure-history
-          allure_results: allure-results
-
-      - name: Publish test report
-        uses: peaceiris/actions-gh-pages@v3
-        if: always()
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: allure-history
-          force_orphan: true
-
-      - name: Fail pipeline if tests failed
-        if: steps.e2e-tests.outcome == 'failure' || steps.bdd-tests.outcome == 'failure' || steps.cross-browser-tests.outcome == 'failure' || steps.visual-tests.outcome == 'failure'
-        run: exit 1
-
-  setup:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-
-      # Cache root node_modules directly (faster than cache: 'npm')
-      - name: Cache Root node_modules
-        id: cache-root-nm
-        uses: actions/cache@v4
-        with:
-          path: node_modules
-          key: root-nm-${{ hashFiles('package-lock.json') }}
-
-      # Cache server node_modules
-      - name: Cache Server node_modules
-        id: cache-server-nm
-        uses: actions/cache@v4
-        with:
-          path: server/node_modules
-          key: server-nm-${{ hashFiles('server/package-lock.json') }} # Assuming server has its own lock file
-
-      - name: Install Root Dependencies
-        if: steps.cache-root-nm.outputs.cache-hit != 'true'
-        run: npm ci --legacy-peer-deps
-
-      - name: Install Server Dependencies
-        if: steps.cache-server-nm.outputs.cache-hit != 'true'
-        run: cd server && npm ci
-
-      # Cache Playwright browsers
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
-
+  # ==========================================
+  # 3b. E2E SHARDED TESTS: Fast Parallel Execution
+  # ==========================================
   e2e-sharded:
-    needs: setup # Forces this to wait for the setup job
+    needs: setup
     timeout-minutes: 60
     runs-on: ubuntu-latest
     strategy:
@@ -261,7 +197,6 @@ jobs:
         with:
           node-version: 22
 
-      # Lightning-fast cache restores replacing npm ci
       - name: Restore Root node_modules
         uses: actions/cache@v4
         with:
@@ -280,21 +215,17 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
 
-      # We must still install OS deps per Ubuntu VM, but it's fast without the browser binaries
       - name: Install Playwright OS dependencies
         run: npx playwright install-deps
 
-      - name: Start server & wait
-        run: |
-          cd server
-          npm start & 
-          npx --yes wait-on http-get://localhost:5001/api-docs -t 60000
-
+      # NOTE: Removed manual "npm start" step! Playwright handles it natively now.
       - name: Run sharded e2e tests
         run: npx cross-env npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'
+        env:
+          BASE_URL: http://localhost:5001
 
       - name: Upload blob report
-        if: ${{ !cancelled() }}
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: e2e-blob-report-${{ matrix.shardIndex }}
@@ -302,11 +233,12 @@ jobs:
           retention-days: 1
 
   # ==========================================
-  # 3. MERGE REPORTS: Pull cache, merge blobs
+  # 4. REPORTING: Merge and Publish Everything
   # ==========================================
-  e2e-merge-reports:
-    if: ${{ !cancelled() }}
-    needs: [e2e-sharded]
+  publish-reports:
+    name: Merge Reports & Publish
+    needs: [test-suites, e2e-sharded]
+    if: always()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -316,26 +248,57 @@ jobs:
         with:
           node-version: 22
 
-      # Restore root modules so we have access to Playwright CLI for merging
       - name: Restore Root node_modules
         uses: actions/cache@v4
         with:
           path: node_modules
           key: root-nm-${{ hashFiles('package-lock.json') }}
 
-      - name: Download blob reports
+      - name: Download all suite artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: suite-artifacts
+
+      - name: Download e2e blob reports
         uses: actions/download-artifact@v4
         with:
           path: all-e2e-blob-reports
           pattern: e2e-blob-report-*
           merge-multiple: true
 
-      - name: Merge reports
+      - name: Merge E2E Playwright reports
         run: npx playwright merge-reports --reporter html ./all-e2e-blob-reports
 
-      - name: Upload HTML report
+      - name: Upload merged HTML report
         uses: actions/upload-artifact@v4
         with:
-          name: e2e-html-report
+          name: playwright-e2e-html-report
           path: playwright-report
           retention-days: 14
+
+      - name: Upload coverage to Coveralls
+        uses: coverallsapp/github-action@master
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Load test report history
+        uses: actions/checkout@v4
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Build Allure report
+        uses: simple-elf/allure-report-action@v1.13
+        with:
+          gh_pages: gh-pages
+          allure_history: allure-history
+          allure_results: allure-results
+
+      - name: Publish Allure to GH Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+          force_orphan: true
