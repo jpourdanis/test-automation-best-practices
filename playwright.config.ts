@@ -7,7 +7,8 @@ const testDir = defineBddConfig({
 });
 
 const config: PlaywrightTestConfig = {
-  // Directory containing Playwright tests
+  // Parralelize all tests, including BDD tests, to speed up execution
+  fullyParallel: true,
   testDir: "e2e",
   // Where to store visual snapshots
   snapshotDir: "e2e/snapshots",
@@ -29,7 +30,7 @@ const config: PlaywrightTestConfig = {
         ...devices["Desktop Chrome"],
       },
       // Exclude BDD tests from the default Chrome run to avoid duplicate runs
-      testIgnore: /.*\.feature\.spec.*$/, 
+      testIgnore: /.*\.feature\.spec.*$/,
     },
     {
       name: "BDD",
@@ -73,16 +74,8 @@ const config: PlaywrightTestConfig = {
     baseURL: process.env.BASE_URL || "http://localhost:3000",
   },
   reporter: process.env.CI
-    ? [
-        ["allure-playwright"],
-        ["list"],
-        ["html", { open: "never" }],
-      ]
-    : [
-        ["html", { open: "never" }],
-        ["allure-playwright"],
-        ["list"],
-      ],
+    ? [["allure-playwright"], ["list"], ["html", { open: "never" }]]
+    : [["html", { open: "never" }], ["allure-playwright"], ["list"]],
 };
 
 export default config;
