@@ -32,6 +32,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   build:
+    name: Run tests and publish report
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
