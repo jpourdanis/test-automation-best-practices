@@ -5,7 +5,7 @@ on:
   pull_request:
     branches: [main, gh-pages]
   schedule:
-    - cron: '0 0 * * *'
+    - cron: "0 0 * * *"
 permissions:
   contents: write
   pages: write
@@ -41,7 +41,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: 'npm'
+          cache: "npm"
 
       - run: npm ci --legacy-peer-deps
 
@@ -71,7 +71,7 @@ jobs:
       - name: Start app service (Docker Compose)
         run: docker compose up -d --build app api mongo
 
-      - name: Health Checks for service 
+      - name: Health Checks for service
         run: |
           wait_for() {
             local url=$1
@@ -169,8 +169,8 @@ jobs:
         if: always()
         continue-on-error: true
         with:
-            ref: gh-pages
-            path: gh-pages  
+          ref: gh-pages
+          path: gh-pages
 
       - name: Build test report
         uses: simple-elf/allure-report-action@v1.13
@@ -184,12 +184,89 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
-            github_token: ${{ secrets.GITHUB_TOKEN }}
-            publish_branch: gh-pages
-            publish_dir: allure-history
-            force_orphan: true
-            
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: allure-history
+          force_orphan: true
+
       - name: Fail pipeline if tests failed
         if: steps.e2e-tests.outcome == 'failure' || steps.bdd-tests.outcome == 'failure' || steps.cross-browser-tests.outcome == 'failure' || steps.visual-tests.outcome == 'failure'
         run: exit 1
 
+  e2e-sharded:
+    timeout-minutes: 60
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            playwright-
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
+
+      - name: Install Playwright OS dependencies
+        run: npx playwright install-deps
+
+      - name: Run sharded e2e tests
+        run: cross-env npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'
+
+      - name: Upload blob report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-blob-report-${{ matrix.shardIndex }}
+          path: blob-report
+          retention-days: 1
+
+  e2e-merge-reports:
+    if: ${{ !cancelled() }}
+    needs: [e2e-sharded]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - run: npm ci --legacy-peer-deps
+
+      - name: Download blob reports
+        uses: actions/download-artifact@v4
+        with:
+          path: all-e2e-blob-reports
+          pattern: e2e-blob-report-*
+          merge-multiple: true
+
+      - name: Merge reports
+        run: npx playwright merge-reports --reporter html ./all-e2e-blob-reports
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-html-report
+          path: playwright-report
+          retention-days: 14
