@@ -549,6 +549,25 @@ npm run test:e2e:docker
 npm run test:e2e:docker:update
 ```
 
+> [!CAUTION]
+> **Local prerequisite — remove BuildKit cache mounts.**
+> The `Dockerfile` and `server/Dockerfile` use `RUN --mount=type=cache` syntax which requires Docker BuildKit. This works automatically in GitHub Actions (CI), but the local `docker-compose` (v1) does **not** support BuildKit by default and will fail with:
+> ```
+> the --mount option requires BuildKit
+> ```
+> Before running locally, replace the cache-mount `RUN` lines in both files:
+>
+> **`Dockerfile`** (line ~8) and **`server/Dockerfile`** (line ~6):
+> ```dockerfile
+> # ❌ CI-only — remove locally
+> RUN --mount=type=cache,target=/root/.npm \
+>     npm ci --legacy-peer-deps
+>
+> # ✅ Replace with plain npm ci
+> RUN npm ci --legacy-peer-deps
+> ```
+> Remember to **revert this change** before pushing, since the cache mount improves CI build speed significantly.
+
 > **Tip:** Always review visual diffs before accepting updated baselines. Never blindly run `--update-snapshots`.
 
 ---

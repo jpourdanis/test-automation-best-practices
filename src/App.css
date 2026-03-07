@@ -1,3 +1,4 @@
+/* stylelint-disable selector-class-pattern, keyframes-name-pattern */
 .App {
   text-align: center;
 }
@@ -25,13 +26,14 @@
 }
 
 .App-link {
-  color: #003366; /* Even darker blue to pass contrast ratio 3:1 on turquoise */
+  color: #036; /* Even darker blue to pass contrast ratio 3:1 on turquoise */
 }
 
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
