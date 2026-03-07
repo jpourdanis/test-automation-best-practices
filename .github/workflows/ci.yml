@@ -228,6 +228,24 @@ jobs:
       - name: Install Playwright OS dependencies
         run: npx playwright install-deps
 
+      - name: Install server dependencies
+        run: cd server && npm ci
+
+      - name: Start server
+        run: cd server && npm start &
+
+      - name: Wait for server
+        run: |
+          for i in {1..30}; do
+            if curl -sSf http://127.0.0.1:5001/api/colors > /dev/null 2>&1; then
+              echo "Server ready"
+              exit 0
+            fi
+            sleep 1
+          done
+          echo "Server not ready"
+          exit 1
+
       - name: Run sharded e2e tests
         run: npx cross-env npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'
 
