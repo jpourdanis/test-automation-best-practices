@@ -284,12 +284,11 @@ jobs:
       - name: Install Playwright OS dependencies
         run: npx playwright install-deps
 
-      # Fixed server start using background execution & wait-on
       - name: Start server & wait
         run: |
           cd server
           npm start & 
-          npx --yes wait-on http://localhost:5001 -t 60000
+          npx --yes wait-on http-get://localhost:5001/api-docs -t 60000
 
       - name: Run sharded e2e tests
         run: npx cross-env npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'
