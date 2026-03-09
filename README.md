@@ -1093,6 +1093,57 @@ npx --yes mega-linter-runner@latest
 
 ---
 
+### 18. Parallel Execution & Sharding
+
+**Files:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) · [`playwright.config.ts`](/playwright.config.ts)
+
+#### What is it?
+
+Parallel execution runs multiple tests simultaneously on the same machine. Sharding takes this a step further by splitting the entire test suite across multiple identical CI runners (machines), allowing them to execute concurrently and then merging the results back together at the end.
+
+#### Why it matters
+
+- **Massive Time Savings** — As your E2E suite grows, execution time scales linearly. Running 200 tests sequentially could take 30 minutes. By sharding across 4 runners, execution drops to ~8 minutes, restoring the developer feedback loop.
+- **Resource Optimization** — Playwright workers max out CPU usage on a single runner. Sharding distributes this computational load across horizontally scaled CI infrastructure.
+- **Fail-Fast** — Parallelism and rapid sharding ensure failing tests are identified in a fraction of the time.
+
+#### How it works
+
+**1. Local/Playwright Parallelism (`playwright.config.ts`):**
+We enable `fullyParallel: true` in the Playwright config. This tells Playwright to execute individual tests inside the same file simultaneously using independent worker processes, instead of waiting for file-level boundaries. It effectively parallelizes all tests, including BDD tests, speeding up the execution.
+
+**2. CI Sharding Strategy (`ci.yml`):**
+In GitHub Actions, we define a matrix strategy for the `e2e-sharded` job:
+```yaml
+strategy:
+  fail-fast: false
+  matrix:
+    shardIndex: [1, 2, 3, 4]
+    shardTotal: [4]
+```
+This spawns 4 identical CI runners. Each runner spins up an isolated Docker environment and is passed a specific slice of the test suite via the CLI flag: `--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}`. 
+
+**3. Test Segregation (Non-Sharded vs Sharded):**
+Not all tests are suitable for sharding. In our `ci.yml`, tests are intelligently segregated into two architectural branches:
+- `tests-misc`: Runs API, BDD, cross-browser, and **visual regression tests** on a single runner. Visual tests (`visual.spec.ts`) are deliberately excluded from sharding to avoid baseline merging conflicts and to preserve snapshot integrity.
+- `e2e-sharded`: Runs the bulk of the E2E suite using sharding. We specifically exclude visual tests using a regex (`'^(?!.*visual\.spec\.ts).*\.spec\.ts$'`) so they don't break the concurrent shards.
+
+**4. Blob Reporting & Fan-In (`ci.yml`):**
+Because the tests execute on different machines, the generated reports are fragmented. 
+- Each shard generates a **blob** report (`--reporter=blob,allure-playwright`) instead of standard HTML reports.
+- We upload these blobs and Allure results as CI artifacts.
+- A final `publish-reports` job acts as the "Fan-In," waiting for all shards and misc tests to finish (`needs: [tests-misc, e2e-sharded]`). It uses `merge-multiple: true` to download all blob and Allure artifacts sequentially across jobs. Finally, it uses `npx playwright merge-reports` to generate a single unified HTML view, and builds a comprehensive Allure report consolidating the history of all shards seamlessly.
+
+#### How to verify
+
+To test this locally (simulating a single shard):
+```bash
+npx playwright test --shard=1/4
+```
+It will execute only roughly 25% of your test suite.
+
+---
+
 ## Getting Started
 
 ### Prerequisites
