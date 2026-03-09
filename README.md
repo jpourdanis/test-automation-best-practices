@@ -1111,7 +1111,6 @@ Parallel execution runs multiple tests simultaneously on the same machine. Shard
 #### How it works
 
 **1. Local/Playwright Parallelism (`playwright.config.ts`):**
-<<<<<<< HEAD
 We enable `fullyParallel: true` in the Playwright config. This tells Playwright to execute individual tests inside the same file simultaneously using independent worker processes, instead of waiting for file-level boundaries. It effectively parallelizes all tests, including BDD tests, speeding up the execution.
 
 **2. CI Sharding Strategy (`ci.yml`):**
@@ -1119,19 +1118,10 @@ In GitHub Actions, we define a matrix strategy for the `e2e-sharded` job:
 ```yaml
 strategy:
   fail-fast: false
-=======
-We enable `fullyParallel: true` in the Playwright config. This tells Playwright to execute individual tests inside the same file simultaneously using independent worker processes, instead of waiting for file-level boundaries.
-
-**2. CI Sharding (`ci.yml`):**
-In GitHub Actions, we define a matrix strategy for the `e2e-sharded` job:
-```yaml
-strategy:
->>>>>>> 7f2f4000153f3cb22b3bdee09b80e05ec6427b46
   matrix:
     shardIndex: [1, 2, 3, 4]
     shardTotal: [4]
 ```
-<<<<<<< HEAD
 This spawns 4 identical CI runners. Each runner spins up an isolated Docker environment and is passed a specific slice of the test suite via the CLI flag: `--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}`. 
 
 **3. Test Segregation (Non-Sharded vs Sharded):**
@@ -1148,19 +1138,6 @@ Because the tests execute on different machines, the generated reports are fragm
 #### How to verify
 
 To test this locally (simulating a single shard):
-=======
-This spawns 4 identical CI runners. Each runner spins up the isolated Docker environment and is passed a specific slice of the test suite via the CLI flag: `--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}`. 
-
-**3. Blob Reporting & Fan-In (`ci.yml`):**
-Because the tests execute on different machines, the generated reports are fragmented. 
-- Each shard generates a **blob** report (`--reporter=blob,allure-playwright`) instead of an HTML report.
-- We upload these blobs as CI artifacts.
-- A final `publish-reports` job acts as the "Fan-In," waiting for all shards to finish. It downloads all blob artifacts and runs `npx playwright merge-reports --reporter html ./all-blob-reports` to generate a single unified HTML view (and Allure report) seamlessly.
-
-#### How to verify
-
-To test this locally (simulating a shard):
->>>>>>> 7f2f4000153f3cb22b3bdee09b80e05ec6427b46
 ```bash
 npx playwright test --shard=1/4
 ```
