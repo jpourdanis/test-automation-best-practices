@@ -192,7 +192,7 @@ Do not compromise your architecture just because the text changes. Smart systems
 
 ### 3. Network Mocking & Interception
 
-**File:** [`e2e/tests/network-mocking.spec.ts`](/e2e/tests/network-mocking.spec.ts)
+**Files:** [`e2e/tests/network-mocking.spec.ts`](/e2e/tests/network-mocking.spec.ts) · [`e2e/tests/error-handling.spec.ts`](/e2e/tests/error-handling.spec.ts)
 
 #### What is it?
 
@@ -293,10 +293,23 @@ test("should gracefully handle a color not found in the database", async ({ page
 
 > **Important:** Always call `page.route()` *before* the action that triggers the network request (e.g., `page.goto()`).
 
+**Simulating complete network failures to verify UI error states**:
+
+```typescript
+test("should handle fetch colors network failure gracefully", async ({ page }) => {
+  // Abort the initial colors fetch
+  await page.route("**/api/colors", (route) => route.abort('failed'));
+  await homePage.goto();
+  
+  // Verify UI reacts to the empty/failed data state instead of crashing
+  await expect(page.locator("text=Loading colors...")).toBeVisible();
+});
+```
+
 #### How to verify
 
 ```bash
-npx playwright test e2e/tests/network-mocking.spec.ts
+npx playwright test e2e/tests/network-mocking.spec.ts e2e/tests/error-handling.spec.ts
 ```
 
 ---
