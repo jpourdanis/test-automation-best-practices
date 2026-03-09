@@ -23,16 +23,21 @@ jobs:
     name: Static Code Analysis
     runs-on: ubuntu-latest
     steps:
+      # Checks out the repository code so the workflow can access it
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          # Fetches all history for all tags and branches so MegaLinter can check the diff
           fetch-depth: 0
 
+      # Runs MegaLinter to detect issues, formatting errors, and bugs in the codebase
       - name: MegaLinter
-        uses: oxsecurity/megalinter@v8
+        uses: oxsecurity/megalinter-javascript@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Lint the full codebase on main branch pushes, otherwise only lint changed files in PRs
+          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
   # ==========================================
   # 2. SETUP & CACHE (Runs once to save time)
@@ -41,16 +46,20 @@ jobs:
     name: Install Dependencies
     runs-on: ubuntu-latest
     steps:
+      # Checks out the code
       - uses: actions/checkout@v4
 
+      # Sets up the required Node.js version and enables npm caching for faster installs
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: "npm"
 
+      # Installs project dependencies exactly as defined in package-lock.json
       - run: npm ci --legacy-peer-deps
 
+      # Caches Playwright's browser binaries to speed up subsequent workflow runs
       - name: Cache Playwright browsers
         id: playwright-cache
         uses: actions/cache@v4
@@ -58,6 +67,7 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
 
+      # Downloads Playwright browser binaries only if they weren't found in the cache
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install
@@ -70,25 +80,31 @@ jobs:
     needs: setup
     runs-on: ubuntu-latest
     steps:
+      # Checks out the code
       - uses: actions/checkout@v4
 
+      # Sets up Node.js for this job
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: "npm"
 
+      # Installs project dependencies
       - run: npm ci --legacy-peer-deps
 
+      # Restores the Playwright browsers cached in the setup job
       - name: Restore Playwright browsers
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
 
+      # Installs OS-level dependencies required by Playwright browsers (e.g., fonts, libraries)
       - name: Install Playwright OS dependencies
         run: npx playwright install-deps
 
+      # Configures Docker Buildx to enable advanced build features like layer caching
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -96,9 +112,11 @@ jobs:
             image=moby/buildkit:latest
             network=host
 
+      # Spins up the application frontend, backend API, and MongoDB database via Docker
       - name: Start app service (Docker Compose)
         run: docker compose up -d --build app api mongo
 
+      # Waits until the frontend and backend services are fully running and responding to requests
       - name: Health Checks for service
         run: |
           wait_for() {
@@ -121,24 +139,29 @@ jobs:
           PID_PROXY=$!
           wait $PID_API $PID_APP $PID_PROXY
 
+      # Runs fast API tests first; failures here indicate backend issues
       - name: Run API tests
         id: api-tests
         continue-on-error: true
         run: npm run test:api
 
+      # Runs Behavior-Driven Development (Cucumber) tests
       - name: Run BDD tests
         id: bdd-tests
         continue-on-error: true
         run: npm run test:bdd
 
+      # Runs tests across Chromium, Firefox, and WebKit to ensure comprehensive compatibility
       - name: Run cross-browser compatibility tests
         id: cross-browser-tests
         continue-on-error: true
         run: npm run test:cross-browser
 
+      # Gathers execution coverage data from the tests to measure how much code was exercised
       - name: Generate code coverage
         run: npx nyc report --reporter=lcovonly
 
+      # Executes visual regression checks inside a Docker container for identical pixel rendering
       - name: Run Playwright in Docker Compose for visual regression
         id: visual-tests
         continue-on-error: true
@@ -146,6 +169,7 @@ jobs:
           mkdir -p e2e/snapshots test-results allure-results
           docker compose run --rm playwright e2e/tests/visual.spec.ts
 
+      # Packs and uploads the generated test artifacts (reports, traces, snapshots) for download
       - name: Upload Misc Test Artifacts
         if: always()
         uses: actions/upload-artifact@v4
@@ -157,6 +181,7 @@ jobs:
             coverage/**
             allure-results/**
 
+      # Aborts the pipeline at the end if any of the preceding step sets failed
       - name: Fail pipeline if misc tests failed
         if: steps.api-tests.outcome == 'failure' || steps.bdd-tests.outcome == 'failure' || steps.cross-browser-tests.outcome == 'failure' || steps.visual-tests.outcome == 'failure'
         run: exit 1
@@ -168,31 +193,38 @@ jobs:
     name: E2E Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
     needs: setup
     runs-on: ubuntu-latest
+    # Strategy matrix allows running multiple instances of this job concurrently
     strategy:
       fail-fast: false
       matrix:
         shardIndex: [1, 2, 3, 4]
         shardTotal: [4]
     steps:
+      # Checks out the code for this specific shard runner
       - uses: actions/checkout@v4
 
+      # Sets up Node.js for this shard runner
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: "npm"
 
+      # Installs project dependencies
       - run: npm ci --legacy-peer-deps
 
+      # Restores Playwright browsers for this runner
       - name: Restore Playwright browsers
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
 
+      # Installs OS dependencies required by browsers
       - name: Install Playwright OS dependencies
         run: npx playwright install-deps
 
+      # Sets up Docker Buildx for advanced image building
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -200,10 +232,11 @@ jobs:
             image=moby/buildkit:latest
             network=host
 
-      # Exactly identical working Docker environment for the shards
+      # Completely isolated environment spin-up for this exact shard runner
       - name: Start app service (Docker Compose)
         run: docker compose up -d --build app api mongo
 
+      # Verifies the application is healthy inside this shard's Docker environment
       - name: Health Checks for service
         run: |
           wait_for() {
@@ -225,9 +258,11 @@ jobs:
           PID_PROXY=$!
           wait $PID_API $PID_APP $PID_PROXY
 
+      # Executes precisely the assigned fraction (shard) of the test suite (skipping visual tests)
       - name: Run sharded e2e tests
         run: npx playwright test '^(?!.*visual\.spec\.ts).*\.spec\.ts$' --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=blob,allure-playwright
 
+      # Uploads the fragmented Playwright execution data (blob) to be merged later
       - name: Upload blob report
         if: always()
         uses: actions/upload-artifact@v4
@@ -236,6 +271,7 @@ jobs:
           path: blob-report
           retention-days: 1
 
+      # Uploads the raw Allure test result tracking data for this shard fraction
       - name: Upload Allure Results for Shard
         if: always()
         uses: actions/upload-artifact@v4
@@ -249,26 +285,31 @@ jobs:
   # ==========================================
   publish-reports:
     name: Merge Reports & Publish
+    # This job 'fans in', running only after all the test runners finish
     needs: [tests-misc, e2e-sharded]
     if: always()
     runs-on: ubuntu-latest
     steps:
+      # Checks out the code to gather reporting logic
       - uses: actions/checkout@v4
 
+      # Sets up Node JS
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 22
           cache: "npm"
 
+      # Installs reporting dependencies via package-lock.json
       - run: npm ci --legacy-peer-deps
 
-      # Download all artifacts across all jobs
+      # Downloads the artifacts generated by the non-sharded test runner
       - name: Download Misc Artifacts
         uses: actions/download-artifact@v4
         with:
           name: misc-test-artifacts
 
+      # Downloads the fractional blob reports from every concurrent shard runner
       - name: Download all Playwright blob reports
         uses: actions/download-artifact@v4
         with:
@@ -276,6 +317,7 @@ jobs:
           pattern: e2e-blob-report-*
           merge-multiple: true
 
+      # Downloads the raw Allure results from every concurrent shard runner
       - name: Download all Allure results
         uses: actions/download-artifact@v4
         with:
@@ -283,21 +325,25 @@ jobs:
           pattern: allure-results-shard-*
           merge-multiple: true
 
+      # Merges the distributed Playwright blobs into a single readable HTML report
       - name: Merge Playwright Reports
         run: npx playwright merge-reports --reporter html ./all-blob-reports
 
+      # Uploads the finalized, unified Playwright HTML report
       - name: Upload Merged Playwright HTML
         uses: actions/upload-artifact@v4
         with:
           name: playwright-merged-html-report
           path: playwright-report
 
+      # Publishes the collected unit and workflow test coverage to Coveralls dashboard
       - name: Upload host-run coverage to Coveralls
         uses: coverallsapp/github-action@master
         continue-on-error: true
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
+      # Checks out the gh-pages branch to access historical Allure test data
       - name: Load test report history
         uses: actions/checkout@v4
         continue-on-error: true
@@ -305,6 +351,7 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
+      # Consolidates new and historical results into a new interactive Allure build report
       - name: Build Allure report
         uses: simple-elf/allure-report-action@v1.13
         with:
@@ -312,6 +359,7 @@ jobs:
           allure_history: allure-history
           allure_results: allure-results
 
+      # Commits the new Allure trend graphs and test statuses directly to GitHub Pages
       - name: Publish test report to GH Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
