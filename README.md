@@ -150,7 +150,7 @@ test("should maintain accessibility after color change", async ({ page }) => {
   await homePage.clickColorButton("Yellow");
   const results = await new AxeBuilder({ page }).analyze();
   const contrastViolations = results.violations.filter(
-    (v) => v.id === "color-contrast"
+    (v) => v.id === "color-contrast",
   );
   expect(contrastViolations).toEqual([]);
 });
@@ -168,7 +168,7 @@ If a violation is found, the output will include the exact rule ID (e.g., `color
 
 **File:** [`e2e/tests/a11y.spec.ts`](/e2e/tests/a11y.spec.ts)
 
-When an application has different languages, most engineers panic because their trusted English text locators would break once they change the testing language. 
+When an application has different languages, most engineers panic because their trusted English text locators would break once they change the testing language.
 
 So they abandon accessibility locators and fallback to the dark ages of DOM manipulation. They start writing locators like this:
 
@@ -181,10 +181,10 @@ There is a much cleaner way to handle this in Playwright. Your testing framework
 
 ```typescript
 // Example: locating a button dynamically based on the current testing language
-await page.getByRole('button', { name: i18nConfig.colors.red }).click();
+await page.getByRole("button", { name: i18nConfig.colors.red }).click();
 ```
 
-Playwright inserts the correct string automatically. English, French, Spanish, or whatsoever — it does not matter. You keep the user-centric accessibility locators and ditch the brittle DOM paths. 
+Playwright inserts the correct string automatically. English, French, Spanish, or whatsoever — it does not matter. You keep the user-centric accessibility locators and ditch the brittle DOM paths.
 
 Do not compromise your architecture just because the text changes. Smart systems adapt to the context. Adding an additional language to the framework is done under a minute.
 
@@ -223,7 +223,9 @@ test("should handle missing image gracefully", async ({ page }) => {
 **Mocking data that doesn't exist in the database** (e.g., a brand-new color):
 
 ```typescript
-test("should display colors that do not exist in the database", async ({ page }) => {
+test("should display colors that do not exist in the database", async ({
+  page,
+}) => {
   // Mock the /api/colors endpoint to return a color not in the real DB
   await page.route("**/api/colors", async (route) => {
     await route.fulfill({
@@ -249,7 +251,10 @@ test("should display colors that do not exist in the database", async ({ page })
   await customBtn.click();
 
   // Verify the background reflects the mocked hex value
-  await expect(homePage.header).toHaveCSS("background-color", "rgb(255, 0, 255)");
+  await expect(homePage.header).toHaveCSS(
+    "background-color",
+    "rgb(255, 0, 255)",
+  );
 });
 ```
 
@@ -258,7 +263,9 @@ test("should display colors that do not exist in the database", async ({ page })
 ```typescript
 import enTranslations from "../../src/locales/en.json";
 
-test("should gracefully handle a color not found in the database", async ({ page }) => {
+test("should gracefully handle a color not found in the database", async ({
+  page,
+}) => {
   await page.route("**/api/colors", async (route) => {
     await route.fulfill({
       status: 200,
@@ -280,27 +287,35 @@ test("should gracefully handle a color not found in the database", async ({ page
   });
 
   await homePage.goto();
-  await expect(homePage.header).toHaveCSS("background-color", "rgb(26, 188, 156)");
+  await expect(homePage.header).toHaveCSS(
+    "background-color",
+    "rgb(26, 188, 156)",
+  );
 
   // Use i18n-aware accessible locator for the button
   const redBtn = page.getByRole("button", { name: enTranslations.colors.red });
   await redBtn.click();
 
   // Background should not have changed since the API returned a 404
-  await expect(homePage.header).toHaveCSS("background-color", "rgb(26, 188, 156)");
+  await expect(homePage.header).toHaveCSS(
+    "background-color",
+    "rgb(26, 188, 156)",
+  );
 });
 ```
 
-> **Important:** Always call `page.route()` *before* the action that triggers the network request (e.g., `page.goto()`).
+> **Important:** Always call `page.route()` _before_ the action that triggers the network request (e.g., `page.goto()`).
 
 **Simulating complete network failures to verify UI error states**:
 
 ```typescript
-test("should handle fetch colors network failure gracefully", async ({ page }) => {
+test("should handle fetch colors network failure gracefully", async ({
+  page,
+}) => {
   // Abort the initial colors fetch
-  await page.route("**/api/colors", (route) => route.abort('failed'));
+  await page.route("**/api/colors", (route) => route.abort("failed"));
   await homePage.goto();
-  
+
   // Verify UI reacts to the empty/failed data state instead of crashing
   await expect(page.locator("text=Loading colors...")).toBeVisible();
 });
@@ -420,9 +435,13 @@ A pattern where a single test template is executed multiple times with different
 
 ```typescript
 const testData = [
-  { name: "Turquoise", expectedHex: "#1abc9c", expectedRgb: "rgb(26, 188, 156)" },
-  { name: "Red",       expectedHex: "#e74c3c", expectedRgb: "rgb(231, 76, 60)"  },
-  { name: "Yellow",    expectedHex: "#f1c40f", expectedRgb: "rgb(241, 196, 15)"  },
+  {
+    name: "Turquoise",
+    expectedHex: "#1abc9c",
+    expectedRgb: "rgb(26, 188, 156)",
+  },
+  { name: "Red", expectedHex: "#e74c3c", expectedRgb: "rgb(231, 76, 60)" },
+  { name: "Yellow", expectedHex: "#f1c40f", expectedRgb: "rgb(241, 196, 15)" },
 ];
 ```
 
@@ -431,10 +450,15 @@ const testData = [
 ```typescript
 test.describe("Data-Driven Testing", () => {
   for (const data of testData) {
-    test(`changing color to ${data.name} should reflect in UI and DOM`, async ({ page }) => {
+    test(`changing color to ${data.name} should reflect in UI and DOM`, async ({
+      page,
+    }) => {
       await homePage.clickColorButton(data.name);
       await expect(homePage.currentColorText).toContainText(data.expectedHex);
-      await expect(homePage.header).toHaveCSS("background-color", data.expectedRgb);
+      await expect(homePage.header).toHaveCSS(
+        "background-color",
+        data.expectedRgb,
+      );
     });
   }
 });
@@ -567,12 +591,15 @@ npm run test:e2e:docker:update
 > [!CAUTION]
 > **Local prerequisite — remove BuildKit cache mounts.**
 > The `Dockerfile` and `server/Dockerfile` use `RUN --mount=type=cache` syntax which requires Docker BuildKit. This works automatically in GitHub Actions (CI), but the local `docker-compose` (v1) does **not** support BuildKit by default and will fail with:
+>
 > ```
 > the --mount option requires BuildKit
 > ```
+>
 > Before running locally, replace the cache-mount `RUN` lines in both files:
 >
 > **`Dockerfile`** (line ~8) and **`server/Dockerfile`** (line ~6):
+>
 > ```dockerfile
 > # ❌ CI-only — remove locally
 > RUN --mount=type=cache,target=/root/.npm \
@@ -581,6 +608,7 @@ npm run test:e2e:docker:update
 > # ✅ Replace with plain npm ci
 > RUN npm ci --legacy-peer-deps
 > ```
+>
 > Remember to **revert this change** before pushing, since the cache mount improves CI build speed significantly.
 
 > **Tip:** Always review visual diffs before accepting updated baselines. Never blindly run `--update-snapshots`.
@@ -655,6 +683,7 @@ A conditional strategy for running tests across multiple browser engines (Chromi
 Many teams configure Playwright to run every test on all three browsers. While this provides great coverage, it multiplies your test execution time by 3. If a PR takes 15 minutes to run UI tests on Chrome, it will take 45 minutes to run all three browsers. This destroys the developer feedback loop.
 
 The senior QA best practice is **Conditional Execution**:
+
 1. **Pull Requests / Local Dev:** Run tests fast on one primary engine (e.g., Chromium).
 2. **Nightly / Release Branches:** Run full regression across all browsers using an environment variable flag.
 
@@ -681,11 +710,13 @@ We configure our `playwright.config.ts` to dynamically inject browser projects b
 #### How to verify
 
 **Run fast on default browser (Chromium only):**
+
 ```bash
 npm run test
 ```
 
 **Run deep coverage across all engines (Chromium, Firefox, WebKit):**
+
 ```bash
 npm run test:cross-browser
 ```
@@ -744,6 +775,7 @@ Given("I am on the home page", async ({ page }) => {
 #### How to verify
 
 Execute the BDD tests specifically:
+
 ```bash
 npm run test:bdd
 ```
@@ -775,7 +807,7 @@ on:
   pull_request:
     branches: [main, gh-pages]
   schedule:
-    - cron: '0 0 * * *' # Executes daily at Midnight UTC
+    - cron: "0 0 * * *" # Executes daily at Midnight UTC
 ```
 
 This guarantees an autonomous system health check every day.
@@ -813,7 +845,7 @@ expect(hex).toContain("#f1c40f");
 // ✅ Best practice — deterministic, no wasted time
 // 1. Register the listener BEFORE the click
 const responsePromise = page.waitForResponse(
-  resp => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
+  (resp) => resp.url().includes("/api/colors/Yellow") && resp.status() === 200,
 );
 // 2. Fire the action
 await homePage.clickColorButton("Yellow");
@@ -824,6 +856,7 @@ await expect(homePage.currentColorText).toContainText("#f1c40f");
 ```
 
 This pattern:
+
 - **Eliminates flakiness** caused by network timing variance
 - **Speeds up tests** — no sleeping, the assertion runs the instant the response lands
 - **Self-documents the intent** — it's immediately clear the test is waiting for a specific API call
@@ -863,9 +896,12 @@ A hybrid test leverages both backend API calls and frontend UI interactions in a
 import { test, expect } from "../baseFixtures";
 import { HomePage } from "../pages/HomePage";
 
-test("should create color via API and verify through UI", async ({ page, request }) => {
+test("should create color via API and verify through UI", async ({
+  page,
+  request,
+}) => {
   const newColor = { name: "Purple", hex: "#8e44ad" };
-  
+
   // 1. Arrange - Fast state setup via API
   const createResponse = await request.post("/api/colors", { data: newColor });
   expect(createResponse.ok()).toBeTruthy();
@@ -873,9 +909,11 @@ test("should create color via API and verify through UI", async ({ page, request
   // 2. Act - Navigate and interact via UI
   const homePage = new HomePage(page);
   await homePage.goto();
-  
+
   const responsePromise = page.waitForResponse(
-    (resp) => resp.url().includes(`/api/colors/${newColor.name}`) && resp.status() === 200
+    (resp) =>
+      resp.url().includes(`/api/colors/${newColor.name}`) &&
+      resp.status() === 200,
   );
   await page.getByRole("button", { name: "colors.purple" }).click();
   await responsePromise;
@@ -906,18 +944,18 @@ A pipeline execution strategy based on the **Test Automation Pyramid**. It stric
 
 #### How to implement
 
-In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step *without* `continue-on-error`. This instantly fails the workflow if any API endpoints regress. The subsequent E2E steps declare an `if: success()` condition, ensuring they only trigger if the API test step completes flawlessly.
+In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step _without_ `continue-on-error`. This instantly fails the workflow if any API endpoints regress. The subsequent E2E steps declare an `if: success()` condition, ensuring they only trigger if the API test step completes flawlessly.
 
 ```yaml
-      - name: Run API tests (host Playwright)
-        id: api-tests
-        run: npm run test:api
+- name: Run API tests (host Playwright)
+  id: api-tests
+  run: npm run test:api
 
-      - name: Run end-to-end tests (host Playwright)
-        id: e2e-tests
-        continue-on-error: true
-        if: success()
-        run: npm test
+- name: Run end-to-end tests (host Playwright)
+  id: e2e-tests
+  continue-on-error: true
+  if: success()
+  run: npm test
 ```
 
 ---
@@ -949,21 +987,27 @@ This creates a **closed validation loop**: the server rejects malformed input, a
 
 ```javascript
 // server/index.js
-const { z } = require('zod');
+const { z } = require("zod");
 
 const colorZodSchema = z.object({
-  name: z.string({ required_error: 'name is required' })
-    .trim().min(1, 'name cannot be empty'),
-  hex: z.string({ required_error: 'hex is required' })
+  name: z
+    .string({ required_error: "name is required" })
     .trim()
-    .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format (e.g., #1abc9c)'),
+    .min(1, "name cannot be empty"),
+  hex: z
+    .string({ required_error: "hex is required" })
+    .trim()
+    .regex(
+      /^#[0-9A-Fa-f]{6}$/,
+      "hex must be a valid 6-digit hex format (e.g., #1abc9c)",
+    ),
 });
 ```
 
 **Step 2:** Use `safeParse` in route handlers to return structured error messages instead of crashing.
 
 ```javascript
-app.post('/api/colors', async (req, res) => {
+app.post("/api/colors", async (req, res) => {
   const parseResult = colorZodSchema.safeParse(req.body);
   if (!parseResult.success) {
     return res.status(400).json({ error: parseResult.error.issues[0].message });
@@ -999,14 +1043,18 @@ test("should create a new color with valid schema", async ({ request }) => {
 
 ```typescript
 test("should reject missing name", async ({ request }) => {
-  const response = await request.post(`/api/colors`, { data: { hex: "#ffa500" } });
+  const response = await request.post(`/api/colors`, {
+    data: { hex: "#ffa500" },
+  });
   expect(response.status()).toBe(400);
   const data = await response.json();
   expect(data.error).toBe("name is required");
 });
 
 test("should reject invalid hex format", async ({ request }) => {
-  const response = await request.post(`/api/colors`, { data: { name: "Orange", hex: "ffa500" } });
+  const response = await request.post(`/api/colors`, {
+    data: { name: "Orange", hex: "ffa500" },
+  });
   expect(response.status()).toBe(400);
   const data = await response.json();
   expect(data.error).toContain("hex must be a valid 6-digit hex format");
@@ -1035,11 +1083,12 @@ Using a library like [`@faker-js/faker`](https://fakerjs.dev/) to generate dynam
 
 - **Discovers Edge Cases naturally** — Static data like `"John"` never breaks anything. But `faker.person.lastName()` might eventually generate `"O'Connor"`, exposing an unescaped SQL query or a UI component that doesn't handle apostrophes correctly.
 - **Prevents State Collisions** — Hardcoded entities (e.g., `email: "test@example.com"`) often conflict in parallel test executions or dirty databases. Random data guarantees uniqueness (`faker.internet.email()`), allowing tests to run safely in parallel without stomping on each other's state.
-- **Avoids Test Coupling** — Tests shouldn't pass just because they rely on a specific hardcoded shape in the database. Dynamic data forces the test to assert on *system behavior* rather than predefined constants.
+- **Avoids Test Coupling** — Tests shouldn't pass just because they rely on a specific hardcoded shape in the database. Dynamic data forces the test to assert on _system behavior_ rather than predefined constants.
 
 #### How to implement
 
 **Step 1:** Install faker:
+
 ```bash
 npm install -D @faker-js/faker
 ```
@@ -1054,7 +1103,7 @@ test("should handle randomized color generation", async ({ page, request }) => {
   // Generate random data
   const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`;
   const randomHex = faker.color.rgb();
-  
+
   // Arrange via API
   await request.post("/api/colors", {
     data: { name: randomColorName, hex: randomHex },
@@ -1062,7 +1111,7 @@ test("should handle randomized color generation", async ({ page, request }) => {
 
   // Act via UI
   await page.goto("/");
-  // The system's robustness is tested because it must render 
+  // The system's robustness is tested because it must render
   // whatever string faker generated, regardless of length or content.
   await page.getByRole("button", { name: `colors.${randomColorName}` }).click();
 
@@ -1096,7 +1145,7 @@ Static code analysis is the practice of examining source code before it is run t
 
 #### How it works
 
-MegaLinter is configured via `.mega-linter.yml` where we specify which directories to include/exclude and which overlapping or overly noisy linters to disable. It runs automatically in our GitHub Actions pipeline (`.github/workflows/ci.yml`) on every pull request. 
+MegaLinter is configured via `.mega-linter.yml` where we specify which directories to include/exclude and which overlapping or overly noisy linters to disable. It runs automatically in our GitHub Actions pipeline (`.github/workflows/ci.yml`) on every pull request.
 
 #### How to verify
 
@@ -1129,6 +1178,7 @@ We enable `fullyParallel: true` in the Playwright config. This tells Playwright 
 
 **2. CI Sharding Strategy (`ci.yml`):**
 In GitHub Actions, we define a matrix strategy for the `e2e-sharded` job:
+
 ```yaml
 strategy:
   fail-fast: false
@@ -1136,15 +1186,18 @@ strategy:
     shardIndex: [1, 2, 3, 4]
     shardTotal: [4]
 ```
-This spawns 4 identical CI runners. Each runner spins up an isolated Docker environment and is passed a specific slice of the test suite via the CLI flag: `--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}`. 
+
+This spawns 4 identical CI runners. Each runner spins up an isolated Docker environment and is passed a specific slice of the test suite via the CLI flag: `--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}`.
 
 **3. Test Segregation (Non-Sharded vs Sharded):**
 Not all tests are suitable for sharding. In our `ci.yml`, tests are intelligently segregated into two architectural branches:
+
 - `tests-misc`: Runs API, BDD, cross-browser, and **visual regression tests** on a single runner. Visual tests (`visual.spec.ts`) are deliberately excluded from sharding to avoid baseline merging conflicts and to preserve snapshot integrity.
 - `e2e-sharded`: Runs the bulk of the E2E suite using sharding. We specifically exclude visual tests using a regex (`'^(?!.*visual\.spec\.ts).*\.spec\.ts$'`) so they don't break the concurrent shards.
 
 **4. Blob Reporting & Fan-In (`ci.yml`):**
-Because the tests execute on different machines, the generated reports are fragmented. 
+Because the tests execute on different machines, the generated reports are fragmented.
+
 - Each shard generates a **blob** report (`--reporter=blob,allure-playwright`) instead of standard HTML reports.
 - We upload these blobs and Allure results as CI artifacts.
 - A final `publish-reports` job acts as the "Fan-In," waiting for all shards and misc tests to finish (`needs: [tests-misc, e2e-sharded]`). It uses `merge-multiple: true` to download all blob and Allure artifacts sequentially across jobs. Finally, it uses `npx playwright merge-reports` to generate a single unified HTML view, and builds a comprehensive Allure report consolidating the history of all shards seamlessly.
@@ -1152,9 +1205,11 @@ Because the tests execute on different machines, the generated reports are fragm
 #### How to verify
 
 To test this locally (simulating a single shard):
+
 ```bash
 npx playwright test --shard=1/4
 ```
+
 It will execute only roughly 25% of your test suite.
 
 ---
@@ -1186,13 +1241,14 @@ We define the gate in `package.json` using the Istanbul (`nyc`) CLI:
 This script is then hooked into `.github/workflows/ci.yml` right after the coverage report is generated:
 
 ```yaml
-      - name: Generate code coverage
-        run: npx nyc report --reporter=lcovonly
+- name: Generate code coverage
+  run: npx nyc report --reporter=lcovonly
 
-      # Fails the pipeline if code coverage drops below 80%. This ensures no code is merged without adequate tests.
-      - name: Enforce 80% Code Coverage Gate
-        run: npm run coverage:check
+# Fails the pipeline if code coverage drops below 80%. This ensures no code is merged without adequate tests.
+- name: Enforce 80% Code Coverage Gate
+  run: npm run coverage:check
 ```
+
 If the tests do not hit the 80% mark, `nyc` exits with an error code and the GitHub Action job turns red, blocking the Pull Request from being merged.
 
 ---
@@ -1224,7 +1280,9 @@ To run the full stack (React frontend + Express backend + MongoDB), use Docker C
 ```bash
 docker compose up -d
 ```
-The React app will be available at `http://localhost:3000` and the API will run on port `5001`. 
+
+The React app will be available at `http://localhost:3000` and the API will run on port `5001`.
+
 > **Note:** We use port `5001` instead of `5000` because macOS Monterey and later reserves port `5000` for its AirPlay Receiver service, which causes an HTTP 403 Forbidden conflict.
 
 ### Running tests locally
@@ -1272,12 +1330,15 @@ e2e/
 │   ├── coverage.spec.ts         # E2E tests with code coverage
 │   ├── cross-browser.spec.ts    # Cross-browser testing strategy
 │   ├── data-driven.spec.ts      # Data-driven testing
+│   ├── error-handling.spec.ts   # Error handling & network failure simulation
 │   ├── hybrid.spec.ts           # Hybrid E2E testing (API + UI)
 │   ├── network-mocking.spec.ts  # Network mocking & interception
 │   ├── pom-refactored.spec.ts   # POM demonstration
+│   ├── random-data.spec.ts      # Random data generation with faker.js
 │   └── visual.spec.ts           # Visual regression & responsive testing
 ├── snapshots/
-│   └── home.png                 # Visual regression baseline
+│   ├── home.png                 # Visual regression baseline for desktop
+│   └── home-mobile.png          # Visual regression baseline for mobile
 ├── baseFixtures.ts              # Istanbul coverage fixture
 └── helper.ts                    # Utility functions
 ```
