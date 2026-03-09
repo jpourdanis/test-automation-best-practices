@@ -9,6 +9,8 @@ A comprehensive reference project demonstrating **test automation engineering be
 
 ## Table of Contents
 
+- [Application Architecture](#application-architecture)
+- [Getting Started](#getting-started)
 - [Best Practices Implemented](#best-practices-implemented)
   - [1. Page Object Model (POM)](#1-page-object-model-pom)
   - [2. Accessibility (a11y) Testing](#2-accessibility-a11y-testing)
@@ -30,7 +32,170 @@ A comprehensive reference project demonstrating **test automation engineering be
   - [17. Static Code Analysis with MegaLinter](#17-static-code-analysis-with-megalinter)
   - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
   - [19. Quality Gates & Code Coverage](#19-quality-gates--code-coverage)
-- [Getting Started](#getting-started)
+
+---
+
+## Application Architecture
+
+This project follows a **three-tier architecture** with a clear separation between the frontend, backend, and database layers.
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                        Docker Compose                            │
+│                                                                  │
+│  ┌─────────────┐     ┌─────────────────┐     ┌──────────────┐   │
+│  │   Frontend   │────▶│   Backend API   │────▶│   MongoDB    │   │
+│  │  (React)     │     │   (Express)     │     │  (colorsdb)  │   │
+│  │  Port 3000   │     │   Port 5001     │     │  Port 27017  │   │
+│  └─────────────┘     └─────────────────┘     └──────────────┘   │
+│                                                                  │
+│  ┌─────────────────────────────────────────────────────────────┐ │
+│  │  Playwright (test runner) — connects to Frontend on :3000   │ │
+│  └─────────────────────────────────────────────────────────────┘ │
+└──────────────────────────────────────────────────────────────────┘
+```
+
+### Frontend — React (TypeScript)
+
+| Item | Details |
+|---|---|
+| **Location** | [`src/`](/src) |
+| **Framework** | React 17 with TypeScript |
+| **Entry point** | [`src/App.tsx`](/src/App.tsx) |
+| **Internationalization** | `react-i18next` with `i18next-browser-languagedetector` — supports English, Spanish, and Greek via JSON translation files in [`src/locales/`](/src/locales) |
+| **Dev server** | `react-app-rewired` on port **3000** (with Istanbul instrumentation via `babel-plugin-istanbul` when `USE_BABEL_PLUGIN_ISTANBUL=1`) |
+| **API proxy** | [`src/setupProxy.js`](/src/setupProxy.js) forwards `/api/*` requests to the backend, eliminating CORS issues during development |
+
+**How it works:** On load, the React app fetches available colors from `/api/colors`, renders them as buttons, and updates the header background color when a button is clicked by calling `/api/colors/:name`.
+
+### Backend — Express API (Node.js)
+
+| Item | Details |
+|---|---|
+| **Location** | [`server/`](/server) |
+| **Framework** | Express 5 with Mongoose 9 |
+| **Entry point** | [`server/index.js`](/server/index.js) |
+| **Database** | MongoDB (connection URI configurable via `MONGO_URI` env var) |
+| **Validation** | [Zod](https://zod.dev/) schemas for request body validation on `POST` and `PUT` endpoints |
+| **API docs** | Swagger UI auto-generated from JSDoc annotations, served at `/api-docs` |
+| **Port** | **5001** (configurable via `PORT` env var) |
+
+**Endpoints:**
+
+| Method | Endpoint | Description |
+|---|---|---|
+| `GET` | `/api/colors` | List all colors |
+| `GET` | `/api/colors/:name` | Get a single color by name |
+| `POST` | `/api/colors` | Create a new color |
+| `PUT` | `/api/colors/:name` | Update an existing color |
+| `DELETE` | `/api/colors/:name` | Delete a color |
+
+On startup, the server seeds the database with three default colors (Turquoise, Red, Yellow) to ensure a predictable initial state.
+
+### Docker Compose Orchestration
+
+The [`docker-compose.yml`](/docker-compose.yml) defines four services that wire everything together:
+
+| Service | Image / Build | Purpose |
+|---|---|---|
+| **mongo** | `mongo:latest` | Database — persists data in a named volume (`mongo_data`) |
+| **api** | `./server/Dockerfile` | Backend API — waits for `mongo` to be healthy before starting |
+| **app** | `./Dockerfile` (target: `app`) | Frontend dev server — waits for `api` to be healthy, proxies `/api` to `http://api:5001` |
+| **playwright** | `./Dockerfile` (target: `playwright`) | Test runner — executes Playwright tests against `http://app:3000` |
+
+> **Healthchecks** ensure services start in the correct order: MongoDB must accept connections before the API starts, and the API must respond to HTTP requests before the frontend or Playwright starts.
+
+---
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 16+
+- Docker (for visual regression and consistent cross-platform tests)
+
+### Installation
+
+```bash
+# Install frontend dependencies
+npm install
+npx playwright install
+
+# Install backend dependencies
+cd server
+npm install
+cd ..
+```
+
+### Running the application
+
+To run the full stack (React frontend + Express backend + MongoDB), use Docker Compose:
+
+```bash
+docker compose up -d
+```
+
+The React app will be available at `http://localhost:3000` and the API will run on port `5001`.
+
+> **Note:** We use port `5001` instead of `5000` because macOS Monterey and later reserves port `5000` for its AirPlay Receiver service, which causes an HTTP 403 Forbidden conflict.
+
+### Running tests locally
+
+```bash
+# Run all e2e tests (starts dev server automatically)
+npx playwright test
+
+# Run a specific test suite
+npx playwright test e2e/tests/a11y.spec.ts
+
+# Run in headed mode (see the browser)
+npx playwright test --headed
+
+# Run in UI mode (interactive debugging)
+npx playwright test --ui
+
+# Run with coverage
+npm run coverage
+
+# Run BDD (Cucumber) tests
+npm run test:bdd
+```
+
+### Project structure
+
+```text
+src/
+├── locales/
+│   ├── el.json                  # Greek translation file
+│   ├── en.json                  # English translation file (default)
+│   └── es.json                  # Spanish translation file
+server/
+├── index.js                     # Express API Backend & MongoDB Seed
+├── Dockerfile                   # Docker configuration for backend
+e2e/
+├── features/
+│   └── home.feature             # Gherkin BDD scenarios
+├── pages/
+│   └── HomePage.ts              # Page Object Model
+├── tests/
+│   ├── a11y.spec.ts             # Accessibility testing (with i18n support)
+│   ├── api.spec.ts              # API schema validation with Zod
+│   ├── bdd.spec.ts              # Step definitions for BDD tests
+│   ├── coverage.spec.ts         # E2E tests with code coverage
+│   ├── cross-browser.spec.ts    # Cross-browser testing strategy
+│   ├── data-driven.spec.ts      # Data-driven testing
+│   ├── error-handling.spec.ts   # Error handling & network failure simulation
+│   ├── hybrid.spec.ts           # Hybrid E2E testing (API + UI)
+│   ├── network-mocking.spec.ts  # Network mocking & interception
+│   ├── pom-refactored.spec.ts   # POM demonstration
+│   ├── random-data.spec.ts      # Random data generation with faker.js
+│   └── visual.spec.ts           # Visual regression & responsive testing
+├── snapshots/
+│   ├── home.png                 # Visual regression baseline for desktop
+│   └── home-mobile.png          # Visual regression baseline for mobile
+├── baseFixtures.ts              # Istanbul coverage fixture
+└── helper.ts                    # Utility functions
+```
 
 ---
 
@@ -1251,94 +1416,3 @@ This script is then hooked into `.github/workflows/ci.yml` right after the cover
 
 If the tests do not hit the 80% mark, `nyc` exits with an error code and the GitHub Action job turns red, blocking the Pull Request from being merged.
 
----
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 16+
-- Docker (for visual regression and consistent cross-platform tests)
-
-### Installation
-
-```bash
-# Install frontend dependencies
-npm install
-npx playwright install
-
-# Install backend dependencies
-cd server
-npm install
-cd ..
-```
-
-### Running the application
-
-To run the full stack (React frontend + Express backend + MongoDB), use Docker Compose:
-
-```bash
-docker compose up -d
-```
-
-The React app will be available at `http://localhost:3000` and the API will run on port `5001`.
-
-> **Note:** We use port `5001` instead of `5000` because macOS Monterey and later reserves port `5000` for its AirPlay Receiver service, which causes an HTTP 403 Forbidden conflict.
-
-### Running tests locally
-
-```bash
-# Run all e2e tests (starts dev server automatically)
-npx playwright test
-
-# Run a specific test suite
-npx playwright test e2e/tests/a11y.spec.ts
-
-# Run in headed mode (see the browser)
-npx playwright test --headed
-
-# Run in UI mode (interactive debugging)
-npx playwright test --ui
-
-# Run with coverage
-npm run coverage
-
-# Run BDD (Cucumber) tests
-npm run test:bdd
-```
-
-### Project structure
-
-```text
-src/
-├── locales/
-│   ├── el.json                  # Greek translation file
-│   ├── en.json                  # English translation file (default)
-│   └── es.json                  # Spanish translation file
-server/
-├── index.js                     # Express API Backend & MongoDB Seed
-├── Dockerfile                   # Docker configuration for backend
-e2e/
-├── features/
-│   └── home.feature             # Gherkin BDD scenarios
-├── pages/
-│   └── HomePage.ts              # Page Object Model
-├── tests/
-│   ├── a11y.spec.ts             # Accessibility testing (with i18n support)
-│   ├── api.spec.ts              # API schema validation with Zod
-│   ├── bdd.spec.ts              # Step definitions for BDD tests
-│   ├── coverage.spec.ts         # E2E tests with code coverage
-│   ├── cross-browser.spec.ts    # Cross-browser testing strategy
-│   ├── data-driven.spec.ts      # Data-driven testing
-│   ├── error-handling.spec.ts   # Error handling & network failure simulation
-│   ├── hybrid.spec.ts           # Hybrid E2E testing (API + UI)
-│   ├── network-mocking.spec.ts  # Network mocking & interception
-│   ├── pom-refactored.spec.ts   # POM demonstration
-│   ├── random-data.spec.ts      # Random data generation with faker.js
-│   └── visual.spec.ts           # Visual regression & responsive testing
-├── snapshots/
-│   ├── home.png                 # Visual regression baseline for desktop
-│   └── home-mobile.png          # Visual regression baseline for mobile
-├── baseFixtures.ts              # Istanbul coverage fixture
-└── helper.ts                    # Utility functions
-```
