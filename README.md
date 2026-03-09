@@ -43,11 +43,11 @@ This project follows a **three-tier architecture** with a clear separation betwe
 ┌──────────────────────────────────────────────────────────────────┐
 │                        Docker Compose                            │
 │                                                                  │
-│  ┌─────────────┐     ┌─────────────────┐     ┌──────────────┐   │
-│  │   Frontend   │────▶│   Backend API   │────▶│   MongoDB    │   │
-│  │  (React)     │     │   (Express)     │     │  (colorsdb)  │   │
-│  │  Port 3000   │     │   Port 5001     │     │  Port 27017  │   │
-│  └─────────────┘     └─────────────────┘     └──────────────┘   │
+│  ┌─────────────┐     ┌─────────────────┐     ┌──────────────┐    │
+│  │  Frontend   │────▶│   Backend API   │────▶│   MongoDB    │    │
+│  │   (React)   │     │   (Express)     │     │  (colorsdb)  │    │
+│  │  Port 3000  │     │   Port 5001     │     │  Port 27017  │    │
+│  └─────────────┘     └─────────────────┘     └──────────────┘    │
 │                                                                  │
 │  ┌─────────────────────────────────────────────────────────────┐ │
 │  │  Playwright (test runner) — connects to Frontend on :3000   │ │
