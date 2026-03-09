@@ -67,27 +67,9 @@ jobs:
   # ==========================================
   tests-misc:
     name: API, BDD, Visual, Cross-Browser
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
-
-      - run: npm ci --legacy-peer-deps
-
-      - name: Restore Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright OS dependencies
-        run: npx playwright install-deps
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -124,20 +106,20 @@ jobs:
       - name: Run API tests
         id: api-tests
         continue-on-error: true
-        run: npm run test:api
+        run: docker compose run --rm playwright npm run test:api
 
       - name: Run BDD tests
         id: bdd-tests
         continue-on-error: true
-        run: npm run test:bdd
+        run: docker compose run --rm playwright npm run test:bdd
 
       - name: Run cross-browser compatibility tests
         id: cross-browser-tests
         continue-on-error: true
-        run: npm run test:cross-browser
+        run: docker compose run --rm playwright npm run test:cross-browser
 
       - name: Generate code coverage
-        run: npx nyc report --reporter=lcovonly
+        run: docker compose run --rm playwright npx nyc report --reporter=lcovonly
 
       - name: Run Playwright in Docker Compose for visual regression
         id: visual-tests
@@ -166,7 +148,6 @@ jobs:
   # ==========================================
   e2e-sharded:
     name: E2E Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-    needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -175,23 +156,6 @@ jobs:
         shardTotal: [4]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
-
-      - run: npm ci --legacy-peer-deps
-
-      - name: Restore Playwright browsers
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ hashFiles('package-lock.json') }}
-
-      - name: Install Playwright OS dependencies
-        run: npx playwright install-deps
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -226,7 +190,7 @@ jobs:
           wait $PID_API $PID_APP $PID_PROXY
 
       - name: Run sharded e2e tests
-        run: npx playwright test '^(?!.*visual\.spec\.ts).*\.spec\.ts$' --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=blob,allure-playwright
+        run: docker compose run --rm playwright npx playwright test '^(?!.*visual\.spec\.ts).*\.spec\.ts$' --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=blob,allure-playwright
 
       - name: Upload blob report
         if: always()
