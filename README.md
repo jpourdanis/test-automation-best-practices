@@ -203,17 +203,18 @@ e2e/
 
 ### 1. Page Object Model (POM)
 
-**Files:** [`e2e/pages/HomePage.ts`](/e2e/pages/HomePage.ts) · [`e2e/tests/pom-refactored.spec.ts`](/e2e/tests/pom-refactored.spec.ts)
+**Files:** [`e2e/pages/HomePage.ts`](/e2e/pages/HomePage.ts) · [`e2e/baseFixtures.ts`](/e2e/baseFixtures.ts) · [`e2e/tests/pom-refactored.spec.ts`](/e2e/tests/pom-refactored.spec.ts)
 
 #### What is it?
 
-The Page Object Model is a design pattern that creates an abstraction layer between your tests and the page structure. Instead of scattering selectors like `page.locator("header")` across dozens of test files, you define them **once** inside a dedicated class.
+The Page Object Model is a design pattern that creates an abstraction layer between your tests and the page structure. Instead of scattering selectors like `page.locator("header")` across dozens of test files, you define them **once** inside a dedicated class. We take this one step further by **registering page objects as Playwright fixtures**, so every test receives a ready-to-use instance automatically — no manual instantiation needed.
 
 #### Why it matters
 
 - **Maintainability** — When a selector changes (e.g., a button class is renamed), you update it in **one place** instead of every test file that references it.
 - **Readability** — Tests read like user stories: `homePage.clickColorButton("Red")` is instantly understandable, even by non-engineers.
 - **Reusability** — The same page object is shared across multiple test suites, eliminating duplicated boilerplate.
+- **Zero boilerplate** — By registering page objects as fixtures in `baseFixtures.ts`, tests simply destructure `{ homePage }` from the test arguments instead of manually calling `new HomePage(page)` in every `beforeEach`.
 
 #### How to implement
 
@@ -244,22 +245,42 @@ export class HomePage {
 }
 ```
 
-**Step 2:** Use the page object in your tests:
+**Step 2:** Register the page object as a fixture in `baseFixtures.ts`:
+
+```typescript
+// e2e/baseFixtures.ts
+import { test as baseTest } from "@playwright/test";
+import { HomePage } from "./pages/HomePage";
+
+export const test = baseTest.extend<{ homePage: HomePage }>({
+  // Automatically instantiate Page Objects
+  homePage: async ({ page }, use) => {
+    await use(new HomePage(page));
+  },
+
+  // Istanbul Code Coverage listener is also injected here
+  // (see Section 6: E2E Code Coverage)
+});
+
+export const expect = test.expect;
+```
+
+Every test that imports `test` from `baseFixtures` automatically receives a fresh `homePage` instance — no manual setup required.
+
+**Step 3:** Use the fixture in your tests:
 
 ```typescript
 // e2e/tests/pom-refactored.spec.ts
-test.describe("POM Refactored: Background color tests", () => {
-  let homePage: HomePage;
+import { test, expect } from "../baseFixtures";
 
-  test.beforeEach(async ({ page }) => {
-    homePage = new HomePage(page);
+test.describe("POM Refactored: Background color tests", () => {
+  test.beforeEach(async ({ homePage }) => {
     await homePage.goto();
   });
 
-  test("verify Red is applied as the background color", async () => {
+  test("verify Red (#e74c3c) is applied as the background color", async ({ homePage }) => {
     await homePage.clickColorButton("Red");
-    const text = await homePage.getCurrentColorText();
-    // ... assertions
+    await expect(homePage.currentColorText).toContainText("e74c3c");
   });
 });
 ```
