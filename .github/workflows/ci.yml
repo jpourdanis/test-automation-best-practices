@@ -33,7 +33,7 @@ jobs:
 
       # Runs MegaLinter to detect issues, formatting errors, and bugs in the codebase
       - name: MegaLinter
-        uses: oxsecurity/megalinter-javascript@v8
+        uses: oxsecurity/megalinter/flavors/javascript@v8
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Lint the full codebase on main branch pushes, otherwise only lint changed files in PRs
