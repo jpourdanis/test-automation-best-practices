@@ -34,6 +34,21 @@ test.describe("Backend API Integration", () => {
     });
   }
 
+  test("GET /api/colors should return all colors", async ({ request }) => {
+    const response = await request.get(`/api/colors`);
+    expect(response.status()).toBe(200);
+    const data = await response.json();
+    expect(Array.isArray(data)).toBeTruthy();
+    expect(data.length).toBeGreaterThanOrEqual(3);
+  });
+
+  test("GET /api/colors/:name should return 404 for non-existent color", async ({ request }) => {
+    const response = await request.get(`/api/colors/DoesNotExist`);
+    expect(response.status()).toBe(404);
+    const data = await response.json();
+    expect(data.error).toBe("Color not found");
+  });
+
   test.describe("POST /api/colors Schema Validation", () => {
     test("should create a new color with valid schema", async ({ request }) => {
       const newColor = { name: "Orange", hex: "#ffa500" };
@@ -46,6 +61,18 @@ test.describe("Backend API Integration", () => {
 
       // Cleanup
       await request.delete(`/api/colors/${newColor.name}`);
+    });
+
+    test("should return 409 for duplicate color creation", async ({ request }) => {
+      const color = { name: "DuplicateColor", hex: "#111111" };
+      await request.post(`/api/colors`, { data: color });
+      
+      const response = await request.post(`/api/colors`, { data: color });
+      expect(response.status()).toBe(409);
+      const data = await response.json();
+      expect(data.error).toBe('Color "DuplicateColor" already exists');
+      
+      await request.delete(`/api/colors/${color.name}`);
     });
 
     test("should reject missing name", async ({ request }) => {
@@ -113,6 +140,32 @@ test.describe("Backend API Integration", () => {
       expect(response.status()).toBe(400);
       const data = await response.json();
       expect(data.error).toBe("At least one field to update must be provided");
+    });
+
+    test("should return 404 when updating non-existent color", async ({ request }) => {
+      const response = await request.put(`/api/colors/DoesNotExist`, { data: { hex: "#222222" } });
+      expect(response.status()).toBe(404);
+      const data = await response.json();
+      expect(data.error).toBe("Color not found");
+    });
+  });
+
+  test.describe("DELETE /api/colors/:name", () => {
+    test("should delete an existing color", async ({ request }) => {
+      const color = { name: "ToDelete", hex: "#333333" };
+      await request.post(`/api/colors`, { data: color });
+      
+      const response = await request.delete(`/api/colors/${color.name}`);
+      expect(response.status()).toBe(200);
+      const data = await response.json();
+      expect(data.message).toBe('Color "ToDelete" deleted successfully');
+    });
+
+    test("should return 404 for non-existent color deletion", async ({ request }) => {
+      const response = await request.delete(`/api/colors/DoesNotExist`);
+      expect(response.status()).toBe(404);
+      const data = await response.json();
+      expect(data.error).toBe("Color not found");
     });
   });
 });
