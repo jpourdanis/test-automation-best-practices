@@ -28,6 +28,7 @@ A comprehensive reference project demonstrating **test automation engineering be
   - [15. API Schema Validation with Zod](#15-api-schema-validation-with-zod)
   - [16. Random Data Generation with faker.js](#16-random-data-generation-with-fakerjs)
   - [17. Static Code Analysis with MegaLinter](#17-static-code-analysis-with-megalinter)
+  - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
 - [Getting Started](#getting-started)
 
 ---
@@ -1090,6 +1091,51 @@ You can run MegaLinter locally using the official Docker wrapper to quickly lint
 ```bash
 npx --yes mega-linter-runner@latest
 ```
+
+---
+
+### 18. Parallel Execution & Sharding
+
+**Files:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) · [`playwright.config.ts`](/playwright.config.ts)
+
+#### What is it?
+
+Parallel execution runs multiple tests simultaneously on the same machine. Sharding takes this a step further by splitting the entire test suite across multiple identical CI runners (machines), allowing them to execute concurrently and then merging the results back together at the end.
+
+#### Why it matters
+
+- **Massive Time Savings** — As your E2E suite grows, execution time scales linearly. Running 200 tests sequentially could take 30 minutes. By sharding across 4 runners, execution drops to ~8 minutes, restoring the developer feedback loop.
+- **Resource Optimization** — Playwright workers max out CPU usage on a single runner. Sharding distributes this computational load across horizontally scaled CI infrastructure.
+- **Fail-Fast** — Parallelism and rapid sharding ensure failing tests are identified in a fraction of the time.
+
+#### How it works
+
+**1. Local/Playwright Parallelism (`playwright.config.ts`):**
+We enable `fullyParallel: true` in the Playwright config. This tells Playwright to execute individual tests inside the same file simultaneously using independent worker processes, instead of waiting for file-level boundaries.
+
+**2. CI Sharding (`ci.yml`):**
+In GitHub Actions, we define a matrix strategy for the `e2e-sharded` job:
+```yaml
+strategy:
+  matrix:
+    shardIndex: [1, 2, 3, 4]
+    shardTotal: [4]
+```
+This spawns 4 identical CI runners. Each runner spins up the isolated Docker environment and is passed a specific slice of the test suite via the CLI flag: `--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}`. 
+
+**3. Blob Reporting & Fan-In (`ci.yml`):**
+Because the tests execute on different machines, the generated reports are fragmented. 
+- Each shard generates a **blob** report (`--reporter=blob,allure-playwright`) instead of an HTML report.
+- We upload these blobs as CI artifacts.
+- A final `publish-reports` job acts as the "Fan-In," waiting for all shards to finish. It downloads all blob artifacts and runs `npx playwright merge-reports --reporter html ./all-blob-reports` to generate a single unified HTML view (and Allure report) seamlessly.
+
+#### How to verify
+
+To test this locally (simulating a shard):
+```bash
+npx playwright test --shard=1/4
+```
+It will execute only roughly 25% of your test suite.
 
 ---
 
