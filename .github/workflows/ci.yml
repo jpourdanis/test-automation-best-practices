@@ -161,6 +161,10 @@ jobs:
       - name: Generate code coverage
         run: npx nyc report --reporter=lcovonly
 
+      # Fails the pipeline if code coverage drops below 80%. This ensures no code is merged without adequate tests.
+      - name: Enforce 80% Code Coverage Gate
+        run: npm run coverage:check
+
       # Executes visual regression checks inside a Docker container for identical pixel rendering
       - name: Run Playwright in Docker Compose for visual regression
         id: visual-tests

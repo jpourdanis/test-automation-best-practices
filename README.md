@@ -29,6 +29,7 @@ A comprehensive reference project demonstrating **test automation engineering be
   - [16. Random Data Generation with faker.js](#16-random-data-generation-with-fakerjs)
   - [17. Static Code Analysis with MegaLinter](#17-static-code-analysis-with-megalinter)
   - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
+  - [19. Quality Gates & Code Coverage](#19-quality-gates--code-coverage)
 - [Getting Started](#getting-started)
 
 ---
@@ -1142,6 +1143,44 @@ To test this locally (simulating a single shard):
 npx playwright test --shard=1/4
 ```
 It will execute only roughly 25% of your test suite.
+
+---
+
+### 19. Quality Gates & Code Coverage
+
+**Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+
+#### What is it?
+
+A strict validation step in the CI pipeline that automatically fails the build if the end-to-end test code coverage falls below a predefined threshold (80%). We use `nyc check-coverage` to enforce this rule during the comprehensive test run.
+
+#### Why it matters
+
+- **Automated Standard Enforcement** — It guarantees that **"nothing will be added to the codebase without tests."** You don't have to argue during code review about missing tests; the pipeline handles it objectively.
+- **Prevents Technical Debt** — By enforcing coverage on every Pull Request, the codebase maintains its health continuously instead of requiring massive "test refactoring" sprints later.
+- **Confidence in Refactoring** — High, enforced test coverage acts as a safety net, allowing developers to refactor freely with the assurance that they haven't broken existing functionality.
+
+#### How to implement
+
+We define the gate in `package.json` using the Istanbul (`nyc`) CLI:
+
+```json
+"scripts": {
+  "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80"
+}
+```
+
+This script is then hooked into `.github/workflows/ci.yml` right after the coverage report is generated:
+
+```yaml
+      - name: Generate code coverage
+        run: npx nyc report --reporter=lcovonly
+
+      # Fails the pipeline if code coverage drops below 80%. This ensures no code is merged without adequate tests.
+      - name: Enforce 80% Code Coverage Gate
+        run: npm run coverage:check
+```
+If the tests do not hit the 80% mark, `nyc` exits with an error code and the GitHub Action job turns red, blocking the Pull Request from being merged.
 
 ---
 

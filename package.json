@@ -26,6 +26,7 @@
     "test:bdd": "npx bddgen && npx playwright test --project=BDD",
     "test:cross-browser": "cross-env CROSS_BROWSER=true npx playwright test e2e/tests/cross-browser.spec.ts",
     "coverage": "npm run test && nyc report --reporter=text",
+    "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80",
     "test:e2e:docker": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts",
     "test:e2e:docker:update": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts --update-snapshots",
     "test:api": "npx playwright test e2e/tests/api.spec.ts"
