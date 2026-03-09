@@ -1,5 +1,4 @@
 import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
 import enTranslations from "../../src/locales/en.json";
 
 /**
@@ -10,11 +9,7 @@ import enTranslations from "../../src/locales/en.json";
  * without relying on a real backend.
  */
 test.describe("Network Mocking & Interception", () => {
-  let homePage: HomePage;
-
-  test.beforeEach(async ({ page }) => {
-    homePage = new HomePage(page);
-  });
+  // homePage is now provided via the baseFixtures fixture
 
   /**
    * Test: Handle missing image gracefully
@@ -24,7 +19,7 @@ test.describe("Network Mocking & Interception", () => {
    * the alternative "alt" text as a fallback.
    */
   test("should handle missing image gracefully by showing alt text", async ({
-    page,
+    homePage, page,
   }) => {
     // Intercept requests for the logo and abort them
     await page.route("**/logo.svg", (route) => route.abort());
@@ -48,7 +43,7 @@ test.describe("Network Mocking & Interception", () => {
    * Demonstrates how to fulfill an intercepted request with mock JSON data
    * that doesn't exist in the real database.
    */
-  test("should display colors that do not exist in the database", async ({ page }) => {
+  test("should display colors that do not exist in the database", async ({ homePage, page }) => {
     // Intercept the initial colors fetch and provide custom mock data
     await page.route("**/api/colors", async (route) => {
       await route.fulfill({
@@ -86,7 +81,7 @@ test.describe("Network Mocking & Interception", () => {
    * Demonstrates mocking an API error response (e.g. 404 Not Found)
    * and verifying that the application handles it gracefully.
    */
-  test("should gracefully handle a color not found in the database", async ({ page }) => {
+  test("should gracefully handle a color not found in the database", async ({ homePage, page }) => {
     // Verify that the UI handles a 404 gracefully without changing the background
     await page.route("**/api/colors", async (route) => {
       await route.fulfill({

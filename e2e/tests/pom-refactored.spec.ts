@@ -1,5 +1,4 @@
 import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
 import { convertHexToRGB, extractHexColor } from "../helper";
 
 const colors = [
@@ -16,10 +15,7 @@ const colors = [
  * which abstracts the page structure and improves test maintainability.
  */
 test.describe("POM Refactored: Background color tests", () => {
-  let homePage: HomePage;
-
-  test.beforeEach(async ({ page }) => {
-    homePage = new HomePage(page);
+  test.beforeEach(async ({ homePage }) => {
     await homePage.goto();
   });
 
@@ -30,7 +26,7 @@ test.describe("POM Refactored: Background color tests", () => {
      * Uses the methods and elements defined in the HomePage POM class to 
      * change the color and verify the new hexadecimal and RGB values. 
      */
-    test(`verify ${color.name} ( #${color.hex} ) is applied as the background color`, async () => {
+    test(`verify ${color.name} ( #${color.hex} ) is applied as the background color`, async ({ homePage }) => {
       await homePage.clickColorButton(color.name);
       await expect(homePage.currentColorText).toContainText(color.hex);
 

@@ -2,6 +2,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { test as baseTest } from "@playwright/test";
 import { generateUUID } from "./helper";
+import { HomePage } from "./pages/HomePage";
 
 /**
  * Directory where Istanbul will store coverage data
@@ -43,7 +44,12 @@ if (!process.env.COVERAGE_CLEANED) {
  * Extended Playwright test fixture that adds code coverage collection
  * This adds Istanbul coverage support to all tests using this fixture
  */
-export const test = baseTest.extend({
+export const test = baseTest.extend<{ homePage: HomePage }>({
+  // Automatically instantiate Page Objects
+  homePage: async ({ page }, use) => {
+    await use(new HomePage(page));
+  },
+
   context: async ({ context }, use) => {
     // Add script to collect coverage data before page unload
     await context.addInitScript(() =>

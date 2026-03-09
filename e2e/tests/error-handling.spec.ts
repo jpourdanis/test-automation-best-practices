@@ -1,20 +1,17 @@
 import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
 
 test.describe("UI Error Handling Coverage", () => {
-  test("should handle fetch colors network failure gracefully", async ({ page }) => {
+  test("should handle fetch colors network failure gracefully", async ({ homePage, page }) => {
     // Abort the initial colors fetch
     await page.route("**/api/colors", (route) => route.abort('failed'));
-    const homePage = new HomePage(page);
     await homePage.goto();
     
     // The UI should show "Loading colors..." because colors array is empty
     await expect(page.locator("text=Loading colors...")).toBeVisible();
   });
 
-  test("should handle color click network failure gracefully", async ({ page }) => {
+  test("should handle color click network failure gracefully", async ({ homePage, page }) => {
     // Start normally
-    const homePage = new HomePage(page);
     await homePage.goto();
 
     // Abort the specific color fetch

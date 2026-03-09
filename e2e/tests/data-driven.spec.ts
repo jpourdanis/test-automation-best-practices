@@ -1,5 +1,4 @@
 import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
 
 // Define the dataset for the data-driven tests
 const testData = [
@@ -15,10 +14,7 @@ const testData = [
  * generate identical test cases for different inputs, keeping the code DRY.
  */
 test.describe("Data-Driven Testing", () => {
-  let homePage: HomePage;
-
-  test.beforeEach(async ({ page }) => {
-    homePage = new HomePage(page);
+  test.beforeEach(async ({ homePage }) => {
     await homePage.goto();
   });
 
@@ -32,7 +28,7 @@ test.describe("Data-Driven Testing", () => {
      * colors match the expected outputs from the dataset.
      */
     test(`changing color to ${data.name} should reflect in UI and DOM`, async ({
-      page,
+      homePage,
     }) => {
       // Act
       await homePage.clickColorButton(data.name);

@@ -1,5 +1,4 @@
 import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
 import { faker } from "@faker-js/faker";
 
 /**
@@ -14,9 +13,7 @@ import { faker } from "@faker-js/faker";
  * specific static data shapes, and to discover edge-cases naturally over time.
  */
 test.describe("Random Data Testing with faker.js", () => {
-  let homePage: HomePage;
-
-  test("should create dynamic random color via API and verify through UI", async ({ page, request }) => {
+  test("should create dynamic random color via API and verify through UI", async ({ homePage, page, request }) => {
     // Generate a uniquely prefixed name to avoid any potential DB collisions
     // e2e_random_<word>
     const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`;
@@ -30,7 +27,6 @@ test.describe("Random Data Testing with faker.js", () => {
     });
     expect(createResponse.ok()).toBeTruthy();
 
-    homePage = new HomePage(page);
 
     // 2. Act - Navigate to the UI which will now fetch the new state
     await homePage.goto();

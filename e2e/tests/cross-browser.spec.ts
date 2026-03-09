@@ -1,5 +1,4 @@
 import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
 
 /**
  * Test Suite: Cross-Browser Testing Demonstration
@@ -17,14 +16,11 @@ import { HomePage } from "../pages/HomePage";
  * provides deep compatibility confidence.
  */
 test.describe("Cross-Browser Core Functionality", () => {
-  let homePage: HomePage;
-
-  test.beforeEach(async ({ page }) => {
-    homePage = new HomePage(page);
+  test.beforeEach(async ({ homePage }) => {
     await homePage.goto();
   });
 
-  test("should load the application and verify core functionality across browsers", async ({ page }) => {
+  test("should load the application and verify core functionality across browsers", async ({ homePage }) => {
     // Verify core UI loads
     await expect(homePage.header).toBeVisible();
     await expect(homePage.currentColorText).toBeVisible();

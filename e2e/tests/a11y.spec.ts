@@ -1,5 +1,4 @@
 import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
 import AxeBuilder from "@axe-core/playwright";
 
 /**
@@ -10,10 +9,7 @@ import AxeBuilder from "@axe-core/playwright";
  * accessibility WCAG guidelines.
  */
 test.describe("Accessibility Tests", () => {
-  let homePage: HomePage;
-
-  test.beforeEach(async ({ page }) => {
-    homePage = new HomePage(page);
+  test.beforeEach(async ({ homePage }) => {
     await homePage.goto();
   });
 
@@ -24,7 +20,7 @@ test.describe("Accessibility Tests", () => {
    * that elements like headings, ARIA tags, and contrast are compliant.
    */
   test("should not have any automatically detectable accessibility issues", async ({
-    page,
+    homePage, page,
   }) => {
     // Wait for the main elements to render
     await expect(homePage.header).toBeVisible();
@@ -44,7 +40,7 @@ test.describe("Accessibility Tests", () => {
    * background color changes dynamically.
    */
   test("should maintain accessibility after state change (color update)", async ({
-    page,
+    homePage, page,
   }) => {
     // Change color to verify contrast and other rules still pass
     await homePage.clickColorButton("Yellow");
@@ -81,8 +77,7 @@ test.describe("i18n Accessibility Tests", () => {
   ];
 
   for (const lang of languages) {
-    test(`should maintain accessibility in ${lang.code} language and verify resilient locators`, async ({ page }) => {
-      const homePage = new HomePage(page);
+    test(`should maintain accessibility in ${lang.code} language and verify resilient locators`, async ({ homePage, page }) => {
       await homePage.goto();
 
       // Change the language. Default is English, so the label starts as English.

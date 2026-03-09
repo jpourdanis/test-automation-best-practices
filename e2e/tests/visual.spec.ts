@@ -1,5 +1,4 @@
 import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
 
 /**
  * Test Suite: Visual Regression & Responsive Design Testing
@@ -50,10 +49,7 @@ test.describe("Visual Regression", () => {
 // ─────────────────────────────────────────────────────────────────────────────
 
 test.describe("Responsive Design Testing", () => {
-  let homePage: HomePage;
-
-  test.beforeEach(async ({ page }) => {
-    homePage = new HomePage(page);
+  test.beforeEach(async ({ homePage }) => {
     await homePage.goto();
   });
 
@@ -68,7 +64,7 @@ test.describe("Responsive Design Testing", () => {
    * and functional despite strict space constraints. Also verifies that
    * clicking a color button still updates the displayed hex value.
    */
-  test("should render correctly on mobile viewport", async ({ page }) => {
+  test("should render correctly on mobile viewport", async ({ homePage, page }) => {
     // Check that core elements remain visible on a small screen
     await expect(homePage.header).toBeVisible();
     await expect(homePage.currentColorText).toBeVisible();

@@ -1,5 +1,4 @@
 import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
 
 /**
  * Test Suite: Hybrid E2E Testing
@@ -10,9 +9,7 @@ import { HomePage } from "../pages/HomePage";
  * for the actual validations. This ensures fast execution and test isolation.
  */
 test.describe("Hybrid E2E Testing", () => {
-  let homePage: HomePage;
-
-  test("should create color via API and verify through UI", async ({ page, request }) => {
+  test("should create color via API and verify through UI", async ({ homePage, page, request }) => {
     const newColor = { name: "Purple", hex: "#8e44ad" };
     
     // 1. Arrange - Use the API to set up the system's state before the test
@@ -21,7 +18,6 @@ test.describe("Hybrid E2E Testing", () => {
     });
     expect(createResponse.ok()).toBeTruthy();
 
-    homePage = new HomePage(page);
 
     // 2. Act - Navigate to the UI which will now fetch the new state
     await homePage.goto();
