@@ -630,7 +630,7 @@ In CI, navigate to the repository's GitHub Pages URL after a build finishes to v
 
 ### 9. Cross-Browser Testing Strategy
 
-**File:** [`playwright.config.ts`](/playwright.config.ts) · [`e2e/tests/cross-browser.spec.ts`](/e2e/tests/cross-browser.spec.ts)
+**File:** [`playwright.config.ts#L26`](/playwright.config.ts#L26) · [`e2e/tests/cross-browser.spec.ts`](/e2e/tests/cross-browser.spec.ts)
 
 #### What is it?
 
@@ -738,7 +738,7 @@ npm run test:bdd
 
 ### 11. Nightly Builds & Scheduled Playwright Runs
 
-**File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+**File:** [`.github/workflows/ci.yml#L7`](/.github/workflows/ci.yml#L7)
 
 #### What is it?
 
@@ -770,7 +770,7 @@ This guarantees an autonomous system health check every day.
 
 ### 12. Avoiding Static Waits with `waitForResponse`
 
-**File:** [`e2e/tests/visual.spec.ts`](/e2e/tests/visual.spec.ts)
+**File:** [`e2e/tests/visual.spec.ts#L85`](/e2e/tests/visual.spec.ts#L85)
 
 #### What is it?
 
@@ -878,7 +878,7 @@ test("should create color via API and verify through UI", async ({ page, request
 
 ### 14. Test Automation Pyramid: API First
 
-**File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+**File:** [`.github/workflows/ci.yml#L124`](/.github/workflows/ci.yml#L124)
 
 #### What is it?
 
@@ -910,7 +910,7 @@ In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step
 
 ### 15. API Schema Validation with Zod
 
-**Files:** [`server/index.js`](/server/index.js) · [`e2e/tests/api.spec.ts`](/e2e/tests/api.spec.ts)
+**Files:** [`server/index.js#L14`](/server/index.js#L14) · [`e2e/tests/api.spec.ts`](/e2e/tests/api.spec.ts)
 
 #### What is it?
 
@@ -1067,7 +1067,7 @@ npx playwright test e2e/tests/random-data.spec.ts
 
 ### 17. Static Code Analysis with MegaLinter
 
-**Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+**Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml#L32`](/.github/workflows/ci.yml#L32)
 
 #### What is it?
 
@@ -1096,7 +1096,7 @@ npx --yes mega-linter-runner@latest
 
 ### 18. Parallel Execution & Sharding
 
-**Files:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) · [`playwright.config.ts`](/playwright.config.ts)
+**Files:** [`.github/workflows/ci.yml#L167`](/.github/workflows/ci.yml#L167) · [`playwright.config.ts#L11`](/playwright.config.ts#L11)
 
 #### What is it?
 
