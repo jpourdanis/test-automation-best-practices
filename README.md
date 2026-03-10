@@ -159,20 +159,12 @@ npm run test:bdd
 ### Project structure
 
 ```text
-src/
-├── locales/
-│   ├── el.json                  # Greek translation file
-│   ├── en.json                  # English translation file (default)
-│   └── es.json                  # Spanish translation file
-server/
-├── index.js                     # Express API Backend & MongoDB Seed
-├── Dockerfile                   # Docker configuration for backend
 e2e/
 ├── features/
 │   └── home.feature             # Gherkin BDD scenarios
 ├── pages/
 │   └── HomePage.ts              # Page Object Model
-├── tests/
+├── tests/                       # Playwright E2E test suites
 │   ├── a11y.spec.ts             # Accessibility testing (with i18n support)
 │   ├── api.spec.ts              # API schema validation with Zod
 │   ├── bdd.spec.ts              # Step definitions for BDD tests
@@ -188,8 +180,25 @@ e2e/
 ├── snapshots/
 │   ├── home.png                 # Visual regression baseline for desktop
 │   └── home-mobile.png          # Visual regression baseline for mobile
-├── baseFixtures.ts              # Istanbul coverage fixture
+├── baseFixtures.ts              # Playwright fixtures (POM, Coverage)
 └── helper.ts                    # Utility functions
+performance/
+├── configs/
+│   └── test-config.json         # k6 load test configurations
+├── utils/
+│   ├── allure-reporter.js       # k6 to Allure results transformer
+│   └── utils.ts                 # Performance test utilities
+├── api-performance.spec.ts      # k6 API load tests
+└── ui-performance.spec.ts       # k6 Browser performance tests
+server/
+├── index.js                     # Express API Backend & MongoDB Seed
+└── Dockerfile                   # Docker configuration for backend
+src/
+├── locales/                     # i18n translation files (en, es, el)
+├── App.tsx                      # Main React application
+└── index.tsx                    # Frontend entry point
+docker-compose.yml               # Multi-container orchestration
+playwright.config.ts             # Playwright configuration
 ```
 
 ---
