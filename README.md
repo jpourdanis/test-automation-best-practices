@@ -5,42 +5,47 @@
 
 ![Demo Animation](demo.webp)
 
-A comprehensive reference project demonstrating **test automation engineering best practices** using [Playwright](https://playwright.dev). This repository goes beyond simple end-to-end tests to showcase the patterns, architectures, and strategies that make a test suite **robust, maintainable, and scalable**.
+A comprehensive reference project demonstrating **test automation engineering best practices** using [Playwright](https://playwright.dev), [Allure Reports](https://allurereport.org/), [k6](https://k6.io/), and [MegaLinter](https://megalinter.io/). This repository goes beyond simple end-to-end tests to showcase the patterns, architectures, and strategies that make a test suite **robust, maintainable, and scalable**.
 
 ## Table of Contents
 
 - [Application Architecture](#application-architecture)
 - [Getting Started](#getting-started)
 - [Best Practices Implemented](#best-practices-implemented)
-  - [1. Page Object Model (POM)](#1-page-object-model-pom)
-  - [2. Accessibility (a11y) Testing](#2-accessibility-a11y-testing)
-    - [Handling i18n with Accessibility Locators](#handling-i18n-with-accessibility-locators)
-  - [3. Network Mocking & Interception](#3-network-mocking--interception)
-  - [4. Visual Regression & Responsive Testing](#4-visual-regression--responsive-testing)
-  - [5. Data-Driven Testing](#5-data-driven-testing)
-  - [6. E2E Code Coverage](#6-e2e-code-coverage)
-  - [7. Consistent Cross-Platform Testing with Docker](#7-consistent-cross-platform-testing-with-docker)
-  - [8. Allure Reports with Historical Data & Flaky Test Detection](#8-allure-reports-with-historical-data--flaky-test-detection)
-  - [9. Cross-Browser Testing Strategy](#9-cross-browser-testing-strategy)
-  - [10. Behavior-Driven Development (BDD) with Cucumber](#10-behavior-driven-development-bdd-with-cucumber)
-  - [11. Nightly Builds & Scheduled Playwright Runs](#11-nightly-builds--scheduled-playwright-runs)
-  - [12. Avoiding Static Waits with waitForResponse](#12-avoiding-static-waits-with-waitforresponse)
-  - [13. Hybrid E2E Testing](#13-hybrid-e2e-testing)
-  - [14. Test Automation Pyramid: API First](#14-test-automation-pyramid-api-first)
-  - [15. API Schema Validation with Zod](#15-api-schema-validation-with-zod)
-  - [16. Random Data Generation with faker.js](#16-random-data-generation-with-fakerjs)
-  - [17. Static Code Analysis with MegaLinter](#17-static-code-analysis-with-megalinter)
-  - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
-  - [19. Quality Gates & Code Coverage](#19-quality-gates--code-coverage)
-  - [20. Performance Testing with k6](#20-performance-testing-with-k6)
+  - [Part 1: Core Framework & Test Design](#part-1-core-framework--test-design)
+    - [1. Page Object Model (POM)](#1-page-object-model-pom)
+    - [2. Behavior-Driven Development (BDD) with Cucumber](#2-behavior-driven-development-bdd-with-cucumber)
+    - [3. Avoiding Static Waits with waitForResponse](#3-avoiding-static-waits-with-waitforresponse)
+    - [4. Data-Driven Testing](#4-data-driven-testing)
+    - [5. Random Data Generation with faker.js](#5-random-data-generation-with-fakerjs)
+  - [Part 2: Comprehensive Test Coverage](#part-2-comprehensive-test-coverage)
+    - [6. Hybrid E2E Testing](#6-hybrid-e2e-testing)
+    - [7. Network Mocking & Interception](#7-network-mocking--interception)
+    - [8. API Schema Validation with Zod](#8-api-schema-validation-with-zod)
+    - [9. Visual Regression & Responsive Testing](#9-visual-regression--responsive-testing)
+    - [10. Accessibility (a11y) Testing](#10-accessibility-a11y-testing)
+    - [11. Performance Testing with k6](#11-performance-testing-with-k6)
+  - [Part 3: CI/CD & Execution Strategy](#part-3-cicd--execution-strategy)
+    - [12. Test Automation Pyramid: API First](#12-test-automation-pyramid-api-first)
+    - [13. Consistent Cross-Platform Testing with Docker](#13-consistent-cross-platform-testing-with-docker)
+    - [14. Cross-Browser Testing Strategy](#14-cross-browser-testing-strategy)
+    - [15. Parallel Execution & Sharding](#15-parallel-execution--sharding)
+    - [16. Nightly Builds & Scheduled Playwright Runs](#16-nightly-builds--scheduled-playwright-runs)
+  - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
+    - [17. Static Code Analysis with MegaLinter](#17-static-code-analysis-with-megalinter)
+    - [18. E2E Code Coverage](#18-e2e-code-coverage)
+    - [19. Quality Gates & Code Coverage Limits](#19-quality-gates--code-coverage-limits)
+    - [20. Allure Reports with Historical Data & Flaky Test Detection](#20-allure-reports-with-historical-data--flaky-test-detection)
 
 ---
 
 ## Application Architecture
 
+
+
 This project follows a **three-tier architecture** with a clear separation between the frontend, backend, and database layers.
 
-```
+```text
 ┌──────────────────────────────────────────────────────────────────┐
 │                        Docker Compose                            │
 │                                                                  │
@@ -54,12 +59,13 @@ This project follows a **three-tier architecture** with a clear separation betwe
 │  │  Playwright (test runner) — connects to Frontend on :3000   │ │
 │  └─────────────────────────────────────────────────────────────┘ │
 └──────────────────────────────────────────────────────────────────┘
+
 ```
 
 ### Frontend — React (TypeScript)
 
 | Item | Details |
-|---|---|
+| --- | --- |
 | **Location** | [`src/`](/src) |
 | **Framework** | React 17 with TypeScript |
 | **Entry point** | [`src/App.tsx`](/src/App.tsx) |
@@ -72,7 +78,7 @@ This project follows a **three-tier architecture** with a clear separation betwe
 ### Backend — Express API (Node.js)
 
 | Item | Details |
-|---|---|
+| --- | --- |
 | **Location** | [`server/`](/server) |
 | **Framework** | Express 5 with Mongoose 9 |
 | **Entry point** | [`server/index.js`](/server/index.js) |
@@ -84,7 +90,7 @@ This project follows a **three-tier architecture** with a clear separation betwe
 **Endpoints:**
 
 | Method | Endpoint | Description |
-|---|---|---|
+| --- | --- | --- |
 | `GET` | `/api/colors` | List all colors |
 | `GET` | `/api/colors/:name` | Get a single color by name |
 | `POST` | `/api/colors` | Create a new color |
@@ -98,13 +104,11 @@ On startup, the server seeds the database with three default colors (Turquoise, 
 The [`docker-compose.yml`](/docker-compose.yml) defines four services that wire everything together:
 
 | Service | Image / Build | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | **mongo** | `mongo:latest` | Database — persists data in a named volume (`mongo_data`) |
 | **api** | `./server/Dockerfile` | Backend API — waits for `mongo` to be healthy before starting |
 | **app** | `./Dockerfile` (target: `app`) | Frontend dev server — waits for `api` to be healthy, proxies `/api` to `http://api:5001` |
 | **playwright** | `./Dockerfile` (target: `playwright`) | Test runner — executes Playwright tests against `http://app:3000` |
-
-> **Healthchecks** ensure services start in the correct order: MongoDB must accept connections before the API starts, and the API must respond to HTTP requests before the frontend or Playwright starts.
 
 ---
 
@@ -112,8 +116,8 @@ The [`docker-compose.yml`](/docker-compose.yml) defines four services that wire 
 
 ### Prerequisites
 
-- Node.js 16+
-- Docker (for visual regression and consistent cross-platform tests)
+* Node.js 16+
+* Docker (for visual regression and consistent cross-platform tests)
 
 ### Installation
 
@@ -136,10 +140,6 @@ To run the full stack (React frontend + Express backend + MongoDB), use Docker C
 docker compose up -d
 ```
 
-The React app will be available at `http://localhost:3000` and the API will run on port `5001`.
-
-> **Note:** We use port `5001` instead of `5000` because macOS Monterey and later reserves port `5000` for its AirPlay Receiver service, which causes an HTTP 403 Forbidden conflict.
-
 ### Running tests locally
 
 ```bash
@@ -151,12 +151,6 @@ npx playwright test e2e/tests/a11y.spec.ts
 
 # Run in headed mode (see the browser)
 npx playwright test --headed
-
-# Run in UI mode (interactive debugging)
-npx playwright test --ui
-
-# Run with coverage
-npm run coverage
 
 # Run BDD (Cucumber) tests
 npm run test:bdd
@@ -202,7 +196,9 @@ e2e/
 
 ## Best Practices Implemented
 
-### 1. Page Object Model (POM)
+### Part 1: Core Framework & Test Design
+
+#### 1. Page Object Model (POM)
 
 **Files:** [`e2e/pages/HomePage.ts`](/e2e/pages/HomePage.ts) · [`e2e/baseFixtures.ts`](/e2e/baseFixtures.ts) · [`e2e/tests/pom-refactored.spec.ts`](/e2e/tests/pom-refactored.spec.ts)
 
@@ -217,7 +213,7 @@ The Page Object Model is a design pattern that creates an abstraction layer betw
 - **Reusability** — The same page object is shared across multiple test suites, eliminating duplicated boilerplate.
 - **Zero boilerplate** — By registering page objects as fixtures in `baseFixtures.ts`, tests simply destructure `{ homePage }` from the test arguments instead of manually calling `new HomePage(page)` in every `beforeEach`.
 
-#### How to implement
+**How to implement:**
 
 **Step 1:** Create a page class with locators and actions:
 
@@ -258,15 +254,9 @@ export const test = baseTest.extend<{ homePage: HomePage }>({
   homePage: async ({ page }, use) => {
     await use(new HomePage(page));
   },
-
-  // Istanbul Code Coverage listener is also injected here
-  // (see Section 6: E2E Code Coverage)
 });
-
 export const expect = test.expect;
 ```
-
-Every test that imports `test` from `baseFixtures` automatically receives a fresh `homePage` instance — no manual setup required.
 
 **Step 3:** Use the fixture in your tests:
 
@@ -286,100 +276,253 @@ test.describe("POM Refactored: Background color tests", () => {
 });
 ```
 
-#### How to verify
+**How to verify:**
 
 ```bash
 npx playwright test e2e/tests/pom-refactored.spec.ts
 ```
 
----
+#### 2. Behavior-Driven Development (BDD) with Cucumber
 
-### 2. Accessibility (a11y) Testing
+**Files:** [`e2e/features/home.feature`](/e2e/features/home.feature) · [`e2e/tests/bdd.spec.ts`](/e2e/tests/bdd.spec.ts)
 
-**File:** [`e2e/tests/a11y.spec.ts`](/e2e/tests/a11y.spec.ts)
-
-#### What is it?
-
-Automated accessibility auditing that scans your rendered DOM against the [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/standards-guidelines/wcag/). We use [`@axe-core/playwright`](https://github.com/dequelabs/axe-core-npm/tree/develop/packages/playwright) — the same engine used by browser DevTools accessibility audits.
+**What is it?**
+BDD closes the gap between business stakeholders and QA engineers by expressing tests in plain English using Gherkin syntax. We use `playwright-bdd` to seamlessly compile `.feature` files into native Playwright tests.
 
 #### Why it matters
 
-- **Inclusivity** — Ensures the application is usable by individuals with visual, motor, or cognitive disabilities.
-- **Legal compliance** — Many jurisdictions require WCAG AA compliance for public-facing web applications.
-- **Regression prevention** — A CSS refactor can silently break color contrast ratios. An automated a11y gate catches it before merge.
-- **Real bugs found** — In this project, the a11y tests uncovered actual contrast violations (white text on yellow/turquoise backgrounds) and missing semantic landmarks (`<main>`, `<h1>`) that were subsequently fixed.
+- **Living Documentation** — Your test artifacts serve as the actual source of truth for product requirements.
+- **Improved Collaboration** — Product Managers can review or even write the Gherkin scenarios without needing to understand TypeScript or Playwright APIs.
+- **Reusability** — The step definitions (`bdd.spec.ts`) leverage the same Page Object Models used by standard end-to-end tests, maximizing reusability and reducing duplication.
 
-#### How to implement
+**How to implement:**
 
-**Step 1:** Install the dependency:
+**Step 1:** Write a Gherkin feature file outlining the desired behavior:
 
-```bash
-npm install -D @axe-core/playwright
+```gherkin
+# e2e/features/home.feature
+Feature: Home Page Background Color
+
+  Scenario Outline: Change background color
+    Given I am on the home page
+    When I click the "<color>" color button
+    Then the background color should be "<rgb>"
+
+    Examples:
+      | color     | rgb                |
+      | Turquoise | rgb(26, 188, 156)  |
 ```
 
-**Step 2:** Write a test that scans the page:
+**Step 2:** Write the Step Definitions using Playwright and your Page Objects:
 
 ```typescript
-// e2e/tests/a11y.spec.ts
-import AxeBuilder from "@axe-core/playwright";
+// e2e/tests/bdd.spec.ts
+import { createBdd } from "playwright-bdd";
+import { HomePage } from "../pages/HomePage";
 
-test("should not have any accessibility issues", async ({ page }) => {
+const { Given, When, Then } = createBdd();
+let homePage: HomePage;
+
+Given("I am on the home page", async ({ page }) => {
+  homePage = new HomePage(page);
+  await homePage.goto();
+});
+// ... Map other steps
+```
+
+**How to verify:**
+
+```bash
+npm run test:bdd
+```
+
+#### 3. Avoiding Static Waits with waitForResponse
+
+**File:** [`e2e/tests/visual.spec.ts`](/e2e/tests/visual.spec.ts)
+
+**What is it?**
+Using Playwright's `page.waitForResponse()` to synchronise test execution with asynchronous network activity, instead of inserting arbitrary time delays (`page.waitForTimeout`).
+
+#### Why it matters
+
+`page.waitForTimeout(2000)` is the most common anti-pattern in end-to-end testing. It has two failure modes:
+
+- **Too short** — the request hasn't completed yet, so the assertion fails on a fast machine.
+- **Too long** — you're wasting seconds on every test run, even when the request resolves in 100ms.
+
+A slow Docker network or a busy CI runner exaggerates both problems. The test becomes **non-deterministic**: it passes locally and fails in CI for no obvious reason.
+
+**How to implement:**
+
+```typescript
+// ❌ Anti-pattern — arbitrary delay, non-deterministic
+await homePage.clickColorButton("Yellow");
+await page.waitForTimeout(2000); // Hope the API responds within 2s
+const hex = await homePage.getCurrentColorText();
+expect(hex).toContain("#f1c40f");
+
+// ✅ Best practice — deterministic, no wasted time
+// 1. Register the listener BEFORE the click
+const responsePromise = page.waitForResponse(
+  (resp) => resp.url().includes("/api/colors/Yellow") && resp.status() === 200,
+);
+// 2. Fire the action
+await homePage.clickColorButton("Yellow");
+// 3. Await the response (resolves as soon as it arrives)
+await responsePromise;
+// 4. Use auto-retrying assertion to handle React state update
+await expect(homePage.currentColorText).toContainText("#f1c40f");
+```
+
+**How to verify:**
+
+```bash
+npm run test:e2e:docker
+```
+
+#### 4. Data-Driven Testing
+
+**File:** [`e2e/tests/data-driven.spec.ts`](/e2e/tests/data-driven.spec.ts)
+
+#### What is it?
+
+A pattern where a single test template is executed multiple times with different input data. Instead of writing three nearly identical tests for three colors, you define the data once and generate the tests programmatically.
+
+#### Why it matters
+
+- **DRY (Don't Repeat Yourself)** — The test logic is written once. Adding a new test case means adding one line to the data array, not copying an entire test block.
+- **Scalability** — When your application adds a fourth or fifth color, you add one object to the array and get full test coverage instantly.
+- **Consistency** — Every data point goes through the exact same assertion pipeline, eliminating the risk of copy-paste bugs in duplicated test blocks.
+
+**How to implement:**
+
+**Step 1:** Define the test dataset:
+
+```typescript
+const testData = [
+  { name: "Turquoise", expectedHex: "#1abc9c", expectedRgb: "rgb(26, 188, 156)" },
+  { name: "Red", expectedHex: "#e74c3c", expectedRgb: "rgb(231, 76, 60)" },
+  { name: "Yellow", expectedHex: "#f1c40f", expectedRgb: "rgb(241, 196, 15)" },
+];
+```
+
+**Step 2:** Loop over the data to generate tests:
+
+```typescript
+test.describe("Data-Driven Testing", () => {
+  for (const data of testData) {
+    test(`changing color to ${data.name} should reflect in UI and DOM`, async ({ page }) => {
+      await homePage.clickColorButton(data.name);
+      await expect(homePage.currentColorText).toContainText(data.expectedHex);
+      await expect(homePage.header).toHaveCSS("background-color", data.expectedRgb);
+    });
+  }
+});
+```
+
+**How to verify:**
+
+```bash
+npx playwright test e2e/tests/data-driven.spec.ts
+```
+
+#### 5. Random Data Generation with faker.js
+
+**File:** [`e2e/tests/random-data.spec.ts`](/e2e/tests/random-data.spec.ts)
+
+#### What is it?
+
+Using a library like [`@faker-js/faker`](https://fakerjs.dev/) to generate dynamic, randomized test data (names, emails, hex codes, UUIDs) during test execution, rather than using hardcoded static values like `"TestUser"` or `"#ff0000"`.
+
+#### Why it matters
+
+- **Discovers Edge Cases naturally** — Static data like `"John"` never breaks anything. But `faker.person.lastName()` might eventually generate `"O'Connor"`, exposing an unescaped SQL query or a UI component that doesn't handle apostrophes correctly.
+- **Prevents State Collisions** — Hardcoded entities (e.g., `email: "test@example.com"`) often conflict in parallel test executions or dirty databases. Random data guarantees uniqueness (`faker.internet.email()`), allowing tests to run safely in parallel without stomping on each other's state.
+- **Avoids Test Coupling** — Tests shouldn't pass just because they rely on a specific hardcoded shape in the database. Dynamic data forces the test to assert on _system behavior_ rather than predefined constants.
+
+**How to implement:**
+
+```bash
+npm install -D @faker-js/faker
+```
+
+```typescript
+import { test, expect } from "../baseFixtures";
+import { faker } from "@faker-js/faker";
+
+test("should handle randomized color generation", async ({ page, request }) => {
+  const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`;
+  const randomHex = faker.color.rgb();
+
+  await request.post("/api/colors", {
+    data: { name: randomColorName, hex: randomHex },
+  });
+
   await page.goto("/");
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
+  await page.getByRole("button", { name: `colors.${randomColorName}` }).click();
+
+  await expect(page.locator("text=Current color:")).toContainText(randomHex);
 });
 ```
 
-**Step 3:** Test accessibility **after state changes** too — a button click that changes the background color could introduce new contrast violations:
-
-```typescript
-test("should maintain accessibility after color change", async ({ page }) => {
-  await homePage.clickColorButton("Yellow");
-  const results = await new AxeBuilder({ page }).analyze();
-  const contrastViolations = results.violations.filter(
-    (v) => v.id === "color-contrast",
-  );
-  expect(contrastViolations).toEqual([]);
-});
-```
-
-#### How to verify
+**How to verify:**
 
 ```bash
-npx playwright test e2e/tests/a11y.spec.ts
+npx playwright test e2e/tests/random-data.spec.ts
 ```
-
-If a violation is found, the output will include the exact rule ID (e.g., `color-contrast`), the failing HTML element, and the specific contrast ratio that failed.
-
-#### Handling i18n with Accessibility Locators
-
-**File:** [`e2e/tests/a11y.spec.ts`](/e2e/tests/a11y.spec.ts)
-
-When an application has different languages, most engineers panic because their trusted English text locators would break once they change the testing language.
-
-So they abandon accessibility locators and fallback to the dark ages of DOM manipulation. They start writing locators like this:
-
-🚩 `page.locator('.form-group .btn.btn-primary .submit-btn')`  
-🚩 `page.locator('//div[@class="login-container"]/div[2]/form/button')`
-
-This is how flaky pipelines are born, and the confidence in the testing is ruined. A developer adds one extra wrapper `div` for a layout tweak, and your entire test suite breaks.
-
-There is a much cleaner way to handle this in Playwright. Your testing framework just needs a single source of truth. Keep it simple: load the correct language JSON file at runtime (e.g., using an environment variable, test parameters, or straight imports). Then you just pass that dynamic dictionary right back into your resilient Playwright locators:
-
-```typescript
-// Example: locating a button dynamically based on the current testing language
-await page.getByRole("button", { name: i18nConfig.colors.red }).click();
-```
-
-Playwright inserts the correct string automatically. English, French, Spanish, or whatsoever — it does not matter. You keep the user-centric accessibility locators and ditch the brittle DOM paths.
-
-Do not compromise your architecture just because the text changes. Smart systems adapt to the context. Adding an additional language to the framework is done under a minute.
 
 ---
 
-### 3. Network Mocking & Interception
+### Part 2: Comprehensive Test Coverage
 
-**Files:** [`e2e/tests/network-mocking.spec.ts`](/e2e/tests/network-mocking.spec.ts) · [`e2e/tests/error-handling.spec.ts`](/e2e/tests/error-handling.spec.ts)
+#### 6. Hybrid E2E Testing
+
+**File:** [`e2e/tests/hybrid.spec.ts`](/e2e/tests/hybrid.spec.ts)
+
+#### What is it?
+
+A hybrid test leverages both backend API calls and frontend UI interactions in a single test case. Instead of clicking through the UI to create a resource or set up a specific state, the test uses the `request` fixture to interact directly with the API to set the system under test to the desired state. It then navigates to the UI to verify the required behavior.
+
+#### Why it matters
+
+- **Unmatched Speed** — Setting up test state via the UI involves waiting for pages to load, animations to finish, and multiple clicks to register. API setup takes milliseconds.
+- **Improved Reliability (Less Flake)** — The UI layer is inherently brittle. Bypassing the UI for the "arrange" phase of a test drastically reduces false negatives caused by UI flakiness in parts of the application that are not the primary focus of the test.
+- **True Isolation** — You can create and delete exact data permutations for the specific test without relying on existing database fixtures.
+
+**How to implement:**
+
+```typescript
+import { test, expect } from "../baseFixtures";
+import { HomePage } from "../pages/HomePage";
+
+test("should create color via API and verify through UI", async ({ page, request }) => {
+  const newColor = { name: "Purple", hex: "#8e44ad" };
+
+  // 1. Arrange - Fast state setup via API
+  const createResponse = await request.post("/api/colors", { data: newColor });
+  expect(createResponse.ok()).toBeTruthy();
+
+  // 2. Act - Navigate and interact via UI
+  const homePage = new HomePage(page);
+  await homePage.goto();
+
+  const responsePromise = page.waitForResponse(
+    (resp) => resp.url().includes(`/api/colors/${newColor.name}`) && resp.status() === 200
+  );
+  await page.getByRole("button", { name: "colors.purple" }).click();
+  await responsePromise;
+
+  // 3. Assert - Validating UI reflects the state correctly
+  await expect(homePage.currentColorText).toContainText(newColor.hex);
+
+  // 4. Teardown - Clean up via API to maintain isolation
+  await request.delete(`/api/colors/${newColor.name}`);
+});
+```
+
+#### 7. Network Mocking & Interception
+
+**Files:** [`e2e/tests/network-mocking.spec.ts`](https://www.google.com/search?q=/e2e/tests/network-mocking.spec.ts) · [`e2e/tests/error-handling.spec.ts`](https://www.google.com/search?q=/e2e/tests/error-handling.spec.ts)
 
 #### What is it?
 
@@ -391,29 +534,23 @@ Playwright's `page.route()` API allows you to intercept any network request and 
 - **Edge case coverage** — You can simulate states that are difficult to reproduce naturally: API errors, empty responses, rate limits, or missing assets.
 - **Speed** — Mocked responses return instantly, dramatically reducing test execution time for API-heavy applications.
 
-#### How to implement
+**How to implement:**
 
 **Aborting a request** (simulating a missing asset):
 
 ```typescript
 test("should handle missing image gracefully", async ({ page }) => {
-  // Intercept and abort the logo request BEFORE navigating
   await page.route("**/logo.svg", (route) => route.abort());
   await page.goto("/");
-
-  // The image element should still exist in the DOM with its alt text
   const logoImg = page.getByRole("img", { name: "logo" });
   await expect(logoImg).toHaveAttribute("alt", "logo");
 });
 ```
 
-**Mocking data that doesn't exist in the database** (e.g., a brand-new color):
+**Mocking data that doesn't exist in the database**:
 
 ```typescript
-test("should display colors that do not exist in the database", async ({
-  page,
-}) => {
-  // Mock the /api/colors endpoint to return a color not in the real DB
+test("should display colors that do not exist in the database", async ({ page }) => {
   await page.route("**/api/colors", async (route) => {
     await route.fulfill({
       status: 200,
@@ -421,27 +558,7 @@ test("should display colors that do not exist in the database", async ({
       body: JSON.stringify([{ name: "Magenta", hex: "#ff00ff" }]),
     });
   });
-
-  // Also mock the individual color endpoint
-  await page.route("**/api/colors/Magenta", async (route) => {
-    await route.fulfill({
-      status: 200,
-      contentType: "application/json",
-      body: JSON.stringify({ name: "Magenta", hex: "#ff00ff" }),
-    });
-  });
-
-  await homePage.goto();
-
-  // Use accessible locators to find and click the mocked color button
-  const customBtn = page.getByRole("button", { name: "colors.magenta" });
-  await customBtn.click();
-
-  // Verify the background reflects the mocked hex value
-  await expect(homePage.header).toHaveCSS(
-    "background-color",
-    "rgb(255, 0, 255)",
-  );
+  // ... Rest of test
 });
 ```
 
@@ -490,7 +607,6 @@ test("should gracefully handle a color not found in the database", async ({
   );
 });
 ```
-
 > **Important:** Always call `page.route()` _before_ the action that triggers the network request (e.g., `page.goto()`).
 
 **Simulating complete network failures to verify UI error states**:
@@ -508,648 +624,15 @@ test("should handle fetch colors network failure gracefully", async ({
 });
 ```
 
-#### How to verify
+**How to verify:**
 
 ```bash
 npx playwright test e2e/tests/network-mocking.spec.ts e2e/tests/error-handling.spec.ts
 ```
 
----
+#### 8. API Schema Validation with Zod
 
-### 4. Visual Regression & Responsive Testing
-
-**File:** [`e2e/tests/visual.spec.ts`](/e2e/tests/visual.spec.ts)
-
-This file combines two complementary testing practices into a single suite: **visual regression** (pixel-level screenshot comparison) and **responsive design** (mobile viewport verification).
-
-#### 4a. Visual Regression
-
-##### What is it?
-
-Visual regression testing captures a full-page screenshot and compares it pixel-by-pixel against a previously approved baseline image. If there's a difference, the test fails and generates a visual diff highlighting exactly what changed.
-
-##### Why it matters
-
-- **Catches what functional tests miss** — A CSS change that shifts a button 5 pixels to the left won't break any functional assertion, but it will break a visual snapshot.
-- **Ideal for static content** — Pages like FAQs, landing pages, or dashboards benefit enormously from visual testing because their layout is their primary "feature."
-- **Confidence in refactors** — When refactoring CSS or updating components, visual tests confirm nothing changed unexpectedly.
-
-##### How to implement
-
-```typescript
-test.describe("Visual Regression", () => {
-  test("homepage should match snapshot", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForSelector("header");
-
-    // Mask the animated logo so its CSS animation doesn't cause flaky diffs
-    const screenshot = await page.screenshot({
-      fullPage: true,
-      mask: [page.locator(".App-logo")],
-    });
-    expect(screenshot).toMatchSnapshot("home.png");
-  });
-});
-```
-
-> **Tip — Masking animated elements:** The `mask` option accepts an array of locators. Playwright paints a solid-color block over each matched element before capturing the screenshot. Use it for any element with CSS animations, GIFs, or other non-deterministic visuals (e.g., carousels, loading spinners) that would otherwise produce false-positive pixel diffs between runs.
-
-> **Important:** Visual regression baselines should be generated inside Docker to avoid OS-specific rendering differences. See [Section 7: Consistent Cross-Platform Testing with Docker](#7-consistent-cross-platform-testing-with-docker).
-
-#### 4b. Responsive / Viewport Testing
-
-##### What is it?
-
-Testing your application under specific viewport dimensions to simulate how it renders on mobile phones, tablets, or other non-desktop devices.
-
-##### Why it matters
-
-- **Mobile-first reality** — Over 50% of global web traffic comes from mobile devices. Buttons that overlap or text that overflows can make an app unusable on a phone.
-- **Layout regression prevention** — A CSS change on desktop can inadvertently break the mobile layout. Viewport tests catch these regressions automatically.
-- **Cross-device confidence** — You verify functional correctness (not just appearance) at constrained dimensions — buttons can still be clicked, text is still readable.
-
-##### How to implement
-
-```typescript
-test.describe("Responsive Design Testing", () => {
-  // Simulate an iPhone SE viewport
-  test.use({ viewport: { width: 375, height: 667 } });
-
-  test("should render correctly on mobile viewport", async ({ page }) => {
-    await page.goto("/");
-
-    // Verify all critical elements are visible
-    await expect(page.locator("header")).toBeVisible();
-    await expect(page.locator("text=Turquoise")).toBeVisible();
-    await expect(page.locator("text=Red")).toBeVisible();
-    await expect(page.locator("text=Yellow")).toBeVisible();
-
-    // Verify interactions still work at this size
-    await page.click("text=Yellow");
-    const text = await page.locator("text=Current color:").textContent();
-    expect(text).toContain("#f1c40f");
-  });
-});
-```
-
-#### How to verify
-
-```bash
-npx playwright test e2e/tests/visual.spec.ts
-```
-
-Use Playwright's UI mode (`npx playwright test --ui`) to visually inspect how the page renders at the constrained viewport.
-
----
-
-### 5. Data-Driven Testing
-
-**File:** [`e2e/tests/data-driven.spec.ts`](/e2e/tests/data-driven.spec.ts)
-
-#### What is it?
-
-A pattern where a single test template is executed multiple times with different input data. Instead of writing three nearly identical tests for three colors, you define the data once and generate the tests programmatically.
-
-#### Why it matters
-
-- **DRY (Don't Repeat Yourself)** — The test logic is written once. Adding a new test case means adding one line to the data array, not copying an entire test block.
-- **Scalability** — When your application adds a fourth or fifth color, you add one object to the array and get full test coverage instantly.
-- **Consistency** — Every data point goes through the exact same assertion pipeline, eliminating the risk of copy-paste bugs in duplicated test blocks.
-
-#### How to implement
-
-**Step 1:** Define the test dataset:
-
-```typescript
-const testData = [
-  {
-    name: "Turquoise",
-    expectedHex: "#1abc9c",
-    expectedRgb: "rgb(26, 188, 156)",
-  },
-  { name: "Red", expectedHex: "#e74c3c", expectedRgb: "rgb(231, 76, 60)" },
-  { name: "Yellow", expectedHex: "#f1c40f", expectedRgb: "rgb(241, 196, 15)" },
-];
-```
-
-**Step 2:** Loop over the data to generate tests:
-
-```typescript
-test.describe("Data-Driven Testing", () => {
-  for (const data of testData) {
-    test(`changing color to ${data.name} should reflect in UI and DOM`, async ({
-      page,
-    }) => {
-      await homePage.clickColorButton(data.name);
-      await expect(homePage.currentColorText).toContainText(data.expectedHex);
-      await expect(homePage.header).toHaveCSS(
-        "background-color",
-        data.expectedRgb,
-      );
-    });
-  }
-});
-```
-
-#### How to verify
-
-```bash
-npx playwright test e2e/tests/data-driven.spec.ts
-```
-
-The output will list **three distinct test names** — one per dataset entry — confirming that a single test block generated multiple independent executions.
-
----
-
-### 6. E2E Code Coverage
-
-**Files:** [`e2e/baseFixtures.ts`](/e2e/baseFixtures.ts) · [`e2e/tests/coverage.spec.ts`](/e2e/tests/coverage.spec.ts)
-
-#### What is it?
-
-Code coverage measurement for **end-to-end tests**, not just unit tests. Using [Istanbul/nyc](https://github.com/istanbuljs/nyc), we instrument the application at build time and collect coverage data from the browser during Playwright test execution. This tells you exactly which lines, branches, and functions of your source code are exercised by your E2E suite.
-
-#### Why it matters
-
-- **Identifies blind spots** — Shows which parts of your codebase have no E2E test coverage, guiding you on where to write the next test.
-- **Measures test effectiveness** — A test suite with 200 tests but 30% coverage has fundamental gaps. Coverage metrics make this visible.
-- **CI/CD integration** — Coverage data is uploaded to [Coveralls](https://coveralls.io/) on every push, providing historical trends and PR-level deltas.
-- **Stakeholder communication** — Coverage percentages are easy to understand and share with product managers and engineering leads.
-
-#### How it works
-
-The custom `baseFixtures.ts` extends Playwright's test runner to:
-
-1. **Inject** a `beforeunload` listener that serializes Istanbul's `__coverage__` object
-2. **Expose** a `collectIstanbulCoverage` function to the browser context
-3. **Collect** coverage data from every open page after each test completes
-4. **Write** coverage JSON files to `.nyc_output/` with unique UUIDs
-
-#### How to implement
-
-**Step 1:** Ensure your build pipeline includes `babel-plugin-istanbul` (controlled via the `USE_BABEL_PLUGIN_ISTANBUL` env var).
-
-**Step 2:** Import from `baseFixtures` instead of `@playwright/test`:
-
-```typescript
-// e2e/tests/coverage.spec.ts
-import { test, expect } from "../baseFixtures"; // ← NOT from @playwright/test
-```
-
-**Step 3:** Write your tests as usual — coverage collection is automatic.
-
-#### Generating reports
-
-```bash
-# Run tests with coverage collection
-npm run coverage
-
-# Or generate reports manually:
-npx nyc report --reporter=html    # HTML report → coverage/index.html
-npx nyc report --reporter=lcov    # For Coveralls / Codecov upload
-npx nyc report --reporter=text    # CLI summary table
-```
-
-#### How to verify
-
-```bash
-npm run coverage
-```
-
-The CLI will output a table showing per-file statement, branch, function, and line coverage percentages.
-
----
-
-### 7. Consistent Cross-Platform Testing with Docker
-
-#### What is it?
-
-A Docker-based testing environment that guarantees identical rendering and test behavior across all machines — developer laptops, CI servers, and staging environments.
-
-#### Why it matters
-
-Visual regression tests are particularly sensitive to cross-platform differences. A screenshot taken on **macOS** will differ from one taken on **Linux** due to subtle variations in:
-
-- **Font rendering** — macOS uses Core Text, Linux uses FreeType — same font, different pixels
-- **Anti-aliasing** — Sub-pixel smoothing algorithms differ between OSes
-- **System fonts** — Default fallback fonts vary across platforms
-
-These differences cause **false positives**: tests pass locally on macOS but fail in Linux-based CI, or vice versa. This erodes trust in the test suite and wastes debugging time.
-
-#### The solution
-
-We use Docker with the official [Playwright Docker image](https://hub.docker.com/_/microsoft-playwright) (`mcr.microsoft.com/playwright`) to lock the rendering environment. Our `docker-compose.yml` defines two services:
-
-```
-docker-compose.yml
-├── app service         → Runs the React dev server on port 3000
-└── playwright service  → Runs Playwright tests against the app
-```
-
-**Dockerfile** (simplified):
-
-```dockerfile
-FROM mcr.microsoft.com/playwright:v1
-
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-
-CMD ["npm", "test"]
-```
-
-**Key Docker Compose features:**
-
-- **Consistent rendering** — The official Playwright image pins browser versions and system libraries
-- **Volume mounts** — Snapshots (`e2e/snapshots/`) and test results (`test-results/`) persist between container runs, so updated baselines are always available on the host
-- **CI-ready** — The same Docker configuration runs locally and in GitHub Actions
-
-#### How to use
-
-```bash
-# Run the full test suite in Docker
-npm run test:e2e:docker
-
-# Update visual regression baselines (after intentional UI changes)
-npm run test:e2e:docker:update
-```
-
-> [!CAUTION]
-> **Local prerequisite — remove BuildKit cache mounts.**
-> The `Dockerfile` and `server/Dockerfile` use `RUN --mount=type=cache` syntax which requires Docker BuildKit. This works automatically in GitHub Actions (CI), but the local `docker-compose` (v1) does **not** support BuildKit by default and will fail with:
->
-> ```
-> the --mount option requires BuildKit
-> ```
->
-> Before running locally, replace the cache-mount `RUN` lines in both files:
->
-> **`Dockerfile`** (line ~8) and **`server/Dockerfile`** (line ~6):
->
-> ```dockerfile
-> # ❌ CI-only — remove locally
-> RUN --mount=type=cache,target=/root/.npm \
->     npm ci --legacy-peer-deps
->
-> # ✅ Replace with plain npm ci
-> RUN npm ci --legacy-peer-deps
-> ```
->
-> Remember to **revert this change** before pushing, since the cache mount improves CI build speed significantly.
-
-> **Tip:** Always review visual diffs before accepting updated baselines. Never blindly run `--update-snapshots`.
-
----
-
-### 8. Allure Reports with Historical Data & Flaky Test Detection
-
-👉 **[View the Live Allure Report for this Repository](https://jpourdanis.github.io/test-automation-best-practices/)**
-
-#### What is it?
-
-[Allure Framework](https://allurereport.org/) is a flexible lightweight multi-language test report tool that not only shows a very concise representation of what has been tested in a neat web report form, but allows everyone participating in the development process to extract maximum useful information from everyday execution of tests. We've integrated `allure-playwright` to automatically generate these reports.
-
-#### Why it matters
-
-- **Historical Data** — Standard Playwright HTML reports are ephemeral; they overwrite on the next run. Allure maintains a history of test executions, allowing you to see trends over time (e.g., "this test has been failing for the last 5 builds").
-- **Flaky Test Detection** — Because Allure tracks history, it can easily identify "flaky" tests—tests that pass and fail intermittently without code changes. This is crucial for maintaining a trustworthy test suite.
-- **Rich Visualizations** — Allure categorizes failures into Product Defects (bugs) and Test Defects (broken tests), providing a clear dashboard for stakeholders to understand the health of the application.
-- **Attachments** — Screenshots (like visual regression diffs), videos, and traces collected by Playwright are natively embedded into the Allure report for easy debugging.
-
-#### How to implement
-
-**Step 1:** Install the necessary packages.
-
-```bash
-npm install -D allure-playwright
-npm install -g allure-commandline # For viewing reports locally
-```
-
-**Step 2:** Configure Playwright to use the Allure reporter in `playwright.config.ts`.
-
-```typescript
-  reporter: process.env.CI
-    ? [
-        ["allure-playwright"],
-        ["list"],
-      ]
-    : [
-        ["html", { open: "never" }],
-        ["allure-playwright"],
-        ["list"],
-      ],
-```
-
-**Step 3:** Use GitHub Actions to build and publish the report with historical data.
-
-Our CI workflow uses `simple-elf/allure-report-action` to build the report. Crucially, it fetches the previous `allure-history` from the `gh-pages` branch, allowing Allure to compute trends. It then publishes the updated report back to GitHub Pages.
-
-#### How to verify
-
-To view the report locally after running tests:
-
-```bash
-npx allure serve allure-results
-```
-
-In CI, navigate to the repository's GitHub Pages URL after a build finishes to view the continually updated historical report.
-
----
-
-### 9. Cross-Browser Testing Strategy
-
-**File:** [`playwright.config.ts#L26`](/playwright.config.ts#L26) · [`e2e/tests/cross-browser.spec.ts`](/e2e/tests/cross-browser.spec.ts)
-
-#### What is it?
-
-A conditional strategy for running tests across multiple browser engines (Chromium, Firefox, and WebKit) without permanently inflating the CI execution time for every single commit.
-
-#### Why it matters
-
-Many teams configure Playwright to run every test on all three browsers. While this provides great coverage, it multiplies your test execution time by 3. If a PR takes 15 minutes to run UI tests on Chrome, it will take 45 minutes to run all three browsers. This destroys the developer feedback loop.
-
-The senior QA best practice is **Conditional Execution**:
-
-1. **Pull Requests / Local Dev:** Run tests fast on one primary engine (e.g., Chromium).
-2. **Nightly / Release Branches:** Run full regression across all browsers using an environment variable flag.
-
-#### How to implement
-
-We configure our `playwright.config.ts` to dynamically inject browser projects based on an environment variable (`CROSS_BROWSER`):
-
-```typescript
-  projects: [
-    {
-      name: "Chrome",
-      use: { ...devices["Desktop Chrome"] },
-    },
-    // Conditionally load other browsers only when requested
-    ...(process.env.CROSS_BROWSER === "true"
-      ? [
-          { name: "Firefox", use: { ...devices["Desktop Firefox"] } },
-          { name: "WebKit",  use: { ...devices["Desktop Safari"] } },
-        ]
-      : []),
-  ],
-```
-
-#### How to verify
-
-**Run fast on default browser (Chromium only):**
-
-```bash
-npm run test
-```
-
-**Run deep coverage across all engines (Chromium, Firefox, WebKit):**
-
-```bash
-npm run test:cross-browser
-```
-
----
-
-### 10. Behavior-Driven Development (BDD) with Cucumber
-
-**Files:** [`e2e/features/home.feature`](/e2e/features/home.feature) · [`e2e/tests/bdd.spec.ts`](/e2e/tests/bdd.spec.ts)
-
-#### What is it?
-
-Behavior-Driven Development (BDD) closes the gap between business stakeholders and QA engineers by expressing tests in plain English using Gherkin syntax. We use [`playwright-bdd`](https://github.com/vitalets/playwright-bdd) to seamlessly compile `.feature` files into native Playwright tests.
-
-#### Why it matters
-
-- **Living Documentation** — Your test artifacts serve as the actual source of truth for product requirements.
-- **Improved Collaboration** — Product Managers can review or even write the Gherkin scenarios without needing to understand TypeScript or Playwright APIs.
-- **Reusability** — The step definitions (`bdd.spec.ts`) leverage the same Page Object Models used by standard end-to-end tests, maximizing reusability and reducing duplication.
-
-#### How to implement
-
-**Step 1:** Write a Gherkin feature file outlining the desired behavior:
-
-```gherkin
-# e2e/features/home.feature
-Feature: Home Page Background Color
-
-  Scenario Outline: Change background color
-    Given I am on the home page
-    When I click the "<color>" color button
-    Then the background color should be "<rgb>"
-
-    Examples:
-      | color     | rgb                |
-      | Turquoise | rgb(26, 188, 156)  |
-```
-
-**Step 2:** Write the Step Definitions using Playwright and your Page Objects:
-
-```typescript
-// e2e/tests/bdd.spec.ts
-import { createBdd } from "playwright-bdd";
-import { HomePage } from "../pages/HomePage";
-
-const { Given, When, Then } = createBdd();
-let homePage: HomePage;
-
-Given("I am on the home page", async ({ page }) => {
-  homePage = new HomePage(page);
-  await homePage.goto();
-});
-// ... Map other steps
-```
-
-#### How to verify
-
-Execute the BDD tests specifically:
-
-```bash
-npm run test:bdd
-```
-
----
-
-### 11. Nightly Builds & Scheduled Playwright Runs
-
-**File:** [`.github/workflows/ci.yml#L7`](/.github/workflows/ci.yml#L7)
-
-#### What is it?
-
-A scheduled Continuous Integration (CI) run that executes the entire test suite unconditionally at a specific time every day (e.g., midnight), regardless of whether any commits were pushed.
-
-#### Why it matters
-
-- **Cross-Browser Verification** — As discussed in the [Cross-Browser Testing Strategy](#9-cross-browser-testing-strategy), running every test on Firefox, WebKit, and Chrome on every single Pull Request can severely drag down performance. Nightly builds allow you to run the **complete deep-dive matrix** covering all supported platform, OS constraints, and scenarios while the team is asleep.
-- **External Dependency Monitoring** — Real-world apps depend on third-party APIs, CDNs, or downstream services that are frequently out of your control. If a third-party gateway changes its response payload silently, a scheduled regression test will report the failure before morning.
-- **Flaky Test Identification** — Flaky tests manifest more accurately when tested passively alongside other background systemic disturbances. Finding these via scheduled runs increases confidence during fast-moving days.
-
-#### How to implement
-
-Using GitHub actions, we configure the `schedule` keyword paired with a standard [cron syntax representation](https://crontab.guru/):
-
-```yaml
-on:
-  push:
-    branches: [main, gh-pages]
-  pull_request:
-    branches: [main, gh-pages]
-  schedule:
-    - cron: "0 0 * * *" # Executes daily at Midnight UTC
-```
-
-This guarantees an autonomous system health check every day.
-
----
-
-### 12. Avoiding Static Waits with `waitForResponse`
-
-**File:** [`e2e/tests/visual.spec.ts#L85`](/e2e/tests/visual.spec.ts#L85)
-
-#### What is it?
-
-Using Playwright's `page.waitForResponse()` to synchronise test execution with asynchronous network activity, instead of inserting arbitrary time delays (`page.waitForTimeout`).
-
-#### Why it matters
-
-`page.waitForTimeout(2000)` is the most common anti-pattern in Playwright. It has two failure modes:
-
-- **Too short** — the request hasn't completed yet, so the assertion fails on a fast machine
-- **Too long** — you're wasting seconds on every test run, even when the request resolves in 100ms
-
-A slow Docker network or a busy CI runner exaggerates both problems. The test becomes **non-deterministic**: it passes locally and fails in CI for no obvious reason.
-
-#### How to implement
-
-The key insight is: **register the listener before the action that fires the request**. This guarantees you never miss the network event, even if the response arrives before the `await` is reached.
-
-```typescript
-// ❌ Anti-pattern — arbitrary delay, non-deterministic
-await homePage.clickColorButton("Yellow");
-await page.waitForTimeout(2000); // Hope the API responds within 2s
-const hex = await homePage.getCurrentColorText();
-expect(hex).toContain("#f1c40f");
-
-// ✅ Best practice — deterministic, no wasted time
-// 1. Register the listener BEFORE the click
-const responsePromise = page.waitForResponse(
-  (resp) => resp.url().includes("/api/colors/Yellow") && resp.status() === 200,
-);
-// 2. Fire the action
-await homePage.clickColorButton("Yellow");
-// 3. Await the response (resolves as soon as it arrives)
-await responsePromise;
-// 4. Use auto-retrying assertion to handle React state update
-await expect(homePage.currentColorText).toContainText("#f1c40f");
-```
-
-This pattern:
-
-- **Eliminates flakiness** caused by network timing variance
-- **Speeds up tests** — no sleeping, the assertion runs the instant the response lands
-- **Self-documents the intent** — it's immediately clear the test is waiting for a specific API call
-
-> **Why not `Promise.all([waitForResponse, click])`?** That pattern is needed when action and response race simultaneously (e.g., navigation). For a button click that triggers a fetch, you have a small but safe window between registering the listener and firing the click — `waitForResponse` is set up before any network activity begins, so nothing is missed.
-
-#### How to verify
-
-```bash
-npm run test:e2e:docker
-```
-
----
-
-### 13. Hybrid E2E Testing
-
-**File:** [`e2e/tests/hybrid.spec.ts`](/e2e/tests/hybrid.spec.ts)
-
-#### What is it?
-
-A hybrid test leverages both backend API calls and frontend UI interactions in a single test case. Instead of clicking through the UI to create a resource or set up a specific state, the test uses the `request` fixture to interact directly with the API to set the system under test to the desired state. It then navigates to the UI to verify the required behavior.
-
-#### Why it matters
-
-- **Unmatched Speed** — Setting up test state via the UI involves waiting for pages to load, animations to finish, and multiple clicks to register. API setup takes milliseconds.
-- **Improved Reliability (Less Flake)** — The UI layer is inherently brittle. Bypassing the UI for the "arrange" phase of a test drastically reduces false negatives caused by UI flakiness in parts of the application that are not the primary focus of the test.
-- **True Isolation** — You can create and delete exact data permutations for the specific test without relying on existing database fixtures.
-
-#### How to implement
-
-**Step 1:** Use `request` (Playwright's APIRequestContext) to arrange the state directly.
-**Step 2:** Use `page` to act and assert on the frontend UI.
-**Step 3:** Use `request` to clean up the state to keep the environment stateless.
-
-```typescript
-// e2e/tests/hybrid.spec.ts
-import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
-
-test("should create color via API and verify through UI", async ({
-  page,
-  request,
-}) => {
-  const newColor = { name: "Purple", hex: "#8e44ad" };
-
-  // 1. Arrange - Fast state setup via API
-  const createResponse = await request.post("/api/colors", { data: newColor });
-  expect(createResponse.ok()).toBeTruthy();
-
-  // 2. Act - Navigate and interact via UI
-  const homePage = new HomePage(page);
-  await homePage.goto();
-
-  const responsePromise = page.waitForResponse(
-    (resp) =>
-      resp.url().includes(`/api/colors/${newColor.name}`) &&
-      resp.status() === 200,
-  );
-  await page.getByRole("button", { name: "colors.purple" }).click();
-  await responsePromise;
-
-  // 3. Assert - Validating UI reflects the state correctly
-  await expect(homePage.currentColorText).toContainText(newColor.hex);
-
-  // 4. Teardown - Clean up via API to maintain isolation
-  await request.delete(`/api/colors/${newColor.name}`);
-});
-```
-
----
-
-### 14. Test Automation Pyramid: API First
-
-**File:** [`.github/workflows/ci.yml#L124`](/.github/workflows/ci.yml#L124)
-
-#### What is it?
-
-A pipeline execution strategy based on the **Test Automation Pyramid**. It strictly enforces that fast, reliable API test suites must pass before any slower, brittle UI/E2E test suites are executed.
-
-#### Why it matters
-
-- **Fail-Fast Feedback Loop** — If the backend is broken, there is no point in waiting for UI tests to launch, inevitably timeout, and fail. Halting the pipeline immediately saves valuable CI runner minutes.
-- **Root Cause Isolation** — When UI tests fail but API tests pass, the regression is definitively isolated to the frontend presentation layer. Conversely, when API tests fail, it highlights a broken backend contract.
-- **Cost Efficiency** — End-to-end Playwright tests executing full browser automation are computationally expensive compared to executing raw HTTP requests against API endpoints.
-
-#### How to implement
-
-In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step _without_ `continue-on-error`. This instantly fails the workflow if any API endpoints regress. The subsequent E2E steps declare an `if: success()` condition, ensuring they only trigger if the API test step completes flawlessly.
-
-```yaml
-- name: Run API tests (host Playwright)
-  id: api-tests
-  run: npm run test:api
-
-- name: Run end-to-end tests (host Playwright)
-  id: e2e-tests
-  continue-on-error: true
-  if: success()
-  run: npm test
-```
-
----
-
-### 15. API Schema Validation with Zod
-
-**Files:** [`server/index.js#L14`](/server/index.js#L14) · [`e2e/tests/api.spec.ts`](/e2e/tests/api.spec.ts)
+**Files:** [`server/index.js`](https://www.google.com/search?q=/server/index.js) · [`e2e/tests/api.spec.ts`](https://www.google.com/search?q=/e2e/tests/api.spec.ts)
 
 #### What is it?
 
@@ -1168,30 +651,20 @@ This creates a **closed validation loop**: the server rejects malformed input, a
 - **Documentation-as-Code** — The Zod schemas serve as living, executable documentation of the API contract. Unlike an OpenAPI spec that can drift from reality, the Zod schema is enforced at runtime on every single request.
 - **Negative Testing Built In** — It's not enough to test that valid requests succeed. The test suite explicitly verifies that the server **rejects** missing fields, empty strings, and malformed hex codes with the correct HTTP status and error message. This prevents regressions where error handling is accidentally removed during refactoring.
 
-#### How to implement
+**How to implement:**
 
-**Step 1:** Define Zod schemas on the server to validate incoming request bodies.
+**Step 1:** Define Zod schemas on the server.
 
 ```javascript
 // server/index.js
 const { z } = require("zod");
-
 const colorZodSchema = z.object({
-  name: z
-    .string({ required_error: "name is required" })
-    .trim()
-    .min(1, "name cannot be empty"),
-  hex: z
-    .string({ required_error: "hex is required" })
-    .trim()
-    .regex(
-      /^#[0-9A-Fa-f]{6}$/,
-      "hex must be a valid 6-digit hex format (e.g., #1abc9c)",
-    ),
+  name: z.string({ required_error: "name is required" }).trim().min(1),
+  hex: z.string({ required_error: "hex is required" }).trim().regex(/^#[0-9A-Fa-f]{6}$/),
 });
 ```
 
-**Step 2:** Use `safeParse` in route handlers to return structured error messages instead of crashing.
+**Step 2:** Use `safeParse` in Express route handlers.
 
 ```javascript
 app.post("/api/colors", async (req, res) => {
@@ -1199,250 +672,164 @@ app.post("/api/colors", async (req, res) => {
   if (!parseResult.success) {
     return res.status(400).json({ error: parseResult.error.issues[0].message });
   }
-  const { name, hex } = parseResult.data;
-  // ... proceed with validated data
+  // ...
 });
 ```
 
-**Step 3:** In Playwright tests, define a matching Zod schema and parse every API response through it.
+**Step 3:** In Playwright tests, parse every API response through the matching schema.
 
 ```typescript
 // e2e/tests/api.spec.ts
 import { z } from "zod";
-
 const ColorSchema = z.object({
   name: z.string(),
   hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
 });
 
 test("should create a new color with valid schema", async ({ request }) => {
-  const newColor = { name: "Orange", hex: "#ffa500" };
-  const response = await request.post(`/api/colors`, { data: newColor });
-  expect(response.status()).toBe(201);
-
+  const response = await request.post(`/api/colors`, { data: { name: "Orange", hex: "#ffa500" } });
   const data = await response.json();
   ColorSchema.parse(data); // Throws if response shape is wrong
-  expect(data).toEqual(expect.objectContaining(newColor));
 });
 ```
 
-**Step 4:** Write explicit **negative tests** for every validation rule to lock down the error contract.
+**Step 4:** Write explicit negative tests.
 
 ```typescript
 test("should reject missing name", async ({ request }) => {
-  const response = await request.post(`/api/colors`, {
-    data: { hex: "#ffa500" },
-  });
+  const response = await request.post(`/api/colors`, { data: { hex: "#ffa500" } });
   expect(response.status()).toBe(400);
   const data = await response.json();
   expect(data.error).toBe("name is required");
 });
-
-test("should reject invalid hex format", async ({ request }) => {
-  const response = await request.post(`/api/colors`, {
-    data: { name: "Orange", hex: "ffa500" },
-  });
-  expect(response.status()).toBe(400);
-  const data = await response.json();
-  expect(data.error).toContain("hex must be a valid 6-digit hex format");
-});
 ```
 
-#### How to verify
+**How to verify:**
 
 ```bash
 npx playwright test e2e/tests/api.spec.ts
 ```
 
-The output will list all schema validation test results, confirming both positive (valid data accepted) and negative (invalid data rejected with correct status codes and messages) scenarios pass.
+#### 9. Visual Regression & Responsive Testing
 
----
+**File:** [`e2e/tests/visual.spec.ts`](https://www.google.com/search?q=/e2e/tests/visual.spec.ts)
 
-### 16. Random Data Generation with faker.js
+##### What is it?
 
-**File:** [`e2e/tests/random-data.spec.ts`](/e2e/tests/random-data.spec.ts)
+Visual regression testing captures a full-page screenshot and compares it pixel-by-pixel against a previously approved baseline image. If there's a difference, the test fails and generates a visual diff highlighting exactly what changed.
 
-#### What is it?
+##### Why it matters
 
-Using a library like [`@faker-js/faker`](https://fakerjs.dev/) to generate dynamic, randomized test data (names, emails, hex codes, UUIDs) during test execution, rather than using hardcoded static values like `"TestUser"` or `"#ff0000"`.
+- **Catches what functional tests miss** — A CSS change that shifts a button 5 pixels to the left won't break any functional assertion, but it will break a visual snapshot.
+- **Ideal for static content** — Pages like FAQs, landing pages, or dashboards benefit enormously from visual testing because their layout is their primary "feature."
+- **Confidence in refactors** — When refactoring CSS or updating components, visual tests confirm nothing changed unexpectedly.
 
-#### Why it matters
+**How to implement:**
 
-- **Discovers Edge Cases naturally** — Static data like `"John"` never breaks anything. But `faker.person.lastName()` might eventually generate `"O'Connor"`, exposing an unescaped SQL query or a UI component that doesn't handle apostrophes correctly.
-- **Prevents State Collisions** — Hardcoded entities (e.g., `email: "test@example.com"`) often conflict in parallel test executions or dirty databases. Random data guarantees uniqueness (`faker.internet.email()`), allowing tests to run safely in parallel without stomping on each other's state.
-- **Avoids Test Coupling** — Tests shouldn't pass just because they rely on a specific hardcoded shape in the database. Dynamic data forces the test to assert on _system behavior_ rather than predefined constants.
-
-#### How to implement
-
-**Step 1:** Install faker:
-
-```bash
-npm install -D @faker-js/faker
-```
-
-**Step 2:** Generate the data in your test and inject it into the system:
+**Visual Regression:**
 
 ```typescript
-import { test, expect } from "../baseFixtures";
-import { faker } from "@faker-js/faker";
-
-test("should handle randomized color generation", async ({ page, request }) => {
-  // Generate random data
-  const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`;
-  const randomHex = faker.color.rgb();
-
-  // Arrange via API
-  await request.post("/api/colors", {
-    data: { name: randomColorName, hex: randomHex },
+test.describe("Visual Regression", () => {
+  test("homepage should match snapshot", async ({ page }) => {
+    await page.goto("/");
+    await page.waitForSelector("header");
+    const screenshot = await page.screenshot({
+      fullPage: true,
+      mask: [page.locator(".App-logo")], // Mask animated elements!
+    });
+    expect(screenshot).toMatchSnapshot("home.png");
   });
-
-  // Act via UI
-  await page.goto("/");
-  // The system's robustness is tested because it must render
-  // whatever string faker generated, regardless of length or content.
-  await page.getByRole("button", { name: `colors.${randomColorName}` }).click();
-
-  // Assert
-  await expect(page.locator("text=Current color:")).toContainText(randomHex);
 });
 ```
 
-#### How to verify
+**Responsive Design:**
 
-```bash
-npx playwright test e2e/tests/random-data.spec.ts
+```typescript
+test.describe("Responsive Design Testing", () => {
+  test.use({ viewport: { width: 375, height: 667 } }); // iPhone SE
+
+  test("should render correctly on mobile viewport", async ({ page }) => {
+    await page.goto("/");
+    await expect(page.locator("header")).toBeVisible();
+  });
+});
 ```
 
----
+**How to verify:**
 
-### 17. Static Code Analysis with MegaLinter
+```bash
+npx playwright test e2e/tests/visual.spec.ts
+```
 
-**Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml#L32`](/.github/workflows/ci.yml#L32)
+#### 10. Accessibility (a11y) Testing
+
+**File:** [`e2e/tests/a11y.spec.ts`](https://www.google.com/search?q=/e2e/tests/a11y.spec.ts)
 
 #### What is it?
 
-Static code analysis is the practice of examining source code before it is run to find vulnerabilities, bugs, styling errors, and suspicious constructs. We use **[MegaLinter](https://megalinter.io/)**, an open-source framework that aggregates 100+ linters into a single tool to analyze our whole repository.
+Automated accessibility auditing that scans your rendered DOM against the [Web Content Accessibility Guidelines (WCAG)](https://www.w3.org/WAI/standards-guidelines/wcag/). We use [`@axe-core/playwright`](https://github.com/dequelabs/axe-core-npm/tree/develop/packages/playwright) — the same engine used by browser DevTools accessibility audits.
 
-#### Why it matters
+### Why it matters
 
-- **Security & Vulnerabilities** — MegaLinter scans for hardcoded secrets (Secretlint, Gitleaks), Docker misconfigurations (Checkov), and software bill of materials / vulnerabilities (Trivy SBOM).
-- **Code Quality** — Enforces consistent formatting (ESLint, Prettier, jsonlint) across all files, preventing bikeshedding in code reviews and ensuring syntactical correctness.
-- **Spell Checking** — Automatically checks for typos in the codebase (CSpell, Lychee), making the code look professional.
-- **Fail-Fast Feedback** — Catching these errors in the pipeline or locally before testing saves debugging time and prevents dirty code from reaching the main branch.
+- **Inclusivity** — Ensures the application is usable by individuals with visual, motor, or cognitive disabilities.
+- **Legal compliance** — Many jurisdictions require WCAG AA compliance for public-facing web applications.
+- **Regression prevention** — A CSS refactor can silently break color contrast ratios. An automated a11y gate catches it before merge.
+- **Real bugs found** — In this project, the a11y tests uncovered actual contrast violations (white text on yellow/turquoise backgrounds) and missing semantic landmarks (`<main>`, `<h1>`) that were subsequently fixed.
 
-#### How it works
 
-MegaLinter is configured via `.mega-linter.yml` where we specify which directories to include/exclude and which overlapping or overly noisy linters to disable. It runs automatically in our GitHub Actions pipeline (`.github/workflows/ci.yml`) on every pull request.
-
-#### How to verify
-
-You can run MegaLinter locally using the official Docker wrapper to quickly lint the entire project before pushing (requires Docker engine to be running):
+**How to implement:**
 
 ```bash
-npx --yes mega-linter-runner@latest
+npm install -D @axe-core/playwright
 ```
 
----
+```typescript
+// e2e/tests/a11y.spec.ts
+import AxeBuilder from "@axe-core/playwright";
 
-### 18. Parallel Execution & Sharding
-
-**Files:** [`.github/workflows/ci.yml#L167`](/.github/workflows/ci.yml#L167) · [`playwright.config.ts#L11`](/playwright.config.ts#L11)
-
-#### What is it?
-
-Parallel execution runs multiple tests simultaneously on the same machine. Sharding takes this a step further by splitting the entire test suite across multiple identical CI runners (machines), allowing them to execute concurrently and then merging the results back together at the end.
-
-#### Why it matters
-
-- **Massive Time Savings** — As your E2E suite grows, execution time scales linearly. Running 200 tests sequentially could take 30 minutes. By sharding across 4 runners, execution drops to ~8 minutes, restoring the developer feedback loop.
-- **Resource Optimization** — Playwright workers max out CPU usage on a single runner. Sharding distributes this computational load across horizontally scaled CI infrastructure.
-- **Fail-Fast** — Parallelism and rapid sharding ensure failing tests are identified in a fraction of the time.
-
-#### How it works
-
-**1. Local/Playwright Parallelism (`playwright.config.ts`):**
-We enable `fullyParallel: true` in the Playwright config. This tells Playwright to execute individual tests inside the same file simultaneously using independent worker processes, instead of waiting for file-level boundaries. It effectively parallelizes all tests, including BDD tests, speeding up the execution.
-
-**2. CI Sharding Strategy (`ci.yml`):**
-In GitHub Actions, we define a matrix strategy for the `e2e-sharded` job:
-
-```yaml
-strategy:
-  fail-fast: false
-  matrix:
-    shardIndex: [1, 2, 3, 4]
-    shardTotal: [4]
+test("should not have any accessibility issues", async ({ page }) => {
+  await page.goto("/");
+  const results = await new AxeBuilder({ page }).analyze();
+  expect(results.violations).toEqual([]);
+});
 ```
 
-This spawns 4 identical CI runners. Each runner spins up an isolated Docker environment and is passed a specific slice of the test suite via the CLI flag: `--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}`.
+If a violation is found, the output will include the exact rule ID (e.g., `color-contrast`), the failing HTML element, and the specific contrast ratio that failed.
 
-**3. Test Segregation (Non-Sharded vs Sharded):**
-Not all tests are suitable for sharding. In our `ci.yml`, tests are intelligently segregated into two architectural branches:
+### Handling i18n with Accessibility Locators
 
-- `tests-misc`: Runs API, BDD, cross-browser, and **visual regression tests** on a single runner. Visual tests (`visual.spec.ts`) are deliberately excluded from sharding to avoid baseline merging conflicts and to preserve snapshot integrity.
-- `e2e-sharded`: Runs the bulk of the E2E suite using sharding. We specifically exclude visual tests using a regex (`'^(?!.*visual\.spec\.ts).*\.spec\.ts$'`) so they don't break the concurrent shards.
+**File:** [`e2e/tests/a11y.spec.ts`](/e2e/tests/a11y.spec.ts)
 
-**4. Blob Reporting & Fan-In (`ci.yml`):**
-Because the tests execute on different machines, the generated reports are fragmented.
+When an application has different languages, most engineers panic because their trusted English text locators would break once they change the testing language.
 
-- Each shard generates a **blob** report (`--reporter=blob,allure-playwright`) instead of standard HTML reports.
-- We upload these blobs and Allure results as CI artifacts.
-- A final `publish-reports` job acts as the "Fan-In," waiting for all shards and misc tests to finish (`needs: [tests-misc, e2e-sharded]`). It uses `merge-multiple: true` to download all blob and Allure artifacts sequentially across jobs. Finally, it uses `npx playwright merge-reports` to generate a single unified HTML view, and builds a comprehensive Allure report consolidating the history of all shards seamlessly.
+So they abandon accessibility locators and fallback to the dark ages of DOM manipulation. They start writing locators like this:
 
-#### How to verify
+🚩 `page.locator('.form-group .btn.btn-primary .submit-btn')`  
+🚩 `page.locator('//div[@class="login-container"]/div[2]/form/button')`
 
-To test this locally (simulating a single shard):
+This is how flaky pipelines are born, and the confidence in the testing is ruined. A developer adds one extra wrapper `div` for a layout tweak, and your entire test suite breaks.
+
+There is a much cleaner way to handle this in Playwright. Your testing framework just needs a single source of truth. Keep it simple: load the correct language JSON file at runtime (e.g., using an environment variable, test parameters, or straight imports). Then you just pass that dynamic dictionary right back into your resilient Playwright locators:
+
+```typescript
+// Example: locating a button dynamically based on the current testing language
+await page.getByRole("button", { name: i18nConfig.colors.red }).click();
+```
+
+Playwright inserts the correct string automatically. English, French, Spanish, or whatsoever — it does not matter. You keep the user-centric accessibility locators and ditch the brittle DOM paths.
+
+Do not compromise your architecture just because the text changes. Smart systems adapt to the context. Adding an additional language to the framework is done under a minute.
+
+
+**How to verify:**
 
 ```bash
-npx playwright test --shard=1/4
+npx playwright test e2e/tests/a11y.spec.ts
 ```
 
-It will execute only roughly 25% of your test suite.
+#### 11. Performance Testing with k6
 
----
-
-### 19. Quality Gates & Code Coverage
-
-**Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
-
-#### What is it?
-
-A strict validation step in the CI pipeline that automatically fails the build if the end-to-end test code coverage falls below a predefined threshold (80%). We use `nyc check-coverage` to enforce this rule during the comprehensive test run.
-
-#### Why it matters
-
-- **Automated Standard Enforcement** — It guarantees that **"nothing will be added to the codebase without tests."** You don't have to argue during code review about missing tests; the pipeline handles it objectively.
-- **Prevents Technical Debt** — By enforcing coverage on every Pull Request, the codebase maintains its health continuously instead of requiring massive "test refactoring" sprints later.
-- **Confidence in Refactoring** — High, enforced test coverage acts as a safety net, allowing developers to refactor freely with the assurance that they haven't broken existing functionality.
-
-#### How to implement
-
-We define the gate in `package.json` using the Istanbul (`nyc`) CLI:
-
-```json
-"scripts": {
-  "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80"
-}
-```
-
-This script is then hooked into `.github/workflows/ci.yml` right after the coverage report is generated:
-
-```yaml
-- name: Generate code coverage
-  run: npx nyc report --reporter=lcovonly
-
-# Fails the pipeline if code coverage drops below 80%. This ensures no code is merged without adequate tests.
-- name: Enforce 80% Code Coverage Gate
-  run: npm run coverage:check
-```
-
-If the tests do not hit the 80% mark, `nyc` exits with an error code and the GitHub Action job turns red, blocking the Pull Request from being merged.
-
----
-
-### 20. Performance Testing with k6
-
-**Files:** [`performance/api-performance.spec.ts`](/performance/api-performance.spec.ts) · [`performance/ui-performance.spec.ts`](/performance/ui-performance.spec.ts) · [`.github/workflows/ci.yml#L285`](/.github/workflows/ci.yml#L285)
+**Files:** [`performance/api-performance.spec.ts`](https://www.google.com/search?q=/performance/api-performance.spec.ts) · [`performance/ui-performance.spec.ts`](https://www.google.com/search?q=/performance/ui-performance.spec.ts)
 
 #### What is it?
 
@@ -1457,12 +844,9 @@ Performance testing evaluates how the system behaves under load and measures res
 - **Real User Experience** — Backend API speed doesn't matter if the frontend takes 4 seconds to parse a massive JSON payload and paint the DOM. Browser-based k6 tests measure the *actual* perceived performance from the user's perspective.
 - **CI/CD Integration** — Running performance checks in the pipeline prevents "death by a thousand cuts"—small, barely noticeable degradations that accumulate over dozens of PRs until the application is unusable.
 
-#### How to implement
+**How to implement:**
 
-We keep performance tests in a dedicated `performance/` directory so they are isolated from the Functional Playwright E2E suite.
-
-**1. API Load Test (`api-performance.spec.ts`)**:
-Defines a load profile and success thresholds.
+**API Load Test:**
 
 ```javascript
 import http from 'k6/http';
@@ -1470,27 +854,23 @@ import { check, sleep } from 'k6';
 
 export const options = {
   stages: [
-    { duration: '5s', target: 10 }, // Ramp up to 10 users
-    { duration: '10s', target: 10 }, // Hold load for 10s
-    { duration: '5s', target: 0 },   // Ramp down to 0 users
+    { duration: '5s', target: 10 }, 
+    { duration: '10s', target: 10 }, 
+    { duration: '5s', target: 0 },   
   ],
   thresholds: {
     http_req_duration: ['p(95)<500'], // 95% of requests < 500ms
-    http_req_failed: ['rate<0.01'],   // Error rate < 1%
   },
 };
 
 export default function () {
-  const res = http.get('http://127.0.0.1:5001/api/colors');
-  check(res, {
-    'status is 200': (r) => r.status === 200,
-  });
+  const res = http.get('[http://127.0.0.1:5001/api/colors](http://127.0.0.1:5001/api/colors)');
+  check(res, { 'status is 200': (r) => r.status === 200 });
   sleep(1);
 }
 ```
 
-**2. Browser-level UI Test (`ui-performance.spec.ts`)**:
-Uses the k6 browser API (similar to Playwright) to measure rendering and interaction capabilities.
+**Browser-level UI Test:**
 
 ```javascript
 import { browser } from 'k6/experimental/browser';
@@ -1508,32 +888,337 @@ export const options = {
 export default async function () {
   const page = browser.newPage();
   try {
-    await page.goto('http://127.0.0.1:3000');
-    const yellowButton = page.locator('text=Yellow');
-    await yellowButton.click();
-    
-    check(page, {
-      'color updated to yellow': async () => {
-        const text = await page.locator('text=Current color:').textContent();
-        return text.includes('#f1c40f');
-      },
-    });
+    await page.goto('[http://127.0.0.1:3000](http://127.0.0.1:3000)');
+    // ... Check UI interactions
   } finally {
     page.close();
   }
 }
 ```
 
-#### How to verify locally
+**How to verify locally:**
 
-We execute these tests using the `k6` tool natively installed on your machine.
+```bash
+npm run test:perf:api:smoke
+npm run test:perf:ui:load
+```
 
-1. **Smoke Test**: Quick verification of system health under minimal load (1 VU).
-   - **API**: `npm run test:perf:api:smoke`
-   - **UI**: `npm run test:perf:ui:smoke`
+---
 
-2. **Load Test**: Assessment of system behavior under expected production traffic (ramping up VUs).
-   - **API**: `npm run test:perf:api:load`
-   - **UI**: `npm run test:perf:ui:load`
+### Part 3: CI/CD & Execution Strategy
 
-Make sure to install k6 first (e.g., `brew install k6` on macOS or `choco install k6` on Windows), and ensure your application services (`app`, `api`, `mongo`) are running via `docker compose up -d`.
+#### 12. Test Automation Pyramid: API First
+
+**File:** [`.github/workflows/ci.yml`](https://www.google.com/search?q=/.github/workflows/ci.yml)
+
+#### What is it?
+
+A pipeline execution strategy based on the **Test Automation Pyramid**. It strictly enforces that fast, reliable API test suites must pass before any slower, brittle UI/E2E test suites are executed.
+
+#### Why it matters
+
+- **Fail-Fast Feedback Loop** — If the backend is broken, there is no point in waiting for UI tests to launch, inevitably timeout, and fail. Halting the pipeline immediately saves valuable CI runner minutes.
+- **Root Cause Isolation** — When UI tests fail but API tests pass, the regression is definitively isolated to the frontend presentation layer. Conversely, when API tests fail, it highlights a broken backend contract.
+- **Cost Efficiency** — End-to-end Playwright tests executing full browser automation are computationally expensive compared to executing raw HTTP requests against API endpoints.
+
+**How to implement:**
+
+In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step _without_ `continue-on-error`. This instantly fails the workflow if any API endpoints regress. The subsequent E2E steps declare an `if: success()` condition, ensuring they only trigger if the API test step completes flawlessly.
+
+```yaml
+- name: Run API tests (host Playwright)
+  id: api-tests
+  run: npm run test:api
+
+- name: Run end-to-end tests (host Playwright)
+  id: e2e-tests
+  continue-on-error: true
+  if: success() # Only triggers if API tests passed
+  run: npm test
+```
+
+#### 13. Consistent Cross-Platform Testing with Docker
+
+**Files:** [`Dockerfile`](https://www.google.com/search?q=/Dockerfile), [`docker-compose.yml`](https://www.google.com/search?q=/docker-compose.yml)
+
+#### What is it?
+
+A Docker-based testing environment that guarantees identical rendering and test behavior across all machines — developer laptops, CI servers, and staging environments.
+
+#### Why it matters
+
+Visual regression tests are particularly sensitive to cross-platform differences. A screenshot taken on **macOS** will differ from one taken on **Linux** due to subtle variations in:
+
+- **Font rendering** — macOS uses Core Text, Linux uses FreeType — same font, different pixels
+- **Anti-aliasing** — Sub-pixel smoothing algorithms differ between OSes
+- **System fonts** — Default fallback fonts vary across platforms
+
+These differences cause **false positives**: tests pass locally on macOS but fail in Linux-based CI, or vice versa. This erodes trust in the test suite and wastes debugging time.
+
+**How to implement:**
+
+We use Docker with the official [Playwright Docker image](https://hub.docker.com/_/microsoft-playwright) (`mcr.microsoft.com/playwright`) to lock the rendering environment. Our `docker-compose.yml` defines two services:
+
+```dockerfile
+FROM [mcr.microsoft.com/playwright:v1](https://mcr.microsoft.com/playwright:v1)
+
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+COPY . .
+
+CMD ["npm", "test"]
+```
+
+> [!CAUTION]
+> **Local prerequisite — remove BuildKit cache mounts.**
+> Before running locally, replace the cache-mount `RUN` lines in both `Dockerfile` and `server/Dockerfile`:
+> ```dockerfile
+> # ❌ CI-only — remove locally
+> RUN --mount=type=cache,target=/root/.npm \
+>     npm ci --legacy-peer-deps
+> ```
+> 
+> 
+
+> # ✅ Replace with plain npm ci
+> 
+> 
+> RUN npm ci --legacy-peer-deps
+> 
+
+#### 14. Cross-Browser Testing Strategy
+
+**File:** [`playwright.config.ts`](https://www.google.com/search?q=/playwright.config.ts)
+
+#### What is it?
+
+A conditional strategy for running tests across multiple browser engines (Chromium, Firefox, and WebKit) without permanently inflating the CI execution time for every single commit.
+
+#### Why it matters
+
+Many teams configure Playwright to run every test on all three browsers. While this provides great coverage, it multiplies your test execution time by 3. If a PR takes 15 minutes to run UI tests on Chrome, it will take 45 minutes to run all three browsers. This destroys the developer feedback loop.
+
+The best practice here is **Conditional Execution**:
+
+1. **Pull Requests / Local Dev:** Run tests fast on one primary engine (e.g., Chromium).
+2. **Nightly / Release Branches:** Run full regression across all browsers using an environment variable flag.
+
+**How to implement:**
+
+```typescript
+  projects: [
+    {
+      name: "Chrome",
+      use: { ...devices["Desktop Chrome"] },
+    },
+    ...(process.env.CROSS_BROWSER === "true"
+      ? [
+          { name: "Firefox", use: { ...devices["Desktop Firefox"] } },
+          { name: "WebKit",  use: { ...devices["Desktop Safari"] } },
+        ]
+      : []),
+  ],
+```
+
+**How to verify:**
+
+```bash
+npm run test # Fast (Chromium)
+npm run test:cross-browser # Deep coverage (All browsers)
+```
+
+#### 15. Parallel Execution & Sharding
+
+**Files:** [`.github/workflows/ci.yml`](https://www.google.com/search?q=/.github/workflows/ci.yml) · [`playwright.config.ts`](https://www.google.com/search?q=/playwright.config.ts)
+
+#### What is it?
+
+Parallel execution runs multiple tests simultaneously on the same machine. Sharding takes this a step further by splitting the entire test suite across multiple identical CI runners (machines), allowing them to execute concurrently and then merging the results back together at the end.
+
+#### Why it matters
+
+- **Massive Time Savings** — As your E2E suite grows, execution time scales linearly. Running 200 tests sequentially could take 30 minutes. By sharding across 4 runners, execution drops to ~8 minutes, restoring the developer feedback loop.
+- **Resource Optimization** — Playwright workers max out CPU usage on a single runner. Sharding distributes this computational load across horizontally scaled CI infrastructure.
+- **Fail-Fast** — Parallelism and rapid sharding ensure failing tests are identified in a fraction of the time
+
+**How to implement:**
+
+**1. Local/Playwright Parallelism (`playwright.config.ts`):**
+We enable `fullyParallel: true` in the Playwright config. This tells Playwright to execute individual tests inside the same file simultaneously using independent worker processes, instead of waiting for file-level boundaries. It effectively parallelizes all tests, including BDD tests, speeding up the execution.
+
+**2. CI Sharding Strategy (`ci.yml`):**
+In GitHub Actions, we define a matrix strategy for the `e2e-sharded` job:
+
+```yaml
+strategy:
+  fail-fast: false
+  matrix:
+    shardIndex: [1, 2, 3, 4]
+    shardTotal: [4]
+```
+This spawns 4 identical CI runners. Each runner spins up an isolated Docker environment and is passed a specific slice of the test suite via the CLI flag: `--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}`.
+
+**How to verify:**
+
+```bash
+npx playwright test --shard=1/4
+```
+
+#### 16. Nightly Builds & Scheduled Playwright Runs
+
+**File:** [`.github/workflows/ci.yml`](https://www.google.com/search?q=/.github/workflows/ci.yml)
+
+#### What is it?
+
+A scheduled Continuous Integration (CI) run that executes the entire test suite unconditionally at a specific time every day (e.g., midnight), regardless of whether any commits were pushed.
+
+#### Why it matters
+
+- **Cross-Browser Verification** — As discussed in the [Cross-Browser Testing Strategy](#9-cross-browser-testing-strategy), running every test on Firefox, WebKit, and Chrome on every single Pull Request can severely drag down performance. Nightly builds allow you to run the **complete deep-dive matrix** covering all supported platform, OS constraints, and scenarios while the team is asleep.
+- **External Dependency Monitoring** — Real-world apps depend on third-party APIs, CDNs, or downstream services that are frequently out of your control. If a third-party gateway changes its response payload silently, a scheduled regression test will report the failure before morning.
+- **Flaky Test Identification** — Flaky tests manifest more accurately when tested passively alongside other background systemic disturbances. Finding these via scheduled runs increases confidence during fast-moving days.
+
+**How to implement:**
+
+Using GitHub actions, we configure the `schedule` keyword paired with a standard [cron syntax representation](https://crontab.guru/):
+
+```yaml
+on:
+  schedule:
+    - cron: "0 0 * * *" # Executes daily at Midnight UTC
+```
+
+---
+
+### Part 4: Quality Gates & Reporting
+
+#### 17. Static Code Analysis with MegaLinter
+
+**Files:** [`.mega-linter.yml`](https://www.google.com/search?q=/.mega-linter.yml) · [`.github/workflows/ci.yml`](https://www.google.com/search?q=/.github/workflows/ci.yml)
+
+#### What is it?
+
+Static code analysis is the practice of examining source code before it is run to find vulnerabilities, bugs, styling errors, and suspicious constructs. We use **[MegaLinter](https://megalinter.io/)**, an open-source framework that aggregates 100+ linters into a single tool to analyze our whole repository.
+
+#### Why it matters
+
+- **Security & Vulnerabilities** — MegaLinter scans for hardcoded secrets (Secretlint, Gitleaks), Docker misconfigurations (Checkov), and software bill of materials / vulnerabilities (Trivy SBOM).
+- **Code Quality** — Enforces consistent formatting (ESLint, Prettier, jsonlint) across all files, preventing bikeshedding in code reviews and ensuring syntactical correctness.
+- **Spell Checking** — Automatically checks for typos in the codebase (CSpell, Lychee), making the code look professional.
+- **Fail-Fast Feedback** — Catching these errors in the pipeline or locally before testing saves debugging time and prevents dirty code from reaching the main branch.
+
+**How to verify:**
+
+MegaLinter is configured via `.mega-linter.yml` where we specify which directories to include/exclude and which overlapping or overly noisy linters to disable. It runs automatically in our GitHub Actions pipeline (`.github/workflows/ci.yml`) on every pull request.
+
+
+```bash
+npx --yes mega-linter-runner@latest
+```
+
+#### 18. E2E Code Coverage
+
+**Files:** [`e2e/baseFixtures.ts`](https://www.google.com/search?q=/e2e/baseFixtures.ts) · [`e2e/tests/coverage.spec.ts`](https://www.google.com/search?q=/e2e/tests/coverage.spec.ts)
+
+#### What is it?
+
+Code coverage measurement for **end-to-end tests**, not just unit tests. Using [Istanbul/nyc](https://github.com/istanbuljs/nyc), we instrument the application at build time and collect coverage data from the browser during Playwright test execution. This tells you exactly which lines, branches, and functions of your source code are exercised by your E2E suite.
+
+#### Why it matters
+
+- **Identifies blind spots** — Shows which parts of your codebase have no E2E test coverage, guiding you on where to write the next test.
+- **Measures test effectiveness** — A test suite with 200 tests but 30% coverage has fundamental gaps. Coverage metrics make this visible.
+- **CI/CD integration** — Coverage data is uploaded to [Coveralls](https://coveralls.io/) on every push, providing historical trends and PR-level deltas.
+- **Stakeholder communication** — Coverage percentages are easy to understand and share with product managers and engineering leads.
+
+**How to implement:**
+
+The custom `baseFixtures.ts` extends Playwright's test runner to:
+
+1. **Inject** a `beforeunload` listener that serializes Istanbul's `__coverage__` object
+2. **Expose** a `collectIstanbulCoverage` function to the browser context
+3. **Collect** coverage data from every open page after each test completes
+4. **Write** coverage JSON files to `.nyc_output/` with unique UUIDs
+
+**Step 1:** Ensure your build pipeline includes `babel-plugin-istanbul` (controlled via the `USE_BABEL_PLUGIN_ISTANBUL` env var).
+
+**Step 2:** Import from `baseFixtures` instead of `@playwright/test`:
+
+```typescript
+// e2e/tests/coverage.spec.ts
+import { test, expect } from "../baseFixtures"; // ← NOT from @playwright/test
+
+```
+
+**How to verify:**
+
+```bash
+npm run coverage
+
+```
+
+#### 19. Quality Gates & Code Coverage Limits
+
+**Files:** [`package.json`](https://www.google.com/search?q=/package.json) · [`.github/workflows/ci.yml`](https://www.google.com/search?q=/.github/workflows/ci.yml)
+
+#### What is it?
+
+A strict validation step in the CI pipeline that automatically fails the build if the end-to-end test code coverage falls below a predefined threshold (80%). We use `nyc check-coverage` to enforce this rule during the comprehensive test run.
+
+#### Why it matters
+
+- **Automated Standard Enforcement** — It guarantees that **"nothing will be added to the codebase without tests."** You don't have to argue during code review about missing tests; the pipeline handles it objectively.
+- **Prevents Technical Debt** — By enforcing coverage on every Pull Request, the codebase maintains its health continuously instead of requiring massive "test refactoring" sprints later.
+- **Confidence in Refactoring** — High, enforced test coverage acts as a safety net, allowing developers to refactor freely with the assurance that they haven't broken existing functionality.
+
+**How to implement:**
+
+```json
+"scripts": {
+  "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80"
+}
+
+```
+
+In `ci.yml`, this step runs after the main test execution:
+
+```yaml
+- name: Enforce 80% Code Coverage Gate
+  run: npm run coverage:check
+
+```
+
+#### 20. Allure Reports with Historical Data & Flaky Test Detection
+
+**Link:** [Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/)
+
+#### What is it?
+
+[Allure Framework](https://allurereport.org/) is a flexible lightweight multi-language test report tool that not only shows a very concise representation of what has been tested in a neat web report form, but allows everyone participating in the development process to extract maximum useful information from everyday execution of tests. We've integrated `allure-playwright` to automatically generate these reports.
+
+#### Why it matters
+
+- **Historical Data** — Standard Playwright HTML reports are ephemeral; they overwrite on the next run. Allure maintains a history of test executions, allowing you to see trends over time (e.g., "this test has been failing for the last 5 builds").
+- **Flaky Test Detection** — Because Allure tracks history, it can easily identify "flaky" tests—tests that pass and fail intermittently without code changes. This is crucial for maintaining a trustworthy test suite.
+- **Rich Visualizations** — Allure categorizes failures into Product Defects (bugs) and Test Defects (broken tests), providing a clear dashboard for stakeholders to understand the health of the application.
+- **Attachments** — Screenshots (like visual regression diffs), videos, and traces collected by Playwright are natively embedded into the Allure report for easy debugging and also k6 reports.
+
+**How to implement:**
+
+```bash
+npm install -D allure-playwright
+npm install -g allure-commandline
+```
+
+```typescript
+  reporter: process.env.CI
+    ? [["allure-playwright"], ["list"]]
+    : [["html", { open: "never" }], ["allure-playwright"], ["list"]],
+```
+
+**How to verify:**
+
+```bash
+npx allure serve allure-results
+```
