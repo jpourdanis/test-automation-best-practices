@@ -10,10 +10,11 @@
   },
   "smoke": {
     "stages": [
-      { "duration": "10s", "target": 1 }
+      { "duration": "30s", "target": 5 }
     ],
     "thresholds": {
-      "http_req_duration": ["p(95)<500"]
+      "http_req_duration": ["p(95)<500"],
+      "successful_actions_rate": ["rate==1.0"]
     }
   }
 }
