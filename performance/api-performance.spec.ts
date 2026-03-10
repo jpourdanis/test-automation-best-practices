@@ -1,7 +1,7 @@
 import http from 'k6/http';
 import { check, group, sleep } from 'k6';
 import { Counter, Rate } from 'k6/metrics';
-import { getConfig, getRandomNumber } from './utils/utils';
+import { getConfig, getRandomNumber } from './utils/utils.ts';
 
 const API_URL = 'http://127.0.0.1:5001';
 const successfulActionsRate = new Rate('successful_actions_rate');
