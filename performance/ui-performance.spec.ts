@@ -1,29 +1,43 @@
-import http from 'k6/http';
 import { check } from 'k6';
+import { Rate } from 'k6/metrics';
+import http from 'k6/http';
 import { browser } from 'k6/browser';
+import { getConfig } from './utils/utils.ts';
 
 // Base URLs
 const BASE_URL = 'http://127.0.0.1:3000'; // The app is hosted locally on 3000
 const API_URL = 'http://127.0.0.1:5001'; // The API is hosted locally on 5001
 
 const testType = __ENV.TEST_TYPE;
+const successfulActionsRate = new Rate('successful_actions_rate');
 
-// Test Options
+// Load test configurations from external JSON file
+const configs = JSON.parse(open('./configs/test-config.json'));
+const testConfig = getConfig(configs, testType);
+
+// Test Options configuring how k6 executes the script and browser
 export const options = {
+    // Scenarios allow multiple types of tests or traffic patterns in one script
     scenarios: {
+        // 'Browser' is a custom name for this scenario
         Browser: {
-            executor: 'shared-iterations',
-            vus: 10,
-            iterations: 20,
+            // 'ramping-vus' allows using stages from the config
+            executor: 'ramping-vus',
+            stages: testConfig.stages,
+            // Additional options specific to the Browser module
             options: {
                 browser: {
+                    // Start a Chromium-based browser (currently the only supported type)
                     type: 'chromium',
+                    // Run in headless mode (no GUI) for performance and CI compatibility
                     headless: true
                 }
             }
         }
     },
-    thresholds: {
+    // Thresholds define the pass/fail criteria for the test
+    thresholds: testConfig.thresholds || {
+        // 'checks' metric: verify that 100% (rate==1.0) of all check() calls pass
         checks: ['rate==1.0']
     }
 };
@@ -55,18 +69,25 @@ export default async function () {
         const targetColor = 'Yellow';
         
         // Wait for the buttons to be rendered and click the exact one
-        const colorButton = page.locator(`button:has-text("${targetColor}")`);
+        const colorButton = page.locator('button', { hasText: targetColor });
         await colorButton.waitFor({ state: 'visible' });
         await colorButton.click();
         
-        // Locate the text element showing the current color hex
-        const currentColorText = page.locator('text=Current color:');
+        // Locate the text element showing the current color hex and wait for it to update
+        const currentColorText = page.locator('header span', { hasText: '#f1c40f' });
+        await currentColorText.waitFor({ state: 'visible' });
         const textContext = await currentColorText.textContent();
         
         // Assert the update propagated
-        check(page, {
+        const colorUpdated = check(page, {
             'Color updated successfully': () => textContext !== null && textContext.includes('#f1c40f')
         });
+
+        if (isHeaderVisible && colorUpdated) {
+            successfulActionsRate.add(1);
+        } else {
+            successfulActionsRate.add(0);
+        }
 
     } finally {
         page.close();

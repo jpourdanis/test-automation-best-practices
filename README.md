@@ -1528,12 +1528,12 @@ export default async function () {
 
 We execute these tests using the `k6` tool natively installed on your machine.
 
-Make sure to install k6 first (e.g., `brew install k6` on macOS or `choco install k6` on Windows), and ensure your application services (`app`, `api`, `mongo`) are running via `docker compose up -d`, then run:
+1. **Smoke Test**: Quick verification of system health under minimal load (1 VU).
+   - **API**: `npm run test:perf:api:smoke`
+   - **UI**: `npm run test:perf:ui:smoke`
 
-```bash
-# Run API Load Test
-k6 run performance/api-performance.spec.ts
+2. **Load Test**: Assessment of system behavior under expected production traffic (ramping up VUs).
+   - **API**: `npm run test:perf:api:load`
+   - **UI**: `npm run test:perf:ui:load`
 
-# Run UI Browser Test
-npm run test:perf
-```
+Make sure to install k6 first (e.g., `brew install k6` on macOS or `choco install k6` on Windows), and ensure your application services (`app`, `api`, `mongo`) are running via `docker compose up -d`.

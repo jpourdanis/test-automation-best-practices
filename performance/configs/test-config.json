@@ -5,7 +5,7 @@
     ],
     "thresholds": {
       "http_req_duration": ["p(95)<500"],
-      "successful_orders_rate": ["rate>0.9"]
+      "successful_actions_rate": ["rate>0.9"]
     }
   },
   "smoke": {
