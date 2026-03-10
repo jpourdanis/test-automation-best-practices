@@ -29,7 +29,8 @@
     "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80",
     "test:e2e:docker": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts",
     "test:e2e:docker:update": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts --update-snapshots",
-    "test:api": "npx playwright test e2e/tests/api.spec.ts"
+    "test:api": "npx playwright test e2e/tests/api.spec.ts",
+    "test:perf": "cross-env K6_BROWSER_ENABLED=true k6 run performance/ui-performance.spec.ts"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -50,6 +51,7 @@
     "@axe-core/playwright": "^4.11.1",
     "@cucumber/cucumber": "^12.7.0",
     "@faker-js/faker": "^10.3.0",
+    "@types/k6": "^1.6.0",
     "@types/node": "^22.13.10",
     "allure-playwright": "^3.5.0",
     "http-proxy-middleware": "^3.0.5",

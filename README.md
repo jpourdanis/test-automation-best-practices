@@ -32,6 +32,7 @@ A comprehensive reference project demonstrating **test automation engineering be
   - [17. Static Code Analysis with MegaLinter](#17-static-code-analysis-with-megalinter)
   - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
   - [19. Quality Gates & Code Coverage](#19-quality-gates--code-coverage)
+  - [20. Performance Testing with k6](#20-performance-testing-with-k6)
 
 ---
 
@@ -1437,3 +1438,102 @@ This script is then hooked into `.github/workflows/ci.yml` right after the cover
 
 If the tests do not hit the 80% mark, `nyc` exits with an error code and the GitHub Action job turns red, blocking the Pull Request from being merged.
 
+---
+
+### 20. Performance Testing with k6
+
+**Files:** [`performance/api-performance.spec.ts`](/performance/api-performance.spec.ts) · [`performance/ui-performance.spec.ts`](/performance/ui-performance.spec.ts) · [`.github/workflows/ci.yml#L285`](/.github/workflows/ci.yml#L285)
+
+#### What is it?
+
+Performance testing evaluates how the system behaves under load and measures response times and rendering speeds. We use [k6](https://k6.io/), an open-source load testing tool, to implement two distinct types of performance tests:
+- **API Performance Testing**: Simulating hundreds of virtual users (VUs) sending HTTP requests directly to the backend to validate server capacity, throughput, and error rates.
+- **UI Performance Testing**: Using the `k6/experimental/browser` module to launch headless Chromium, simulating a single user interacting with the rendered React application to measure frontend rendering time and layout stability.
+
+#### Why it matters
+
+- **Objective Baselines** — Without performance tests, "the app feels slow" is a subjective opinion. k6 provides hard data: "95% of API requests complete in under 500ms."
+- **Capacity Planning** — Load tests (ramp-up/hold/ramp-down profiles) reveal exactly when and how the system degrades (e.g., database connection pool exhaustion or Node.js event loop lag).
+- **Real User Experience** — Backend API speed doesn't matter if the frontend takes 4 seconds to parse a massive JSON payload and paint the DOM. Browser-based k6 tests measure the *actual* perceived performance from the user's perspective.
+- **CI/CD Integration** — Running performance checks in the pipeline prevents "death by a thousand cuts"—small, barely noticeable degradations that accumulate over dozens of PRs until the application is unusable.
+
+#### How to implement
+
+We keep performance tests in a dedicated `performance/` directory so they are isolated from the Functional Playwright E2E suite.
+
+**1. API Load Test (`api-performance.spec.ts`)**:
+Defines a load profile and success thresholds.
+
+```javascript
+import http from 'k6/http';
+import { check, sleep } from 'k6';
+
+export const options = {
+  stages: [
+    { duration: '5s', target: 10 }, // Ramp up to 10 users
+    { duration: '10s', target: 10 }, // Hold load for 10s
+    { duration: '5s', target: 0 },   // Ramp down to 0 users
+  ],
+  thresholds: {
+    http_req_duration: ['p(95)<500'], // 95% of requests < 500ms
+    http_req_failed: ['rate<0.01'],   // Error rate < 1%
+  },
+};
+
+export default function () {
+  const res = http.get('http://127.0.0.1:5001/api/colors');
+  check(res, {
+    'status is 200': (r) => r.status === 200,
+  });
+  sleep(1);
+}
+```
+
+**2. Browser-level UI Test (`ui-performance.spec.ts`)**:
+Uses the k6 browser API (similar to Playwright) to measure rendering and interaction capabilities.
+
+```javascript
+import { browser } from 'k6/experimental/browser';
+import { check } from 'k6';
+
+export const options = {
+  scenarios: {
+    ui: {
+      executor: 'shared-iterations',
+      options: { browser: { type: 'chromium' } },
+    },
+  },
+};
+
+export default async function () {
+  const page = browser.newPage();
+  try {
+    await page.goto('http://127.0.0.1:3000');
+    const yellowButton = page.locator('text=Yellow');
+    await yellowButton.click();
+    
+    check(page, {
+      'color updated to yellow': async () => {
+        const text = await page.locator('text=Current color:').textContent();
+        return text.includes('#f1c40f');
+      },
+    });
+  } finally {
+    page.close();
+  }
+}
+```
+
+#### How to verify locally
+
+We execute these tests using the `k6` tool natively installed on your machine.
+
+Make sure to install k6 first (e.g., `brew install k6` on macOS or `choco install k6` on Windows), and ensure your application services (`app`, `api`, `mongo`) are running via `docker compose up -d`, then run:
+
+```bash
+# Run API Load Test
+k6 run performance/api-performance.spec.ts
+
+# Run UI Browser Test
+npm run test:perf
+```
