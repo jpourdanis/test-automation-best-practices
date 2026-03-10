@@ -2,7 +2,9 @@ import { check } from 'k6';
 import { Rate } from 'k6/metrics';
 import http from 'k6/http';
 import { browser } from 'k6/browser';
+import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js';
 import { getConfig } from './utils/utils.ts';
+import { generateAllureReport } from './utils/allure-reporter.js';
 
 // Base URLs
 const BASE_URL = 'http://127.0.0.1:3000'; // The app is hosted locally on 3000
@@ -92,4 +94,17 @@ export default async function () {
     } finally {
         page.close();
     }
+}
+
+export function handleSummary(data: any) {
+    const testName = 'UI Performance Test';
+    const fileName = 'ui-performance.spec.ts';
+    const allureResult = generateAllureReport(data, testName, fileName);
+    const uuid = allureResult.uuid;
+
+    return {
+        'stdout': textSummary(data, { indent: ' ', enableColors: true }),
+        [`allure-results/${uuid}-result.json`]: JSON.stringify(allureResult),
+        [`allure-results/${uuid}-attachment.txt`]: textSummary(data, { indent: ' ', enableColors: false }),
+    };
 }

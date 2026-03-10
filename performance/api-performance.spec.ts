@@ -1,7 +1,9 @@
 import http from 'k6/http';
 import { check, group, sleep } from 'k6';
 import { Counter, Rate } from 'k6/metrics';
+import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js';
 import { getConfig, getRandomNumber } from './utils/utils.ts';
+import { generateAllureReport } from './utils/allure-reporter.js';
 
 const API_URL = 'http://127.0.0.1:5001';
 const successfulActionsRate = new Rate('successful_actions_rate');
@@ -66,4 +68,17 @@ export default function () {
     });
 
     sleep(getRandomNumber(1, 3));
+}
+
+export function handleSummary(data: any) {
+    const testName = 'API Performance Test';
+    const fileName = 'api-performance.spec.ts';
+    const allureResult = generateAllureReport(data, testName, fileName);
+    const uuid = allureResult.uuid;
+
+    return {
+        'stdout': textSummary(data, { indent: ' ', enableColors: true }),
+        [`allure-results/${uuid}-result.json`]: JSON.stringify(allureResult),
+        [`allure-results/${uuid}-attachment.txt`]: textSummary(data, { indent: ' ', enableColors: false }),
+    };
 }

@@ -332,12 +332,22 @@ jobs:
           browser: true
 
       - name: Run API Performance Test
-        run: k6 run performance/api-performance.spec.ts
+        run: |
+          mkdir -p allure-results
+          npm run test:perf:api:smoke
 
       - name: Run UI Performance Test
         env:
           K6_BROWSER_ENABLED: true
-        run: k6 run performance/ui-performance.spec.ts
+        run: npm run test:perf:ui:smoke
+
+      - name: Upload k6 Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-k6
+          path: allure-results/**
+          retention-days: 1
 
 
   # ==========================================
@@ -382,7 +392,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: allure-results
-          pattern: allure-results-shard-*
+          pattern: allure-results-*
           merge-multiple: true
 
       # Merges the distributed Playwright blobs into a single readable HTML report
