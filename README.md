@@ -1,6 +1,6 @@
 # Test Automation Best Practices in Action
 
-[![Coverage Status](https://coveralls.io/repos/github/jpourdanis/playwright-test-coverage/badge.svg?branch=main)](https://coveralls.io/github/jpourdanis/playwright-test-coverage?branch=main)
+[![Coverage Status](https://coveralls.io/repos/github/jpourdanis/test-automation-best-practices/badge.svg)](https://coveralls.io/github/jpourdanis/test-automation-best-practices)
 [![CI](https://github.com/jpourdanis/playwright-test-coverage/actions/workflows/ci.yml/badge.svg)](https://github.com/jpourdanis/playwright-test-coverage/actions/workflows/ci.yml)
 
 ![Demo Animation](demo.webp)
