@@ -157,14 +157,6 @@ jobs:
         continue-on-error: true
         run: npm run test:cross-browser
 
-      # Gathers execution coverage data from the tests to measure how much code was exercised
-      - name: Generate code coverage
-        run: npx nyc report --reporter=lcovonly
-
-      # Fails the pipeline if code coverage drops below 80%. This ensures no code is merged without adequate tests.
-      - name: Enforce 80% Code Coverage Gate
-        run: npm run coverage:check
-
       # Executes visual regression checks inside a Docker container for identical pixel rendering
       - name: Run Playwright in Docker Compose for visual regression
         id: visual-tests
@@ -182,8 +174,16 @@ jobs:
           path: |
             test-results/**
             e2e/snapshots/**
-            coverage/**
             allure-results/**
+
+      # Uploads Istanbul coverage data collected by baseFixtures for merging
+      - name: Upload coverage data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nyc-output-misc
+          path: .nyc_output/**
+          retention-days: 1
 
       # Aborts the pipeline at the end if any of the preceding step sets failed
       - name: Fail pipeline if misc tests failed
@@ -273,6 +273,15 @@ jobs:
         with:
           name: e2e-blob-report-${{ matrix.shardIndex }}
           path: blob-report
+          retention-days: 1
+
+      # Uploads Istanbul coverage data from this shard for merging
+      - name: Upload coverage data
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: nyc-output-shard-${{ matrix.shardIndex }}
+          path: .nyc_output/**
           retention-days: 1
 
       # Uploads the raw Allure test result tracking data for this shard fraction
@@ -406,8 +415,24 @@ jobs:
           name: playwright-merged-html-report
           path: playwright-report
 
-      # Publishes the collected unit and workflow test coverage to Coveralls dashboard
-      - name: Upload host-run coverage to Coveralls
+      # Downloads coverage data from all test jobs and merges into .nyc_output
+      - name: Download all coverage data
+        uses: actions/download-artifact@v4
+        with:
+          path: .nyc_output
+          pattern: nyc-output-*
+          merge-multiple: true
+
+      # Generates unified lcov report from merged coverage data
+      - name: Generate merged code coverage
+        run: npx nyc report --reporter=lcovonly
+
+      # Fails the pipeline if code coverage drops below 80%
+      - name: Enforce 80% Code Coverage Gate
+        run: npm run coverage:check
+
+      # Publishes the merged test coverage to Coveralls dashboard
+      - name: Upload coverage to Coveralls
         uses: coverallsapp/github-action@master
         continue-on-error: true
         with:

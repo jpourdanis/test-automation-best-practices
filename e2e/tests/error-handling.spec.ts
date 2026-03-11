@@ -35,4 +35,15 @@ test.describe("UI Error Handling Coverage", () => {
     // Assert that the error line in App.tsx was executed and caught
     expect(errors.some(e => e.includes("Failed to fetch hex for Turquoise"))).toBeTruthy();
   });
+
+  test("should show loading state when API returns empty colors", async ({ homePage, page }) => {
+    // Mock the API to return an empty array to cover the `data.length > 0` false branch
+    await page.route("**/api/colors", (route) =>
+      route.fulfill({ status: 200, contentType: "application/json", body: "[]" })
+    );
+    await homePage.goto();
+
+    // The UI should show "Loading colors..." because the condition `data.length > 0` is false
+    await expect(page.locator("text=Loading colors...")).toBeVisible();
+  });
 });
