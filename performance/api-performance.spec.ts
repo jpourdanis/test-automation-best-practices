@@ -1,8 +1,9 @@
 import http from 'k6/http';
 import { check, group, sleep } from 'k6';
 import { Counter, Rate } from 'k6/metrics';
+import faker from 'k6/x/faker';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js';
-import { getConfig, getRandomNumber } from './utils/utils.ts';
+import { getConfig } from './utils/utils.ts';
 import { generateAllureReport } from './utils/allure-reporter.js';
 
 const API_URL = 'http://127.0.0.1:5001';
@@ -28,8 +29,8 @@ export function setup() {
 }
 
 export default function () {
-    const newColorName = `PerfColor_${Math.random().toString(36).substring(7)}`;
-    const newColorHex = `#${Math.floor(Math.random()*16777215).toString(16).padStart(6, '0')}`;
+    const newColorName = `PerfColor_${faker.strings.lexify('???????')}`;
+    const newColorHex = faker.color.hexColor();
 
     const colorPayload = JSON.stringify({
         name: newColorName,
@@ -67,7 +68,7 @@ export default function () {
         }
     });
 
-    sleep(getRandomNumber(1, 3));
+    sleep(Math.random() * 2 + 1);
 }
 
 export function handleSummary(data: any) {
