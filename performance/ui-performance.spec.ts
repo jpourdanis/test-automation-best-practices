@@ -32,7 +32,7 @@ export const options = {
                     // Start a Chromium-based browser (currently the only supported type)
                     type: 'chromium',
                     // Run in headless mode (no GUI) for performance and CI compatibility
-                    headless: true
+                    headless: true  
                 }
             }
         }
@@ -67,22 +67,29 @@ export default async function () {
             'Homepage header is visible': () => isHeaderVisible
         });
 
-        // Click a color button and verify the change
-        const targetColor = 'Yellow';
+        // Click a random color button and verify the change
+        const testData = [
+            { name: "Turquoise", expectedHex: "#1abc9c" },
+            { name: "Red", expectedHex: "#e74c3c" },
+            { name: "Yellow", expectedHex: "#f1c40f" },
+        ];
+        const randomColor = testData[Math.floor(Math.random() * testData.length)];
+
+  
         
-        // Wait for the buttons to be rendered and click the exact one
-        const colorButton = page.locator('button', { hasText: targetColor });
-        await colorButton.waitFor({ state: 'visible' });
+        // Wait for the buttons to be rendered and click the randomly selected one
+        const colorButton = page.locator('button', { hasText: randomColor.name });
         await colorButton.click();
-        
+        await page.waitForTimeout(1000); //Simulate that the user is thinking.
+          
         // Locate the text element showing the current color hex and wait for it to update
-        const currentColorText = page.locator('header span', { hasText: '#f1c40f' });
+        const currentColorText = page.locator('header span', { hasText: randomColor.expectedHex });
         await currentColorText.waitFor({ state: 'visible' });
         const textContext = await currentColorText.textContent();
-        
+
         // Assert the update propagated
         const colorUpdated = check(page, {
-            'Color updated successfully': () => textContext !== null && textContext.includes('#f1c40f')
+            [`${randomColor.name} color updated successfully`]: () => textContext !== null && textContext.includes(randomColor.expectedHex)
         });
 
         if (isHeaderVisible && colorUpdated) {
