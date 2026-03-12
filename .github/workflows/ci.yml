@@ -327,6 +327,7 @@ jobs:
           path: ${{ env.NYC_OUTPUT_DIR }}
           if-no-files-found: ignore
           retention-days: 1
+          include-hidden-files: true
 
       # Uploads the raw Allure test result tracking data for this shard fraction
       - name: Upload Allure Results for Shard
