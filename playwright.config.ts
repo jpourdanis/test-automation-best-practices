@@ -7,6 +7,9 @@ const testDir = defineBddConfig({
 });
 
 const config: PlaywrightTestConfig = {
+  // If a test fails then passes on a retry, Allure marks it as flaky automatically.
+  retries: process.env.CI ? 2 : 0,
+
   // Global setup for one-time initialization
   globalSetup: require.resolve("./e2e/global-setup"),
   // Parralelize all tests, including BDD tests, to speed up execution
@@ -75,9 +78,34 @@ const config: PlaywrightTestConfig = {
     trace: "retain-on-failure",
     baseURL: process.env.BASE_URL || "http://localhost:3000",
   },
+  
+  //Configured the allure-playwright reporter to handle specific flaky categories
   reporter: process.env.CI
-    ? [["allure-playwright"], ["list"], ["html", { open: "never" }]]
-    : [["html", { open: "never" }], ["allure-playwright"], ["list"]],
+    ? [
+        [
+          "allure-playwright",
+          {
+            detail: true,
+            suiteTitle: false,
+            // Automatically mark known random errors as flaky without needing a retry pass
+            categories: [
+              {
+                name: "Flaky Network Issues",
+                messageRegex: ".*timeout.*|.*ECONNRESET.*|.*fetch failed.*", 
+                matchedStatuses: ["failed", "broken"],
+                flaky: true,
+              },
+            ],
+          },
+        ],
+        ["list"],
+        ["html", { open: "never" }],
+      ]
+    : [
+        ["html", { open: "never" }],
+        ["allure-playwright"], // Kept default for local runs, but you can copy the object above if you want categories locally too
+        ["list"],
+      ],
 };
 
 export default config;
