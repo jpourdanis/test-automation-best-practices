@@ -205,6 +205,7 @@ jobs:
           path: ${{ env.NYC_OUTPUT_DIR }}
           if-no-files-found: ignore
           retention-days: 1
+          include-hidden-files: true
 
       # Aborts the pipeline at the end if any of the preceding step sets failed
       - name: Fail pipeline if misc tests failed
