@@ -42,12 +42,15 @@ export const test = baseTest.extend<{ homePage: HomePage }>({
       "collectIstanbulCoverage",
       (coverageJSON: string) => {
         if (coverageJSON) {
-          // Remap Docker container paths (/app/src/...) to host paths
-          // so nyc can resolve source files and generate valid lcov output
           const coverage = JSON.parse(coverageJSON);
           const remapped: Record<string, any> = {};
-          const srcDir = path.join(process.cwd(), "src");
+          
+          // CRITICAL FIX: Use the host workspace path if in CI, otherwise use local cwd
+          const hostWorkspace = process.env.HOST_WORKSPACE_PATH || process.cwd();
+          const srcDir = path.join(hostWorkspace, "src");
+          
           for (const [key, value] of Object.entries(coverage)) {
+            // Replaces the internal Docker path with the correct host path
             const newPath = key.replace(/^\/app\/src\//, srcDir + "/");
             const entry = value as any;
             entry.path = newPath;
