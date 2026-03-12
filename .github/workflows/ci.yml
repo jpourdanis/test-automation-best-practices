@@ -46,7 +46,6 @@ jobs:
   # ==========================================
   tests-misc:
     name: API, BDD, Visual, Cross-Browser
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       # Checks out the code
@@ -62,12 +61,17 @@ jobs:
       # Installs project dependencies
       - run: npm ci --legacy-peer-deps
 
-      # Restores the Playwright browsers cached in the setup job
-      - name: Restore Playwright browsers
+      # Restores the Playwright browsers (if cached) or installs them if missing
+      - name: Cache Playwright browsers
+        id: playwright-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
 
       # Installs OS-level dependencies required by Playwright browsers (e.g., fonts, libraries)
       - name: Install Playwright OS dependencies
@@ -185,7 +189,6 @@ jobs:
   # ==========================================
   e2e-sharded:
     name: E2E Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
-    needs: setup
     runs-on: ubuntu-latest
     # Strategy matrix allows running multiple instances of this job concurrently
     strategy:
@@ -207,12 +210,17 @@ jobs:
       # Installs project dependencies
       - run: npm ci --legacy-peer-deps
 
-      # Restores Playwright browsers for this runner
-      - name: Restore Playwright browsers
+      # Restores the Playwright browsers (if cached) or installs them if missing
+      - name: Cache Playwright browsers
+        id: playwright-cache
         uses: actions/cache@v4
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
 
       # Installs OS dependencies required by browsers
       - name: Install Playwright OS dependencies
@@ -312,7 +320,6 @@ jobs:
   # ==========================================
   performance-testing:
     name: API & UI Performance Tests
-    needs: setup
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
