@@ -96,6 +96,12 @@ const config: PlaywrightTestConfig = {
                 flaky: true,
               },
             ],
+            links: {
+              issue: {
+                urlTemplate: "https://your-company.atlassian.net/browse/%s",
+                nameTemplate: "Jira: %s",
+              },
+            },
           },
         ],
         ["list"],

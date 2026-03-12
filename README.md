@@ -1243,6 +1243,12 @@ npm install -g allure-commandline
                 flaky: true,
               },
             ],
+            links: {
+              issue: {
+                urlTemplate: "https://your-company.atlassian.net/browse/%s",
+                nameTemplate: "Jira: %s",
+              },
+            },
           },
         ],
         ["list"],
@@ -1272,7 +1278,8 @@ export const test = baseTest.extend<{ homePage: HomePage; allureBddMapper: void 
       if (cleanTag.startsWith('severity:')) allure.severity(cleanTag.split(':')[1]);
       if (cleanTag.startsWith('jira:')) {
         const issueId = cleanTag.split(':')[1];
-        allure.issue(issueId, `https://your-company.atlassian.net/browse/${issueId}`);
+        // Just pass the ID! Playwright config handles the URL formatting.
+        allure.issue(issueId); 
       }
     }
     await use();
