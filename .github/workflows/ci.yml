@@ -40,41 +40,9 @@ jobs:
           # Lint the full codebase on main branch pushes, otherwise only lint changed files in PRs
           VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
-  # ==========================================
-  # 2. SETUP & CACHE (Runs once to save time)
-  # ==========================================
-  setup:
-    name: Install Dependencies
-    runs-on: ubuntu-latest
-    steps:
-      # Checks out the code
-      - uses: actions/checkout@v4
-
-      # Sets up the required Node.js version and enables npm caching for faster installs
-      - name: Use Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 22
-          cache: "npm"
-
-      # Installs project dependencies exactly as defined in package-lock.json
-      - run: npm ci --legacy-peer-deps
-
-      # Caches Playwright's browser binaries to speed up subsequent workflow runs
-      - name: Cache Playwright browsers
-        id: playwright-cache
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ hashFiles('package-lock.json') }}
-
-      # Downloads Playwright browser binaries only if they weren't found in the cache
-      - name: Install Playwright browsers
-        if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
 
   # ==========================================
-  # 3a. NON-SHARDED TESTS (API, BDD, Visual, etc.)
+  # 2a. NON-SHARDED TESTS (API, BDD, Visual, etc.)
   # ==========================================
   tests-misc:
     name: API, BDD, Visual, Cross-Browser
@@ -213,7 +181,7 @@ jobs:
         run: exit 1
 
   # ==========================================
-  # 3b. SHARDED E2E TESTS (Parallel Execution)
+  # 2b. SHARDED E2E TESTS (Parallel Execution)
   # ==========================================
   e2e-sharded:
     name: E2E Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
@@ -340,7 +308,7 @@ jobs:
           retention-days: 1
 
   # ==========================================
-  # 3c. PERFORMANCE TESTS (k6)
+  # 2c. PERFORMANCE TESTS (k6)
   # ==========================================
   performance-testing:
     name: API & UI Performance Tests
@@ -406,7 +374,7 @@ jobs:
 
 
   # ==========================================
-  # 4. REPORTING & PUBLISHING (The Fan-In)
+  # 3. REPORTING & PUBLISHING (The Fan-In)
   # ==========================================
   publish-reports:
     name: Merge Reports & Publish
