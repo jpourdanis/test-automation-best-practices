@@ -10,35 +10,7 @@ import { HomePage } from "./pages/HomePage";
  */
 const istanbulCLIOutput = path.join(process.cwd(), ".nyc_output");
 
-/**
- * Removes the existing coverage directory if it exists
- * This ensures we start with a clean slate for each test run
- */
-function cleanupCoverageDir() {
-  if (fs.existsSync(istanbulCLIOutput)) {
-    try {
-      fs.rmSync(istanbulCLIOutput, { recursive: true, force: true });
-      console.log(`Deleted existing .nyc_output folder`);
-    } catch (err: any) {
-      // Ignore EBUSY or other transient filesystem errors when running
-      // inside containers where the directory may be mounted from the host
-      if (err && err.code === "EBUSY") {
-        console.warn(
-          `Could not remove .nyc_output (EBUSY). Proceeding without cleanup.`,
-        );
-      } else {
-        console.warn(`Could not remove .nyc_output: ${err?.message || err}`);
-      }
-    }
-  }
-}
-
-// Initialize by cleaning up any previous coverage data
-// Only clean up once per process to avoid workers deleting each other's data
-if (!process.env.COVERAGE_CLEANED) {
-  cleanupCoverageDir();
-  process.env.COVERAGE_CLEANED = "true";
-}
+// istanbulCLIOutput is now cleaned up in global-setup.ts
 
 /**
  * Extended Playwright test fixture that adds code coverage collection

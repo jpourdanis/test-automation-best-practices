@@ -82,6 +82,7 @@ services:
       - ./e2e/snapshots:/app/e2e/snapshots
       - ./test-results:/app/test-results
       - ./allure-results:/app/allure-results
+      - ./.nyc_output:/app/.nyc_output
 
 volumes:
   mongo_data:

@@ -7,6 +7,8 @@ const testDir = defineBddConfig({
 });
 
 const config: PlaywrightTestConfig = {
+  // Global setup for one-time initialization
+  globalSetup: require.resolve("./e2e/global-setup"),
   // Parralelize all tests, including BDD tests, to speed up execution
   fullyParallel: true,
   testDir: "e2e",
