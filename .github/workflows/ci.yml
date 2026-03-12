@@ -14,6 +14,7 @@ permissions:
 env:
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
+  NYC_OUTPUT_DIR: .nyc_output
 
 jobs:
   # ==========================================
@@ -164,7 +165,6 @@ jobs:
         run: |
           mkdir -p e2e/snapshots test-results allure-results
           docker compose run --rm playwright e2e/tests/visual.spec.ts
-
       # Packs and uploads the generated test artifacts (reports, traces, snapshots) for download
       - name: Upload Misc Test Artifacts
         if: always()
@@ -275,7 +275,18 @@ jobs:
 
       # Executes precisely the assigned fraction (shard) of the test suite (skipping visual tests)
       - name: Run sharded e2e tests
-        run: npx playwright test '^(?!.*visual\.spec\.ts).*\.spec\.ts$' --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=blob,allure-playwright
+        run: |
+          mkdir -p .nyc_output
+          npx playwright test '^(?!.*visual\.spec\.ts).*\.spec\.ts$' --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=blob,allure-playwright
+
+      # List coverage summary for visibility
+      - name: Coverage Summary (Shard ${{ matrix.shardIndex }})
+        run: |
+          if [ "$(ls -A .nyc_output 2>/dev/null)" ]; then
+            npx nyc report --reporter=text
+          else
+            echo "No coverage data collected in this shard."
+          fi
 
       # Uploads the fragmented Playwright execution data (blob) to be merged later
       - name: Upload blob report
