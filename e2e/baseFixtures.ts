@@ -3,6 +3,7 @@ import * as path from "path";
 import { test as baseTest } from "@playwright/test";
 import { generateUUID } from "./helper";
 import { HomePage } from "./pages/HomePage";
+import * as allure from "allure-js-commons";
 
 /**
  * Directory where Istanbul will store coverage data
@@ -16,11 +17,34 @@ const istanbulCLIOutput = path.join(process.cwd(), ".nyc_output");
  * Extended Playwright test fixture that adds code coverage collection
  * This adds Istanbul coverage support to all tests using this fixture
  */
-export const test = baseTest.extend<{ homePage: HomePage }>({
+export const test = baseTest.extend<{ homePage: HomePage ;allureBddMapper: void}>({
   // Automatically instantiate Page Objects
   homePage: async ({ page }, use) => {
     await use(new HomePage(page));
+    
   },
+
+  // 1. Define the auto-fixture (it runs automatically for every test)
+  allureBddMapper: [async ({}, use, testInfo) => {
+    // 2. Loop through all Gherkin tags applied to the current Scenario
+    for (const tag of testInfo.tags) {
+      const cleanTag = tag.replace('@', ''); // Remove the '@' symbol
+      
+      // 3. Map tags to Allure APIs
+      if (cleanTag.startsWith('epic:')) allure.epic(cleanTag.split(':')[1].replace(/_/g, ' '));
+      if (cleanTag.startsWith('feature:')) allure.feature(cleanTag.split(':')[1].replace(/_/g, ' '));
+      if (cleanTag.startsWith('story:')) allure.story(cleanTag.split(':')[1].replace(/_/g, ' '));
+      if (cleanTag.startsWith('severity:')) allure.severity(cleanTag.split(':')[1]);
+      
+      // Bonus: Turn Jira tags into clickable links in the Allure report!
+      if (cleanTag.startsWith('jira:')) {
+        const issueId = cleanTag.split(':')[1];
+        allure.issue(issueId, `https://your-company.atlassian.net/browse/${issueId}`);
+      }
+    }
+    
+    await use(); // Continue with the test execution
+  }, { auto: true }], // The 'auto: true' flag ensures you don't have to call it manually  
 
   context: async ({ context }, use) => {
     // Add script to collect coverage data before page unload

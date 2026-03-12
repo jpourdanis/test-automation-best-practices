@@ -1,5 +1,13 @@
+@epic:UI_Components
+@feature:Theming
 Feature: Home Page Background Color
+  As a user
+  I want to change the background color
+  So that I can customize my viewing experience
 
+  @story:Background_Color_Customization
+  @severity:normal
+  @jira:UI-456
   Scenario Outline: Change background color
     Given I am on the home page
     When I click the "<color>" color button
