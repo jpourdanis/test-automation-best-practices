@@ -1208,8 +1208,9 @@ In `ci.yml`, this step runs after the main test execution:
 
 #### Why it matters
 
-- **Historical Data** — Standard Playwright HTML reports are ephemeral; they overwrite on the next run. Allure maintains a history of test executions, allowing you to see trends over time (e.g., "this test has been failing for the last 5 builds").
-- **Flaky Test Detection** — Because Allure tracks history, it can easily identify "flaky" tests—tests that pass and fail intermittently without code changes. This is crucial for maintaining a trustworthy test suite.
+- **Flaky Test Detection** — Allure identifies flaky tests through two mechanisms:
+    - **History Tracking:** Tests that pass and fail intermittently across different runs are automatically flagged.
+    - **Automatic Categorization:** Known unstable environments (like network timeouts) can be marked as `flaky` instantly using custom regex patterns in the reporter configuration. This is crucial for maintaining a trustworthy test suite and separating real product bugs from infrastructure noise.
 - **Rich Visualizations** — Allure categorizes failures into Product Defects (bugs) and Test Defects (broken tests), providing a clear dashboard for stakeholders to understand the health of the application.
 - **Attachments** — Screenshots (like visual regression diffs), videos, and traces collected by Playwright are natively embedded into the Allure report for easy debugging and also k6 reports.
 
@@ -1221,9 +1222,35 @@ npm install -g allure-commandline
 ```
 
 ```typescript
+  // playwright.config.ts
+  retries: process.env.CI ? 2 : 0,
+
   reporter: process.env.CI
-    ? [["allure-playwright"], ["list"]]
-    : [["html", { open: "never" }], ["allure-playwright"], ["list"]],
+    ? [
+        [
+          "allure-playwright",
+          {
+            detail: true,
+            suiteTitle: false,
+            // Automatically mark known random errors as flaky without needing a retry pass
+            categories: [
+              {
+                name: "Flaky Network Issues",
+                messageRegex: ".*timeout.*|.*ECONNRESET.*|.*fetch failed.*", 
+                matchedStatuses: ["failed", "broken"],
+                flaky: true,
+              },
+            ],
+          },
+        ],
+        ["list"],
+        ["html", { open: "never" }],
+      ]
+    : [
+        ["html", { open: "never" }],
+        ["allure-playwright"],
+        ["list"],
+      ],
 ```
 
 **How to verify:**
