@@ -1213,6 +1213,8 @@ In `ci.yml`, this step runs after the main test execution:
     - **Automatic Categorization:** Known unstable environments (like network timeouts) can be marked as `flaky` instantly using custom regex patterns in the reporter configuration. This is crucial for maintaining a trustworthy test suite and separating real product bugs from infrastructure noise.
 - **Rich Visualizations** — Allure categorizes failures into Product Defects (bugs) and Test Defects (broken tests), providing a clear dashboard for stakeholders to understand the health of the application.
 - **Attachments** — Screenshots (like visual regression diffs), videos, and traces collected by Playwright are natively embedded into the Allure report for easy debugging and also k6 reports.
+- **BDD Metadata & Tag Mapping** — Automatically maps Gherkin tags (e.g., `@epic`, `@feature`, `@severity`) to Allure's rich metadata. This eliminates the need for manual reporting boilerplate in step definitions and creates a direct link between requirements and test results.
+- **Jira Integration** — Tags like `@jira:UI-456` are automatically converted into clickable links in the report, providing seamless navigation to issue tracking.
 
 **How to implement:**
 
@@ -1251,6 +1253,45 @@ npm install -g allure-commandline
         ["allure-playwright"],
         ["list"],
       ],
+```
+
+#### BDD Metadata & Tag Mapping
+
+To avoid manual reporting boilerplate, we use an auto-fixture that maps Gherkin tags directly to Allure metadata:
+
+```typescript
+// e2e/baseFixtures.ts
+export const test = baseTest.extend<{ homePage: HomePage; allureBddMapper: void }>({
+  // Auto-fixture that maps Gherkin tags to Allure metadata
+  allureBddMapper: [async ({}, use, testInfo) => {
+    for (const tag of testInfo.tags) {
+      const cleanTag = tag.replace('@', '');
+      if (cleanTag.startsWith('epic:')) allure.epic(cleanTag.split(':')[1].replace(/_/g, ' '));
+      if (cleanTag.startsWith('feature:')) allure.feature(cleanTag.split(':')[1].replace(/_/g, ' '));
+      if (cleanTag.startsWith('story:')) allure.story(cleanTag.split(':')[1].replace(/_/g, ' '));
+      if (cleanTag.startsWith('severity:')) allure.severity(cleanTag.split(':')[1]);
+      if (cleanTag.startsWith('jira:')) {
+        const issueId = cleanTag.split(':')[1];
+        allure.issue(issueId, `https://your-company.atlassian.net/browse/${issueId}`);
+      }
+    }
+    await use();
+  }, { auto: true }],
+});
+```
+
+**Gherkin Implementation:**
+
+```gherkin
+@epic:UI_Components
+@feature:Theming
+Feature: Home Page Background Color
+
+  @story:Background_Color_Customization
+  @severity:normal
+  @jira:UI-456
+  Scenario Outline: Change background color
+    ...
 ```
 
 **How to verify:**
