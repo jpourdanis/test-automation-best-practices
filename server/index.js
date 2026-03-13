@@ -31,6 +31,14 @@ const updateColorZodSchema = z.object({
 app.use(cors()) // Enable CORS for all origins
 app.use(express.json()) // Parse incoming JSON request bodies
 
+// Middleware to catch JSON parsing errors and return a JSON response instead of HTML
+app.use((err, req, res, next) => {
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ error: 'Invalid JSON', details: err.message })
+  }
+  next()
+})
+
 // ---------------------------------------------------------------------------
 // Swagger / OpenAPI configuration
 // ---------------------------------------------------------------------------
@@ -98,6 +106,19 @@ app.get('/openapi.json', (req, res) => {
  *         error:
  *           type: string
  *           description: Error message
+ *     UpdateColor:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           minLength: 1
+ *           description: New name for the color
+ *           example: Turquoise
+ *         hex:
+ *           type: string
+ *           pattern: '^#[0-9A-Fa-f]{6}$'
+ *           description: New hex code for the color
+ *           example: "#1abc9c"
  */
 
 // ---------------------------------------------------------------------------
@@ -318,7 +339,7 @@ app.post('/api/colors', async (req, res) => {
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Color'
+ *             $ref: '#/components/schemas/UpdateColor'
  *     responses:
  *       200:
  *         description: Color updated successfully
