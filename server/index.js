@@ -108,7 +108,9 @@ app.get('/openapi.json', (req, res) => {
  *           description: Error message
  *     UpdateColor:
  *       type: object
- *       minProperties: 1
+ *       anyOf:
+ *         - required: [name]
+ *         - required: [hex]
  *       properties:
  *         name:
  *           type: string
@@ -438,6 +440,9 @@ app.delete('/api/colors/:name', async (req, res) => {
     res.status(500).json({ error: 'Failed to delete color' })
   }
 })
+
+// Serve Swagger UI at /api-docs
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
 // ---------------------------------------------------------------------------
 // 405 Method Not Allowed Handler
