@@ -62,6 +62,12 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions)
 // Serve Swagger UI at /api-docs
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
+// Serve OpenAPI spec as JSON at /openapi.json
+app.get('/openapi.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json')
+  res.send(swaggerSpec)
+})
+
 // ---------------------------------------------------------------------------
 // Swagger component schemas (reusable across endpoints)
 // ---------------------------------------------------------------------------
