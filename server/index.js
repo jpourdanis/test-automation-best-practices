@@ -108,6 +108,7 @@ app.get('/openapi.json', (req, res) => {
  *           description: Error message
  *     UpdateColor:
  *       type: object
+ *       minProperties: 1
  *       properties:
  *         name:
  *           type: string
