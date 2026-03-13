@@ -84,10 +84,12 @@ app.get('/openapi.json', (req, res) => {
  *       properties:
  *         name:
  *           type: string
+ *           minLength: 1
  *           description: Human-readable color name
  *           example: Turquoise
  *         hex:
  *           type: string
+ *           pattern: '^#[0-9A-Fa-f]{6}$'
  *           description: Hex color code including the leading #
  *           example: "#1abc9c"
  *     Error:
@@ -255,7 +257,11 @@ app.get('/api/colors/:name', async (req, res) => {
  *             schema:
  *               $ref: '#/components/schemas/Color'
  *       400:
- *         description: Missing required fields (name or hex)
+ *         description: Invalid input data (e.g., empty name, invalid hex format)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       409:
  *         description: A color with that name already exists
  *       500:
@@ -320,6 +326,12 @@ app.post('/api/colors', async (req, res) => {
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Color'
+ *       400:
+ *         description: Invalid input data (e.g., empty name, invalid hex format)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Color not found
  *       500:
@@ -403,6 +415,37 @@ app.delete('/api/colors/:name', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete color' })
   }
+})
+
+// ---------------------------------------------------------------------------
+// 405 Method Not Allowed Handler
+// ---------------------------------------------------------------------------
+
+/**
+ * Middleware to catch methods that are not explicitly defined on existing routes
+ * and return 405 Method Not Allowed instead of 404 Not Found.
+ */
+const allowedMethods = {
+  '/api/colors': ['GET', 'POST'],
+  '/api/colors/:name': ['GET', 'PUT', 'DELETE'],
+  '/openapi.json': ['GET'],
+  '/api-docs': ['GET']
+}
+
+app.all('/api/colors', (req, res, next) => {
+  if (!allowedMethods['/api/colors'].includes(req.method)) {
+    res.setHeader('Allow', allowedMethods['/api/colors'].join(', '))
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors` })
+  }
+  next()
+})
+
+app.all('/api/colors/:name', (req, res, next) => {
+  if (!allowedMethods['/api/colors/:name'].includes(req.method)) {
+    res.setHeader('Allow', allowedMethods['/api/colors/:name'].join(', '))
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors/:name` })
+  }
+  next()
 })
 
 // ---------------------------------------------------------------------------
