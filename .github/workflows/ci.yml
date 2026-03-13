@@ -122,7 +122,7 @@ jobs:
       - name: Run Schemathesis Tests
         uses: schemathesis/action@v2
         with:
-          schema: 'http://127.0.0.1:3000/openapi.json'
+          schema: 'http://127.0.0.1:5001/openapi.json'
       # Runs Behavior-Driven Development (Cucumber) tests
       - name: Run BDD tests
         id: bdd-tests
