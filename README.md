@@ -5,7 +5,7 @@
 
 ![Demo Animation](demo.webp)
 
-A comprehensive reference project demonstrating **test automation engineering best practices** using [Playwright](https://playwright.dev), [Allure Reports](https://allurereport.org/), [k6](https://k6.io/), and [MegaLinter](https://megalinter.io/). This repository goes beyond simple end-to-end tests to showcase the patterns, architectures, and strategies that make a test suite **robust, maintainable, and scalable**.
+A comprehensive reference project demonstrating **test automation engineering best practices** using [Playwright](https://playwright.dev), [Allure Reports](https://allurereport.org/), [k6](https://k6.io/), [Schemathesis](https://schemathesis.readthedocs.io/en/stable/) and [MegaLinter](https://megalinter.io/). This repository goes beyond simple end-to-end tests to showcase the patterns, architectures, and strategies that make a test suite **robust, maintainable, and scalable**.
 
 ## Table of Contents
 
@@ -25,17 +25,18 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [9. Visual Regression & Responsive Testing](#9-visual-regression--responsive-testing)
     - [10. Accessibility (a11y) Testing](#10-accessibility-a11y-testing)
     - [11. Performance Testing with k6](#11-performance-testing-with-k6)
+    - [12. API Property-Based Testing with Schemathesis](#12-api-property-based-testing-with-schemathesis)
   - [Part 3: CI/CD & Execution Strategy](#part-3-cicd--execution-strategy)
-    - [12. Test Automation Pyramid: API First](#12-test-automation-pyramid-api-first)
-    - [13. Consistent Cross-Platform Testing with Docker](#13-consistent-cross-platform-testing-with-docker)
-    - [14. Cross-Browser Testing Strategy](#14-cross-browser-testing-strategy)
-    - [15. Parallel Execution & Sharding](#15-parallel-execution--sharding)
-    - [16. Nightly Builds & Scheduled Playwright Runs](#16-nightly-builds--scheduled-playwright-runs)
+    - [13. Test Automation Pyramid: API First](#13-test-automation-pyramid-api-first)
+    - [14. Consistent Cross-Platform Testing with Docker](#14-consistent-cross-platform-testing-with-docker)
+    - [15. Cross-Browser Testing Strategy](#15-parallel-execution--sharding)
+    - [16. Parallel Execution & Sharding](#16-parallel-execution--sharding)
+    - [17. Nightly Builds & Scheduled Playwright Runs](#17-nightly-builds--scheduled-playwright-runs)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
-    - [17. Static Code Analysis with MegaLinter](#17-static-code-analysis-with-megalinter)
-    - [18. E2E Code Coverage](#18-e2e-code-coverage)
-    - [19. Quality Gates & Code Coverage Limits](#19-quality-gates--code-coverage-limits)
-    - [20. Allure Reports with Historical Data & Flaky Test Detection](#20-allure-reports-with-historical-data--flaky-test-detection)
+    - [18. Static Code Analysis with MegaLinter](#18-static-code-analysis-with-megalinter)
+    - [19. E2E Code Coverage](#19-e2e-code-coverage)
+    - [20. Quality Gates & Code Coverage Limits](#20-quality-gates--code-coverage-limits)
+    - [21. Allure Reports with Historical Data & Flaky Test Detection](#21-allure-reports-with-historical-data--flaky-test-detection)
 
 ---
 
@@ -914,9 +915,60 @@ npm run test:perf:ui:load
 
 ---
 
+#### 12. API Property-Based Testing with Schemathesis
+
+**Files:** [`server/index.js`](/server/index.js) · [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+
+#### What is it?
+
+Property-based testing is a strategy where you define the properties that your system should satisfy, and a tool automatically generates hundreds of edge-case inputs to try and break those properties. We use **[Schemathesis](https://schemathesis.readthedocs.io/)** to perform this against our API by using the OpenAPI/Swagger definition as the source of truth for "valid" and "invalid" data.
+
+#### Why it matters
+
+- **Zero-Effort Test Generation** — Instead of manually writing individual test cases for every possible error, Schemathesis reads your `openapi.json` and generates thousands of requests covering boundary values, malformed JSON, and unexpected data types.
+- **Contract Enforcement** — It ensures your implementation never drifts from your documentation. If your schema says a field is required but your API accepts an empty object, Schemathesis will catch the discrepancy.
+- **Discovery of Hidden Bugs** — It specialized in finding "uncaught exceptions" (500 errors) caused by edge cases you didn't anticipate, such as extremely long strings, null bytes, or deeply nested JSON.
+- **Improved Error Handling** — By forcing the API to handle garbage input, it ensures that the backend consistently returns proper HTTP status codes (like `400 Bad Request` or `405 Method Not Allowed`) instead of crashing.
+
+**How to implement:**
+
+**Step 1:** Serve your OpenAPI schema as a JSON endpoint.
+
+```javascript
+// server/index.js
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
+app.get('/openapi.json', (req, res) => {
+  res.json(swaggerSpec);
+});
+```
+
+**Step 2:** Define clear schema constraints (patterns, min/max length, required fields).
+
+```javascript
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UpdateColor:
+ *       type: object
+ *       anyOf:
+ *         - required: [name]
+ *         - required: [hex]
+ */
+```
+
+**How to verify locally:**
+
+```bash
+# Run Schemathesis tests via Docker
+npm run test:api:schemathesis
+```
+
+---
+
 ### Part 3: CI/CD & Execution Strategy
 
-#### 12. Test Automation Pyramid: API First
+#### 13. Test Automation Pyramid: API First
 
 **File:** [`.github/workflows/ci.yml`](https://www.google.com/search?q=/.github/workflows/ci.yml)
 
@@ -946,7 +998,7 @@ In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step
   run: npm test
 ```
 
-#### 13. Consistent Cross-Platform Testing with Docker
+#### 14. Consistent Cross-Platform Testing with Docker
 
 **Files:** [`Dockerfile`](https://www.google.com/search?q=/Dockerfile), [`docker-compose.yml`](https://www.google.com/search?q=/docker-compose.yml)
 
@@ -996,7 +1048,7 @@ CMD ["npm", "test"]
 > RUN npm ci --legacy-peer-deps
 > 
 
-#### 14. Cross-Browser Testing Strategy
+#### 15. Cross-Browser Testing Strategy
 
 **File:** [`playwright.config.ts`](https://www.google.com/search?q=/playwright.config.ts)
 
@@ -1037,7 +1089,7 @@ npm run test # Fast (Chromium)
 npm run test:cross-browser # Deep coverage (All browsers)
 ```
 
-#### 15. Parallel Execution & Sharding
+#### 16. Parallel Execution & Sharding
 
 **Files:** [`.github/workflows/ci.yml`](https://www.google.com/search?q=/.github/workflows/ci.yml) · [`playwright.config.ts`](https://www.google.com/search?q=/playwright.config.ts)
 
@@ -1074,7 +1126,7 @@ This spawns 4 identical CI runners. Each runner spins up an isolated Docker envi
 npx playwright test --shard=1/4
 ```
 
-#### 16. Nightly Builds & Scheduled Playwright Runs
+#### 17. Nightly Builds & Scheduled Playwright Runs
 
 **File:** [`.github/workflows/ci.yml`](https://www.google.com/search?q=/.github/workflows/ci.yml)
 
@@ -1102,7 +1154,7 @@ on:
 
 ### Part 4: Quality Gates & Reporting
 
-#### 17. Static Code Analysis with MegaLinter
+#### 18. Static Code Analysis with MegaLinter
 
 **Files:** [`.mega-linter.yml`](https://www.google.com/search?q=/.mega-linter.yml) · [`.github/workflows/ci.yml`](https://www.google.com/search?q=/.github/workflows/ci.yml)
 
@@ -1126,7 +1178,7 @@ MegaLinter is configured via `.mega-linter.yml` where we specify which directori
 npx --yes mega-linter-runner@latest
 ```
 
-#### 18. E2E Code Coverage
+#### 19. E2E Code Coverage
 
 **Files:** [`e2e/baseFixtures.ts`](https://www.google.com/search?q=/e2e/baseFixtures.ts) · [`e2e/tests/coverage.spec.ts`](https://www.google.com/search?q=/e2e/tests/coverage.spec.ts)
 
@@ -1167,7 +1219,7 @@ npm run coverage
 
 ```
 
-#### 19. Quality Gates & Code Coverage Limits
+#### 20. Quality Gates & Code Coverage Limits
 
 **Files:** [`package.json`](https://www.google.com/search?q=/package.json) · [`.github/workflows/ci.yml`](https://www.google.com/search?q=/.github/workflows/ci.yml)
 
@@ -1198,7 +1250,7 @@ In `ci.yml`, this step runs after the main test execution:
 
 ```
 
-#### 20. Allure Reports with Historical Data & Flaky Test Detection
+#### 21. Allure Reports with Historical Data & Flaky Test Detection
 
 **Link:** [Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/)
 
