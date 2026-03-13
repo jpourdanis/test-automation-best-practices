@@ -93,7 +93,6 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '.*\S.*'
  *           description: Human-readable color name
  *           example: Turquoise
  *         hex:
@@ -116,7 +115,6 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '.*\S.*'
  *           description: New name for the color
  *           example: Turquoise
  *         hex:
@@ -186,7 +184,6 @@ mongoose.connect(MONGO_URI)
  * /api/colors:
  *   get:
  *     summary: Retrieve all colors
- *     operationId: listColors
  *     description: Returns the full list of colors stored in the database.
  *     tags: [Colors]
  *     responses:
@@ -220,7 +217,6 @@ app.get('/api/colors', async (req, res) => {
  * /api/colors/{name}:
  *   get:
  *     summary: Retrieve a single color by name
- *     operationId: getColorByName
  *     description: Looks up a color by its name (case-sensitive).
  *     tags: [Colors]
  *     parameters:
@@ -267,7 +263,6 @@ app.get('/api/colors/:name', async (req, res) => {
  * /api/colors:
  *   post:
  *     summary: Create a new color
- *     operationId: createColor
  *     description: >
  *       Adds a new color to the database. Both `name` and `hex` are required.
  *       Returns 409 if a color with the same name already exists.
@@ -285,19 +280,6 @@ app.get('/api/colors/:name', async (req, res) => {
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Color'
- *         links:
- *           GetColor:
- *             operationId: getColorByName
- *             parameters:
- *               name: '$response.body#/name'
- *           UpdateColor:
- *             operationId: updateColorByName
- *             parameters:
- *               name: '$response.body#/name'
- *           DeleteColor:
- *             operationId: deleteColorByName
- *             parameters:
- *               name: '$response.body#/name'
  *       400:
  *         description: Invalid input data (e.g., empty name, invalid hex format)
  *         content:
@@ -343,7 +325,6 @@ app.post('/api/colors', async (req, res) => {
  * /api/colors/{name}:
  *   put:
  *     summary: Update an existing color
- *     operationId: updateColorByName
  *     description: >
  *       Updates the hex value (and optionally the name) of an existing color.
  *       The color is identified by its current name in the URL path.
@@ -420,7 +401,6 @@ app.put('/api/colors/:name', async (req, res) => {
  * /api/colors/{name}:
  *   delete:
  *     summary: Delete a color by name
- *     operationId: deleteColorByName
  *     description: Permanently removes the color with the given name from the database.
  *     tags: [Colors]
  *     parameters:

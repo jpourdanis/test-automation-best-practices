@@ -120,6 +120,8 @@ jobs:
 
       # Runs property-based API tests using Schemathesis
       - name: Run Schemathesis Tests
+        id: schemathesis-tests
+        continue-on-error: true
         uses: schemathesis/action@v2
         with:
           schema: 'http://127.0.0.1:5001/openapi.json'
@@ -186,7 +188,7 @@ jobs:
 
       # Aborts the pipeline at the end if any of the preceding step sets failed
       - name: Fail pipeline if misc tests failed
-        if: steps.api-tests.outcome == 'failure' || steps.bdd-tests.outcome == 'failure' || steps.cross-browser-tests.outcome == 'failure' || steps.visual-tests.outcome == 'failure'
+        if: always() && (steps.api-tests.outcome == 'failure' || steps.schemathesis-tests.outcome == 'failure' || steps.bdd-tests.outcome == 'failure' || steps.cross-browser-tests.outcome == 'failure' || steps.visual-tests.outcome == 'failure')
         run: exit 1
 
   # ==========================================
