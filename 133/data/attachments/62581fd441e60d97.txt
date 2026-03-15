@@ -1,0 +1,33 @@
+     ✓ Homepage header is visible
+     ✓ Yellow color updated successfully
+     ✓ Turquoise color updated successfully
+     ✓ Red color updated successfully
+
+     browser_data_received..........: 46 MB   1.4 MB/s
+     browser_data_sent..............: 32 kB   1.0 kB/s
+     browser_http_req_duration......: avg=34.95ms  min=5.1ms    med=15.58ms  max=329.33ms p(90)=85.67ms  p(95)=108.36ms
+     browser_http_req_failed........: 0.00%   ✓ 0                    ✗ 156
+     browser_web_vital_cls..........: avg=0.010639 min=0.010538 med=0.010607 max=0.010965 p(90)=0.010785 p(95)=0.010837
+     browser_web_vital_fcp..........: avg=359.53ms min=208ms    med=294ms    max=904ms    p(90)=456ms    p(95)=793ms   
+     browser_web_vital_fid..........: avg=838.46µs min=299.99µs med=500µs    max=3.9ms    p(90)=1.25ms   p(95)=1.97ms  
+     browser_web_vital_inp..........: avg=16.61ms  min=8ms      med=16ms     max=32ms     p(90)=20ms     p(95)=24ms    
+     browser_web_vital_lcp..........: avg=359.53ms min=208ms    med=294ms    max=904ms    p(90)=456ms    p(95)=793ms   
+     browser_web_vital_ttfb.........: avg=11.75ms  min=4ms      med=5.84ms   max=62.6ms   p(90)=18.75ms  p(95)=51.85ms 
+     checks.........................: 100.00% ✓ 52                   ✗ 0  
+     data_received..................: 371 B   12 B/s
+     data_sent......................: 80 B    2.4944115831171763 B/s
+     http_req_blocked...............: avg=188.32µs min=188.32µs med=188.32µs max=188.32µs p(90)=188.32µs p(95)=188.32µs
+     http_req_connecting............: avg=136.28µs min=136.28µs med=136.28µs max=136.28µs p(90)=136.28µs p(95)=136.28µs
+   ✓ http_req_duration..............: avg=2.99ms   min=2.99ms   med=2.99ms   max=2.99ms   p(90)=2.99ms   p(95)=2.99ms  
+       { expected_response:true }...: avg=2.99ms   min=2.99ms   med=2.99ms   max=2.99ms   p(90)=2.99ms   p(95)=2.99ms  
+     http_req_failed................: 0.00%   ✓ 0                    ✗ 1  
+     http_req_receiving.............: avg=72.35µs  min=72.35µs  med=72.35µs  max=72.35µs  p(90)=72.35µs  p(95)=72.35µs 
+     http_req_sending...............: avg=49.55µs  min=49.55µs  med=49.55µs  max=49.55µs  p(90)=49.55µs  p(95)=49.55µs 
+     http_req_tls_handshaking.......: avg=0s       min=0s       med=0s       max=0s       p(90)=0s       p(95)=0s      
+     http_req_waiting...............: avg=2.87ms   min=2.87ms   med=2.87ms   max=2.87ms   p(90)=2.87ms   p(95)=2.87ms  
+     http_reqs......................: 1       0.03118/s
+     iteration_duration.............: avg=2.29s    min=1.72s    med=1.92s    max=5.97s    p(90)=2.38s    p(95)=5.08s   
+     iterations.....................: 26      0.810684/s
+   ✓ successful_actions_rate........: 100.00% ✓ 26                   ✗ 0  
+     vus............................: 1       min=1                  max=4
+     vus_max........................: 5       min=5                  max=5
