@@ -86,7 +86,7 @@ test.describe("Backend API Integration", () => {
       const response = await request.post(`/api/colors`, { data: { name: "", hex: "#ffa500" } });
       expect(response.status()).toBe(400);
       const data = await response.json();
-      expect(data.error).toBe("name cannot be empty");
+      expect(data.error).toBe("name must contain at least one alphanumeric character");
     });
 
     test("should reject missing hex", async ({ request }) => {
@@ -132,7 +132,7 @@ test.describe("Backend API Integration", () => {
       const response = await request.put(`/api/colors/Turquoise`, { data: { name: "" } });
       expect(response.status()).toBe(400);
       const data = await response.json();
-      expect(data.error).toBe("name cannot be empty");
+      expect(data.error).toBe("name must contain at least one alphanumeric character");
     });
 
     test("should reject omitting both name and hex on update", async ({ request }) => {

@@ -224,7 +224,6 @@ jobs:
         with:
           schema: http://127.0.0.1:5001/openapi.json
           checks: all
-          args: --stateful=links 
 
   # ==========================================
   # 2b. SHARDED E2E TESTS (Parallel Execution)

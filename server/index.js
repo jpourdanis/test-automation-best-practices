@@ -12,14 +12,16 @@ const app = express()
 // ---------------------------------------------------------------------------
 
 const colorZodSchema = z.object({
-  name: z.string({ required_error: 'name is required' }).trim().min(1, 'name cannot be empty'),
+  name: z.string({ required_error: 'name is required' })
+    .trim()
+    .regex(/[a-zA-Z0-9]/, 'name must contain at least one alphanumeric character'),
   hex: z.string({ required_error: 'hex is required' })
     .trim()
     .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format (e.g., #1abc9c)')
 })
 
 const updateColorZodSchema = z.object({
-  name: z.string().trim().min(1, 'name cannot be empty').optional(),
+  name: z.string().trim().regex(/[a-zA-Z0-9]/, 'name must contain at least one alphanumeric character').optional(),
   hex: z.string().trim().regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format').optional()
 }).refine(data => data.name !== undefined || data.hex !== undefined, {
   message: 'At least one field to update must be provided'
@@ -93,7 +95,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '\S'
+ *           pattern: '[a-zA-Z0-9]'
  *           description: Human-readable color name
  *           example: Turquoise
  *         hex:
@@ -116,7 +118,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '\S'
+ *           pattern: '[a-zA-Z0-9]'
  *           description: New name for the color
  *           example: Turquoise
  *         hex:
