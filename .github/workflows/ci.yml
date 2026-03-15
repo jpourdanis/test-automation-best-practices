@@ -219,10 +219,12 @@ jobs:
           }
           wait_for http://127.0.0.1:5001/api/colors
       
-      - name: Run Schemathesis Tests
+      - name: Run schemathesis tests
         uses: schemathesis/action@v2
         with:
-          schema: 'http://127.0.0.1:5001/openapi.json'
+          schema: http://127.0.0.1:5001/openapi.json
+          checks: all
+          args: --stateful=links 
 
   # ==========================================
   # 2b. SHARDED E2E TESTS (Parallel Execution)
