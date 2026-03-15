@@ -831,11 +831,44 @@ Playwright inserts the correct string automatically. English, French, Spanish, o
 Do not compromise your architecture just because the text changes. Smart systems adapt to the context. Adding an additional language to the framework is done under a minute.
 
 
+
+### Accessibility Score via Google Lighthouse
+
+**File:** [`e2e/tests/a11y.spec.ts`](/e2e/tests/a11y.spec.ts)
+
+While Axe scans the DOM for specific violations, **Google Lighthouse** provides a weighted accessibility score from 0 to 100. We integrate Lighthouse into our Playwright suite using `playwright-lighthouse` to ensure the application maintains a premium accessibility rating (Threshold > 90).
+
+#### Why it matters
+
+- **Comprehensive Score** — Provides a high-level metric that reflects the overall accessibility health of the page.
+- **Performance-Aware** — Lighthouse audits often reveal issues related to how the page loads and becomes interactive, which Axe might miss.
+- **CI/CD Quality Gate** — By setting a strict threshold (e.g., 90+), we prevent any PR from being merged if it degrades the overall accessibility of the application.
+
+#### How to implement:
+
+```typescript
+import { playAudit } from "playwright-lighthouse";
+
+test("should meet the accessibility threshold using Google Lighthouse", async ({ page }) => {
+  await playAudit({
+    page: page,
+    thresholds: {
+      accessibility: 90,
+    },
+    port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0),
+  });
+});
+```
+
+> [!NOTE]
+> We use a dynamic port calculation (`9222 + workerIndex`) to allow multiple Lighthouse audits to run in parallel without port conflicts.
+
 **How to verify:**
 
 ```bash
-npx playwright test e2e/tests/a11y.spec.ts
+npx playwright test e2e/tests/a11y.spec.ts -g "Lighthouse"
 ```
+
 
 #### 11. Performance Testing with k6
 
