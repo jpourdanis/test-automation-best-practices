@@ -8,7 +8,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "Test Automation Best Practices demo API",
   "dependencies": {
     "cors": "^2.8.6",
     "express": "^5.2.1",

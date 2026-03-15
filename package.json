@@ -1,6 +1,6 @@
 {
-  "name": "create-react-app-coverage",
-  "version": "0.1.0",
+  "name": "test-automation-best-practices",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "@playwright/test": "^1.51.1",

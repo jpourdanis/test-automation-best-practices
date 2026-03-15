@@ -54,7 +54,7 @@ const swaggerOptions = {
       version: '1.0.0',
       description:
         'A simple CRUD API for managing colors, backed by MongoDB. ' +
-        'This API is used by the Playwright Test Coverage demo application.'
+        'This API is used by the Test Automation Best Practices demo application.'
     },
     servers: [
       {
