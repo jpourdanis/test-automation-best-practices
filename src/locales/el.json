@@ -8,5 +8,6 @@
     "red": "Κόκκινο",
     "yellow": "Κίτρινο"
   },
-  "languageSelector": "Επιλογή Γλώσσας"
+  "languageSelector": "Επιλογή Γλώσσας",
+  "changeColor": "Αλλαγή φόντου σε"
 }

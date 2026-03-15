@@ -22,7 +22,9 @@ const App = () => {
   }, []);
 
   const changeLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    i18n.changeLanguage(e.target.value);
+    const lang = e.target.value;
+    i18n.changeLanguage(lang);
+    document.documentElement.lang = lang;
   }
 
   const handleColorClick = async (colorName: string) => {
@@ -63,11 +65,15 @@ const App = () => {
           >
             {t('learnReact')}
           </a>
-          <span>{t('currentColor')} {backgroundColor}</span>
+          <span aria-live="polite">{t('currentColor')} {backgroundColor}</span>
           <div className="btn-group-colors">
             {colors.length > 0 ? (
               colors.map(c => (
-                <button key={c.name} onClick={() => handleColorClick(c.name)}>
+                <button 
+                  key={c.name} 
+                  onClick={() => handleColorClick(c.name)}
+                  aria-label={`${t('changeColor')} ${t(`colors.${c.name.toLowerCase()}`)}`}
+                >
                   {t(`colors.${c.name.toLowerCase()}`)}
                 </button>
               ))

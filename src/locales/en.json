@@ -8,5 +8,6 @@
     "red": "Red",
     "yellow": "Yellow"
   },
-  "languageSelector": "Select Language"
+  "languageSelector": "Select Language",
+  "changeColor": "Change background to"
 }

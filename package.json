@@ -61,7 +61,9 @@
     "@types/node": "^22.13.10",
     "allure-playwright": "^3.5.0",
     "http-proxy-middleware": "^3.0.5",
+    "lighthouse": "^12.8.2",
     "playwright-bdd": "^8.4.2",
+    "playwright-lighthouse": "^4.0.0",
     "zod": "^4.3.6"
   }
 }

@@ -1,5 +1,6 @@
 import { test, expect } from "../baseFixtures";
 import AxeBuilder from "@axe-core/playwright";
+import { playAudit } from "playwright-lighthouse";
 
 /**
  * Test Suite: Accessibility Tests
@@ -55,6 +56,31 @@ test.describe("Accessibility Tests", () => {
       (v) => v.id === "color-contrast"
     );
     expect(contrastViolations).toEqual([]);
+  });
+
+  /**
+   * Test: Accessibility Score via Google Lighthouse
+   * 
+   * Runs a full Lighthouse accessibility audit on the page. Unlike Axe, 
+   * Lighthouse provides a weighted score (from 0 to 100) based on multiple 
+   * accessibility categories. We enforce a high bar (threshold > 90) to 
+   * guarantee premium compliance.
+   */
+  test("should meet the accessibility threshold using Google Lighthouse", async ({
+    homePage, page,
+  }) => {
+
+    // Wait for the main elements to render
+    await expect(homePage.header).toBeVisible();
+
+    // Run the Lighthouse audit
+    await playAudit({
+      page: page,
+      thresholds: {
+        accessibility: 90,
+      },
+      port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0),
+    });
   });
 });
 

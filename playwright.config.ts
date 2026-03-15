@@ -33,6 +33,9 @@ const config: PlaywrightTestConfig = {
       name: "Chrome",
       use: {
         ...devices["Desktop Chrome"],
+        launchOptions: {
+          args: [`--remote-debugging-port=${9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)}`],
+        },
       },
       // Exclude BDD tests from the default Chrome run to avoid duplicate runs
       testIgnore: /.*\.feature\.spec.*$/,
