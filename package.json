@@ -35,7 +35,8 @@
     "test:perf:ui:smoke": "K6_BROWSER_ENABLED=true TEST_TYPE=smoke k6 run performance/ui-performance.spec.ts",
     "test:perf:ui:load": "K6_BROWSER_ENABLED=true TEST_TYPE=load k6 run performance/ui-performance.spec.ts",
     "test:perf": "npm run test:perf:ui:smoke",
-    "test:api:schemathesis": "docker run --rm schemathesis/schemathesis run http://host.docker.internal:5001/openapi.json"
+    "test:api:schemathesis": "docker run --rm schemathesis/schemathesis run http://host.docker.internal:5001/openapi.json",
+    "docker:up": "docker-compose up -d --build"
   },
   "eslintConfig": {
     "extends": "react-app"

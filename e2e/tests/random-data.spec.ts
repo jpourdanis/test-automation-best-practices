@@ -33,12 +33,14 @@ test.describe("Random Data Testing with faker.js", () => {
 
     // Since this random string isn't in our english translation file (en.json), 
     // i18next falls back to the key "colors.<randomColorName>".
-    const customBtn = page.getByRole("button", { name: `colors.${newColor.name}` });
+    // We use .toLowerCase() to match the App.tsx implementation: {t(`colors.${c.name.toLowerCase()}`)}
+    const customBtn = page.getByRole("button", { name: `colors.${newColor.name.toLowerCase()}` });
     
     // We use Playwright's waitForResponse to avoid static waits natively, 
     // ensuring fast and deterministic execution.
+    // We use encodeURIComponent to handle potential spaces or special characters in the name.
     const responsePromise = page.waitForResponse(
-      (resp) => resp.url().includes(`/api/colors/${newColor.name}`) && resp.status() === 200
+      (resp) => resp.url().includes(`/api/colors/${encodeURIComponent(newColor.name)}`) && resp.status() === 200
     );
     await customBtn.click();
     await responsePromise;
