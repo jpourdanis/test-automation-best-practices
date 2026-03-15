@@ -1,6 +1,13 @@
 import { test, expect } from "../baseFixtures";
 import { convertHexToRGB, extractHexColor } from "../helper";
 
+/**
+ * Test Suite: Coverage Verification
+ * 
+ * This suite focuses on ensuring that the basic UI functionality is covered
+ * and that the background color logic works as expected. It also serves
+ * as a baseline for Istanbul code coverage collection.
+ */
 test.beforeEach(async ({ page }) => {
   await page.goto("/");
 });

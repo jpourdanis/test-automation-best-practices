@@ -5,6 +5,16 @@ const ColorSchema = z.object({
   name: z.string(),
   hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
 });
+/**
+ * Test Suite: Backend API Integration
+ *
+ * This suite verifies the core REST API endpoints for the Colors service.
+ * it ensures that GET, POST, PUT, and DELETE operations work correctly
+ * and that the data returned matches the expected schema using Zod for validation.
+ *
+ * This suite follows a contract-testing-lite approach by validating the
+ * live API responses against the shared type definitions.
+ */
 test.describe("Backend API Integration", () => {
   const expectedColors = [
     { name: "Turquoise", hex: "#1abc9c" },
@@ -12,6 +22,10 @@ test.describe("Backend API Integration", () => {
     { name: "Yellow", hex: "#f1c40f" },
   ];
 
+  /**
+   * Test Group: GET /api/colors/:name
+   * Verifies that each seed color can be retrieved individually.
+   */
   for (const color of expectedColors) {
     test(`GET /api/colors/${color.name} should return the correct hex code`, async ({ request }) => {
       const response = await request.get(`/api/colors/${color.name}`);
@@ -34,6 +48,10 @@ test.describe("Backend API Integration", () => {
     });
   }
 
+  /**
+   * Negative Test: GET /api/colors
+   * Verifies that the list of all colors is returned correctly.
+   */
   test("GET /api/colors should return all colors", async ({ request }) => {
     const response = await request.get(`/api/colors`);
     expect(response.status()).toBe(200);
@@ -42,6 +60,10 @@ test.describe("Backend API Integration", () => {
     expect(data.length).toBeGreaterThanOrEqual(3);
   });
 
+  /**
+   * Negative Test: GET /api/colors/:name
+   * Verifies that the API correctly handles requests for colors that do not exist.
+   */
   test("GET /api/colors/:name should return 404 for non-existent color", async ({ request }) => {
     const response = await request.get(`/api/colors/DoesNotExist`);
     expect(response.status()).toBe(404);
@@ -49,7 +71,15 @@ test.describe("Backend API Integration", () => {
     expect(data.error).toBe("Color not found");
   });
 
+  /**
+   * Test Group: POST /api/colors
+   * Verifies the creation of new colors and strict schema validation for input data.
+   */
   test.describe("POST /api/colors Schema Validation", () => {
+    /**
+     * Positive Test: Color Creation
+     * Verifies that a valid color object can be successfully created and persisted.
+     */
     test("should create a new color with valid schema", async ({ request }) => {
       const newColor = { name: "Orange", hex: "#ffa500" };
       const response = await request.post(`/api/colors`, { data: newColor });
@@ -104,7 +134,15 @@ test.describe("Backend API Integration", () => {
     });
   });
 
+  /**
+   * Test Group: PUT /api/colors/:name
+   * Verifies that existing colors can be updated and that input validation is enforced.
+   */
   test.describe("PUT /api/colors/:name Schema Validation", () => {
+    /**
+     * Positive Test: Color Update
+     * Verifies that an existing color's properties can be updated.
+     */
     test("should update a color with valid schema", async ({ request }) => {
       const tempColor = { name: "TempUpdate", hex: "#112233" };
       await request.post(`/api/colors`, { data: tempColor });
@@ -150,7 +188,15 @@ test.describe("Backend API Integration", () => {
     });
   });
 
+  /**
+   * Test Group: DELETE /api/colors/:name
+   * Verifies that colors can be removed from the system.
+   */
   test.describe("DELETE /api/colors/:name", () => {
+    /**
+     * Positive Test: Color Deletion
+     * Verifies that an existing color can be deleted successfully.
+     */
     test("should delete an existing color", async ({ request }) => {
       const color = { name: "ToDelete", hex: "#333333" };
       await request.post(`/api/colors`, { data: color });
