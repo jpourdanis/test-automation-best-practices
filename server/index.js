@@ -21,7 +21,7 @@ const colorZodSchema = z.object({
 })
 
 const updateColorZodSchema = z.object({
-  name: z.string().trim().regex(/[a-zA-Z0-9]/, 'name must contain at least one alphanumeric character').optional(),
+  name: z.string().trim().regex(/^[a-zA-Z0-9 ]+$/, 'name must contain at least one alphanumeric character').optional(),
   hex: z.string().trim().regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format').optional()
 }).refine(data => data.name !== undefined || data.hex !== undefined, {
   message: 'At least one field to update must be provided'
