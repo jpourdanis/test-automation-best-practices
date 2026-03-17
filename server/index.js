@@ -14,7 +14,7 @@ const app = express()
 const colorZodSchema = z.object({
   name: z.string({ required_error: 'name is required' })
     .trim()
-    .regex(/[a-zA-Z0-9]/, 'name must contain at least one alphanumeric character'),
+    .regex(/^[a-zA-Z0-9 ]+$/, 'name must contain at least one alphanumeric character'),
   hex: z.string({ required_error: 'hex is required' })
     .trim()
     .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format (e.g., #1abc9c)')
