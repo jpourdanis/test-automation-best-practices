@@ -95,7 +95,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '[a-zA-Z0-9]'
+ *           pattern: '^[a-zA-Z0-9 ]+$'
  *           description: Human-readable color name
  *           example: Turquoise
  *         hex:
@@ -118,7 +118,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '[a-zA-Z0-9]'
+ *           pattern: '^[a-zA-Z0-9 ]+$'
  *           description: New name for the color
  *           example: Turquoise
  *         hex:
