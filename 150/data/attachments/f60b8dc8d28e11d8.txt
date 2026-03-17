@@ -1,0 +1,6 @@
+
+
+-------- playwright lighthouse audit reports --------
+
+
+accessibility record is 95 and desired threshold was 90
