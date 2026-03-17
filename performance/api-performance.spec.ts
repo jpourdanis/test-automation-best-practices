@@ -29,7 +29,7 @@ export function setup() {
 }
 
 export default function () {
-    const newColorName = `PerfColor_${faker.strings.lexify('???????')}`;
+    const newColorName = faker.string.alpha(10);
     const newColorHex = faker.color.hexColor();
 
     const colorPayload = JSON.stringify({

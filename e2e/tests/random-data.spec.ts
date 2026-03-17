@@ -16,7 +16,7 @@ test.describe("Random Data Testing with faker.js", () => {
   test("should create dynamic random color via API and verify through UI", async ({ homePage, page, request }) => {
     // Generate a uniquely prefixed name to avoid any potential DB collisions
     // e2e_random_<word>
-    const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`;
+    const randomColorName = faker.string.alpha(10);
     const randomHex = faker.color.rgb();
     
     const newColor = { name: randomColorName, hex: randomHex };
