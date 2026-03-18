@@ -78,12 +78,26 @@ jobs:
         run: npx playwright install-deps
 
       # Configures Docker Buildx to enable advanced build features like layer caching
+      # config-inline wires the GHA cache backend into the BuildKit daemon so that
+      # the cache_from/cache_to: type=gha entries in docker-compose.yml are honoured.
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
           driver-opts: |
             image=moby/buildkit:latest
             network=host
+          config-inline: |
+            [registry]
+            [worker.oci]
+              max-parallelism = 4
+            [worker.containerd]
+              max-parallelism = 4
+
+            [cache]
+              [cache.gha]
+                token = "${{ env.ACTIONS_RUNTIME_TOKEN }}"
+                url   = "${{ env.ACTIONS_CACHE_URL }}"
+                scope = "buildkit"
 
       # Spins up the application frontend, backend API, and MongoDB database via Docker
       - name: Start app service (Docker Compose)
@@ -199,6 +213,18 @@ jobs:
           driver-opts: |
             image=moby/buildkit:latest
             network=host
+          config-inline: |
+            [registry]
+            [worker.oci]
+              max-parallelism = 4
+            [worker.containerd]
+              max-parallelism = 4
+
+            [cache]
+              [cache.gha]
+                token = "${{ env.ACTIONS_RUNTIME_TOKEN }}"
+                url   = "${{ env.ACTIONS_CACHE_URL }}"
+                scope = "buildkit"
 
       - name: Start app service (Docker Compose)
         run: docker compose up -d --build api mongo
@@ -283,6 +309,18 @@ jobs:
           driver-opts: |
             image=moby/buildkit:latest
             network=host
+          config-inline: |
+            [registry]
+            [worker.oci]
+              max-parallelism = 4
+            [worker.containerd]
+              max-parallelism = 4
+
+            [cache]
+              [cache.gha]
+                token = "${{ env.ACTIONS_RUNTIME_TOKEN }}"
+                url   = "${{ env.ACTIONS_CACHE_URL }}"
+                scope = "buildkit"
 
       # Completely isolated environment spin-up for this exact shard runner
       - name: Start app service (Docker Compose)
@@ -380,6 +418,18 @@ jobs:
           driver-opts: |
             image=moby/buildkit:latest
             network=host
+          config-inline: |
+            [registry]
+            [worker.oci]
+              max-parallelism = 4
+            [worker.containerd]
+              max-parallelism = 4
+
+            [cache]
+              [cache.gha]
+                token = "${{ env.ACTIONS_RUNTIME_TOKEN }}"
+                url   = "${{ env.ACTIONS_CACHE_URL }}"
+                scope = "buildkit"
 
       - name: Start app service (Docker Compose)
         run: docker compose up -d --build app api mongo
