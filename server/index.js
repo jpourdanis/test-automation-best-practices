@@ -1,45 +1,70 @@
-const express = require('express')
-const mongoose = require('mongoose')
-const cors = require('cors')
-const swaggerJsdoc = require('swagger-jsdoc')
-const swaggerUi = require('swagger-ui-express')
-const { z } = require('zod')
+const express = require("express");
+const mongoose = require("mongoose");
+const cors = require("cors");
+const swaggerJsdoc = require("swagger-jsdoc");
+const swaggerUi = require("swagger-ui-express");
+const { z } = require("zod");
 
-const app = express()
+const app = express();
 
 // ---------------------------------------------------------------------------
 // Validation Schemas
 // ---------------------------------------------------------------------------
 
-const colorZodSchema = z.object({
-  name: z.string({ required_error: 'name is required' })
-    .trim()
-    .regex(/^[a-zA-Z0-9 ]+$/, 'name must contain at least one alphanumeric character'),
-  hex: z.string({ required_error: 'hex is required' })
-    .trim()
-    .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format (e.g., #1abc9c)')
-})
+// Strict regex: allows spaces, but REQUIRES at least one letter or number
+const STRICT_NAME_REGEX = /^[a-zA-Z0-9 ]*[a-zA-Z0-9][a-zA-Z0-9 ]*$/;
+const STRICT_NAME_MSG =
+  "name must contain alphanumeric characters and spaces only, and at least one alphanumeric character";
 
-const updateColorZodSchema = z.object({
-  name: z.string().trim().regex(/^[a-zA-Z0-9 ]+$/, 'name must contain at least one alphanumeric character').optional(),
-  hex: z.string().trim().regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format').optional()
-}).refine(data => data.name !== undefined || data.hex !== undefined, {
-  message: 'At least one field to update must be provided'
-})
+const colorZodSchema = z
+  .object({
+    name: z
+      .string({ required_error: "name is required" })
+      .trim()
+      .regex(STRICT_NAME_REGEX, STRICT_NAME_MSG),
+    hex: z
+      .string({ required_error: "hex is required" })
+      .trim()
+      .regex(
+        /^#[0-9A-Fa-f]{6}$/,
+        "hex must be a valid 6-digit hex format (e.g., #1abc9c)",
+      ),
+  })
+  .strict();
+
+const updateColorZodSchema = z
+  .object({
+    name: z
+      .string()
+      .trim()
+      .regex(STRICT_NAME_REGEX, STRICT_NAME_MSG)
+      .optional(),
+    hex: z
+      .string()
+      .trim()
+      .regex(/^#[0-9A-Fa-f]{6}$/, "hex must be a valid 6-digit hex format")
+      .optional(),
+  })
+  .strict()
+  .refine((data) => data.name !== undefined || data.hex !== undefined, {
+    message: "At least one field to update must be provided",
+  });
 
 // ---------------------------------------------------------------------------
 // Middleware
 // ---------------------------------------------------------------------------
-app.use(cors()) // Enable CORS for all origins
-app.use(express.json()) // Parse incoming JSON request bodies
+app.use(cors()); // Enable CORS for all origins
+app.use(express.json()); // Parse incoming JSON request bodies
 
 // Middleware to catch JSON parsing errors and return a JSON response instead of HTML
 app.use((err, req, res, next) => {
-  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
-    return res.status(400).json({ error: 'Invalid JSON', details: err.message })
+  if (err instanceof SyntaxError && err.status === 400 && "body" in err) {
+    return res
+      .status(400)
+      .json({ error: "Invalid JSON", details: err.message });
   }
-  next()
-})
+  next();
+});
 
 // ---------------------------------------------------------------------------
 // Swagger / OpenAPI configuration
@@ -48,35 +73,35 @@ app.use((err, req, res, next) => {
 /** @type {import('swagger-jsdoc').Options} */
 const swaggerOptions = {
   definition: {
-    openapi: '3.0.0',
+    openapi: "3.0.0",
     info: {
-      title: 'Colors API',
-      version: '1.0.0',
+      title: "Colors API",
+      version: "1.0.0",
       description:
-        'A simple CRUD API for managing colors, backed by MongoDB. ' +
-        'This API is used by the Test Automation Best Practices demo application.'
+        "A simple CRUD API for managing colors, backed by MongoDB. " +
+        "This API is used by the Test Automation Best Practices demo application.",
     },
     servers: [
       {
         url: `http://localhost:${process.env.PORT || 5001}`,
-        description: 'Local development server'
-      }
-    ]
+        description: "Local development server",
+      },
+    ],
   },
   // Scan this file for JSDoc @swagger annotations
-  apis: [__filename]
-}
+  apis: [__filename],
+};
 
-const swaggerSpec = swaggerJsdoc(swaggerOptions)
+const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 // Serve Swagger UI at /api-docs
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // Serve OpenAPI spec as JSON at /openapi.json
-app.get('/openapi.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json')
-  res.send(swaggerSpec)
-})
+app.get("/openapi.json", (req, res) => {
+  res.setHeader("Content-Type", "application/json");
+  res.send(swaggerSpec);
+});
 
 // ---------------------------------------------------------------------------
 // Swagger component schemas (reusable across endpoints)
@@ -88,6 +113,7 @@ app.get('/openapi.json', (req, res) => {
  *   schemas:
  *     Color:
  *       type: object
+ *       additionalProperties: false
  *       required:
  *         - name
  *         - hex
@@ -95,7 +121,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '^[a-zA-Z0-9 ]+$'
+ *           pattern: '^[a-zA-Z0-9 ]*[a-zA-Z0-9][a-zA-Z0-9 ]*$'
  *           description: Human-readable color name
  *           example: Turquoise
  *         hex:
@@ -111,6 +137,7 @@ app.get('/openapi.json', (req, res) => {
  *           description: Error message
  *     UpdateColor:
  *       type: object
+ *       additionalProperties: false
  *       anyOf:
  *         - required: [name]
  *         - required: [hex]
@@ -118,7 +145,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '^[a-zA-Z0-9 ]+$'
+ *           pattern: '^[a-zA-Z0-9 ]*[a-zA-Z0-9][a-zA-Z0-9 ]*$'
  *           description: New name for the color
  *           example: Turquoise
  *         hex:
@@ -132,15 +159,15 @@ app.get('/openapi.json', (req, res) => {
 // MongoDB connection
 // ---------------------------------------------------------------------------
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/colorsdb'
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/colorsdb";
 
 // Define Color Schema
 const colorSchema = new mongoose.Schema({
   name: String,
-  hex: String
-})
+  hex: String,
+});
 
-const Color = mongoose.model('Color', colorSchema)
+const Color = mongoose.model("Color", colorSchema);
 
 // ---------------------------------------------------------------------------
 // Seed initial data
@@ -152,28 +179,29 @@ const Color = mongoose.model('Color', colorSchema)
  */
 const seedDatabase = async () => {
   const defaultColors = [
-    { name: 'Turquoise', hex: '#1abc9c' },
-    { name: 'Red', hex: '#e74c3c' },
-    { name: 'Yellow', hex: '#f1c40f' }
-  ]
+    { name: "Turquoise", hex: "#1abc9c" },
+    { name: "Red", hex: "#e74c3c" },
+    { name: "Yellow", hex: "#f1c40f" },
+  ];
 
   try {
     // Clear and re-seed the DB on startup
-    await Color.deleteMany({})
-    await Color.insertMany(defaultColors)
-    console.log('Database seeded with default colors')
+    await Color.deleteMany({});
+    await Color.insertMany(defaultColors);
+    console.log("Database seeded with default colors");
   } catch (error) {
-    console.error('Error seeding database:', error)
+    console.error("Error seeding database:", error);
   }
-}
+};
 
 // Connect to MongoDB
-mongoose.connect(MONGO_URI)
+mongoose
+  .connect(MONGO_URI)
   .then(async () => {
-    console.log(`Connected to MongoDB at ${MONGO_URI}`)
-    await seedDatabase()
+    console.log(`Connected to MongoDB at ${MONGO_URI}`);
+    await seedDatabase();
   })
-  .catch((err) => console.error('Could not connect to MongoDB:', err))
+  .catch((err) => console.error("Could not connect to MongoDB:", err));
 
 // ===========================================================================
 // API Endpoints
@@ -202,15 +230,15 @@ mongoose.connect(MONGO_URI)
  *       500:
  *         description: Server error
  */
-app.get('/api/colors', async (req, res) => {
+app.get("/api/colors", async (req, res) => {
   try {
     // Return all colors, hiding internal MongoDB __v and _id
-    const colors = await Color.find({}, { _id: 0, __v: 0 })
-    res.json(colors)
+    const colors = await Color.find({}, { _id: 0, __v: 0 });
+    res.json(colors);
   } catch (error) {
-    res.status(500).json({ error: 'Error fetching colors' })
+    res.status(500).json({ error: "Error fetching colors" });
   }
-})
+});
 
 // ---------------------------------------------------------------------------
 // GET /api/colors/:name – Get a single color by name
@@ -243,20 +271,20 @@ app.get('/api/colors', async (req, res) => {
  *       500:
  *         description: Server error
  */
-app.get('/api/colors/:name', async (req, res) => {
+app.get("/api/colors/:name", async (req, res) => {
   try {
     const color = await Color.findOne(
       { name: req.params.name },
-      { _id: 0, __v: 0 }
-    )
+      { _id: 0, __v: 0 },
+    );
     if (!color) {
-      return res.status(404).json({ error: 'Color not found' })
+      return res.status(404).json({ error: "Color not found" });
     }
-    res.json(color)
+    res.json(color);
   } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch color' })
+    res.status(500).json({ error: "Failed to fetch color" });
   }
-})
+});
 
 // ---------------------------------------------------------------------------
 // POST /api/colors – Create a new color
@@ -295,30 +323,32 @@ app.get('/api/colors/:name', async (req, res) => {
  *       500:
  *         description: Server error
  */
-app.post('/api/colors', async (req, res) => {
+app.post("/api/colors", async (req, res) => {
   try {
-    const parseResult = colorZodSchema.safeParse(req.body)
+    const parseResult = colorZodSchema.safeParse(req.body);
     if (!parseResult.success) {
-      return res.status(400).json({ error: parseResult.error.issues[0].message })
+      return res
+        .status(400)
+        .json({ error: parseResult.error.issues[0].message });
     }
-    const { name, hex } = parseResult.data
+    const { name, hex } = parseResult.data;
 
     // Prevent duplicate color names
-    const existing = await Color.findOne({ name })
+    const existing = await Color.findOne({ name });
     if (existing) {
-      return res.status(409).json({ error: `Color "${name}" already exists` })
+      return res.status(409).json({ error: `Color "${name}" already exists` });
     }
 
     // Create and persist the new color
-    const color = await Color.create({ name, hex })
+    const color = await Color.create({ name, hex });
 
     // Return the created color without internal fields
-    res.status(201).json({ name: color.name, hex: color.hex })
+    res.status(201).json({ name: color.name, hex: color.hex });
   } catch (error) {
-    console.error('POST /api/colors error:', error)
-    res.status(500).json({ error: 'Failed to create color' })
+    console.error("POST /api/colors error:", error);
+    res.status(500).json({ error: "Failed to create color" });
   }
-})
+});
 
 // ---------------------------------------------------------------------------
 // PUT /api/colors/:name – Update an existing color
@@ -365,36 +395,38 @@ app.post('/api/colors', async (req, res) => {
  *       500:
  *         description: Server error
  */
-app.put('/api/colors/:name', async (req, res) => {
+app.put("/api/colors/:name", async (req, res) => {
   try {
-    const parseResult = updateColorZodSchema.safeParse(req.body)
+    const parseResult = updateColorZodSchema.safeParse(req.body);
     if (!parseResult.success) {
-      return res.status(400).json({ error: parseResult.error.issues[0].message })
+      return res
+        .status(400)
+        .json({ error: parseResult.error.issues[0].message });
     }
-    const { name, hex } = parseResult.data
+    const { name, hex } = parseResult.data;
 
     // Build the update payload – only include provided fields
-    const update = {}
-    if (name) update.name = name
-    if (hex) update.hex = hex
+    const update = {};
+    if (name) update.name = name;
+    if (hex) update.hex = hex;
 
     // Find by current name and apply the update, returning the new document
     const color = await Color.findOneAndUpdate(
       { name: req.params.name },
       update,
-      { new: true, projection: { _id: 0, __v: 0 } }
-    )
+      { new: true, projection: { _id: 0, __v: 0 } },
+    );
 
     if (!color) {
-      return res.status(404).json({ error: 'Color not found' })
+      return res.status(404).json({ error: "Color not found" });
     }
 
-    res.json(color)
+    res.json(color);
   } catch (error) {
-    console.error('PUT /api/colors/:name error:', error)
-    res.status(500).json({ error: 'Failed to update color' })
+    console.error("PUT /api/colors/:name error:", error);
+    res.status(500).json({ error: "Failed to update color" });
   }
-})
+});
 
 // ---------------------------------------------------------------------------
 // DELETE /api/colors/:name – Delete a color
@@ -431,22 +463,19 @@ app.put('/api/colors/:name', async (req, res) => {
  *       500:
  *         description: Server error
  */
-app.delete('/api/colors/:name', async (req, res) => {
+app.delete("/api/colors/:name", async (req, res) => {
   try {
-    const color = await Color.findOneAndDelete({ name: req.params.name })
+    const color = await Color.findOneAndDelete({ name: req.params.name });
 
     if (!color) {
-      return res.status(404).json({ error: 'Color not found' })
+      return res.status(404).json({ error: "Color not found" });
     }
 
-    res.json({ message: `Color "${req.params.name}" deleted successfully` })
+    res.json({ message: `Color "${req.params.name}" deleted successfully` });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to delete color' })
+    res.status(500).json({ error: "Failed to delete color" });
   }
-})
-
-// Serve Swagger UI at /api-docs
-app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+});
 
 // ---------------------------------------------------------------------------
 // 405 Method Not Allowed Handler
@@ -457,34 +486,38 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
  * and return 405 Method Not Allowed instead of 404 Not Found.
  */
 const allowedMethods = {
-  '/api/colors': ['GET', 'POST'],
-  '/api/colors/:name': ['GET', 'PUT', 'DELETE'],
-  '/openapi.json': ['GET'],
-  '/api-docs': ['GET']
-}
+  "/api/colors": ["GET", "POST"],
+  "/api/colors/:name": ["GET", "PUT", "DELETE"],
+  "/openapi.json": ["GET"],
+  "/api-docs": ["GET"],
+};
 
-app.all('/api/colors', (req, res, next) => {
-  if (!allowedMethods['/api/colors'].includes(req.method)) {
-    res.setHeader('Allow', allowedMethods['/api/colors'].join(', '))
-    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors` })
+app.all("/api/colors", (req, res, next) => {
+  if (!allowedMethods["/api/colors"].includes(req.method)) {
+    res.setHeader("Allow", allowedMethods["/api/colors"].join(", "));
+    return res
+      .status(405)
+      .json({ error: `Method ${req.method} not allowed on /api/colors` });
   }
-  next()
-})
+  next();
+});
 
-app.all('/api/colors/:name', (req, res, next) => {
-  if (!allowedMethods['/api/colors/:name'].includes(req.method)) {
-    res.setHeader('Allow', allowedMethods['/api/colors/:name'].join(', '))
-    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors/:name` })
+app.all("/api/colors/:name", (req, res, next) => {
+  if (!allowedMethods["/api/colors/:name"].includes(req.method)) {
+    res.setHeader("Allow", allowedMethods["/api/colors/:name"].join(", "));
+    return res
+      .status(405)
+      .json({ error: `Method ${req.method} not allowed on /api/colors/:name` });
   }
-  next()
-})
+  next();
+});
 
 // ---------------------------------------------------------------------------
 // Start the server
 // ---------------------------------------------------------------------------
 
-const PORT = process.env.PORT || 5001
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`)
-  console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`)
-})
+const PORT = process.env.PORT || 5001;
+app.listen(PORT, "0.0.0.0", () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`);
+});
