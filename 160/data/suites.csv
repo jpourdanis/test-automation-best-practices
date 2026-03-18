@@ -1,0 +1,71 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","585","should create color via API and verify through UI","Chrome","Wed Mar 18 15:23:32 UTC 2026","passed","Wed Mar 18 15:23:32 UTC 2026","Hybrid E2E Testing","tests/hybrid.spec.ts","",""
+"","1733","should maintain accessibility in es language and verify resilient locators","Chrome","Wed Mar 18 15:23:56 UTC 2026","passed","Wed Mar 18 15:23:58 UTC 2026","i18n Accessibility Tests","tests/a11y.spec.ts","",""
+"","16","GET /api/colors should return all colors","Chrome","Wed Mar 18 15:24:00 UTC 2026","passed","Wed Mar 18 15:24:00 UTC 2026","Backend API Integration","tests/api.spec.ts","",""
+"","23","should reject updating with empty name","Chrome","Wed Mar 18 15:23:55 UTC 2026","passed","Wed Mar 18 15:23:55 UTC 2026","Backend API Integration > PUT /api/colors/:name Schema Validation","tests/api.spec.ts","",""
+"","1541","PUT /api/colors/{name}","","","passed","","","schemathesis","",""
+"Performance Test: API Performance Test
+File: api-performance.spec.ts
+Total Iterations: 1108313
+Max VUs: 4
+
+HTTP Request Duration:
+- Avg: 6.75ms
+- P(95): 6.75ms
+- Max: 6.75ms
+
+Full metrics attached in the results.","7449","API Performance Test","Performance","Wed Mar 18 15:23:06 UTC 2026","passed","Wed Mar 18 15:23:14 UTC 2026","api-performance.spec.ts","API Performance Test","",""
+"","562","changing color to Yellow should reflect in UI and DOM","Chrome","Wed Mar 18 15:23:59 UTC 2026","passed","Wed Mar 18 15:23:59 UTC 2026","Data-Driven Testing","tests/data-driven.spec.ts","",""
+"","225","should return 404 for non-existent color deletion","Chrome","Wed Mar 18 15:23:56 UTC 2026","passed","Wed Mar 18 15:23:57 UTC 2026","Backend API Integration > DELETE /api/colors/:name","tests/api.spec.ts","",""
+"","421","should create dynamic random color via API and verify through UI","Chrome","Wed Mar 18 15:23:34 UTC 2026","passed","Wed Mar 18 15:23:35 UTC 2026","Random Data Testing with faker.js","tests/random-data.spec.ts","",""
+"","519","should handle missing image gracefully by showing alt text","Chrome","Wed Mar 18 15:23:32 UTC 2026","passed","Wed Mar 18 15:23:33 UTC 2026","Network Mocking & Interception","tests/network-mocking.spec.ts","",""
+"","2417","GET /api/colors/{name}","","","passed","","","schemathesis","",""
+"","141","should return 409 for duplicate color creation","Chrome","Wed Mar 18 15:23:54 UTC 2026","passed","Wed Mar 18 15:23:54 UTC 2026","Backend API Integration > POST /api/colors Schema Validation","tests/api.spec.ts","",""
+"","121","should create a new color with valid schema","Chrome","Wed Mar 18 15:23:54 UTC 2026","passed","Wed Mar 18 15:23:54 UTC 2026","Backend API Integration > POST /api/colors Schema Validation","tests/api.spec.ts","",""
+"","21","GET /api/colors/Yellow should return the correct hex code","Chrome","Wed Mar 18 15:24:00 UTC 2026","passed","Wed Mar 18 15:24:00 UTC 2026","Backend API Integration","tests/api.spec.ts","",""
+"","649","changing color to Turquoise should reflect in UI and DOM","Chrome","Wed Mar 18 15:23:58 UTC 2026","passed","Wed Mar 18 15:23:59 UTC 2026","Data-Driven Testing","tests/data-driven.spec.ts","",""
+"","639","should show loading state when API returns empty colors","Chrome","Wed Mar 18 15:23:31 UTC 2026","passed","Wed Mar 18 15:23:32 UTC 2026","UI Error Handling Coverage","tests/error-handling.spec.ts","",""
+"","2131","should not have any automatically detectable accessibility issues","Chrome","Wed Mar 18 15:23:52 UTC 2026","passed","Wed Mar 18 15:23:54 UTC 2026","Accessibility Tests","tests/a11y.spec.ts","",""
+"","621","should load the application and verify core functionality across browsers","Chrome","Wed Mar 18 15:23:58 UTC 2026","passed","Wed Mar 18 15:23:59 UTC 2026","Cross-Browser Core Functionality","tests/cross-browser.spec.ts","",""
+"","2091","should maintain accessibility after state change (color update)","Chrome","Wed Mar 18 15:23:52 UTC 2026","passed","Wed Mar 18 15:23:54 UTC 2026","Accessibility Tests","tests/a11y.spec.ts","",""
+"","558","verify Red ( #e74c3c ) is applied as the background color","Chrome","Wed Mar 18 15:23:57 UTC 2026","passed","Wed Mar 18 15:23:58 UTC 2026","Background color tests","tests/coverage.spec.ts","",""
+"","7900","should meet the accessibility threshold using Google Lighthouse","Chrome","Wed Mar 18 15:23:54 UTC 2026","passed","Wed Mar 18 15:24:02 UTC 2026","Accessibility Tests","tests/a11y.spec.ts","",""
+"","226","should reject missing name","Chrome","Wed Mar 18 15:23:54 UTC 2026","passed","Wed Mar 18 15:23:55 UTC 2026","Backend API Integration > POST /api/colors Schema Validation","tests/api.spec.ts","",""
+"","20","GET /api/colors/Red should return the correct hex code","Chrome","Wed Mar 18 15:24:00 UTC 2026","passed","Wed Mar 18 15:24:00 UTC 2026","Backend API Integration","tests/api.spec.ts","",""
+"","562","verify Turquoise ( #1abc9c ) is applied as the background color","Chrome","Wed Mar 18 15:23:33 UTC 2026","passed","Wed Mar 18 15:23:34 UTC 2026","POM Refactored: Background color tests","tests/pom-refactored.spec.ts","",""
+"","1203","should handle color click network failure gracefully","Chrome","Wed Mar 18 15:23:31 UTC 2026","passed","Wed Mar 18 15:23:32 UTC 2026","UI Error Handling Coverage","tests/error-handling.spec.ts","",""
+"","578","verify Yellow ( #f1c40f ) is applied as the background color","Chrome","Wed Mar 18 15:23:34 UTC 2026","passed","Wed Mar 18 15:23:34 UTC 2026","POM Refactored: Background color tests","tests/pom-refactored.spec.ts","",""
+"Performance Test: UI Performance Test
+File: ui-performance.spec.ts
+Total Iterations: 26
+Max VUs: 4
+
+HTTP Request Duration:
+- Avg: 2.98ms
+- P(95): 2.98ms
+- Max: 2.98ms
+
+Full metrics attached in the results.","61519","UI Performance Test","Performance","Wed Mar 18 15:24:26 UTC 2026","passed","Wed Mar 18 15:25:27 UTC 2026","ui-performance.spec.ts","UI Performance Test","",""
+"","1643","should maintain accessibility in en language and verify resilient locators","Chrome","Wed Mar 18 15:23:55 UTC 2026","passed","Wed Mar 18 15:23:56 UTC 2026","i18n Accessibility Tests","tests/a11y.spec.ts","",""
+"","20","GET /api/colors/:name should return 404 for non-existent color","Chrome","Wed Mar 18 15:24:00 UTC 2026","passed","Wed Mar 18 15:24:00 UTC 2026","Backend API Integration","tests/api.spec.ts","",""
+"","1373","POST /api/colors","","","passed","","","schemathesis","",""
+"","618","verify Yellow ( #f1c40f ) is applied as the background color","Chrome","Wed Mar 18 15:23:58 UTC 2026","passed","Wed Mar 18 15:23:58 UTC 2026","Background color tests","tests/coverage.spec.ts","",""
+"","632","check Turquoise ( #1abc9c) is the default background color.","Chrome","Wed Mar 18 15:23:57 UTC 2026","passed","Wed Mar 18 15:23:57 UTC 2026","","tests/coverage.spec.ts","",""
+"","17","should reject omitting both name and hex on update","Chrome","Wed Mar 18 15:23:55 UTC 2026","passed","Wed Mar 18 15:23:55 UTC 2026","Backend API Integration > PUT /api/colors/:name Schema Validation","tests/api.spec.ts","",""
+"","574","verify Red ( #e74c3c ) is applied as the background color","Chrome","Wed Mar 18 15:23:34 UTC 2026","passed","Wed Mar 18 15:23:34 UTC 2026","POM Refactored: Background color tests","tests/pom-refactored.spec.ts","",""
+"","378","should handle fetch colors network failure gracefully","Chrome","Wed Mar 18 15:23:59 UTC 2026","passed","Wed Mar 18 15:24:00 UTC 2026","UI Error Handling Coverage","tests/error-handling.spec.ts","",""
+"","353","should delete an existing color","Chrome","Wed Mar 18 15:23:56 UTC 2026","passed","Wed Mar 18 15:23:57 UTC 2026","Backend API Integration > DELETE /api/colors/:name","tests/api.spec.ts","",""
+"","200","should reject empty name","Chrome","Wed Mar 18 15:23:54 UTC 2026","passed","Wed Mar 18 15:23:55 UTC 2026","Backend API Integration > POST /api/colors Schema Validation","tests/api.spec.ts","",""
+"","38","should reject missing hex","Chrome","Wed Mar 18 15:23:55 UTC 2026","passed","Wed Mar 18 15:23:55 UTC 2026","Backend API Integration > POST /api/colors Schema Validation","tests/api.spec.ts","",""
+"","36","GET /api/colors/Turquoise should return the correct hex code","Chrome","Wed Mar 18 15:24:00 UTC 2026","passed","Wed Mar 18 15:24:00 UTC 2026","Backend API Integration","tests/api.spec.ts","",""
+"","25","GET /api/colors","","","skipped","","","schemathesis","",""
+"","627","should gracefully handle a color not found in the database","Chrome","Wed Mar 18 15:23:33 UTC 2026","passed","Wed Mar 18 15:23:34 UTC 2026","Network Mocking & Interception","tests/network-mocking.spec.ts","",""
+"","627","changing color to Red should reflect in UI and DOM","Chrome","Wed Mar 18 15:23:59 UTC 2026","passed","Wed Mar 18 15:23:59 UTC 2026","Data-Driven Testing","tests/data-driven.spec.ts","",""
+"","739","verify Turquoise ( #1abc9c ) is applied as the background color","Chrome","Wed Mar 18 15:23:57 UTC 2026","passed","Wed Mar 18 15:23:57 UTC 2026","Background color tests","tests/coverage.spec.ts","",""
+"","572","should display colors that do not exist in the database","Chrome","Wed Mar 18 15:23:32 UTC 2026","passed","Wed Mar 18 15:23:33 UTC 2026","Network Mocking & Interception","tests/network-mocking.spec.ts","",""
+"","49","should update a color with valid schema","Chrome","Wed Mar 18 15:23:55 UTC 2026","passed","Wed Mar 18 15:23:55 UTC 2026","Backend API Integration > PUT /api/colors/:name Schema Validation","tests/api.spec.ts","",""
+"","943","DELETE /api/colors/{name}","","","passed","","","schemathesis","",""
+"","1507","should maintain accessibility in el language and verify resilient locators","Chrome","Wed Mar 18 15:23:58 UTC 2026","passed","Wed Mar 18 15:23:59 UTC 2026","i18n Accessibility Tests","tests/a11y.spec.ts","",""
+"","16","should return 404 when updating non-existent color","Chrome","Wed Mar 18 15:23:55 UTC 2026","passed","Wed Mar 18 15:23:55 UTC 2026","Backend API Integration > PUT /api/colors/:name Schema Validation","tests/api.spec.ts","",""
+"","32","should reject invalid hex format","Chrome","Wed Mar 18 15:23:55 UTC 2026","passed","Wed Mar 18 15:23:55 UTC 2026","Backend API Integration > POST /api/colors Schema Validation","tests/api.spec.ts","",""
+"","19","should reject invalid hex format on update","Chrome","Wed Mar 18 15:23:55 UTC 2026","passed","Wed Mar 18 15:23:55 UTC 2026","Backend API Integration > PUT /api/colors/:name Schema Validation","tests/api.spec.ts","",""
