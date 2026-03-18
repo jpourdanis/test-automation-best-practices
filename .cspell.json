@@ -6,7 +6,8 @@
         "**/.pnpm-lock.json",
         ".vscode",
         "package-lock.json",
-        "megalinter-reports"
+        "megalinter-reports",
+        "server/index.test.js"
     ],
     "language": "en",
     "version": "0.2",
