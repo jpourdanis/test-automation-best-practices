@@ -45,7 +45,7 @@ jobs:
   # 2a. NON-SHARDED TESTS (API, BDD, Visual, etc.)
   # ==========================================
   tests-misc:
-    name: API, BDD, Visual, Cross-Browser
+    name: API, BDD, Visual Regression, Cross-Browser Tests
     runs-on: ubuntu-latest
     steps:
       # Checks out the code
@@ -188,7 +188,7 @@ jobs:
   # 2b. API PROPERTY TESTING (Schemathesis)
   # ==========================================
   api-property-testing:
-    name: API Property Based Testing (Schemathesis)
+    name: API Property Based Testing
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -224,7 +224,7 @@ jobs:
         with:
           schema: http://127.0.0.1:5001/openapi.json
           checks: all
-          args: --suppress-health-check=filter_too_much --report=junit --report-junit-path=allure-results/schemathesis-junit.xml
+          args: --suppress-health-check=filter_too_much --mode=all --report=junit --report-junit-path=allure-results/schemathesis-junit.xml
 
       - name: Upload Schemathesis Allure Results
         if: always()
@@ -238,7 +238,7 @@ jobs:
   # 2b. SHARDED E2E TESTS (Parallel Execution)
   # ==========================================
   e2e-sharded:
-    name: E2E Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+    name: E2E Tests Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
     runs-on: ubuntu-latest
     # Strategy matrix allows running multiple instances of this job concurrently
     strategy:
