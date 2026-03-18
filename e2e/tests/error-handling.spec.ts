@@ -39,23 +39,23 @@ test.describe("UI Error Handling Coverage", () => {
     // Abort the specific color fetch
     await page.route("**/api/colors/Turquoise", (route) => route.abort('failed'));
 
-    // Capture console errors
+    // Start capture console errors
     const errors: string[] = [];
     page.on('console', msg => {
       if (msg.type() === 'error') errors.push(msg.text());
     });
 
-    // We must wait for the buttons to appear using accessible locators in the real app,
-    // Note that the translation key in the actual test is accessible.
-    // The locator text=colors.turquoise (from translation config) or English "Turquoise"
-    // Since UI loads default english or i18n, let's look for "Turquoise"
-    await page.locator("text=Turquoise").click();
+    // We start the request listener before the action
+    const requestPromise = page.waitForRequest("**/api/colors/Turquoise");
+    
+    // We use the POM locator we recently updated
+    await homePage.turquoiseBtn.click();
 
-    // Wait a bit for the async catch block to execute
-    await page.waitForTimeout(500);
+    // Await the request to ensure it happened
+    await requestPromise;
 
-    // Assert that the error line in App.tsx was executed and caught
-    expect(errors.some(e => e.includes("Failed to fetch hex for Turquoise"))).toBeTruthy();
+    // Wait for the async catch block to execute and log the error
+    await expect.poll(() => errors).toContainEqual(expect.stringContaining("Failed to fetch hex for Turquoise"));
   });
 
   /**
@@ -69,7 +69,14 @@ test.describe("UI Error Handling Coverage", () => {
     await page.route("**/api/colors", (route) =>
       route.fulfill({ status: 200, contentType: "application/json", body: "[]" })
     );
+
+    // We use Playwright's waitForResponse to avoid static waits natively, 
+    // ensuring fast and deterministic execution.
+    const responsePromise = page.waitForResponse(
+      (resp) => resp.url().includes("/api/colors") && resp.status() === 200
+    );
     await homePage.goto();
+    await responsePromise;
 
     // The UI should show "Loading colors..." because the condition `data.length > 0` is false
     await expect(page.locator("text=Loading colors...")).toBeVisible();
