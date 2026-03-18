@@ -224,7 +224,15 @@ jobs:
         with:
           schema: http://127.0.0.1:5001/openapi.json
           checks: all
-          args: --suppress-health-check=filter_too_much
+          args: --suppress-health-check=filter_too_much --junit-xml=allure-results/schemathesis-junit.xml
+
+      - name: Upload Schemathesis Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-schemathesis
+          path: allure-results/**
+          retention-days: 1
 
   # ==========================================
   # 2b. SHARDED E2E TESTS (Parallel Execution)
