@@ -1,4 +1,5 @@
 import { test, expect } from "@playwright/test";
+import { faker } from "@faker-js/faker";
 import { z } from "zod";
 
 const ColorSchema = z.object({
@@ -16,6 +17,15 @@ const ColorSchema = z.object({
  * live API responses against the shared type definitions.
  */
 test.describe("Backend API Integration", () => {
+  let createdColorName: string | null = null;
+
+  test.afterEach(async ({ request }) => {
+    if (createdColorName) {
+      await request.delete(`/api/colors/${createdColorName}`).catch(() => {});
+      createdColorName = null;
+    }
+  });
+
   const expectedColors = [
     { name: "Turquoise", hex: "#1abc9c" },
     { name: "Red", hex: "#e74c3c" },
@@ -81,28 +91,27 @@ test.describe("Backend API Integration", () => {
      * Verifies that a valid color object can be successfully created and persisted.
      */
     test("should create a new color with valid schema", async ({ request }) => {
-      const newColor = { name: "Orange", hex: "#ffa500" };
+      const uniqueName = faker.string.alphanumeric(15);
+      const newColor = { name: uniqueName, hex: "#ffa500" };
+      createdColorName = newColor.name;
       const response = await request.post(`/api/colors`, { data: newColor });
       expect(response.status()).toBe(201);
       
       const data = await response.json();
       ColorSchema.parse(data);
       expect(data).toEqual(expect.objectContaining(newColor));
-
-      // Cleanup
-      await request.delete(`/api/colors/${newColor.name}`);
     });
 
     test("should return 409 for duplicate color creation", async ({ request }) => {
-      const color = { name: "DuplicateColor", hex: "#111111" };
+      const uniqueName = faker.string.alphanumeric(15);
+      const color = { name: uniqueName, hex: "#111111" };
+      createdColorName = color.name;
       await request.post(`/api/colors`, { data: color });
       
       const response = await request.post(`/api/colors`, { data: color });
       expect(response.status()).toBe(409);
       const data = await response.json();
-      expect(data.error).toBe('Color "DuplicateColor" already exists');
-      
-      await request.delete(`/api/colors/${color.name}`);
+      expect(data.error).toBe(`Color "${uniqueName}" already exists`);
     });
 
     test("should reject missing name", async ({ request }) => {
@@ -144,7 +153,9 @@ test.describe("Backend API Integration", () => {
      * Verifies that an existing color's properties can be updated.
      */
     test("should update a color with valid schema", async ({ request }) => {
-      const tempColor = { name: "TempUpdate", hex: "#112233" };
+      const uniqueName = faker.string.alphanumeric(15);
+      const tempColor = { name: uniqueName, hex: "#112233" };
+      createdColorName = tempColor.name;
       await request.post(`/api/colors`, { data: tempColor });
 
       const updateData = { hex: "#332211" };
@@ -154,9 +165,6 @@ test.describe("Backend API Integration", () => {
       const data = await response.json();
       ColorSchema.parse(data);
       expect(data.hex).toBe(updateData.hex);
-
-      // Cleanup
-      await request.delete(`/api/colors/${tempColor.name}`);
     });
 
     test("should reject invalid hex format on update", async ({ request }) => {
@@ -198,13 +206,15 @@ test.describe("Backend API Integration", () => {
      * Verifies that an existing color can be deleted successfully.
      */
     test("should delete an existing color", async ({ request }) => {
-      const color = { name: "ToDelete", hex: "#333333" };
+      const uniqueName = faker.string.alphanumeric(15);
+      const color = { name: uniqueName, hex: "#333333" };
+      createdColorName = color.name;
       await request.post(`/api/colors`, { data: color });
       
       const response = await request.delete(`/api/colors/${color.name}`);
       expect(response.status()).toBe(200);
       const data = await response.json();
-      expect(data.message).toBe('Color "ToDelete" deleted successfully');
+      expect(data.message).toBe(`Color "${uniqueName}" deleted successfully`);
     });
 
     test("should return 404 for non-existent color deletion", async ({ request }) => {

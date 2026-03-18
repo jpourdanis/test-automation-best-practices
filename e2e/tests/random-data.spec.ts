@@ -13,13 +13,23 @@ import { faker } from "@faker-js/faker";
  * specific static data shapes, and to discover edge-cases naturally over time.
  */
 test.describe("Random Data Testing with faker.js", () => {
+  let createdColorName: string | null = null;
+
+  test.afterEach(async ({ request }) => {
+    if (createdColorName) {
+      await request.delete(`/api/colors/${createdColorName}`);
+      createdColorName = null;
+    }
+  });
+
   test("should create dynamic random color via API and verify through UI", async ({ homePage, page, request }) => {
     // Generate a uniquely prefixed name to avoid any potential DB collisions
     // e2e_random_<word>
-    const randomColorName = faker.string.alpha(10);
+    const randomColorName = faker.string.alphanumeric(15);
     const randomHex = faker.color.rgb();
     
     const newColor = { name: randomColorName, hex: randomHex };
+    createdColorName = newColor.name;
     
     // 1. Arrange - Use the API to set up the system's state before the test
     const createResponse = await request.post("/api/colors", {
@@ -47,9 +57,5 @@ test.describe("Random Data Testing with faker.js", () => {
 
     // 3. Assert - Verify the behavior entirely via the UI layer
     await expect(homePage.currentColorText).toContainText(newColor.hex);
-    
-    // 4. Teardown - Clean the state up via API again, keeping the DB stateless
-    const deleteResponse = await request.delete(`/api/colors/${newColor.name}`);
-    expect(deleteResponse.ok()).toBeTruthy();
   });
 });

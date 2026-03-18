@@ -1,4 +1,5 @@
 import { test, expect } from "../baseFixtures";
+import { faker } from "@faker-js/faker";
 
 /**
  * Test Suite: Hybrid E2E Testing
@@ -9,8 +10,19 @@ import { test, expect } from "../baseFixtures";
  * for the actual validations. This ensures fast execution and test isolation.
  */
 test.describe("Hybrid E2E Testing", () => {
+  let createdColorName: string | null = null;
+
+  test.afterEach(async ({ request }) => {
+    if (createdColorName) {
+      await request.delete(`/api/colors/${createdColorName}`);
+      createdColorName = null;
+    }
+  });
+
   test("should create color via API and verify through UI", async ({ homePage, page, request }) => {
-    const newColor = { name: "Purple", hex: "#8e44ad" };
+    const uniqueName = faker.string.alphanumeric(15);
+    const newColor = { name: uniqueName, hex: "#8e44ad" };
+    createdColorName = newColor.name;
     
     // 1. Arrange - Use the API to set up the system's state before the test
     const createResponse = await request.post("/api/colors", {
@@ -42,9 +54,5 @@ test.describe("Hybrid E2E Testing", () => {
       "background-color",
       "rgb(142, 68, 173)"
     );
-
-    // 4. Teardown - Clean the state up via API again, keeping the DB stateless
-    const deleteResponse = await request.delete(`/api/colors/${newColor.name}`);
-    expect(deleteResponse.ok()).toBeTruthy();
   });
 });
