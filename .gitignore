@@ -12,3 +12,6 @@
 /playwright-report/
 /allure-results/
 /megalinter-reports/
+/server/reports/
+/server/.stryker-tmp/
+/server/allure-results/

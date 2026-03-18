@@ -37,6 +37,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [19. E2E Code Coverage](#19-e2e-code-coverage)
     - [20. Quality Gates & Code Coverage Limits](#20-quality-gates--code-coverage-limits)
     - [21. Allure Reports with Historical Data & Flaky Test Detection](#21-allure-reports-with-historical-data--flaky-test-detection)
+    - [22. Mutation Testing with Stryker Mutator](#22-mutation-testing-with-stryker-mutator)
 
 ---
 
@@ -193,6 +194,9 @@ performance/
 └── ui-performance.spec.ts       # k6 Browser performance tests
 server/
 ├── index.js                     # Express API Backend & MongoDB Seed
+├── index.test.js                # Jest + Supertest unit tests
+├── jest.config.js               # Jest configuration
+├── stryker.config.json          # Stryker mutation testing configuration
 └── Dockerfile                   # Docker configuration for backend
 src/
 ├── locales/                     # i18n translation files (en, es, el)
@@ -1269,3 +1273,99 @@ Feature: Home Page Background Color
 ```bash
 npx allure serve allure-results
 ```
+
+### 22. Mutation Testing with Stryker Mutator
+
+**Files:** [`server/index.js`](/server/index.js) · [`server/index.test.js`](/server/index.test.js) · [`server/stryker.config.json`](/server/stryker.config.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+
+**What is it?**
+Mutation testing introduces small, deliberate code changes ("mutants") — like replacing `===` with `!==`, flipping `>` to `<`, or swapping `true` for `false` — and then runs your test suite to see if at least one test fails. If a test catches the change and fails, the mutant is **killed**. If all tests still pass despite the bug, the mutant **survives**, proving your assertions are weak. We use [Stryker Mutator](https://stryker-mutator.io/) to automate this analysis.
+
+**Why it matters:**
+
+* **Coverage ≠ Confidence:** A test can execute every line of code (100% line coverage) and still be completely useless if it lacks meaningful assertions. Consider a test that calls `POST /api/colors` but never checks the response status — it would pass even if the endpoint always returned 500.
+* **Quantifying Assertion Quality:** The **mutation score** (percentage of killed mutants) measures how well your tests actually *detect bugs*, not just how much code they *touch*. It is the difference between "exercised" and "verified".
+* **CI Quality Gate:** We enforce a ≥70% mutation score threshold in CI, separate from the 80% code coverage gate. If the mutation score drops below 70%, the pipeline fails — guaranteeing that new code comes with substantive, bug-detecting tests.
+
+**How to implement:**
+
+**Step 1:** Write unit tests for your application logic using **Jest + Supertest + mongodb-memory-server**:
+
+```javascript
+// server/index.test.js
+const request = require('supertest')
+const { MongoMemoryServer } = require('mongodb-memory-server')
+const mongoose = require('mongoose')
+
+let app, seedDatabase, Color, mongoServer
+
+beforeAll(async () => {
+  mongoServer = await MongoMemoryServer.create()
+  await mongoose.connect(mongoServer.getUri())
+  const server = require('./index')
+  app = server.app
+  seedDatabase = server.seedDatabase
+  Color = server.Color
+})
+
+beforeEach(async () => { await seedDatabase() })
+
+test('returns 409 for a duplicate color name', async () => {
+  const res = await request(app)
+    .post('/api/colors')
+    .send({ name: 'Red', hex: '#ff0000' })
+  expect(res.status).toBe(409)         // ← Asserts status code
+  expect(res.body.error).toContain('already exists') // ← Asserts message content
+})
+```
+
+> **Key Insight:** The assertions must be specific. `expect(res.status).toBe(409)` kills the mutant that changes `409` → `200`. `expect(res.body.error).toContain('already exists')` kills the mutant that swaps the error string to an empty string.
+
+**Step 2:** Configure Stryker to use the Jest test runner:
+
+```json
+// server/stryker.config.json
+{
+  "mutate": ["index.js"],
+  "testRunner": "jest",
+  "reporters": ["clear-text", "html", "progress"],
+  "thresholds": {
+    "high": 80,
+    "low": 70,
+    "break": 70
+  }
+}
+```
+
+The `break: 70` setting causes Stryker to return exit code 1 if the mutation score falls below 70%, which fails the CI pipeline.
+
+**Step 3:** Add a dedicated CI job (runs in parallel with other test jobs, no Docker needed):
+
+```yaml
+mutation-testing:
+  name: Mutation Testing (Stryker)
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - uses: actions/setup-node@v4
+      with:
+        node-version: 22
+    - run: npm ci
+      working-directory: server
+    - run: npm test
+      working-directory: server
+    - run: npm run mutation
+      working-directory: server
+```
+
+**How to verify:**
+
+```bash
+# Run the unit tests
+cd server && npm test
+
+# Run Stryker mutation testing
+cd server && npm run mutation
+```
+
+Stryker generates a detailed HTML report showing each mutant, whether it was killed or survived, and links directly to the mutated line of code.

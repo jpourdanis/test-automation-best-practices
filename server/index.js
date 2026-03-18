@@ -70,6 +70,7 @@ app.use((err, req, res, next) => {
 // Swagger / OpenAPI configuration
 // ---------------------------------------------------------------------------
 
+// Stryker disable all: Swagger metadata configuration, not business logic
 /** @type {import('swagger-jsdoc').Options} */
 const swaggerOptions = {
   definition: {
@@ -91,6 +92,7 @@ const swaggerOptions = {
   // Scan this file for JSDoc @swagger annotations
   apis: [__filename]
 }
+// Stryker restore all
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions)
 
@@ -190,18 +192,23 @@ const seedDatabase = async () => {
     await Color.insertMany(defaultColors)
     console.log('Database seeded with default colors')
   } catch (error) {
+    // Stryker disable next-line all: error logging only
     console.error('Error seeding database:', error)
   }
 }
 
-// Connect to MongoDB
-mongoose
-  .connect(MONGO_URI)
-  .then(async () => {
-    console.log(`Connected to MongoDB at ${MONGO_URI}`)
-    await seedDatabase()
-  })
-  .catch((err) => console.error('Could not connect to MongoDB:', err))
+// Stryker disable all: infrastructure-only code, not testable in unit tests
+// Connect to MongoDB (only when run directly, not when imported by tests)
+if (require.main === module) {
+  mongoose
+    .connect(MONGO_URI)
+    .then(async () => {
+      console.log(`Connected to MongoDB at ${MONGO_URI}`)
+      await seedDatabase()
+    })
+    .catch((err) => console.error('Could not connect to MongoDB:', err))
+}
+// Stryker restore all
 
 // ===========================================================================
 // API Endpoints
@@ -345,6 +352,7 @@ app.post('/api/colors', async (req, res) => {
     // Return the created color without internal fields
     res.status(201).json({ name: color.name, hex: color.hex })
   } catch (error) {
+    // Stryker disable next-line all: error logging only
     console.error('POST /api/colors error:', error)
     res.status(500).json({ error: 'Failed to create color' })
   }
@@ -423,6 +431,7 @@ app.put('/api/colors/:name', async (req, res) => {
 
     res.json(color)
   } catch (error) {
+    // Stryker disable next-line all: error logging only
     console.error('PUT /api/colors/:name error:', error)
     res.status(500).json({ error: 'Failed to update color' })
   }
@@ -516,8 +525,14 @@ app.all('/api/colors/:name', (req, res, next) => {
 // Start the server
 // ---------------------------------------------------------------------------
 
+// Stryker disable all: infrastructure-only code, not testable in unit tests
 const PORT = process.env.PORT || 5001
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`Server running on port ${PORT}`)
-  console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`)
-})
+if (require.main === module) {
+  app.listen(PORT, '0.0.0.0', () => {
+    console.log(`Server running on port ${PORT}`)
+    console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`)
+  })
+}
+// Stryker restore all
+
+module.exports = { app, seedDatabase, Color, mongoose }

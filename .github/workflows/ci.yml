@@ -42,6 +42,66 @@ jobs:
 
 
   # ==========================================
+  # 1b. MUTATION TESTING (Stryker)
+  # ==========================================
+  mutation-testing:
+    name: Mutation Testing on Server
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install server dependencies
+        run: npm ci
+        working-directory: server
+
+      - name: Run unit tests (with JUnit for Allure)
+        run: npm test
+        working-directory: server
+
+      - name: Run Stryker mutation testing
+        run: npm run mutation
+        working-directory: server
+
+      - name: Generate Allure environment properties
+        if: always()
+        working-directory: server
+        run: |
+          mkdir -p allure-results
+          # Extract mutation score from Stryker clear-text output
+          SCORE=$(grep -oP 'Mutation score: \K[\d.]+' reports/mutation.html 2>/dev/null || echo "N/A")
+          cat > allure-results/environment.properties <<EOF
+          mutation.tool=Stryker Mutator
+          mutation.threshold=70%
+          mutation.score=${SCORE}
+          mutation.target=server/index.js
+          EOF
+
+      - name: Upload Stryker Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stryker-mutation-report
+          path: server/reports/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-mutation
+          path: server/allure-results/
+          if-no-files-found: ignore
+          retention-days: 1
+
+  # ==========================================
   # 2a. NON-SHARDED TESTS (API, BDD, Visual, etc.)
   # ==========================================
   tests-misc:
@@ -486,7 +546,7 @@ jobs:
   publish-reports:
     name: Merge Reports & Publish
     # This job 'fans in', running only after all the test runners finish
-    needs: [tests-misc, api-property-testing, e2e-sharded, performance-testing]
+    needs: [tests-misc, api-property-testing, e2e-sharded, performance-testing, mutation-testing]
     if: always()
     runs-on: ubuntu-latest
     steps:
