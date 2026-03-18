@@ -224,7 +224,7 @@ jobs:
         with:
           schema: http://127.0.0.1:5001/openapi.json
           checks: all
-          args: --suppress-health-check=filter_too_much --junit-xml=allure-results/schemathesis-junit.xml
+          args: --suppress-health-check=filter_too_much --report-junit-path=allure-results/schemathesis-junit.xml
 
       - name: Upload Schemathesis Allure Results
         if: always()
