@@ -1,0 +1,226 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: Backend API Integration >> POST /api/colors Schema Validation >> should reject empty name
+- Location: /home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts:115:9
+
+# Error details
+
+```
+Error: expect(received).toBe(expected) // Object.is equality
+
+Expected: "name must contain at least one alphanumeric character"
+Received: "name must contain alphanumeric characters and spaces only, and at least one alphanumeric character"
+    at /home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts:119:26
+```
+
+# Test source
+
+```ts
+   19 |   const expectedColors = [
+   20 |     { name: "Turquoise", hex: "#1abc9c" },
+   21 |     { name: "Red", hex: "#e74c3c" },
+   22 |     { name: "Yellow", hex: "#f1c40f" },
+   23 |   ];
+   24 |
+   25 |   /**
+   26 |    * Test Group: GET /api/colors/:name
+   27 |    * Verifies that each seed color can be retrieved individually.
+   28 |    */
+   29 |   for (const color of expectedColors) {
+   30 |     test(`GET /api/colors/${color.name} should return the correct hex code`, async ({ request }) => {
+   31 |       const response = await request.get(`/api/colors/${color.name}`);
+   32 |       
+   33 |       // Verify HTTP status code
+   34 |       expect(response.status()).toBe(200);
+   35 |
+   36 |       // Verify content type
+   37 |       expect(response.headers()["content-type"]).toContain("application/json");
+   38 |
+   39 |       // Parse the JSON payload
+   40 |       const data = await response.json();
+   41 |
+   42 |       // Verify exact object schema using Zod
+   43 |       ColorSchema.parse(data);
+   44 |
+   45 |       expect(data).toEqual(
+   46 |         expect.objectContaining({ name: color.name, hex: color.hex })
+   47 |       );
+   48 |     });
+   49 |   }
+   50 |
+   51 |   /**
+   52 |    * Negative Test: GET /api/colors
+   53 |    * Verifies that the list of all colors is returned correctly.
+   54 |    */
+   55 |   test("GET /api/colors should return all colors", async ({ request }) => {
+   56 |     const response = await request.get(`/api/colors`);
+   57 |     expect(response.status()).toBe(200);
+   58 |     const data = await response.json();
+   59 |     expect(Array.isArray(data)).toBeTruthy();
+   60 |     expect(data.length).toBeGreaterThanOrEqual(3);
+   61 |   });
+   62 |
+   63 |   /**
+   64 |    * Negative Test: GET /api/colors/:name
+   65 |    * Verifies that the API correctly handles requests for colors that do not exist.
+   66 |    */
+   67 |   test("GET /api/colors/:name should return 404 for non-existent color", async ({ request }) => {
+   68 |     const response = await request.get(`/api/colors/DoesNotExist`);
+   69 |     expect(response.status()).toBe(404);
+   70 |     const data = await response.json();
+   71 |     expect(data.error).toBe("Color not found");
+   72 |   });
+   73 |
+   74 |   /**
+   75 |    * Test Group: POST /api/colors
+   76 |    * Verifies the creation of new colors and strict schema validation for input data.
+   77 |    */
+   78 |   test.describe("POST /api/colors Schema Validation", () => {
+   79 |     /**
+   80 |      * Positive Test: Color Creation
+   81 |      * Verifies that a valid color object can be successfully created and persisted.
+   82 |      */
+   83 |     test("should create a new color with valid schema", async ({ request }) => {
+   84 |       const newColor = { name: "Orange", hex: "#ffa500" };
+   85 |       const response = await request.post(`/api/colors`, { data: newColor });
+   86 |       expect(response.status()).toBe(201);
+   87 |       
+   88 |       const data = await response.json();
+   89 |       ColorSchema.parse(data);
+   90 |       expect(data).toEqual(expect.objectContaining(newColor));
+   91 |
+   92 |       // Cleanup
+   93 |       await request.delete(`/api/colors/${newColor.name}`);
+   94 |     });
+   95 |
+   96 |     test("should return 409 for duplicate color creation", async ({ request }) => {
+   97 |       const color = { name: "DuplicateColor", hex: "#111111" };
+   98 |       await request.post(`/api/colors`, { data: color });
+   99 |       
+  100 |       const response = await request.post(`/api/colors`, { data: color });
+  101 |       expect(response.status()).toBe(409);
+  102 |       const data = await response.json();
+  103 |       expect(data.error).toBe('Color "DuplicateColor" already exists');
+  104 |       
+  105 |       await request.delete(`/api/colors/${color.name}`);
+  106 |     });
+  107 |
+  108 |     test("should reject missing name", async ({ request }) => {
+  109 |       const response = await request.post(`/api/colors`, { data: { hex: "#ffa500" } });
+  110 |       expect(response.status()).toBe(400);
+  111 |       const data = await response.json();
+  112 |       expect(data.error).toBe("Invalid input: expected string, received undefined");
+  113 |     });
+  114 |
+  115 |     test("should reject empty name", async ({ request }) => {
+  116 |       const response = await request.post(`/api/colors`, { data: { name: "", hex: "#ffa500" } });
+  117 |       expect(response.status()).toBe(400);
+  118 |       const data = await response.json();
+> 119 |       expect(data.error).toBe("name must contain at least one alphanumeric character");
+      |                          ^ Error: expect(received).toBe(expected) // Object.is equality
+  120 |     });
+  121 |
+  122 |     test("should reject missing hex", async ({ request }) => {
+  123 |       const response = await request.post(`/api/colors`, { data: { name: "Orange" } });
+  124 |       expect(response.status()).toBe(400);
+  125 |       const data = await response.json();
+  126 |       expect(data.error).toBe("Invalid input: expected string, received undefined");
+  127 |     });
+  128 |
+  129 |     test("should reject invalid hex format", async ({ request }) => {
+  130 |       const response = await request.post(`/api/colors`, { data: { name: "Orange", hex: "ffa500" } });
+  131 |       expect(response.status()).toBe(400);
+  132 |       const data = await response.json();
+  133 |       expect(data.error).toContain("hex must be a valid 6-digit hex format");
+  134 |     });
+  135 |   });
+  136 |
+  137 |   /**
+  138 |    * Test Group: PUT /api/colors/:name
+  139 |    * Verifies that existing colors can be updated and that input validation is enforced.
+  140 |    */
+  141 |   test.describe("PUT /api/colors/:name Schema Validation", () => {
+  142 |     /**
+  143 |      * Positive Test: Color Update
+  144 |      * Verifies that an existing color's properties can be updated.
+  145 |      */
+  146 |     test("should update a color with valid schema", async ({ request }) => {
+  147 |       const tempColor = { name: "TempUpdate", hex: "#112233" };
+  148 |       await request.post(`/api/colors`, { data: tempColor });
+  149 |
+  150 |       const updateData = { hex: "#332211" };
+  151 |       const response = await request.put(`/api/colors/${tempColor.name}`, { data: updateData });
+  152 |       expect(response.status()).toBe(200);
+  153 |       
+  154 |       const data = await response.json();
+  155 |       ColorSchema.parse(data);
+  156 |       expect(data.hex).toBe(updateData.hex);
+  157 |
+  158 |       // Cleanup
+  159 |       await request.delete(`/api/colors/${tempColor.name}`);
+  160 |     });
+  161 |
+  162 |     test("should reject invalid hex format on update", async ({ request }) => {
+  163 |       const response = await request.put(`/api/colors/Turquoise`, { data: { hex: "112233" } });
+  164 |       expect(response.status()).toBe(400);
+  165 |       const data = await response.json();
+  166 |       expect(data.error).toContain("hex must be a valid 6-digit hex format");
+  167 |     });
+  168 |
+  169 |     test("should reject updating with empty name", async ({ request }) => {
+  170 |       const response = await request.put(`/api/colors/Turquoise`, { data: { name: "" } });
+  171 |       expect(response.status()).toBe(400);
+  172 |       const data = await response.json();
+  173 |       expect(data.error).toBe("name must contain at least one alphanumeric character");
+  174 |     });
+  175 |
+  176 |     test("should reject omitting both name and hex on update", async ({ request }) => {
+  177 |       const response = await request.put(`/api/colors/Turquoise`, { data: {} });
+  178 |       expect(response.status()).toBe(400);
+  179 |       const data = await response.json();
+  180 |       expect(data.error).toBe("At least one field to update must be provided");
+  181 |     });
+  182 |
+  183 |     test("should return 404 when updating non-existent color", async ({ request }) => {
+  184 |       const response = await request.put(`/api/colors/DoesNotExist`, { data: { hex: "#222222" } });
+  185 |       expect(response.status()).toBe(404);
+  186 |       const data = await response.json();
+  187 |       expect(data.error).toBe("Color not found");
+  188 |     });
+  189 |   });
+  190 |
+  191 |   /**
+  192 |    * Test Group: DELETE /api/colors/:name
+  193 |    * Verifies that colors can be removed from the system.
+  194 |    */
+  195 |   test.describe("DELETE /api/colors/:name", () => {
+  196 |     /**
+  197 |      * Positive Test: Color Deletion
+  198 |      * Verifies that an existing color can be deleted successfully.
+  199 |      */
+  200 |     test("should delete an existing color", async ({ request }) => {
+  201 |       const color = { name: "ToDelete", hex: "#333333" };
+  202 |       await request.post(`/api/colors`, { data: color });
+  203 |       
+  204 |       const response = await request.delete(`/api/colors/${color.name}`);
+  205 |       expect(response.status()).toBe(200);
+  206 |       const data = await response.json();
+  207 |       expect(data.message).toBe('Color "ToDelete" deleted successfully');
+  208 |     });
+  209 |
+  210 |     test("should return 404 for non-existent color deletion", async ({ request }) => {
+  211 |       const response = await request.delete(`/api/colors/DoesNotExist`);
+  212 |       expect(response.status()).toBe(404);
+  213 |       const data = await response.json();
+  214 |       expect(data.error).toBe("Color not found");
+  215 |     });
+  216 |   });
+  217 | });
+  218 |
+```
