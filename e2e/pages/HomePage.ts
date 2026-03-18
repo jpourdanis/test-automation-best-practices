@@ -11,10 +11,10 @@ export class HomePage {
   constructor(page: Page) {
     this.page = page;
     this.header = page.locator("header");
-    this.currentColorText = page.locator("text=Current color:");
-    this.turquoiseBtn = page.locator("text=Turquoise");
-    this.redBtn = page.locator("text=Red");
-    this.yellowBtn = page.locator("text=Yellow");
+    this.currentColorText = page.getByText("Current color:");
+    this.turquoiseBtn = page.getByRole("button", { name: "Turquoise" });
+    this.redBtn = page.getByRole("button", { name: "Red" });
+    this.yellowBtn = page.getByRole("button", { name: "Yellow" });
   }
 
   async goto() {
@@ -22,7 +22,7 @@ export class HomePage {
   }
 
   async clickColorButton(colorName: string) {
-    await this.page.click(`text=${colorName}`);
+    await this.page.getByRole("button", { name: colorName }).click();
   }
 
   async getCurrentColorText(): Promise<string | null> {
