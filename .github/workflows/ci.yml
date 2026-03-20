@@ -91,19 +91,6 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
-      - name: Inject Executor Info for Server Mutation
-        if: always()
-        run: |
-          cat <<EOF > server/allure-results/executor.json
-          {
-            "name": "GitHub Actions",
-            "type": "github",
-            "reportName": "Server Mutation Tests",
-            "buildName": "Job: mutation-testing",
-            "buildUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          }
-          EOF
-
       # Uploads the Allure results specifically for the mutation test run
       - name: Upload Allure Results
         if: always()
@@ -152,21 +139,7 @@ jobs:
           path: reports/mutation/frontend/
           if-no-files-found: ignore
           retention-days: 7
-          
-      - name: Inject Executor Info for Frontend Mutation
-        if: always()
-        run: |
-          mkdir -p allure-results
-          cat <<EOF > allure-results/executor.json
-          {
-            "name": "GitHub Actions",
-            "type": "github",
-            "reportName": "Frontend Mutation Tests",
-            "buildName": "Job: mutation-testing-frontend",
-            "buildUrl": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          }
-          EOF
-          
+
       # Uploads the Allure results specifically for the frontend mutation test run
       # Note: We need to ensure Allure results are generated if configured in Stryker
       - name: Upload Allure Results
