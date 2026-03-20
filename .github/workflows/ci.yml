@@ -48,8 +48,10 @@ jobs:
     name: Mutation Testing on Server
     runs-on: ubuntu-latest
     steps:
+      # Checks out the repository code
       - uses: actions/checkout@v4
 
+      # Sets up Node.js for the mutation testing environment
       - name: Use Node.js
         uses: actions/setup-node@v4
         with:
@@ -57,32 +59,29 @@ jobs:
           cache: "npm"
           cache-dependency-path: server/package-lock.json
 
+      # Installs only the server-side dependencies
       - name: Install server dependencies
         run: npm ci
         working-directory: server
 
+      # Runs unit tests for the server to ensure baseline stability before mutation
       - name: Run unit tests (with JUnit for Allure)
         run: npm test
         working-directory: server
 
+      # Executes Stryker Mutator to measure test suite effectiveness via fault injection
       - name: Run Stryker mutation testing
         run: npm run mutation
         working-directory: server
 
+      # Prepares the results directory for reporting
       - name: Generate Allure environment properties
         if: always()
         working-directory: server
         run: |
           mkdir -p allure-results
-          # Extract mutation score from Stryker clear-text output
-          SCORE=$(grep -oP 'Mutation score: \K[\d.]+' reports/mutation.html 2>/dev/null || echo "N/A")
-          cat > allure-results/environment.properties <<EOF
-          mutation.tool=Stryker Mutator
-          mutation.threshold=70%
-          mutation.score=${SCORE}
-          mutation.target=server/index.js
-          EOF
 
+      # Preserves the detailed HTML/JSON Stryker mutation reports as build artifacts
       - name: Upload Stryker Report
         if: always()
         uses: actions/upload-artifact@v4
@@ -92,6 +91,7 @@ jobs:
           if-no-files-found: ignore
           retention-days: 7
 
+      # Uploads the Allure results specifically for the mutation test run
       - name: Upload Allure Results
         if: always()
         uses: actions/upload-artifact@v4
@@ -129,6 +129,7 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
 
+      # Installs Playwright browsers if they were not found in the cache
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install
@@ -265,8 +266,10 @@ jobs:
     name: API Property Based Testing
     runs-on: ubuntu-latest
     steps:
+      # Checks out the repository code
       - uses: actions/checkout@v4
 
+      # Configures Docker Buildx to enable advanced build features like layer caching
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -286,9 +289,11 @@ jobs:
                 url   = "${{ env.ACTIONS_CACHE_URL }}"
                 scope = "buildkit"
 
+      # Spins up the backend API and MongoDB database via Docker for testing
       - name: Start app service (Docker Compose)
         run: docker compose up -d --build api mongo
 
+      # Verifies the API is up and responding before starting property-based tests
       - name: Health Checks for service
         run: |
           wait_for() {
@@ -305,6 +310,7 @@ jobs:
           }
           wait_for http://127.0.0.1:5001/api/colors
       
+      # Runs Schemathesis against the OpenAPI spec to discover edge-case bugs via property testing
       - name: Run schemathesis tests
         uses: schemathesis/action@v2
         with:
@@ -312,6 +318,7 @@ jobs:
           checks: all
           args: --suppress-health-check=filter_too_much --report-junit-path=allure-results/schemathesis-junit.xml
 
+      # Uploads the Schemathesis execution results for inclusion in the final Allure report
       - name: Upload Schemathesis Allure Results
         if: always()
         uses: actions/upload-artifact@v4
@@ -354,6 +361,7 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
 
+      # Installs Playwright browsers if they were not found in the cache
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install
@@ -470,8 +478,10 @@ jobs:
     name: API & UI Performance Tests
     runs-on: ubuntu-latest
     steps:
+      # Checks out the repository code
       - uses: actions/checkout@v4
 
+      # Configures Docker Buildx to enable advanced build features like layer caching
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
         with:
@@ -491,9 +501,11 @@ jobs:
                 url   = "${{ env.ACTIONS_CACHE_URL }}"
                 scope = "buildkit"
 
+      # Spins up the application frontend, backend API, and MongoDB database via Docker
       - name: Start app service (Docker Compose)
         run: docker compose up -d --build app api mongo
 
+      # Waits until the frontend and backend services are fully running and responding to requests
       - name: Health Checks for service
         run: |
           wait_for() {
@@ -516,21 +528,25 @@ jobs:
           PID_PROXY=$!
           wait $PID_API $PID_APP $PID_PROXY
 
+      # Installs k6 performance testing tool with browser support
       - name: Setup k6
         uses: grafana/setup-k6-action@v1
         with:
           browser: true
 
+      # Executes k6 smoke tests against the API to verify baseline latency and throughput
       - name: Run API Performance Test
         run: |
           mkdir -p allure-results
           npm run test:perf:api:smoke
 
+      # Executes k6 smoke tests against the UI using browser automation to verify frontend performance
       - name: Run UI Performance Test
         env:
           K6_BROWSER_ENABLED: true
         run: npm run test:perf:ui:smoke
 
+      # Uploads the k6 execution data (JUnit/Allure) for inclusion in the final report
       - name: Upload k6 Allure Results
         if: always()
         uses: actions/upload-artifact@v4
