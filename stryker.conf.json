@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schema.stryker-mutator.io/stryker-config.schema.json",
+  "mutate": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "!src/**/*.test.ts",
+    "!src/**/*.test.tsx",
+    "!src/setupTests.ts",
+    "!src/index.tsx",
+    "!src/react-app-env.d.ts"
+  ],
+  "testRunner": "jest",
+  "jest": {
+    "projectType": "create-react-app"
+  },
+  "reporters": ["progress", "clear-text", "html"],
+  "htmlReporter": {
+    "fileName": "reports/mutation/frontend/index.html"
+  },
+  "thresholds": {
+    "high": 80,
+    "low": 70,
+    "break": 70
+  },
+  "tempDirName": ".stryker-tmp",
+  "concurrency": 2,
+  "timeoutMS": 30000
+}

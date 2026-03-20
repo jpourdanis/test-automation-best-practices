@@ -96,8 +96,58 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-mutation
+          name: allure-results-mutation-server
           path: server/allure-results/
+          if-no-files-found: ignore
+          retention-days: 1
+
+  # ==========================================
+  # 1c. MUTATION TESTING (Stryker) - Frontend
+  # ==========================================
+  mutation-testing-frontend:
+    name: Mutation Testing on Frontend
+    runs-on: ubuntu-latest
+    steps:
+      # Checks out the repository code
+      - uses: actions/checkout@v4
+
+      # Sets up Node.js for the mutation testing environment
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      # Installs all project dependencies (including dev deps for Stryker)
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      # Runs unit tests for the frontend to ensure baseline stability
+      - name: Run unit tests
+        run: npm run test:unit
+
+      # Executes Stryker Mutator to measure frontend test suite effectiveness
+      - name: Run Stryker mutation testing
+        run: npm run mutation:frontend
+
+      # Preserves the detailed HTML/JSON Stryker mutation reports as build artifacts
+      - name: Upload Stryker Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stryker-mutation-report-frontend
+          path: reports/mutation/frontend/
+          if-no-files-found: ignore
+          retention-days: 7
+
+      # Uploads the Allure results specifically for the frontend mutation test run
+      # Note: We need to ensure Allure results are generated if configured in Stryker
+      - name: Upload Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-mutation-frontend
+          path: allure-results/
           if-no-files-found: ignore
           retention-days: 1
 
@@ -562,7 +612,7 @@ jobs:
   publish-reports:
     name: Merge Reports & Publish
     # This job 'fans in', running only after all the test runners finish
-    needs: [tests-misc, api-property-testing, e2e-sharded, performance-testing, mutation-testing]
+    needs: [tests-misc, api-property-testing, e2e-sharded, performance-testing, mutation-testing, mutation-testing-frontend]
     if: always()
     runs-on: ubuntu-latest
     steps:

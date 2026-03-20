@@ -15,3 +15,5 @@
 /server/reports/
 /server/.stryker-tmp/
 /server/allure-results/
+.stryker-tmp/
+/reports/
