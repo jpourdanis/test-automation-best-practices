@@ -24,6 +24,39 @@ export const test = baseTest.extend<{ homePage: HomePage ;allureBddMapper: void}
     
   },
 
+  // Decorate the default page fixture to include comprehensive logging
+  page: async ({ page }, use, testInfo) => {
+    // 1. Log console messages
+    page.on("console", (msg) => {
+      const type = msg.type();
+      // Emphasize errors, but you can also log info/warnings by removing the condition
+      if (type === "error" || type === "warning") {
+        console.error(`[CONSOLE ${type.toUpperCase()}] ${testInfo.title}: ${msg.text()}`);
+      }
+    });
+
+    // 2. Log failed network requests (e.g. DNS issues, aborted requests)
+    page.on("requestfailed", (request) => {
+      console.error(`[NETWORK ERROR] ${testInfo.title}: ${request.method()} ${request.url()} - ${request.failure()?.errorText}`);
+    });
+
+    // 3. Log API Responses (Errors and Successes)
+    page.on("response", (response) => {
+      // Filter the resource type so we only log API data, avoiding noise from images/css/fonts
+      const resourceType = response.request().resourceType();
+      if (resourceType === "fetch" || resourceType === "xhr") {
+        if (!response.ok()) {
+          console.error(`[API ERROR] ${testInfo.title}: ${response.status()} ${response.request().method()} ${response.url()}`);
+        } else {
+          // Captures network when clicking a button that triggers a fetch
+          console.log(`[NETWORK INFO] ${testInfo.title}: ${response.status()} ${response.request().method()} ${response.url()}`);
+        }
+      }
+    });
+
+    await use(page);
+  },
+
   // 1. Define the auto-fixture (it runs automatically for every test)
   allureBddMapper: [async ({}, use, testInfo) => {
     // 2. Loop through all Gherkin tags applied to the current Scenario
