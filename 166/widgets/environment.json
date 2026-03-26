@@ -1,1 +1,0 @@
-[{"values":["Stryker Mutator"],"name":"mutation.tool"},{"values":["70%"],"name":"mutation.threshold"},{"values":["N/A"],"name":"mutation.score"},{"values":["server/index.js"],"name":"mutation.target"}]
