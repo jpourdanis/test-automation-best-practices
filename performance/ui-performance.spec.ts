@@ -55,6 +55,15 @@ export function setup() {
 export default async function () {
     const page = await browser.newPage();
 
+    page.on('request', (request) => {
+        const payload = request.postData() ? `Payload: ${request.postData()}` : 'No payload';
+        console.log(`[UI Request] ${request.method()} ${request.url()} - ${payload}`);
+    });
+
+    page.on('response', (response) => {
+        console.log(`[UI Response] ${response.url()} - Status: ${response.status()}`);
+    });
+
     try {
         await page.goto(BASE_URL);
         

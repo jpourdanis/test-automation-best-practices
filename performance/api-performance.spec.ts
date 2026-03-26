@@ -29,7 +29,7 @@ export function setup() {
 }
 
 export default function () {
-    const newColorName = faker.string.alpha(10);
+    const newColorName = faker.string.alphanumeric(10);
     const newColorHex = faker.color.hexColor();
 
     const colorPayload = JSON.stringify({
@@ -46,6 +46,8 @@ export default function () {
     group('Color Management', function () {
         // Create a new color
         const createResponse = http.post(`${API_URL}/api/colors`, colorPayload, requestParams);
+        console.log(`[API Request] POST ${API_URL}/api/colors - Payload: ${colorPayload}`);
+        console.log(`[API Response] POST ${API_URL}/api/colors - Status: ${createResponse.status} - Body: ${createResponse.body}`);
         const colorCreated = check(createResponse, {
             'Color creation status is 201': (r) => r.status === 201
         });
@@ -56,13 +58,17 @@ export default function () {
 
             // Read the color back
             const getResponse = http.get(`${API_URL}/api/colors/${newColorName}`);
+            console.log(`[API Request] GET ${API_URL}/api/colors/${newColorName} - Payload: None`);
+            console.log(`[API Response] GET ${API_URL}/api/colors/${newColorName} - Status: ${getResponse.status} - Body: ${getResponse.body}`);
             check(getResponse, {
                 'Retrieve color status is 200': (r) => r.status === 200,
                 'Retrieved correct hex': (r) => r.json('hex') === newColorHex
             });
 
             // Cleanup via Delete
-            http.del(`${API_URL}/api/colors/${newColorName}`);
+            const delResponse = http.del(`${API_URL}/api/colors/${newColorName}`);
+            console.log(`[API Request] DELETE ${API_URL}/api/colors/${newColorName} - Payload: None`);
+            console.log(`[API Response] DELETE ${API_URL}/api/colors/${newColorName} - Status: ${delResponse.status} - Body: ${delResponse.body}`);
         } else {
             successfulActionsRate.add(0);
         }
