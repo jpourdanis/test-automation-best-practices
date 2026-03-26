@@ -1,7 +1,6 @@
 import http from 'k6/http';
 import { check, group, sleep } from 'k6';
 import { Counter, Rate } from 'k6/metrics';
-import faker from 'k6/x/faker';
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js';
 import { getConfig } from './utils/utils.ts';
 import { generateAllureReport } from './utils/allure-reporter.js';
@@ -29,8 +28,10 @@ export function setup() {
 }
 
 export default function () {
-    const newColorName = faker.string.alphanumeric(10);
-    const newColorHex = faker.color.hexColor();
+    // Generate a name that strictly conforms to /^[a-zA-Z0-9 ]*[a-zA-Z0-9][a-zA-Z0-9 ]*$/
+    const newColorName = 'TestColor ' + Math.random().toString(36).substring(2, 8);
+    // Generate a valid hex color conforming to /^#[0-9A-Fa-f]{6}$/
+    const newColorHex = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0');
 
     const colorPayload = JSON.stringify({
         name: newColorName,
