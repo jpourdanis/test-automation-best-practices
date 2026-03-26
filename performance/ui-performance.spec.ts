@@ -60,8 +60,17 @@ export default async function () {
         console.log(`[UI Request] ${request.method()} ${request.url()} - ${payload}`);
     });
 
-    page.on('response', (response) => {
-        console.log(`[UI Response] ${response.url()} - Status: ${response.status()}`);
+    page.on('response', async (response) => {
+        let bodyInfo = '';
+        if (response.url().includes('/api/')) {
+            try {
+                const jsonBody = await (response as any).json();
+                bodyInfo = ` - Body: ${JSON.stringify(jsonBody)}`;
+            } catch (e) {
+                bodyInfo = ' - Body: [Could not read]';
+            }
+        }
+        console.log(`[UI Response] ${response.url()} - Status: ${response.status()}${bodyInfo}`);
     });
 
     try {
