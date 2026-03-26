@@ -32,7 +32,9 @@ export const options = {
                     // Start a Chromium-based browser (currently the only supported type)
                     type: 'chromium',
                     // Run in headless mode (no GUI) for performance and CI compatibility
-                    headless: true  
+                    headless: true,
+                    // Essential for running headless browsers stably in GitHub Actions
+                    args: ['no-sandbox', 'disable-dev-shm-usage', 'disable-gpu']
                 }
             }
         }
