@@ -1,0 +1,13 @@
+[NETWORK ERROR] should handle color click network failure gracefully: GET http://localhost:3000/api/colors/Turquoise - net::ERR_FAILED
+[CONSOLE ERROR] should handle color click network failure gracefully: Failed to load resource: net::ERR_FAILED
+[CONSOLE ERROR] should handle color click network failure gracefully: Failed to fetch hex for Turquoise TypeError: Failed to fetch
+    at handleColorClick (http://localhost:3000/static/js/bundle.js:833:51)
+    at onClick (http://localhost:3000/static/js/bundle.js:953:24)
+    at HTMLUnknownElement.callCallback (http://localhost:3000/static/js/bundle.js:11751:18)
+    at Object.invokeGuardedCallbackDev (http://localhost:3000/static/js/bundle.js:11795:20)
+    at invokeGuardedCallback (http://localhost:3000/static/js/bundle.js:11850:35)
+    at invokeGuardedCallbackAndCatchFirstError (http://localhost:3000/static/js/bundle.js:11864:29)
+    at executeDispatch (http://localhost:3000/static/js/bundle.js:15485:7)
+    at processDispatchQueueItemsInOrder (http://localhost:3000/static/js/bundle.js:15511:11)
+    at processDispatchQueue (http://localhost:3000/static/js/bundle.js:15522:9)
+    at dispatchEventsForPlugins (http://localhost:3000/static/js/bundle.js:15531:7)
