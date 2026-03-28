@@ -659,7 +659,7 @@ jobs:
       - name: Run UI Performance Test
         env:
           K6_BROWSER_ENABLED: true
-          K6_BROWSER_ARGS: no-sandbox
+          K6_BROWSER_ARGS: "--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --disable-gpu"
         run: dbus-run-session -- npm run test:perf:ui:smoke
 
       # Uploads the k6 execution data (JUnit/Allure) for inclusion in the final report
