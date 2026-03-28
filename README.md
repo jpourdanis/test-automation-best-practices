@@ -1448,7 +1448,7 @@ Security scanning adds an automated layer of defense by inspecting your project'
 > **Trivy Supply Chain Incident (March 2026)**
 > In March 2026, malicious actors compromised Aqua Security's build pipeline and injected credential-stealing viruses into `latest` and versions `0.69.4` - `0.69.6` AND performed tag-repointing attacks on the GitHub Action release tags. To avoid execution of weaponized images or binaries, we **strict-pin** the GitHub Action to an immutable commit SHA (`@57a97c7e7821a5776cebc9bb87c984fa69cba8f1`), explicitly pass `trivy-version: '0.69.3'`, and hardcode the Docker image pulls to `:0.69.3`.
 
-Our setup includes local scripts in `package.json` for quick developer feedback and a dedicated `security-testing` job in GitHub Actions.
+Our setup includes local scripts in \`package.json\` for quick developer feedback. In GitHub Actions, we separate the security auditing into parallel jobs for optimal execution speed: one for the filesystem/dependencies, one for the frontend container, and one for the backend container.
 
 **Local Checks (package.json):**
 ```json
@@ -1460,24 +1460,34 @@ Our setup includes local scripts in `package.json` for quick developer feedback 
 ```
 
 **CI Pipeline (ci.yml):**
-In GitHub Actions, we run `npm audit` alongside the official `aquasecurity/trivy-action` (pinned to safe releases) to catch `HIGH` and `CRITICAL` vulnerabilities.
+We run \`npm audit\` alongside the official \`aquasecurity/trivy-action\` (pinned to safe releases) to catch \`HIGH\` and \`CRITICAL\` vulnerabilities. Scanning the frontend and API Docker images happens in distinct parallel jobs.
 
 ```yaml
-security-testing:
-  name: Security Code & Container Scan
-  runs-on: ubuntu-latest
+security-testing-fs:
+  name: Security Testing (FS & NPM)
   steps:
-    - uses: actions/checkout@v4
-    - run: npm ci --legacy-peer-deps
     - run: npm audit --audit-level=high
-      continue-on-error: true
-
-    - name: Run Trivy on filesystem
-      uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
+    - uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
       with:
         scan-type: 'fs'
-        severity: 'CRITICAL,HIGH'
-        trivy-version: '0.69.3'
+
+security-testing-frontend:
+  name: Container Scanning (Frontend)
+  steps:
+    - run: docker compose build app
+    - uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
+      with:
+        scan-type: 'image'
+        image-ref: 'test-automation-best-practices-app:latest'
+
+security-testing-api:
+  name: Container Scanning (API)
+  steps:
+    - run: docker compose build api
+    - uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
+      with:
+        scan-type: 'image'
+        image-ref: 'test-automation-best-practices-api:latest'
 ```
 
 **How to verify:**

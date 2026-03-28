@@ -41,10 +41,10 @@ jobs:
           VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
   # ==========================================
-  # 1a. SECURITY TESTING (npm audit & Trivy)
+  # 1a. SECURITY TESTING (npm audit & Trivy FS)
   # ==========================================
-  security-testing:
-    name: Security Testing & Container Scanning
+  security-testing-fs:
+    name: Security Testing (FS & NPM)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -75,14 +75,24 @@ jobs:
           severity: 'CRITICAL,HIGH'
           trivy-version: '0.69.3'
 
-      # Build the frontend and API Docker images locally so Trivy can scan them
+  # ==========================================
+  # 1b. SECURITY TESTING (Frontend Image)
+  # ==========================================
+  security-testing-frontend:
+    name: Container Scanning (Frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Build the frontend Docker image locally so Trivy can scan it
       # Note: We intentionally do NOT use docker/setup-buildx-action here.
       # The docker-container buildx driver builds images in an isolated BuildKit
       # container and does NOT load them into the local Docker daemon image store,
       # making them invisible to Trivy. Using the default 'docker' driver via
       # plain 'docker compose build' loads images directly into the daemon.
-      - name: Build Docker images for container scanning
-        run: docker compose build app api
+      - name: Build Frontend Docker image for container scanning
+        run: docker compose build app
 
       # Scan the frontend Docker image for OS and dependency vulnerabilities
       - name: Run Trivy vulnerability scanner on frontend image
@@ -95,6 +105,21 @@ jobs:
           severity: 'CRITICAL,HIGH'
           trivy-version: '0.69.3'
 
+  # ==========================================
+  # 1c. SECURITY TESTING (API Image)
+  # ==========================================
+  security-testing-api:
+    name: Container Scanning (API)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # Build the API Docker image locally so Trivy can scan it
+      # Note: We intentionally do NOT use docker/setup-buildx-action here.
+      - name: Build API Docker image for container scanning
+        run: docker compose build api
+
       # Scan the backend API Docker image for OS and dependency vulnerabilities
       - name: Run Trivy vulnerability scanner on API image
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
@@ -102,12 +127,11 @@ jobs:
           scan-type: 'image'
           image-ref: 'test-automation-best-practices-api:latest'
           format: 'table'
-          ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
           trivy-version: '0.69.3'
 
   # ==========================================
-  # 1b. MUTATION TESTING (Stryker)
+  # 1d. MUTATION TESTING (Stryker)
   # ==========================================
   mutation-testing:
     name: Mutation Testing on Server
@@ -167,7 +191,7 @@ jobs:
           retention-days: 1
 
   # ==========================================
-  # 1c. MUTATION TESTING (Stryker) - Frontend
+  # 1e. MUTATION TESTING (Stryker) - Frontend
   # ==========================================
   mutation-testing-frontend:
     name: Mutation Testing on Frontend
