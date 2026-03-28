@@ -66,6 +66,9 @@ jobs:
       - name: Create Allure results directory
         run: mkdir -p allure-results
 
+      - name: Download Trivy JUnit template
+        run: curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
+
       - name: Run Trivy vulnerability scanner on fs
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
@@ -76,7 +79,7 @@ jobs:
           # Fail the pipeline and output as JUnit for Allure
           exit-code: '1'
           format: 'template'
-          template: '@contrib/junit.tpl'
+          template: '@/github/workspace/junit.tpl'
           output: 'allure-results/trivy-fs.xml'
 
       - name: Upload Trivy FS Allure Results
@@ -103,6 +106,9 @@ jobs:
       - name: Create Allure results directory
         run: mkdir -p allure-results
 
+      - name: Download Trivy JUnit template
+        run: curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
+
       - name: Run Trivy vulnerability scanner on frontend image
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
@@ -113,7 +119,7 @@ jobs:
           trivy-version: '0.69.3'
           exit-code: '1'
           format: 'template'
-          template: '@contrib/junit.tpl'
+          template: '@/github/workspace/junit.tpl'
           output: 'allure-results/trivy-frontend.xml'
 
       - name: Upload Trivy Frontend Allure Results
@@ -140,6 +146,9 @@ jobs:
       - name: Create Allure results directory
         run: mkdir -p allure-results
 
+      - name: Download Trivy JUnit template
+        run: curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
+
       - name: Run Trivy vulnerability scanner on API image
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
@@ -149,7 +158,7 @@ jobs:
           trivy-version: '0.69.3'
           exit-code: '1'
           format: 'template'
-          template: '@contrib/junit.tpl'
+          template: '@/github/workspace/junit.tpl'
           output: 'allure-results/trivy-api.xml'
 
       - name: Upload Trivy API Allure Results
