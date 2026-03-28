@@ -56,24 +56,36 @@ jobs:
           node-version: 22
           cache: "npm"
 
-      # Install dependencies to ensure accurate npm audit
       - name: Install dependencies
         run: npm ci --legacy-peer-deps
 
-      # Run npm audit (native Node security scanning)
       - name: NPM Vulnerability Audit
         run: npm audit --audit-level=high
         continue-on-error: true
 
-      # Run Trivy vulnerability scanner on filesystem
+      - name: Create Allure results directory
+        run: mkdir -p allure-results
+
       - name: Run Trivy vulnerability scanner on fs
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
           scan-type: 'fs'
           ignore-unfixed: true
-          format: 'table'
           severity: 'CRITICAL,HIGH'
           trivy-version: '0.69.3'
+          # Fail the pipeline and output as JUnit for Allure
+          exit-code: '1'
+          format: 'template'
+          template: '@contrib/junit.tpl'
+          output: 'allure-results/trivy-fs.xml'
+
+      - name: Upload Trivy FS Allure Results
+        if: always() # Ensure this runs even if Trivy fails the build
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-trivy-fs
+          path: allure-results/**
+          retention-days: 1
 
   # ==========================================
   # 1b. SECURITY TESTING (Frontend Image)
@@ -85,25 +97,32 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Build the frontend Docker image locally so Trivy can scan it
-      # Note: We intentionally do NOT use docker/setup-buildx-action here.
-      # The docker-container buildx driver builds images in an isolated BuildKit
-      # container and does NOT load them into the local Docker daemon image store,
-      # making them invisible to Trivy. Using the default 'docker' driver via
-      # plain 'docker compose build' loads images directly into the daemon.
       - name: Build Frontend Docker image for container scanning
         run: docker compose build app
 
-      # Scan the frontend Docker image for OS and dependency vulnerabilities
+      - name: Create Allure results directory
+        run: mkdir -p allure-results
+
       - name: Run Trivy vulnerability scanner on frontend image
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
           scan-type: 'image'
           image-ref: 'test-automation-best-practices-app:latest'
-          format: 'table'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
           trivy-version: '0.69.3'
+          exit-code: '1'
+          format: 'template'
+          template: '@contrib/junit.tpl'
+          output: 'allure-results/trivy-frontend.xml'
+
+      - name: Upload Trivy Frontend Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-trivy-frontend
+          path: allure-results/**
+          retention-days: 1
 
   # ==========================================
   # 1c. SECURITY TESTING (API Image)
@@ -115,21 +134,31 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # Build the API Docker image locally so Trivy can scan it
-      # Note: We intentionally do NOT use docker/setup-buildx-action here.
       - name: Build API Docker image for container scanning
         run: docker compose build api
 
-      # Scan the backend API Docker image for OS and dependency vulnerabilities
+      - name: Create Allure results directory
+        run: mkdir -p allure-results
+
       - name: Run Trivy vulnerability scanner on API image
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
           scan-type: 'image'
           image-ref: 'test-automation-best-practices-api:latest'
-          format: 'table'
           severity: 'CRITICAL,HIGH'
           trivy-version: '0.69.3'
+          exit-code: '1'
+          format: 'template'
+          template: '@contrib/junit.tpl'
+          output: 'allure-results/trivy-api.xml'
 
+      - name: Upload Trivy API Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-trivy-api
+          path: allure-results/**
+          retention-days: 1
   # ==========================================
   # 1d. MUTATION TESTING (Stryker)
   # ==========================================
@@ -704,7 +733,7 @@ jobs:
   publish-reports:
     name: Merge Reports & Publish
     # This job 'fans in', running only after all the test runners finish
-    needs: [tests-misc, api-property-testing, e2e-sharded, performance-testing, mutation-testing, mutation-testing-frontend]
+    needs: [security-testing-fs, security-testing-frontend, security-testing-api, tests-misc, api-property-testing, e2e-sharded, performance-testing, mutation-testing, mutation-testing-frontend]
     if: always()
     runs-on: ubuntu-latest
     steps:
