@@ -17,32 +17,31 @@ const successfulActionsRate = new Rate('successful_actions_rate');
 const configs = JSON.parse(open('./configs/test-config.json'));
 const testConfig = getConfig(configs, testType);
 
-// Test Options configuring how k6 executes the script and browser
 export const options = {
-    // Scenarios allow multiple types of tests or traffic patterns in one script
     scenarios: {
-        // 'Browser' is a custom name for this scenario
         Browser: {
-            // 'ramping-vus' allows using stages from the config
             executor: 'ramping-vus',
             stages: testConfig.stages,
-            // Additional options specific to the Browser module
+            gracefulRampDown: '30s',
             options: {
                 browser: {
-                    // Start a Chromium-based browser (currently the only supported type)
                     type: 'chromium',
-                    // Run in headless mode (no GUI) for performance and CI compatibility
                     headless: true,
-                    // Essential for running headless browsers stably in GitHub Actions
-                    args: ['no-sandbox','--disable-setuid-sandbox', 'disable-dev-shm-usage', 'disable-gpu']
+                    args: [
+                        '--no-sandbox',
+                        '--disable-setuid-sandbox',
+                        '--disable-dev-shm-usage',
+                        '--disable-gpu',
+                        '--no-zygote',
+                        '--single-process'
+                    ]
                 }
             }
         }
     },
-    // Thresholds define the pass/fail criteria for the test
     thresholds: testConfig.thresholds || {
-        // 'checks' metric: verify that 100% (rate==1.0) of all check() calls pass
-        checks: ['rate==1.0']
+        checks: ['rate==1.0'],
+        'browser_http_req_duration': ['p(95)<200'] 
     }
 };
 
