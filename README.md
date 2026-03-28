@@ -1,10 +1,9 @@
 # Test Automation Best Practices in Action
 
 [![Coverage Status](https://coveralls.io/repos/github/jpourdanis/test-automation-best-practices/badge.svg?branch=main)](https://coveralls.io/github/jpourdanis/test-automation-best-practices?branch=main)
-[![CI](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml/badge.svg)](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml)
+[![CI](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml)
 [![Passed Tests](https://img.shields.io/badge/dynamic/json?color=success&label=Passed&query=%24.statistic.passed&url=https%3A%2F%2Fjpourdanis.github.io%2Ftest-automation-best-practices%2Fwidgets%2Fsummary.json)](https://jpourdanis.github.io/test-automation-best-practices/)
 [![Failed Tests](https://img.shields.io/badge/dynamic/json?color=critical&label=Failed&query=%24.statistic.failed&url=https%3A%2F%2Fjpourdanis.github.io%2Ftest-automation-best-practices%2Fwidgets%2Fsummary.json)](https://jpourdanis.github.io/test-automation-best-practices/)
-[![Allure Report](https://img.shields.io/badge/Allure%20Report-View-blue)](https://jpourdanis.github.io/test-automation-best-practices/)
 
 ![Demo Animation](demo.webp)
 
