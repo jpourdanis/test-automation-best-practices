@@ -6,7 +6,6 @@
     "nth-check": "^2.1.1",
     "postcss": "^8.4.31",
     "serialize-javascript": "^7.0.5",
-    "webpack-dev-server": "^5.2.1",
     "@tootallnate/once": "^3.0.1",
     "path-to-regexp": "^0.1.13",
     "picomatch": "^2.3.1",
