@@ -40,6 +40,40 @@ jobs:
           # Lint the full codebase on main branch pushes, otherwise only lint changed files in PRs
           VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
+  # ==========================================
+  # 1a. SECURITY TESTING (npm audit & Trivy)
+  # ==========================================
+  security-testing:
+    name: Security Code & Container Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      # Install dependencies to ensure accurate npm audit
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      # Run npm audit (native Node security scanning)
+      - name: NPM Vulnerability Audit
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      # Run Trivy vulnerability scanner on filesystem
+      - name: Run Trivy vulnerability scanner on fs
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          scan-type: 'fs'
+          ignore-unfixed: true
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          trivy-version: '0.69.3'
 
   # ==========================================
   # 1b. MUTATION TESTING (Stryker)

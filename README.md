@@ -41,6 +41,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [21. Allure Reports with Historical Data & Flaky Test Detection](#21-allure-reports-with-historical-data--flaky-test-detection)
     - [22. Mutation Testing with Stryker Mutator](#22-mutation-testing-with-stryker-mutator)
     - [23. Automated Dependency Updates & Version Testing](#23-automated-dependency-updates--version-testing)
+    - [24. Security Scanning for Code & Containers](#24-security-scanning-for-code--containers)
 
 ---
 
@@ -1427,3 +1428,60 @@ updates:
 ```
 
 Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwright E2E and Jest tests against the new dependency context, ensuring flawless integration.
+
+### 24. Security Scanning for Code & Containers
+
+**Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+
+**What is it?**
+Security scanning adds an automated layer of defense by inspecting your project's codebase, dependencies, and Docker container images for known vulnerabilities (CVEs). We use `npm audit` for Node.js dependencies and **Trivy** for deep filesystem and container scanning.
+
+**Why it matters:**
+
+* **Supply Chain Security:** Many modern applications rely heavily on third-party libraries. If a dependency introduces a security flaw, automated scanning catches it before it ships.
+* **Container Hardening:** Docker images often inherit vulnerabilities from their base images (e.g., outdated OS libraries). Container scanning ensures that the environment your application runs in is as secure as the code itself.
+* **Continuous Monitoring:** By integrating these checks into every CI run, security becomes a continuous process rather than an infrequent manual audit, preventing vulnerable code or images from ever reaching production.
+
+**How to implement:**
+
+> [!CAUTION]
+> **Trivy Supply Chain Incident (March 2026)**
+> In March 2026, malicious actors compromised Aqua Security's build pipeline and injected credential-stealing viruses into `latest` and versions `0.69.4` - `0.69.6`. To avoid execution of weaponized images or binaries, we **strict-pin** the GitHub Action to `@0.28.0`, explicitly pass `trivy-version: '0.69.3'`, and hardcode the Docker image pulls to `:0.69.3`.
+
+Our setup includes local scripts in `package.json` for quick developer feedback and a dedicated `security-testing` job in GitHub Actions.
+
+**Local Checks (package.json):**
+```json
+"scripts": {
+  "security:audit": "npm audit --audit-level=high",
+  "security:scan:code": "docker run --rm -v $(pwd):/app aquasec/trivy:0.69.3 fs /app",
+  "security:scan": "npm run security:audit"
+}
+```
+
+**CI Pipeline (ci.yml):**
+In GitHub Actions, we run `npm audit` alongside the official `aquasecurity/trivy-action` (pinned to safe releases) to catch `HIGH` and `CRITICAL` vulnerabilities.
+
+```yaml
+security-testing:
+  name: Security Code & Container Scan
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v4
+    - run: npm ci --legacy-peer-deps
+    - run: npm audit --audit-level=high
+      continue-on-error: true
+
+    - name: Run Trivy on filesystem
+      uses: aquasecurity/trivy-action@0.28.0
+      with:
+        scan-type: 'fs'
+        severity: 'CRITICAL,HIGH'
+        trivy-version: '0.69.3'
+```
+
+**How to verify:**
+
+```bash
+npm run security:scan
+```
