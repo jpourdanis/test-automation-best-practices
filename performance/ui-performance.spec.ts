@@ -34,7 +34,7 @@ export const options = {
                     // Run in headless mode (no GUI) for performance and CI compatibility
                     headless: true,
                     // Essential for running headless browsers stably in GitHub Actions
-                    args: ['no-sandbox', 'disable-dev-shm-usage', 'disable-gpu']
+                    args: ['no-sandbox','--disable-setuid-sandbox', 'disable-dev-shm-usage', 'disable-gpu']
                 }
             }
         }
