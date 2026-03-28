@@ -1446,7 +1446,7 @@ Security scanning adds an automated layer of defense by inspecting your project'
 
 > [!CAUTION]
 > **Trivy Supply Chain Incident (March 2026)**
-> In March 2026, malicious actors compromised Aqua Security's build pipeline and injected credential-stealing viruses into `latest` and versions `0.69.4` - `0.69.6`. To avoid execution of weaponized images or binaries, we **strict-pin** the GitHub Action to `@0.28.0`, explicitly pass `trivy-version: '0.69.3'`, and hardcode the Docker image pulls to `:0.69.3`.
+> In March 2026, malicious actors compromised Aqua Security's build pipeline and injected credential-stealing viruses into `latest` and versions `0.69.4` - `0.69.6` AND performed tag-repointing attacks on the GitHub Action release tags. To avoid execution of weaponized images or binaries, we **strict-pin** the GitHub Action to an immutable commit SHA (`@57a97c7e7821a5776cebc9bb87c984fa69cba8f1`), explicitly pass `trivy-version: '0.69.3'`, and hardcode the Docker image pulls to `:0.69.3`.
 
 Our setup includes local scripts in `package.json` for quick developer feedback and a dedicated `security-testing` job in GitHub Actions.
 
@@ -1473,7 +1473,7 @@ security-testing:
       continue-on-error: true
 
     - name: Run Trivy on filesystem
-      uses: aquasecurity/trivy-action@0.28.0
+      uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
       with:
         scan-type: 'fs'
         severity: 'CRITICAL,HIGH'

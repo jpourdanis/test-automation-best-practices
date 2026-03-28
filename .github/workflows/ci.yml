@@ -67,7 +67,7 @@ jobs:
 
       # Run Trivy vulnerability scanner on filesystem
       - name: Run Trivy vulnerability scanner on fs
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
           scan-type: 'fs'
           ignore-unfixed: true
