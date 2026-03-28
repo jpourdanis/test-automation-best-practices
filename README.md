@@ -40,6 +40,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [20. Quality Gates & Code Coverage Limits](#20-quality-gates--code-coverage-limits)
     - [21. Allure Reports with Historical Data & Flaky Test Detection](#21-allure-reports-with-historical-data--flaky-test-detection)
     - [22. Mutation Testing with Stryker Mutator](#22-mutation-testing-with-stryker-mutator)
+    - [23. Automated Dependency Updates & Version Testing](#23-automated-dependency-updates--version-testing)
 
 ---
 
@@ -1371,3 +1372,58 @@ cd server && npm run mutation
 ```
 
 Stryker generates a detailed HTML report showing each mutant, whether it was killed or survived, and links directly to the mutated line of code.
+
+### 23. Automated Dependency Updates & Version Testing
+
+**File:** [`.github/workflows/dependabot.yml`](/.github/workflows/dependabot.yml)
+
+**What is it?**
+Dependabot is an automated tool that scans your project's dependencies for outdated packages or known security vulnerabilities and automatically opens Pull Requests to update them to the latest versions. We configure it to check the frontend (`/`), backend (`/server`), and GitHub Actions (`/`) on a weekly or monthly schedule.
+
+**Why it matters:**
+
+* **Version Upgrade Testing:** Dependencies evolve rapidly, and breaking changes in a minor or major release can quietly break your application. Having automated tests run against every Dependabot PR ensures that before you merge a potentially destructive package upgrade, you have concrete proof that your application's core functionality remains intact.
+* **Backwards Compatibility Testing:** Upgrading a backend library (like Express or Mongoose) shouldn't break existing API clients or frontend applications. The automated E2E testing triggered by these upgrades guarantees that the new versions remain backward compatible with your current implementation, giving you confidence to merge updates without manual regression testing.
+* **Security & Maintenance:** The longer you wait to update dependencies, the harder it becomes due to accumulated breaking changes, and the higher the risk of unpatched vulnerabilities. Automated, well-tested updates turn security patches into a non-event.
+
+**How to implement:**
+
+We define a configuration file that targets the different ecosystems in our repository:
+
+```yaml
+# .github/workflows/dependabot.yml
+version: 2
+updates:
+  # 1. Update root frontend/misc npm packages
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "frontend"
+
+  # 2. Update server-side npm packages
+  - package-ecosystem: "npm"
+    directory: "/server"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    labels:
+      - "dependencies"
+      - "backend"
+
+  # 3. Update GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    labels:
+      - "dependencies"
+      - "ci"
+```
+
+Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwright E2E and Jest tests against the new dependency context, ensuring flawless integration.
