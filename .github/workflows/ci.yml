@@ -75,6 +75,36 @@ jobs:
           severity: 'CRITICAL,HIGH'
           trivy-version: '0.69.3'
 
+      # Set up Docker Buildx to enable BuildKit-accelerated image builds
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Build the frontend and API Docker images locally so Trivy can scan them
+      - name: Build Docker images for container scanning
+        run: docker compose build app api
+
+      # Scan the frontend Docker image for OS and dependency vulnerabilities
+      - name: Run Trivy vulnerability scanner on frontend image
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
+        with:
+          scan-type: 'image'
+          image-ref: 'playwright-test-coverage-app:latest'
+          format: 'table'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+          trivy-version: '0.69.3'
+
+      # Scan the backend API Docker image for OS and dependency vulnerabilities
+      - name: Run Trivy vulnerability scanner on API image
+        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
+        with:
+          scan-type: 'image'
+          image-ref: 'playwright-test-coverage-api:latest'
+          format: 'table'
+          ignore-unfixed: true
+          severity: 'CRITICAL,HIGH'
+          trivy-version: '0.69.3'
+
   # ==========================================
   # 1b. MUTATION TESTING (Stryker)
   # ==========================================
