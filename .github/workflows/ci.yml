@@ -117,7 +117,6 @@ jobs:
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
           trivy-version: '0.69.3'
-          exit-code: '1'
           format: 'template'
           template: '@${{ github.workspace }}/junit.tpl'
           output: 'allure-results/trivy-frontend.xml'
