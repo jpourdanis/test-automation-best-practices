@@ -65,6 +65,9 @@ jobs:
         run: npm audit --audit-level=high
         continue-on-error: true
 
+      - name: Create Allure results directory
+        run: mkdir -p allure-results
+
       # Run Trivy vulnerability scanner on filesystem
       - name: Run Trivy vulnerability scanner on fs
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
@@ -74,6 +77,18 @@ jobs:
           format: 'table'
           severity: 'CRITICAL,HIGH'
           trivy-version: '0.69.3'
+          exit-code: '1'
+          format: 'template'
+          template: '@contrib/junit.tpl'
+          output: 'allure-results/trivy-fs.xml'
+
+      - name: Upload Trivy FS Allure Results
+        if: always() # Ensure this runs even if Trivy fails the build
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-trivy-fs
+          path: allure-results/**
+          retention-days: 
 
   # ==========================================
   # 1b. SECURITY TESTING (Frontend Image)
@@ -704,7 +719,7 @@ jobs:
   publish-reports:
     name: Merge Reports & Publish
     # This job 'fans in', running only after all the test runners finish
-    needs: [tests-misc, api-property-testing, e2e-sharded, performance-testing, mutation-testing, mutation-testing-frontend]
+    needs: [security-testing-fs, tests-misc, api-property-testing, e2e-sharded, performance-testing, mutation-testing, mutation-testing-frontend]
     if: always()
     runs-on: ubuntu-latest
     steps:
