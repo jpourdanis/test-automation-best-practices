@@ -716,6 +716,11 @@ jobs:
           allure_history: allure-history
           allure_results: allure-results
 
+      - name: Copy summary.json for Badges
+        run: |
+          mkdir -p allure-history/widgets
+          cp allure-history/${{ github.run_number }}/widgets/summary.json allure-history/widgets/summary.json
+
       # Commits the new Allure trend graphs and test statuses directly to GitHub Pages
       - name: Publish test report to GH Pages
         uses: peaceiris/actions-gh-pages@v3
