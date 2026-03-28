@@ -1,0 +1,13 @@
+[NETWORK ERROR] should handle fetch colors network failure gracefully: GET http://localhost:3000/api/colors - net::ERR_FAILED
+[CONSOLE ERROR] should handle fetch colors network failure gracefully: Failed to load resource: net::ERR_FAILED
+[CONSOLE ERROR] should handle fetch colors network failure gracefully: Failed to fetch colors: TypeError: Failed to fetch
+    at http://localhost:3000/static/js/bundle.js:796:5
+    at invokePassiveEffectCreate (http://localhost:3000/static/js/bundle.js:27350:24)
+    at HTMLUnknownElement.callCallback (http://localhost:3000/static/js/bundle.js:10652:18)
+    at Object.invokeGuardedCallbackDev (http://localhost:3000/static/js/bundle.js:10696:20)
+    at invokeGuardedCallback (http://localhost:3000/static/js/bundle.js:10751:35)
+    at flushPassiveEffectsImpl (http://localhost:3000/static/js/bundle.js:27420:13)
+    at unstable_runWithPriority (http://localhost:3000/static/js/bundle.js:36714:16)
+    at runWithPriority$1 (http://localhost:3000/static/js/bundle.js:16986:14)
+    at flushPassiveEffects (http://localhost:3000/static/js/bundle.js:27316:18)
+    at http://localhost:3000/static/js/bundle.js:27214:15
