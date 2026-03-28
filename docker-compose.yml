@@ -1,5 +1,6 @@
 services:
   app:
+    image: test-automation-best-practices-app:latest
     build:
       context: .
       target: app
@@ -23,6 +24,7 @@ services:
       - ./.nyc_output:/app/.nyc_output
 
   api:
+    image: test-automation-best-practices-api:latest
     build:
       context: ./server
       cache_from:

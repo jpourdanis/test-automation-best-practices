@@ -89,7 +89,7 @@ jobs:
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
           scan-type: 'image'
-          image-ref: 'playwright-test-coverage-app:latest'
+          image-ref: 'test-automation-best-practices-app:latest'
           format: 'table'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
@@ -100,7 +100,7 @@ jobs:
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
           scan-type: 'image'
-          image-ref: 'playwright-test-coverage-api:latest'
+          image-ref: 'test-automation-best-practices-api:latest'
           format: 'table'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'

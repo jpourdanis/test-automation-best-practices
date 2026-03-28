@@ -47,8 +47,8 @@
     "test:api": "npx playwright test e2e/tests/api.spec.ts",
     "test:perf:api:smoke": "TEST_TYPE=smoke k6 run performance/api-performance.spec.ts",
     "test:perf:api:load": "TEST_TYPE=load k6 run performance/api-performance.spec.ts",
-    "test:perf:ui:smoke": "K6_BROWSER_ENABLED=true TEST_TYPE=smoke k6 run performance/ui-performance.spec.ts",
-    "test:perf:ui:load": "K6_BROWSER_ENABLED=true TEST_TYPE=load k6 run performance/ui-performance.spec.ts",
+    "test:perf:ui:smoke": "K6_BROWSER_ENABLED=true K6_BROWSER_ARGS=no-sandbox TEST_TYPE=smoke k6 run performance/ui-performance.spec.ts",
+    "test:perf:ui:load": "K6_BROWSER_ENABLED=true K6_BROWSER_ARGS=no-sandbox TEST_TYPE=load k6 run performance/ui-performance.spec.ts",
     "test:perf": "npm run test:perf:ui:smoke",
     "test:api:schemathesis": "docker run --rm schemathesis/schemathesis run http://host.docker.internal:5001/openapi.json",
     "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-frontend-unit-tests.xml react-scripts test --watchAll=false --reporters=default --reporters=jest-junit",
@@ -56,8 +56,8 @@
     "docker:up": "docker-compose up -d --build",
     "security:audit": "npm audit --audit-level=high",
     "security:scan:code": "docker run --rm -v $(pwd):/app aquasec/trivy:0.69.3 fs /app",
-    "security:scan:container:app": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3 image playwright-test-coverage-app:latest",
-    "security:scan:container:api": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3 image playwright-test-coverage-api:latest",
+    "security:scan:container:app": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3 image test-automation-best-practices-app:latest",
+    "security:scan:container:api": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3 image test-automation-best-practices-api:latest",
     "security:scan": "npm run security:audit && npm run security:scan:code"
   },
   "eslintConfig": {
