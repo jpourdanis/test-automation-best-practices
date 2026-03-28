@@ -79,7 +79,7 @@ jobs:
           # Fail the pipeline and output as JUnit for Allure
           exit-code: '1'
           format: 'template'
-          template: '@/github/workspace/junit.tpl'
+          template: '@${{ github.workspace }}/junit.tpl'
           output: 'allure-results/trivy-fs.xml'
 
       - name: Upload Trivy FS Allure Results
@@ -119,7 +119,7 @@ jobs:
           trivy-version: '0.69.3'
           exit-code: '1'
           format: 'template'
-          template: '@/github/workspace/junit.tpl'
+          template: '@${{ github.workspace }}/junit.tpl'
           output: 'allure-results/trivy-frontend.xml'
 
       - name: Upload Trivy Frontend Allure Results
@@ -158,7 +158,7 @@ jobs:
           trivy-version: '0.69.3'
           exit-code: '1'
           format: 'template'
-          template: '@/github/workspace/junit.tpl'
+          template: '@${{ github.workspace }}/junit.tpl'
           output: 'allure-results/trivy-api.xml'
 
       - name: Upload Trivy API Allure Results
