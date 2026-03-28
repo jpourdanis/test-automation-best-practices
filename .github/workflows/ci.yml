@@ -685,6 +685,7 @@ jobs:
         env:
           K6_BROWSER_ENABLED: true
           TEST_TYPE: 'smoke'
+          DBUS_SESSION_BUS_ADDRESS: /dev/null
         run: k6 run performance/ui-performance.spec.ts
 
       # Uploads the k6 execution data (JUnit/Allure) for inclusion in the final report
