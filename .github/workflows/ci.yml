@@ -648,6 +648,7 @@ jobs:
         uses: grafana/setup-k6-action@v1
         with:
           browser: true
+          k6-version: latest
 
       # Executes k6 smoke tests against the API to verify baseline latency and throughput
       - name: Run API Performance Test
@@ -659,7 +660,7 @@ jobs:
       - name: Run UI Performance Test
         env:
           K6_BROWSER_ENABLED: true
-          K6_BROWSER_ARGS: "--no-sandbox --disable-setuid-sandbox --disable-dev-shm-usage --disable-gpu"
+          TEST_TYPE: 'smoke'
         run: dbus-run-session -- npm run test:perf:ui:smoke
 
       # Uploads the k6 execution data (JUnit/Allure) for inclusion in the final report
