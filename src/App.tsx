@@ -4,28 +4,28 @@ import './App.css';
 import { useTranslation, Trans } from 'react-i18next';
 
 const App = () => {
-  const [backgroundColor, setBackgroundColor] = React.useState("#1abc9c")
-  const [colors, setColors] = React.useState<{name: string, hex: string}[]>([])
+  const [backgroundColor, setBackgroundColor] = React.useState('#1abc9c');
+  const [colors, setColors] = React.useState<{ name: string; hex: string }[]>([]);
   const { t, i18n } = useTranslation();
 
   React.useEffect(() => {
     fetch('/api/colors')
-      .then(res => res.json())
-      .then(data => {
+      .then((res) => res.json())
+      .then((data) => {
         if (Array.isArray(data) && data.length > 0) {
           setColors(data);
           // Set the initial background color to the first color fetched (optional)
           setBackgroundColor(data[0].hex);
         }
       })
-      .catch(err => console.error("Failed to fetch colors:", err));
+      .catch((err) => console.error('Failed to fetch colors:', err));
   }, []);
 
   const changeLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const lang = e.target.value;
     i18n.changeLanguage(lang);
     document.documentElement.lang = lang;
-  }
+  };
 
   const handleColorClick = async (colorName: string) => {
     try {
@@ -44,7 +44,11 @@ const App = () => {
       <main>
         <header className="App-header" style={{ backgroundColor }}>
           <div className="language-selector">
-            <select aria-label={t('languageSelector')} value={i18n.resolvedLanguage} onChange={changeLanguage}>
+            <select
+              aria-label={t('languageSelector')}
+              value={i18n.resolvedLanguage}
+              onChange={changeLanguage}
+            >
               <option value="en">English</option>
               <option value="es">Español</option>
               <option value="el">Ελληνικά</option>
@@ -65,12 +69,14 @@ const App = () => {
           >
             {t('learnReact')}
           </a>
-          <span aria-live="polite">{t('currentColor')} {backgroundColor}</span>
+          <span aria-live="polite">
+            {t('currentColor')} {backgroundColor}
+          </span>
           <div className="btn-group-colors">
             {colors.length > 0 ? (
-              colors.map(c => (
-                <button 
-                  key={c.name} 
+              colors.map((c) => (
+                <button
+                  key={c.name}
                   onClick={() => handleColorClick(c.name)}
                   aria-label={`${t('changeColor')} ${t(`colors.${c.name.toLowerCase()}`)}`}
                 >
@@ -85,6 +91,6 @@ const App = () => {
       </main>
     </div>
   );
-}
+};
 
 export default App;

@@ -1,15 +1,15 @@
-import { test, expect } from "../baseFixtures";
-import { convertHexToRGB, extractHexColor } from "../helper";
+import { test, expect } from '../baseFixtures';
+import { convertHexToRGB, extractHexColor } from '../helper';
 
 /**
  * Test Suite: Coverage Verification
- * 
+ *
  * This suite focuses on ensuring that the basic UI functionality is covered
  * and that the background color logic works as expected. It also serves
  * as a baseline for Istanbul code coverage collection.
  */
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
+  await page.goto('/');
 });
 
 interface Color {
@@ -18,9 +18,9 @@ interface Color {
 }
 
 const colors: Color[] = [
-  { name: "Turquoise", hex: "1abc9c" },
-  { name: "Red", hex: "e74c3c" },
-  { name: "Yellow", hex: "f1c40f" },
+  { name: 'Turquoise', hex: '1abc9c' },
+  { name: 'Red', hex: 'e74c3c' },
+  { name: 'Yellow', hex: 'f1c40f' },
 ];
 
 /**
@@ -32,15 +32,13 @@ const colors: Color[] = [
  * 4. Convert hex to RGB for CSS validation
  * 5. Verify the header background color of the page matches the RGB values
  */
-test("check Turquoise ( #1abc9c) is the default background color.", async ({
-  page,
-}) => {
-  const turquoiseHex = colors.find(c => c.name === "Turquoise")?.hex || "1abc9c";
-  await expect(page.locator("text=Current color:")).toContainText(turquoiseHex);
-  
+test('check Turquoise ( #1abc9c) is the default background color.', async ({ page }) => {
+  const turquoiseHex = colors.find((c) => c.name === 'Turquoise')?.hex || '1abc9c';
+  await expect(page.locator('text=Current color:')).toContainText(turquoiseHex);
+
   let rgbColors = convertHexToRGB(`#${turquoiseHex}`);
-  await expect(page.locator("header")).toHaveCSS(
-    "background-color",
+  await expect(page.locator('header')).toHaveCSS(
+    'background-color',
     `rgb(${rgbColors.red}, ${rgbColors.green}, ${rgbColors.blue})`
   );
 });
@@ -53,7 +51,7 @@ test("check Turquoise ( #1abc9c) is the default background color.", async ({
  * 2. The displayed current color hex matches the expected hex code.
  * 3. The header's CSS background-color matches the expected RGB value.
  */
-test.describe("Background color tests", () => {
+test.describe('Background color tests', () => {
   for (const color of colors) {
     test(`verify ${color.name} ( #${color.hex} ) is applied as the background color`, async ({
       page,
@@ -62,14 +60,14 @@ test.describe("Background color tests", () => {
       await page.click(`text=${color.name}`);
 
       // Wait for React to fetch and update DOM
-      await expect(page.locator("text=Current color:")).toContainText(color.hex);
+      await expect(page.locator('text=Current color:')).toContainText(color.hex);
 
       // Convert hex to RGB for CSS validation
       const rgb = convertHexToRGB(`#${color.hex}`);
 
       // Verify the header background color matches the expected RGB value
-      await expect(page.locator("header")).toHaveCSS(
-        "background-color",
+      await expect(page.locator('header')).toHaveCSS(
+        'background-color',
         `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`
       );
     });

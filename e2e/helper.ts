@@ -1,4 +1,4 @@
-import * as crypto from "crypto";
+import * as crypto from 'crypto';
 /**
  * Converts a hexadecimal color string to RGB values
  * @param hex - The hexadecimal color string (with or without '#' prefix)
@@ -9,7 +9,7 @@ import * as crypto from "crypto";
  */
 export function convertHexToRGB(hex: any) {
   // Remove the '#' if it's included in the input
-  hex = hex.replace(/^#/, "");
+  hex = hex.replace(/^#/, '');
 
   // Parse the hex values into separate R, G, and B values
   const red = parseInt(hex.substring(0, 2), 16);
@@ -46,5 +46,5 @@ export function extractHexColor(text: any) {
  * @example generateUUID() // returns "1a2b3c4d5e6f7890..."
  */
 export function generateUUID(): string {
-  return crypto.randomBytes(16).toString("hex");
+  return crypto.randomBytes(16).toString('hex');
 }

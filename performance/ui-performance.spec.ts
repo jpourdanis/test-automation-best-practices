@@ -18,117 +18,118 @@ const configs = JSON.parse(open('./configs/test-config.json'));
 const testConfig = getConfig(configs, testType);
 
 export const options = {
-    scenarios: {
-        Browser: {
-            executor: 'ramping-vus',
-            stages: testConfig.stages,
-            gracefulRampDown: '30s',
-            options: {
-                browser: {
-                    type: 'chromium',
-                    headless: true,
-                    args: [
-                        '--no-sandbox',
-                        '--disable-setuid-sandbox',
-                        '--disable-dev-shm-usage',
-                        '--disable-gpu'
-                    ]
-                }
-            }
-        }
+  scenarios: {
+    Browser: {
+      executor: 'ramping-vus',
+      stages: testConfig.stages,
+      gracefulRampDown: '30s',
+      options: {
+        browser: {
+          type: 'chromium',
+          headless: true,
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+          ],
+        },
+      },
     },
-    thresholds: testConfig.thresholds || {
-        checks: ['rate==1.0'],
-        'browser_http_req_duration': ['p(95)<200'] 
-    }
+  },
+  thresholds: testConfig.thresholds || {
+    checks: ['rate==1.0'],
+    browser_http_req_duration: ['p(95)<200'],
+  },
 };
 
 export function setup() {
-    console.log(`Running UI ${testType?.toUpperCase() || 'DEFAULT'} test 🚀`);
-    const serverCheck = http.get(`${API_URL}/api/colors`);
-    if (serverCheck.status !== 200) {
-        throw new Error(`Server is not reachable. Status: ${serverCheck.status}`);
-    }
+  console.log(`Running UI ${testType?.toUpperCase() || 'DEFAULT'} test 🚀`);
+  const serverCheck = http.get(`${API_URL}/api/colors`);
+  if (serverCheck.status !== 200) {
+    throw new Error(`Server is not reachable. Status: ${serverCheck.status}`);
+  }
 }
 
 export default async function () {
-    const page = await browser.newPage();
+  const page = await browser.newPage();
 
-    page.on('request', (request) => {
-        const payload = request.postData() ? `Payload: ${request.postData()}` : 'No payload';
-        console.log(`[UI Request] ${request.method()} ${request.url()} - ${payload}`);
-    });
+  page.on('request', (request) => {
+    const payload = request.postData() ? `Payload: ${request.postData()}` : 'No payload';
+    console.log(`[UI Request] ${request.method()} ${request.url()} - ${payload}`);
+  });
 
-    page.on('response', async (response) => {
-        let bodyInfo = '';
-        if (response.url().includes('/api/')) {
-            try {
-                const jsonBody = await (response as any).json();
-                bodyInfo = ` - Body: ${JSON.stringify(jsonBody)}`;
-            } catch (e) {
-                bodyInfo = ' - Body: [Could not read]';
-            }
-        }
-        console.log(`[UI Response] ${response.url()} - Status: ${response.status()}${bodyInfo}`);
-    });
-
-    try {
-        await page.goto(BASE_URL);
-        
-        // Assert header is visible using native k6 browser locators
-        const header = page.locator('header');
-        await header.waitFor({ state: 'visible' });
-        const isHeaderVisible = await header.isVisible();
-        
-        check(page, {
-            'Homepage header is visible': () => isHeaderVisible
-        });
-
-        // Click a random color button and verify the change
-        const testData = [
-            { name: "Turquoise", expectedHex: "#1abc9c" },
-            { name: "Red", expectedHex: "#e74c3c" },
-            { name: "Yellow", expectedHex: "#f1c40f" },
-        ];
-        const randomColor = testData[Math.floor(Math.random() * testData.length)];
-
-  
-        
-        // Wait for the buttons to be rendered and click the randomly selected one
-        const colorButton = page.locator('button', { hasText: randomColor.name });
-        await colorButton.click();
-        await page.waitForTimeout(1000); //Simulate that the user is thinking.
-          
-        // Locate the text element showing the current color hex and wait for it to update
-        const currentColorText = page.locator('header span', { hasText: randomColor.expectedHex });
-        await currentColorText.waitFor({ state: 'visible' });
-        const textContext = await currentColorText.textContent();
-
-        // Assert the update propagated
-        const colorUpdated = check(page, {
-            [`${randomColor.name} color updated successfully`]: () => textContext !== null && textContext.includes(randomColor.expectedHex)
-        });
-
-        if (isHeaderVisible && colorUpdated) {
-            successfulActionsRate.add(1);
-        } else {
-            successfulActionsRate.add(0);
-        }
-
-    } finally {
-        page.close();
+  page.on('response', async (response) => {
+    let bodyInfo = '';
+    if (response.url().includes('/api/')) {
+      try {
+        const jsonBody = await (response as any).json();
+        bodyInfo = ` - Body: ${JSON.stringify(jsonBody)}`;
+      } catch (e) {
+        bodyInfo = ' - Body: [Could not read]';
+      }
     }
+    console.log(`[UI Response] ${response.url()} - Status: ${response.status()}${bodyInfo}`);
+  });
+
+  try {
+    await page.goto(BASE_URL);
+
+    // Assert header is visible using native k6 browser locators
+    const header = page.locator('header');
+    await header.waitFor({ state: 'visible' });
+    const isHeaderVisible = await header.isVisible();
+
+    check(page, {
+      'Homepage header is visible': () => isHeaderVisible,
+    });
+
+    // Click a random color button and verify the change
+    const testData = [
+      { name: 'Turquoise', expectedHex: '#1abc9c' },
+      { name: 'Red', expectedHex: '#e74c3c' },
+      { name: 'Yellow', expectedHex: '#f1c40f' },
+    ];
+    const randomColor = testData[Math.floor(Math.random() * testData.length)];
+
+    // Wait for the buttons to be rendered and click the randomly selected one
+    const colorButton = page.locator('button', { hasText: randomColor.name });
+    await colorButton.click();
+    await page.waitForTimeout(1000); //Simulate that the user is thinking.
+
+    // Locate the text element showing the current color hex and wait for it to update
+    const currentColorText = page.locator('header span', { hasText: randomColor.expectedHex });
+    await currentColorText.waitFor({ state: 'visible' });
+    const textContext = await currentColorText.textContent();
+
+    // Assert the update propagated
+    const colorUpdated = check(page, {
+      [`${randomColor.name} color updated successfully`]: () =>
+        textContext !== null && textContext.includes(randomColor.expectedHex),
+    });
+
+    if (isHeaderVisible && colorUpdated) {
+      successfulActionsRate.add(1);
+    } else {
+      successfulActionsRate.add(0);
+    }
+  } finally {
+    page.close();
+  }
 }
 
 export function handleSummary(data: any) {
-    const testName = 'UI Performance Test';
-    const fileName = 'ui-performance.spec.ts';
-    const allureResult = generateAllureReport(data, testName, fileName);
-    const uuid = allureResult.uuid;
+  const testName = 'UI Performance Test';
+  const fileName = 'ui-performance.spec.ts';
+  const allureResult = generateAllureReport(data, testName, fileName);
+  const uuid = allureResult.uuid;
 
-    return {
-        'stdout': textSummary(data, { indent: ' ', enableColors: true }),
-        [`allure-results/${uuid}-result.json`]: JSON.stringify(allureResult),
-        [`allure-results/${uuid}-attachment.txt`]: textSummary(data, { indent: ' ', enableColors: false }),
-    };
+  return {
+    stdout: textSummary(data, { indent: ' ', enableColors: true }),
+    [`allure-results/${uuid}-result.json`]: JSON.stringify(allureResult),
+    [`allure-results/${uuid}-attachment.txt`]: textSummary(data, {
+      indent: ' ',
+      enableColors: false,
+    }),
+  };
 }

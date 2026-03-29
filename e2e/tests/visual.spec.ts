@@ -1,4 +1,4 @@
-import { test, expect } from "../baseFixtures";
+import { test, expect } from '../baseFixtures';
 
 /**
  * Test Suite: Visual Regression & Responsive Design Testing
@@ -21,7 +21,7 @@ import { test, expect } from "../baseFixtures";
 // Visual Regression Tests (default desktop viewport from playwright.config.ts)
 // ─────────────────────────────────────────────────────────────────────────────
 
-test.describe("Visual Regression", () => {
+test.describe('Visual Regression', () => {
   /**
    * Test: Homepage visual baseline
    *
@@ -30,17 +30,17 @@ test.describe("Visual Regression", () => {
    * Any pixel difference will cause the test to fail, highlighting exactly
    * what changed in a visual diff report.
    */
-  test("homepage should match snapshot", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForSelector("header");
+  test('homepage should match snapshot', async ({ page }) => {
+    await page.goto('/');
+    await page.waitForSelector('header');
 
     // Mask the animated React logo to prevent its CSS spin animation
     // from producing non-deterministic pixel diffs between runs.
     const screenshot = await page.screenshot({
       fullPage: true,
-      mask: [page.locator(".App-logo")],
+      mask: [page.locator('.App-logo')],
     });
-    expect(screenshot).toMatchSnapshot("home.png", { maxDiffPixelRatio: 0.05 });
+    expect(screenshot).toMatchSnapshot('home.png', { maxDiffPixelRatio: 0.05 });
   });
 });
 
@@ -48,7 +48,7 @@ test.describe("Visual Regression", () => {
 // Responsive Design Tests (constrained mobile viewport)
 // ─────────────────────────────────────────────────────────────────────────────
 
-test.describe("Responsive Design Testing", () => {
+test.describe('Responsive Design Testing', () => {
   test.beforeEach(async ({ homePage }) => {
     await homePage.goto();
   });
@@ -64,7 +64,7 @@ test.describe("Responsive Design Testing", () => {
    * and functional despite strict space constraints. Also verifies that
    * clicking a color button still updates the displayed hex value.
    */
-  test("should render correctly on mobile viewport", async ({ homePage, page }) => {
+  test('should render correctly on mobile viewport', async ({ homePage, page }) => {
     // Check that core elements remain visible on a small screen
     await expect(homePage.header).toBeVisible();
     await expect(homePage.currentColorText).toBeVisible();
@@ -79,21 +79,21 @@ test.describe("Responsive Design Testing", () => {
     // ✅ Best practice — deterministic, no wasted time
     // 1. Register the listener BEFORE the click
     const responsePromise = page.waitForResponse(
-      resp => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
+      (resp) => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
     );
     // 2. Fire the action
-    await homePage.clickColorButton("Yellow");
+    await homePage.clickColorButton('Yellow');
     // 3. Await the response (resolves as soon as it arrives)
     await responsePromise;
     // 4. Use auto-retrying assertion to handle React state update
-    await expect(homePage.currentColorText).toContainText("#f1c40f");
+    await expect(homePage.currentColorText).toContainText('#f1c40f');
 
     // Visual regression check for the mobile viewport layout.
     // Mask the animated logo to avoid flaky diffs from its CSS animation.
     const screenshot = await page.screenshot({
       fullPage: true,
-      mask: [page.locator(".App-logo")],
+      mask: [page.locator('.App-logo')],
     });
-    expect(screenshot).toMatchSnapshot("home-mobile.png", { maxDiffPixelRatio: 0.05 });
+    expect(screenshot).toMatchSnapshot('home-mobile.png', { maxDiffPixelRatio: 0.05 });
   });
 });
