@@ -27,7 +27,15 @@ export const options = {
         browser: {
           type: 'chromium',
           headless: true,
-          args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-dev-shm-usage', '--disable-gpu']
+          args: [
+            '--no-sandbox',
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-gpu',
+            '--disable-software-rasterizer',
+            '--disable-background-networking',
+            '--disable-default-apps'
+          ]
         }
       }
     }
@@ -47,7 +55,8 @@ export function setup() {
 }
 
 export default async function () {
-  const page = await browser.newPage()
+  const context = await browser.newContext()
+  const page = await context.newPage()
 
   page.on('request', (request) => {
     const payload = request.postData() ? `Payload: ${request.postData()}` : 'No payload'
@@ -109,7 +118,8 @@ export default async function () {
       successfulActionsRate.add(0)
     }
   } finally {
-    page.close()
+    await page.close()
+    await context.close()
   }
 }
 
