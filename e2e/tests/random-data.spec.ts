@@ -22,11 +22,7 @@ test.describe('Random Data Testing with faker.js', () => {
     }
   })
 
-  test('should create dynamic random color via API and verify through UI', async ({
-    homePage,
-    page,
-    request
-  }) => {
+  test('should create dynamic random color via API and verify through UI', async ({ homePage, page, request }) => {
     // Generate a uniquely prefixed name to avoid any potential DB collisions
     // e2e_random_<word>
     const randomColorName = faker.string.alphanumeric(15)
@@ -53,9 +49,7 @@ test.describe('Random Data Testing with faker.js', () => {
     // ensuring fast and deterministic execution.
     // We use encodeURIComponent to handle potential spaces or special characters in the name.
     const responsePromise = page.waitForResponse(
-      (resp) =>
-        resp.url().includes(`/api/colors/${encodeURIComponent(newColor.name)}`) &&
-        resp.status() === 200
+      (resp) => resp.url().includes(`/api/colors/${encodeURIComponent(newColor.name)}`) && resp.status() === 200
     )
     await customBtn.click()
     await responsePromise

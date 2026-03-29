@@ -20,10 +20,7 @@ test.describe('Accessibility Tests', () => {
    * Scans the initial page state for any accessibility violations, ensuring
    * that elements like headings, ARIA tags, and contrast are compliant.
    */
-  test('should not have any automatically detectable accessibility issues', async ({
-    homePage,
-    page
-  }) => {
+  test('should not have any automatically detectable accessibility issues', async ({ homePage, page }) => {
     // Wait for the main elements to render
     await expect(homePage.header).toBeVisible()
 
@@ -41,10 +38,7 @@ test.describe('Accessibility Tests', () => {
    * specifically ensuring that color contrast ratios remain valid when the
    * background color changes dynamically.
    */
-  test('should maintain accessibility after state change (color update)', async ({
-    homePage,
-    page
-  }) => {
+  test('should maintain accessibility after state change (color update)', async ({ homePage, page }) => {
     // Change color to verify contrast and other rules still pass
     await homePage.clickColorButton('Yellow')
 
@@ -54,9 +48,7 @@ test.describe('Accessibility Tests', () => {
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
 
     // We specifically check contrast rules after a background color change
-    const contrastViolations = accessibilityScanResults.violations.filter(
-      (v) => v.id === 'color-contrast'
-    )
+    const contrastViolations = accessibilityScanResults.violations.filter((v) => v.id === 'color-contrast')
     expect(contrastViolations).toEqual([])
   })
 
@@ -68,10 +60,7 @@ test.describe('Accessibility Tests', () => {
    * accessibility categories. We enforce a high bar (threshold > 90) to
    * guarantee premium compliance.
    */
-  test('should meet the accessibility threshold using Google Lighthouse', async ({
-    homePage,
-    page
-  }) => {
+  test('should meet the accessibility threshold using Google Lighthouse', async ({ homePage, page }) => {
     // Wait for the main elements to render
     await expect(homePage.header).toBeVisible()
 

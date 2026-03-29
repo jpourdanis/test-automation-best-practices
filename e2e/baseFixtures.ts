@@ -71,8 +71,7 @@ export const test = baseTest.extend<{ homePage: HomePage; allureBddMapper: void 
 
         // 3. Map tags to Allure APIs
         if (cleanTag.startsWith('epic:')) allure.epic(cleanTag.split(':')[1].replace(/_/g, ' '))
-        if (cleanTag.startsWith('feature:'))
-          allure.feature(cleanTag.split(':')[1].replace(/_/g, ' '))
+        if (cleanTag.startsWith('feature:')) allure.feature(cleanTag.split(':')[1].replace(/_/g, ' '))
         if (cleanTag.startsWith('story:')) allure.story(cleanTag.split(':')[1].replace(/_/g, ' '))
         if (cleanTag.startsWith('severity:')) allure.severity(cleanTag.split(':')[1])
 
@@ -133,9 +132,7 @@ export const test = baseTest.extend<{ homePage: HomePage; allureBddMapper: void 
 
     // After tests complete, collect coverage data from all open pages
     for (const page of context.pages()) {
-      await page.evaluate(() =>
-        (window as any).collectIstanbulCoverage(JSON.stringify((window as any).__coverage__))
-      )
+      await page.evaluate(() => (window as any).collectIstanbulCoverage(JSON.stringify((window as any).__coverage__)))
     }
   }
 })

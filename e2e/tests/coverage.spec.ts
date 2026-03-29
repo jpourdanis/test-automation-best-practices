@@ -53,9 +53,7 @@ test('check Turquoise ( #1abc9c) is the default background color.', async ({ pag
  */
 test.describe('Background color tests', () => {
   for (const color of colors) {
-    test(`verify ${color.name} ( #${color.hex} ) is applied as the background color`, async ({
-      page
-    }) => {
+    test(`verify ${color.name} ( #${color.hex} ) is applied as the background color`, async ({ page }) => {
       // Click the color name to change the background color
       await page.click(`text=${color.name}`)
 
@@ -66,10 +64,7 @@ test.describe('Background color tests', () => {
       const rgb = convertHexToRGB(`#${color.hex}`)
 
       // Verify the header background color matches the expected RGB value
-      await expect(page.locator('header')).toHaveCSS(
-        'background-color',
-        `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`
-      )
+      await expect(page.locator('header')).toHaveCSS('background-color', `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`)
     })
   }
 })

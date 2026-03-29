@@ -26,17 +26,12 @@ test.describe('POM Refactored: Background color tests', () => {
      * Uses the methods and elements defined in the HomePage POM class to
      * change the color and verify the new hexadecimal and RGB values.
      */
-    test(`verify ${color.name} ( #${color.hex} ) is applied as the background color`, async ({
-      homePage
-    }) => {
+    test(`verify ${color.name} ( #${color.hex} ) is applied as the background color`, async ({ homePage }) => {
       await homePage.clickColorButton(color.name)
       await expect(homePage.currentColorText).toContainText(color.hex)
 
       const rgb = convertHexToRGB(`#${color.hex}`)
-      await expect(homePage.header).toHaveCSS(
-        'background-color',
-        `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`
-      )
+      await expect(homePage.header).toHaveCSS('background-color', `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`)
     })
   }
 })

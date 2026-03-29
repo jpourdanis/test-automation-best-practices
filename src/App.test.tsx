@@ -214,9 +214,7 @@ describe('Frontend Unit Tests', () => {
 
       // Background color should be emerald now (#2ecc71)
       await waitFor(() => {
-        expect(container.querySelector('.App-header')).toHaveStyle(
-          'background-color: rgb(46, 204, 113)'
-        )
+        expect(container.querySelector('.App-header')).toHaveStyle('background-color: rgb(46, 204, 113)')
       })
 
       // Mock fetch returning data WITHOUT hex
@@ -264,17 +262,13 @@ describe('Frontend Unit Tests', () => {
 
     test('useEffect does not re-run when unrelated props change', async () => {
       const { rerender } = render(<App />)
-      const initialCalls = (global.fetch as jest.Mock).mock.calls.filter(
-        (c) => c[0] === '/api/colors'
-      ).length
+      const initialCalls = (global.fetch as jest.Mock).mock.calls.filter((c) => c[0] === '/api/colors').length
 
       // Rerender with new props
       rerender(<App {...({ someProp: 'new-value' } as any)} />)
       await new Promise((r) => setTimeout(r, 50))
 
-      const followUpCalls = (global.fetch as jest.Mock).mock.calls.filter(
-        (c) => c[0] === '/api/colors'
-      ).length
+      const followUpCalls = (global.fetch as jest.Mock).mock.calls.filter((c) => c[0] === '/api/colors').length
       expect(followUpCalls).toBe(initialCalls)
     })
 
@@ -288,10 +282,7 @@ describe('Frontend Unit Tests', () => {
       fireEvent.click(button)
       await new Promise((r) => setTimeout(r, 50))
 
-      expect(console.error).not.toHaveBeenCalledWith(
-        expect.stringContaining('Failed to fetch hex'),
-        expect.anything()
-      )
+      expect(console.error).not.toHaveBeenCalledWith(expect.stringContaining('Failed to fetch hex'), expect.anything())
     })
   })
 })

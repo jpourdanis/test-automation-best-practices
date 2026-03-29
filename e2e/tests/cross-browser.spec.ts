@@ -20,9 +20,7 @@ test.describe('Cross-Browser Core Functionality', () => {
     await homePage.goto()
   })
 
-  test('should load the application and verify core functionality across browsers', async ({
-    homePage
-  }) => {
+  test('should load the application and verify core functionality across browsers', async ({ homePage }) => {
     // Verify core UI loads
     await expect(homePage.header).toBeVisible()
     await expect(homePage.currentColorText).toBeVisible()

@@ -54,9 +54,7 @@ Full metrics attached in the results.
     ],
     name: `${testName}`,
     description: summaryText,
-    start:
-      timestamp -
-      (metrics.iteration_duration ? metrics.iteration_duration.values.avg * iterations : 0),
+    start: timestamp - (metrics.iteration_duration ? metrics.iteration_duration.values.avg * iterations : 0),
     stop: timestamp
   }
 

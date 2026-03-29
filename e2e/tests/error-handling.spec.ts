@@ -55,9 +55,7 @@ test.describe('UI Error Handling Coverage', () => {
     await requestPromise
 
     // Wait for the async catch block to execute and log the error
-    await expect
-      .poll(() => errors)
-      .toContainEqual(expect.stringContaining('Failed to fetch hex for Turquoise'))
+    await expect.poll(() => errors).toContainEqual(expect.stringContaining('Failed to fetch hex for Turquoise'))
   })
 
   /**
@@ -74,9 +72,7 @@ test.describe('UI Error Handling Coverage', () => {
 
     // We use Playwright's waitForResponse to avoid static waits natively,
     // ensuring fast and deterministic execution.
-    const responsePromise = page.waitForResponse(
-      (resp) => resp.url().includes('/api/colors') && resp.status() === 200
-    )
+    const responsePromise = page.waitForResponse((resp) => resp.url().includes('/api/colors') && resp.status() === 200)
     await homePage.goto()
     await responsePromise
 

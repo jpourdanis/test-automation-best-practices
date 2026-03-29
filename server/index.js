@@ -18,10 +18,7 @@ const STRICT_NAME_MSG =
 
 const colorZodSchema = z
   .object({
-    name: z
-      .string({ required_error: 'name is required' })
-      .trim()
-      .regex(STRICT_NAME_REGEX, STRICT_NAME_MSG),
+    name: z.string({ required_error: 'name is required' }).trim().regex(STRICT_NAME_REGEX, STRICT_NAME_MSG),
     hex: z
       .string({ required_error: 'hex is required' })
       .trim()

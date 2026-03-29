@@ -37,9 +37,7 @@ test.describe('Backend API Integration', () => {
    * Verifies that each seed color can be retrieved individually.
    */
   for (const color of expectedColors) {
-    test(`GET /api/colors/${color.name} should return the correct hex code`, async ({
-      request
-    }) => {
+    test(`GET /api/colors/${color.name} should return the correct hex code`, async ({ request }) => {
       const response = await request.get(`/api/colors/${color.name}`)
 
       // Verify HTTP status code

@@ -44,11 +44,7 @@ const App = () => {
       <main>
         <header className='App-header' style={{ backgroundColor }}>
           <div className='language-selector'>
-            <select
-              aria-label={t('languageSelector')}
-              value={i18n.resolvedLanguage}
-              onChange={changeLanguage}
-            >
+            <select aria-label={t('languageSelector')} value={i18n.resolvedLanguage} onChange={changeLanguage}>
               <option value='en'>English</option>
               <option value='es'>Español</option>
               <option value='el'>Ελληνικά</option>
@@ -61,12 +57,7 @@ const App = () => {
               Edit <code>src/App.js</code> and save to reload.
             </Trans>
           </p>
-          <a
-            className='App-link'
-            href='https://reactjs.org'
-            target='_blank'
-            rel='noopener noreferrer'
-          >
+          <a className='App-link' href='https://reactjs.org' target='_blank' rel='noopener noreferrer'>
             {t('learnReact')}
           </a>
           <span aria-live='polite'>

@@ -1248,8 +1248,7 @@ export const test = baseTest.extend<{ homePage: HomePage; allureBddMapper: void 
       for (const tag of testInfo.tags) {
         const cleanTag = tag.replace('@', '')
         if (cleanTag.startsWith('epic:')) allure.epic(cleanTag.split(':')[1].replace(/_/g, ' '))
-        if (cleanTag.startsWith('feature:'))
-          allure.feature(cleanTag.split(':')[1].replace(/_/g, ' '))
+        if (cleanTag.startsWith('feature:')) allure.feature(cleanTag.split(':')[1].replace(/_/g, ' '))
         if (cleanTag.startsWith('story:')) allure.story(cleanTag.split(':')[1].replace(/_/g, ' '))
         if (cleanTag.startsWith('severity:')) allure.severity(cleanTag.split(':')[1])
         if (cleanTag.startsWith('jira:')) {
