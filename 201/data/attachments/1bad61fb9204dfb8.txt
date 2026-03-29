@@ -1,1 +1,0 @@
-[NETWORK INFO] should maintain accessibility in en language and verify resilient locators: 200 GET http://localhost:3000/api/colors
