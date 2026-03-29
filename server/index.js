@@ -18,27 +18,17 @@ const STRICT_NAME_MSG =
 
 const colorZodSchema = z
   .object({
-    name: z
-      .string({ required_error: 'name is required' })
-      .trim()
-      .regex(STRICT_NAME_REGEX, STRICT_NAME_MSG),
+    name: z.string({ required_error: 'name is required' }).trim().regex(STRICT_NAME_REGEX, STRICT_NAME_MSG),
     hex: z
       .string({ required_error: 'hex is required' })
       .trim()
-      .regex(
-        /^#[0-9A-Fa-f]{6}$/,
-        'hex must be a valid 6-digit hex format (e.g., #1abc9c)'
-      )
+      .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format (e.g., #1abc9c)')
   })
   .strict()
 
 const updateColorZodSchema = z
   .object({
-    name: z
-      .string()
-      .trim()
-      .regex(STRICT_NAME_REGEX, STRICT_NAME_MSG)
-      .optional(),
+    name: z.string().trim().regex(STRICT_NAME_REGEX, STRICT_NAME_MSG).optional(),
     hex: z
       .string()
       .trim()
@@ -59,9 +49,7 @@ app.use(express.json()) // Parse incoming JSON request bodies
 // Middleware to catch JSON parsing errors and return a JSON response instead of HTML
 app.use((err, req, res, next) => {
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
-    return res
-      .status(400)
-      .json({ error: 'Invalid JSON', details: err.message })
+    return res.status(400).json({ error: 'Invalid JSON', details: err.message })
   }
   next()
 })
@@ -280,10 +268,7 @@ app.get('/api/colors', async (req, res) => {
  */
 app.get('/api/colors/:name', async (req, res) => {
   try {
-    const color = await Color.findOne(
-      { name: req.params.name },
-      { _id: 0, __v: 0 }
-    )
+    const color = await Color.findOne({ name: req.params.name }, { _id: 0, __v: 0 })
     if (!color) {
       return res.status(404).json({ error: 'Color not found' })
     }
@@ -334,9 +319,7 @@ app.post('/api/colors', async (req, res) => {
   try {
     const parseResult = colorZodSchema.safeParse(req.body)
     if (!parseResult.success) {
-      return res
-        .status(400)
-        .json({ error: parseResult.error.issues[0].message })
+      return res.status(400).json({ error: parseResult.error.issues[0].message })
     }
     const { name, hex } = parseResult.data
 
@@ -407,9 +390,7 @@ app.put('/api/colors/:name', async (req, res) => {
   try {
     const parseResult = updateColorZodSchema.safeParse(req.body)
     if (!parseResult.success) {
-      return res
-        .status(400)
-        .json({ error: parseResult.error.issues[0].message })
+      return res.status(400).json({ error: parseResult.error.issues[0].message })
     }
     const { name, hex } = parseResult.data
 
@@ -419,11 +400,10 @@ app.put('/api/colors/:name', async (req, res) => {
     if (hex) update.hex = hex
 
     // Find by current name and apply the update, returning the new document
-    const color = await Color.findOneAndUpdate(
-      { name: req.params.name },
-      update,
-      { new: true, projection: { _id: 0, __v: 0 } }
-    )
+    const color = await Color.findOneAndUpdate({ name: req.params.name }, update, {
+      new: true,
+      projection: { _id: 0, __v: 0 }
+    })
 
     if (!color) {
       return res.status(404).json({ error: 'Color not found' })
@@ -504,9 +484,7 @@ const allowedMethods = {
 app.all('/api/colors', (req, res, next) => {
   if (!allowedMethods['/api/colors'].includes(req.method)) {
     res.setHeader('Allow', allowedMethods['/api/colors'].join(', '))
-    return res
-      .status(405)
-      .json({ error: `Method ${req.method} not allowed on /api/colors` })
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors` })
   }
   next()
 })
@@ -514,9 +492,7 @@ app.all('/api/colors', (req, res, next) => {
 app.all('/api/colors/:name', (req, res, next) => {
   if (!allowedMethods['/api/colors/:name'].includes(req.method)) {
     res.setHeader('Allow', allowedMethods['/api/colors/:name'].join(', '))
-    return res
-      .status(405)
-      .json({ error: `Method ${req.method} not allowed on /api/colors/:name` })
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors/:name` })
   }
   next()
 })

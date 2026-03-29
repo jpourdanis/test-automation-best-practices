@@ -47,8 +47,6 @@ A comprehensive reference project demonstrating **test automation engineering be
 
 ## Application Architecture
 
-
-
 This project follows a **three-tier architecture** with a clear separation between the frontend, backend, and database layers.
 
 ```text
@@ -70,38 +68,38 @@ This project follows a **three-tier architecture** with a clear separation betwe
 
 ### Frontend — React (TypeScript)
 
-| Item | Details |
-| --- | --- |
-| **Location** | [`src/`](/src) |
-| **Framework** | React 17 with TypeScript |
-| **Entry point** | [`src/App.tsx`](/src/App.tsx) |
+| Item                     | Details                                                                                                                                                     |
+| ------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Location**             | [`src/`](/src)                                                                                                                                              |
+| **Framework**            | React 17 with TypeScript                                                                                                                                    |
+| **Entry point**          | [`src/App.tsx`](/src/App.tsx)                                                                                                                               |
 | **Internationalization** | `react-i18next` with `i18next-browser-languagedetector` — supports English, Spanish, and Greek via JSON translation files in [`src/locales/`](/src/locales) |
-| **Dev server** | `react-app-rewired` on port **3000** (with Istanbul instrumentation via `babel-plugin-istanbul` when `USE_BABEL_PLUGIN_ISTANBUL=1`) |
-| **API proxy** | [`src/setupProxy.js`](/src/setupProxy.js) forwards `/api/*` requests to the backend, eliminating CORS issues during development |
+| **Dev server**           | `react-app-rewired` on port **3000** (with Istanbul instrumentation via `babel-plugin-istanbul` when `USE_BABEL_PLUGIN_ISTANBUL=1`)                         |
+| **API proxy**            | [`src/setupProxy.js`](/src/setupProxy.js) forwards `/api/*` requests to the backend, eliminating CORS issues during development                             |
 
 **How it works:** On load, the React app fetches available colors from `/api/colors`, renders them as buttons, and updates the header background color when a button is clicked by calling `/api/colors/:name`.
 
 ### Backend — Express API (Node.js)
 
-| Item | Details |
-| --- | --- |
-| **Location** | [`server/`](/server) |
-| **Framework** | Express 5 with Mongoose 9 |
-| **Entry point** | [`server/index.js`](/server/index.js) |
-| **Database** | MongoDB (connection URI configurable via `MONGO_URI` env var) |
-| **Validation** | [Zod](https://zod.dev/) schemas for request body validation on `POST` and `PUT` endpoints |
-| **API docs** | Swagger UI auto-generated from JSDoc annotations, served at `/api-docs` |
-| **Port** | **5001** (configurable via `PORT` env var) |
+| Item            | Details                                                                                   |
+| --------------- | ----------------------------------------------------------------------------------------- |
+| **Location**    | [`server/`](/server)                                                                      |
+| **Framework**   | Express 5 with Mongoose 9                                                                 |
+| **Entry point** | [`server/index.js`](/server/index.js)                                                     |
+| **Database**    | MongoDB (connection URI configurable via `MONGO_URI` env var)                             |
+| **Validation**  | [Zod](https://zod.dev/) schemas for request body validation on `POST` and `PUT` endpoints |
+| **API docs**    | Swagger UI auto-generated from JSDoc annotations, served at `/api-docs`                   |
+| **Port**        | **5001** (configurable via `PORT` env var)                                                |
 
 **Endpoints:**
 
-| Method | Endpoint | Description |
-| --- | --- | --- |
-| `GET` | `/api/colors` | List all colors |
-| `GET` | `/api/colors/:name` | Get a single color by name |
-| `POST` | `/api/colors` | Create a new color |
-| `PUT` | `/api/colors/:name` | Update an existing color |
-| `DELETE` | `/api/colors/:name` | Delete a color |
+| Method   | Endpoint            | Description                |
+| -------- | ------------------- | -------------------------- |
+| `GET`    | `/api/colors`       | List all colors            |
+| `GET`    | `/api/colors/:name` | Get a single color by name |
+| `POST`   | `/api/colors`       | Create a new color         |
+| `PUT`    | `/api/colors/:name` | Update an existing color   |
+| `DELETE` | `/api/colors/:name` | Delete a color             |
 
 On startup, the server seeds the database with three default colors (Turquoise, Red, Yellow) to ensure a predictable initial state.
 
@@ -109,12 +107,12 @@ On startup, the server seeds the database with three default colors (Turquoise, 
 
 The [`docker-compose.yml`](/docker-compose.yml) defines four services that wire everything together:
 
-| Service | Image / Build | Purpose |
-| --- | --- | --- |
-| **mongo** | `mongo:latest` | Database — persists data in a named volume (`mongo_data`) |
-| **api** | `./server/Dockerfile` | Backend API — waits for `mongo` to be healthy before starting |
-| **app** | `./Dockerfile` (target: `app`) | Frontend dev server — waits for `api` to be healthy, proxies `/api` to `http://api:5001` |
-| **playwright** | `./Dockerfile` (target: `playwright`) | Test runner — executes Playwright tests against `http://app:3000` |
+| Service        | Image / Build                         | Purpose                                                                                  |
+| -------------- | ------------------------------------- | ---------------------------------------------------------------------------------------- |
+| **mongo**      | `mongo:latest`                        | Database — persists data in a named volume (`mongo_data`)                                |
+| **api**        | `./server/Dockerfile`                 | Backend API — waits for `mongo` to be healthy before starting                            |
+| **app**        | `./Dockerfile` (target: `app`)        | Frontend dev server — waits for `api` to be healthy, proxies `/api` to `http://api:5001` |
+| **playwright** | `./Dockerfile` (target: `playwright`) | Test runner — executes Playwright tests against `http://app:3000`                        |
 
 ---
 
@@ -122,8 +120,8 @@ The [`docker-compose.yml`](/docker-compose.yml) defines four services that wire 
 
 ### Prerequisites
 
-* Node.js 16+
-* Docker (for visual regression and consistent cross-platform tests)
+- Node.js 16+
+- Docker (for visual regression and consistent cross-platform tests)
 
 ### Installation
 
@@ -225,9 +223,9 @@ The Page Object Model is a design pattern that creates an abstraction layer betw
 
 **Why it matters:**
 
-* **Maintainability** — When a selector changes (e.g., a button class is renamed), you update it in **one place** instead of every test file that references it.
-* **Readability** — Tests read like user stories: `homePage.clickColorButton("Red")` is instantly understandable, even by non-engineers.
-* **Zero boilerplate** — By registering page objects as fixtures in `baseFixtures.ts`, tests simply destructure `{ homePage }` from the test arguments instead of manually calling `new HomePage(page)` in every `beforeEach`.
+- **Maintainability** — When a selector changes (e.g., a button class is renamed), you update it in **one place** instead of every test file that references it.
+- **Readability** — Tests read like user stories: `homePage.clickColorButton("Red")` is instantly understandable, even by non-engineers.
+- **Zero boilerplate** — By registering page objects as fixtures in `baseFixtures.ts`, tests simply destructure `{ homePage }` from the test arguments instead of manually calling `new HomePage(page)` in every `beforeEach`.
 
 **How to implement:**
 
@@ -235,25 +233,25 @@ The Page Object Model is a design pattern that creates an abstraction layer betw
 
 ```typescript
 // e2e/pages/HomePage.ts
-import { Page, Locator } from "@playwright/test";
+import { Page, Locator } from '@playwright/test'
 
 export class HomePage {
-  readonly page: Page;
-  readonly header: Locator;
-  readonly currentColorText: Locator;
+  readonly page: Page
+  readonly header: Locator
+  readonly currentColorText: Locator
 
   constructor(page: Page) {
-    this.page = page;
-    this.header = page.locator("header");
-    this.currentColorText = page.locator("text=Current color:");
+    this.page = page
+    this.header = page.locator('header')
+    this.currentColorText = page.locator('text=Current color:')
   }
 
   async goto() {
-    await this.page.goto("/");
+    await this.page.goto('/')
   }
 
   async clickColorButton(colorName: string) {
-    await this.page.click(`text=${colorName}`);
+    await this.page.click(`text=${colorName}`)
   }
 }
 ```
@@ -262,34 +260,34 @@ export class HomePage {
 
 ```typescript
 // e2e/baseFixtures.ts
-import { test as baseTest } from "@playwright/test";
-import { HomePage } from "./pages/HomePage";
+import { test as baseTest } from '@playwright/test'
+import { HomePage } from './pages/HomePage'
 
 export const test = baseTest.extend<{ homePage: HomePage }>({
   // Automatically instantiate Page Objects
   homePage: async ({ page }, use) => {
-    await use(new HomePage(page));
-  },
-});
-export const expect = test.expect;
+    await use(new HomePage(page))
+  }
+})
+export const expect = test.expect
 ```
 
 **Step 3:** Use the fixture in your tests:
 
 ```typescript
 // e2e/tests/pom-refactored.spec.ts
-import { test, expect } from "../baseFixtures";
+import { test, expect } from '../baseFixtures'
 
-test.describe("POM Refactored: Background color tests", () => {
+test.describe('POM Refactored: Background color tests', () => {
   test.beforeEach(async ({ homePage }) => {
-    await homePage.goto();
-  });
+    await homePage.goto()
+  })
 
-  test("verify Red (#e74c3c) is applied as the background color", async ({ homePage }) => {
-    await homePage.clickColorButton("Red");
-    await expect(homePage.currentColorText).toContainText("e74c3c");
-  });
-});
+  test('verify Red (#e74c3c) is applied as the background color', async ({ homePage }) => {
+    await homePage.clickColorButton('Red')
+    await expect(homePage.currentColorText).toContainText('e74c3c')
+  })
+})
 ```
 
 **How to verify:**
@@ -307,9 +305,9 @@ BDD closes the gap between business stakeholders and QA engineers by expressing 
 
 **Why it matters:**
 
-* **Living Documentation** — Your test artifacts serve as the actual source of truth for product requirements.
-* **Improved Collaboration** — Product Managers can review or even write the Gherkin scenarios without needing to understand TypeScript or Playwright APIs.
-* **Reusability** — The step definitions (`bdd.spec.ts`) leverage the same Page Object Models used by standard end-to-end tests, maximizing reusability and reducing duplication.
+- **Living Documentation** — Your test artifacts serve as the actual source of truth for product requirements.
+- **Improved Collaboration** — Product Managers can review or even write the Gherkin scenarios without needing to understand TypeScript or Playwright APIs.
+- **Reusability** — The step definitions (`bdd.spec.ts`) leverage the same Page Object Models used by standard end-to-end tests, maximizing reusability and reducing duplication.
 
 **How to implement:**
 
@@ -333,16 +331,16 @@ Feature: Home Page Background Color
 
 ```typescript
 // e2e/tests/bdd.spec.ts
-import { createBdd } from "playwright-bdd";
-import { HomePage } from "../pages/HomePage";
+import { createBdd } from 'playwright-bdd'
+import { HomePage } from '../pages/HomePage'
 
-const { Given, When, Then } = createBdd();
-let homePage: HomePage;
+const { Given, When, Then } = createBdd()
+let homePage: HomePage
 
-Given("I am on the home page", async ({ page }) => {
-  homePage = new HomePage(page);
-  await homePage.goto();
-});
+Given('I am on the home page', async ({ page }) => {
+  homePage = new HomePage(page)
+  await homePage.goto()
+})
 // ... Map other steps
 ```
 
@@ -362,30 +360,30 @@ Using Playwright's `page.waitForResponse()` to synchronise test execution with a
 **Why it matters:**
 `page.waitForTimeout(2000)` is the most common anti-pattern in end-to-end testing. It has two failure modes:
 
-* **Too short** — the request hasn't completed yet, so the assertion fails on a fast machine.
-* **Too long** — you're wasting seconds on every test run, even when the request resolves in 100ms.
-A slow Docker network or a busy CI runner exaggerates both problems. The test becomes **non-deterministic**: it passes locally and fails in CI for no obvious reason.
+- **Too short** — the request hasn't completed yet, so the assertion fails on a fast machine.
+- **Too long** — you're wasting seconds on every test run, even when the request resolves in 100ms.
+  A slow Docker network or a busy CI runner exaggerates both problems. The test becomes **non-deterministic**: it passes locally and fails in CI for no obvious reason.
 
 **How to implement:**
 
 ```typescript
 // ❌ Anti-pattern — arbitrary delay, non-deterministic
-await homePage.clickColorButton("Yellow");
-await page.waitForTimeout(2000); // Hope the API responds within 2s
-const hex = await homePage.getCurrentColorText();
-expect(hex).toContain("#f1c40f");
+await homePage.clickColorButton('Yellow')
+await page.waitForTimeout(2000) // Hope the API responds within 2s
+const hex = await homePage.getCurrentColorText()
+expect(hex).toContain('#f1c40f')
 
 // ✅ Best practice — deterministic, no wasted time
 // 1. Register the listener BEFORE the click
 const responsePromise = page.waitForResponse(
-  (resp) => resp.url().includes("/api/colors/Yellow") && resp.status() === 200,
-);
+  (resp) => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
+)
 // 2. Fire the action
-await homePage.clickColorButton("Yellow");
+await homePage.clickColorButton('Yellow')
 // 3. Await the response (resolves as soon as it arrives)
-await responsePromise;
+await responsePromise
 // 4. Use auto-retrying assertion to handle React state update
-await expect(homePage.currentColorText).toContainText("#f1c40f");
+await expect(homePage.currentColorText).toContainText('#f1c40f')
 ```
 
 **How to verify:**
@@ -403,9 +401,9 @@ A pattern where a single test template is executed multiple times with different
 
 **Why it matters:**
 
-* **DRY (Don't Repeat Yourself)** — The test logic is written once. Adding a new test case means adding one line to the data array, not copying an entire test block.
-* **Scalability** — When your application adds a fourth or fifth color, you add one object to the array and get full test coverage instantly.
-* **Consistency** — Every data point goes through the exact same assertion pipeline, eliminating the risk of copy-paste bugs in duplicated test blocks.
+- **DRY (Don't Repeat Yourself)** — The test logic is written once. Adding a new test case means adding one line to the data array, not copying an entire test block.
+- **Scalability** — When your application adds a fourth or fifth color, you add one object to the array and get full test coverage instantly.
+- **Consistency** — Every data point goes through the exact same assertion pipeline, eliminating the risk of copy-paste bugs in duplicated test blocks.
 
 **How to implement:**
 
@@ -413,24 +411,24 @@ A pattern where a single test template is executed multiple times with different
 
 ```typescript
 const testData = [
-  { name: "Turquoise", expectedHex: "#1abc9c", expectedRgb: "rgb(26, 188, 156)" },
-  { name: "Red", expectedHex: "#e74c3c", expectedRgb: "rgb(231, 76, 60)" },
-  { name: "Yellow", expectedHex: "#f1c40f", expectedRgb: "rgb(241, 196, 15)" },
-];
+  { name: 'Turquoise', expectedHex: '#1abc9c', expectedRgb: 'rgb(26, 188, 156)' },
+  { name: 'Red', expectedHex: '#e74c3c', expectedRgb: 'rgb(231, 76, 60)' },
+  { name: 'Yellow', expectedHex: '#f1c40f', expectedRgb: 'rgb(241, 196, 15)' }
+]
 ```
 
 **Step 2:** Loop over the data to generate tests:
 
 ```typescript
-test.describe("Data-Driven Testing", () => {
+test.describe('Data-Driven Testing', () => {
   for (const data of testData) {
     test(`changing color to ${data.name} should reflect in UI and DOM`, async ({ page }) => {
-      await homePage.clickColorButton(data.name);
-      await expect(homePage.currentColorText).toContainText(data.expectedHex);
-      await expect(homePage.header).toHaveCSS("background-color", data.expectedRgb);
-    });
+      await homePage.clickColorButton(data.name)
+      await expect(homePage.currentColorText).toContainText(data.expectedHex)
+      await expect(homePage.header).toHaveCSS('background-color', data.expectedRgb)
+    })
   }
-});
+})
 ```
 
 **How to verify:**
@@ -448,8 +446,8 @@ Using a library like [`@faker-js/faker`](https://fakerjs.dev/) to generate dynam
 
 **Why it matters:**
 
-* **Discovers Edge Cases naturally** — Static data like `"John"` never breaks anything. But `faker.person.lastName()` might eventually generate `"O'Connor"`, exposing an unescaped SQL query or a UI component that doesn't handle apostrophes correctly.
-* **Prevents State Collisions** — Hardcoded entities (e.g., `email: "test@example.com"`) often conflict in parallel test executions or dirty databases. Random data guarantees uniqueness (`faker.internet.email()`), allowing tests to run safely in parallel without stomping on each other's state.
+- **Discovers Edge Cases naturally** — Static data like `"John"` never breaks anything. But `faker.person.lastName()` might eventually generate `"O'Connor"`, exposing an unescaped SQL query or a UI component that doesn't handle apostrophes correctly.
+- **Prevents State Collisions** — Hardcoded entities (e.g., `email: "test@example.com"`) often conflict in parallel test executions or dirty databases. Random data guarantees uniqueness (`faker.internet.email()`), allowing tests to run safely in parallel without stomping on each other's state.
 
 **How to implement:**
 
@@ -458,22 +456,22 @@ npm install -D @faker-js/faker
 ```
 
 ```typescript
-import { test, expect } from "../baseFixtures";
-import { faker } from "@faker-js/faker";
+import { test, expect } from '../baseFixtures'
+import { faker } from '@faker-js/faker'
 
-test("should handle randomized color generation", async ({ page, request }) => {
-  const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`;
-  const randomHex = faker.color.rgb();
+test('should handle randomized color generation', async ({ page, request }) => {
+  const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`
+  const randomHex = faker.color.rgb()
 
-  await request.post("/api/colors", {
-    data: { name: randomColorName, hex: randomHex },
-  });
+  await request.post('/api/colors', {
+    data: { name: randomColorName, hex: randomHex }
+  })
 
-  await page.goto("/");
-  await page.getByRole("button", { name: `colors.${randomColorName}` }).click();
+  await page.goto('/')
+  await page.getByRole('button', { name: `colors.${randomColorName}` }).click()
 
-  await expect(page.locator("text=Current color:")).toContainText(randomHex);
-});
+  await expect(page.locator('text=Current color:')).toContainText(randomHex)
+})
 ```
 
 **How to verify:**
@@ -495,39 +493,39 @@ A hybrid test leverages both backend API calls and frontend UI interactions in a
 
 **Why it matters:**
 
-* **Unmatched Speed** — Setting up test state via the UI involves waiting for pages to load, animations to finish, and multiple clicks to register. API setup takes milliseconds.
-* **Improved Reliability (Less Flake)** — The UI layer is inherently brittle. Bypassing the UI for the "arrange" phase of a test drastically reduces false negatives caused by UI flakiness in parts of the application that are not the primary focus of the test.
-* **True Isolation** — You can create and delete exact data permutations for the specific test without relying on existing database fixtures.
+- **Unmatched Speed** — Setting up test state via the UI involves waiting for pages to load, animations to finish, and multiple clicks to register. API setup takes milliseconds.
+- **Improved Reliability (Less Flake)** — The UI layer is inherently brittle. Bypassing the UI for the "arrange" phase of a test drastically reduces false negatives caused by UI flakiness in parts of the application that are not the primary focus of the test.
+- **True Isolation** — You can create and delete exact data permutations for the specific test without relying on existing database fixtures.
 
 **How to implement:**
 
 ```typescript
-import { test, expect } from "../baseFixtures";
-import { HomePage } from "../pages/HomePage";
+import { test, expect } from '../baseFixtures'
+import { HomePage } from '../pages/HomePage'
 
-test("should create color via API and verify through UI", async ({ page, request }) => {
-  const newColor = { name: "Purple", hex: "#8e44ad" };
+test('should create color via API and verify through UI', async ({ page, request }) => {
+  const newColor = { name: 'Purple', hex: '#8e44ad' }
 
   // 1. Arrange - Fast state setup via API
-  const createResponse = await request.post("/api/colors", { data: newColor });
-  expect(createResponse.ok()).toBeTruthy();
+  const createResponse = await request.post('/api/colors', { data: newColor })
+  expect(createResponse.ok()).toBeTruthy()
 
   // 2. Act - Navigate and interact via UI
-  const homePage = new HomePage(page);
-  await homePage.goto();
+  const homePage = new HomePage(page)
+  await homePage.goto()
 
   const responsePromise = page.waitForResponse(
     (resp) => resp.url().includes(`/api/colors/${newColor.name}`) && resp.status() === 200
-  );
-  await page.getByRole("button", { name: "colors.purple" }).click();
-  await responsePromise;
+  )
+  await page.getByRole('button', { name: 'colors.purple' }).click()
+  await responsePromise
 
   // 3. Assert - Validating UI reflects the state correctly
-  await expect(homePage.currentColorText).toContainText(newColor.hex);
+  await expect(homePage.currentColorText).toContainText(newColor.hex)
 
   // 4. Teardown - Clean up via API to maintain isolation
-  await request.delete(`/api/colors/${newColor.name}`);
-});
+  await request.delete(`/api/colors/${newColor.name}`)
+})
 ```
 
 ### 7. Network Mocking & Interception
@@ -539,90 +537,89 @@ Playwright's `page.route()` API allows you to intercept any network request and 
 
 **Why it matters:**
 
-* **Test isolation** — Tests don't depend on live APIs, databases, or third-party services. They run fast and never flake due to network issues.
-* **Edge case coverage** — You can simulate states that are difficult to reproduce naturally: API errors, empty responses, rate limits, or missing assets.
-* **Speed** — Mocked responses return instantly, dramatically reducing test execution time for API-heavy applications.
+- **Test isolation** — Tests don't depend on live APIs, databases, or third-party services. They run fast and never flake due to network issues.
+- **Edge case coverage** — You can simulate states that are difficult to reproduce naturally: API errors, empty responses, rate limits, or missing assets.
+- **Speed** — Mocked responses return instantly, dramatically reducing test execution time for API-heavy applications.
 
 **How to implement:**
 
 **Aborting a request** (simulating a missing asset):
 
 ```typescript
-test("should handle missing image gracefully", async ({ page }) => {
-  await page.route("**/logo.svg", (route) => route.abort());
-  await page.goto("/");
-  const logoImg = page.getByRole("img", { name: "logo" });
-  await expect(logoImg).toHaveAttribute("alt", "logo");
-});
+test('should handle missing image gracefully', async ({ page }) => {
+  await page.route('**/logo.svg', (route) => route.abort())
+  await page.goto('/')
+  const logoImg = page.getByRole('img', { name: 'logo' })
+  await expect(logoImg).toHaveAttribute('alt', 'logo')
+})
 ```
 
 **Mocking data that doesn't exist in the database**:
 
 ```typescript
-test("should display colors that do not exist in the database", async ({ page }) => {
-  await page.route("**/api/colors", async (route) => {
+test('should display colors that do not exist in the database', async ({ page }) => {
+  await page.route('**/api/colors', async (route) => {
     await route.fulfill({
       status: 200,
-      contentType: "application/json",
-      body: JSON.stringify([{ name: "Magenta", hex: "#ff00ff" }]),
-    });
-  });
+      contentType: 'application/json',
+      body: JSON.stringify([{ name: 'Magenta', hex: '#ff00ff' }])
+    })
+  })
   // ... Rest of test
-});
-
+})
 ```
 
 **Handling a color not found (404 response)**:
 
 ```typescript
-import enTranslations from "../../src/locales/en.json";
+import enTranslations from '../../src/locales/en.json'
 
-test("should gracefully handle a color not found in the database", async ({ page }) => {
-  await page.route("**/api/colors", async (route) => {
+test('should gracefully handle a color not found in the database', async ({ page }) => {
+  await page.route('**/api/colors', async (route) => {
     await route.fulfill({
       status: 200,
-      contentType: "application/json",
+      contentType: 'application/json',
       body: JSON.stringify([
-        { name: "Turquoise", hex: "#1abc9c" },
-        { name: "Red", hex: "#e74c3c" },
-      ]),
-    });
-  });
+        { name: 'Turquoise', hex: '#1abc9c' },
+        { name: 'Red', hex: '#e74c3c' }
+      ])
+    })
+  })
 
   // Simulate a 404 for the "Red" color endpoint
-  await page.route("**/api/colors/Red", async (route) => {
+  await page.route('**/api/colors/Red', async (route) => {
     await route.fulfill({
       status: 404,
-      contentType: "application/json",
-      body: JSON.stringify({ error: "Color not found" }),
-    });
-  });
+      contentType: 'application/json',
+      body: JSON.stringify({ error: 'Color not found' })
+    })
+  })
 
-  await homePage.goto();
-  await expect(homePage.header).toHaveCSS("background-color", "rgb(26, 188, 156)");
+  await homePage.goto()
+  await expect(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)')
 
   // Use i18n-aware accessible locator for the button
-  const redBtn = page.getByRole("button", { name: enTranslations.colors.red });
-  await redBtn.click();
+  const redBtn = page.getByRole('button', { name: enTranslations.colors.red })
+  await redBtn.click()
 
   // Background should not have changed since the API returned a 404
-  await expect(homePage.header).toHaveCSS("background-color", "rgb(26, 188, 156)");
-});
+  await expect(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)')
+})
 ```
 
-> **Important:** Always call `page.route()` *before* the action that triggers the network request (e.g., `page.goto()`).
+> **Important:** Always call `page.route()` _before_ the action that triggers the network request (e.g., `page.goto()`).
 
 **Simulating complete network failures to verify UI error states**:
 
 ```typescript
-test("should handle fetch colors network failure gracefully", async ({ page }) => {
+test('should handle fetch colors network failure gracefully', async ({ page }) => {
   // Abort the initial colors fetch
-  await page.route("**/api/colors", (route) => route.abort("failed"));
-  await homePage.goto();
+  await page.route('**/api/colors', (route) => route.abort('failed'))
+  await homePage.goto()
 
   // Verify UI reacts to the empty/failed data state instead of crashing
-  await expect(page.locator("text=Loading colors...")).toBeVisible();
-});
+  await expect(page.locator('text=Loading colors...')).toBeVisible()
+})
 ```
 
 **How to verify:**
@@ -640,9 +637,9 @@ Schema validation strictly enforces the exact shape, data types, and requirement
 
 **Why it matters:**
 
-* **Contract Enforcement** — APIs are contracts. If a backend developer accidentally renames `userId` to `user_id`, the API might still return a 200 OK, but the frontend will crash. Schema validation catches this structural drift instantly.
-* **Documentation as Code** — Zod schemas are executable. Unlike Confluence pages that go out of date, the schema actively enforces the rules at runtime, guaranteeing the documentation is always accurate.
-* **Shift-Left Testing** — Invalid payloads are caught at the API boundary before they reach the database layer or propagate to the frontend.
+- **Contract Enforcement** — APIs are contracts. If a backend developer accidentally renames `userId` to `user_id`, the API might still return a 200 OK, but the frontend will crash. Schema validation catches this structural drift instantly.
+- **Documentation as Code** — Zod schemas are executable. Unlike Confluence pages that go out of date, the schema actively enforces the rules at runtime, guaranteeing the documentation is always accurate.
+- **Shift-Left Testing** — Invalid payloads are caught at the API boundary before they reach the database layer or propagate to the frontend.
 
 **How to implement:**
 
@@ -650,51 +647,54 @@ Schema validation strictly enforces the exact shape, data types, and requirement
 
 ```javascript
 // server/index.js
-const { z } = require("zod");
+const { z } = require('zod')
 const colorZodSchema = z.object({
-  name: z.string({ required_error: "name is required" }).trim().min(1),
-  hex: z.string({ required_error: "hex is required" }).trim().regex(/^#[0-9A-Fa-f]{6}$/),
-});
+  name: z.string({ required_error: 'name is required' }).trim().min(1),
+  hex: z
+    .string({ required_error: 'hex is required' })
+    .trim()
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+})
 ```
 
 **Step 2:** Use `safeParse` in Express route handlers.
 
 ```javascript
-app.post("/api/colors", async (req, res) => {
-  const parseResult = colorZodSchema.safeParse(req.body);
+app.post('/api/colors', async (req, res) => {
+  const parseResult = colorZodSchema.safeParse(req.body)
   if (!parseResult.success) {
-    return res.status(400).json({ error: parseResult.error.issues[0].message });
+    return res.status(400).json({ error: parseResult.error.issues[0].message })
   }
   // ...
-});
+})
 ```
 
 **Step 3:** In Playwright tests, parse every API response through the matching schema.
 
 ```typescript
 // e2e/tests/api.spec.ts
-import { z } from "zod";
+import { z } from 'zod'
 const ColorSchema = z.object({
   name: z.string(),
-  hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-});
+  hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/)
+})
 
-test("should create a new color with valid schema", async ({ request }) => {
-  const response = await request.post(`/api/colors`, { data: { name: "Orange", hex: "#ffa500" } });
-  const data = await response.json();
-  ColorSchema.parse(data); // Throws if response shape is wrong
-});
+test('should create a new color with valid schema', async ({ request }) => {
+  const response = await request.post(`/api/colors`, { data: { name: 'Orange', hex: '#ffa500' } })
+  const data = await response.json()
+  ColorSchema.parse(data) // Throws if response shape is wrong
+})
 ```
 
 **Step 4:** Write explicit negative tests.
 
 ```typescript
-test("should reject missing name", async ({ request }) => {
-  const response = await request.post(`/api/colors`, { data: { hex: "#ffa500" } });
-  expect(response.status()).toBe(400);
-  const data = await response.json();
-  expect(data.error).toBe("name is required");
-});
+test('should reject missing name', async ({ request }) => {
+  const response = await request.post(`/api/colors`, { data: { hex: '#ffa500' } })
+  expect(response.status()).toBe(400)
+  const data = await response.json()
+  expect(data.error).toBe('name is required')
+})
 ```
 
 **How to verify:**
@@ -712,38 +712,38 @@ Visual regression testing captures a full-page screenshot and compares it pixel-
 
 **Why it matters:**
 
-* **Catching Silent UI Failures:** Standard functional tests (`expect(button).toBeVisible()`) will pass even if the button has accidentally been styled to have transparent text on a transparent background. Visual tests catch what the DOM hides.
-* **Multi-Device Confidence:** By running these visual checks across simulated viewports (Mobile, Tablet, Desktop), you guarantee responsive media queries haven't been broken during refactors.
+- **Catching Silent UI Failures:** Standard functional tests (`expect(button).toBeVisible()`) will pass even if the button has accidentally been styled to have transparent text on a transparent background. Visual tests catch what the DOM hides.
+- **Multi-Device Confidence:** By running these visual checks across simulated viewports (Mobile, Tablet, Desktop), you guarantee responsive media queries haven't been broken during refactors.
 
 **How to implement:**
 
 **Visual Regression:**
 
 ```typescript
-test.describe("Visual Regression", () => {
-  test("homepage should match snapshot", async ({ page }) => {
-    await page.goto("/");
-    await page.waitForSelector("header");
+test.describe('Visual Regression', () => {
+  test('homepage should match snapshot', async ({ page }) => {
+    await page.goto('/')
+    await page.waitForSelector('header')
     const screenshot = await page.screenshot({
       fullPage: true,
-      mask: [page.locator(".App-logo")], // Mask animated elements!
-    });
-    expect(screenshot).toMatchSnapshot("home.png");
-  });
-});
+      mask: [page.locator('.App-logo')] // Mask animated elements!
+    })
+    expect(screenshot).toMatchSnapshot('home.png')
+  })
+})
 ```
 
 **Responsive Design:**
 
 ```typescript
-test.describe("Responsive Design Testing", () => {
-  test.use({ viewport: { width: 375, height: 667 } }); // iPhone SE
+test.describe('Responsive Design Testing', () => {
+  test.use({ viewport: { width: 375, height: 667 } }) // iPhone SE
 
-  test("should render correctly on mobile viewport", async ({ page }) => {
-    await page.goto("/");
-    await expect(page.locator("header")).toBeVisible();
-  });
-});
+  test('should render correctly on mobile viewport', async ({ page }) => {
+    await page.goto('/')
+    await expect(page.locator('header')).toBeVisible()
+  })
+})
 ```
 
 **How to verify:**
@@ -761,8 +761,8 @@ Automated accessibility auditing that scans your rendered DOM against the [Web C
 
 **Why it matters:**
 
-* **Ethical and Legal Compliance:** Ensuring your app is usable by visually or motor-impaired users is critical. Furthermore, many government and enterprise contracts legally mandate strict WCAG AA compliance.
-* **Shift-Left Accessibility:** Catching contrast issues or missing `alt` tags in the CI pipeline prevents costly accessibility remediation sprints right before a product launch.
+- **Ethical and Legal Compliance:** Ensuring your app is usable by visually or motor-impaired users is critical. Furthermore, many government and enterprise contracts legally mandate strict WCAG AA compliance.
+- **Shift-Left Accessibility:** Catching contrast issues or missing `alt` tags in the CI pipeline prevents costly accessibility remediation sprints right before a product launch.
 
 **How to implement:**
 
@@ -772,13 +772,13 @@ npm install -D @axe-core/playwright
 
 ```typescript
 // e2e/tests/a11y.spec.ts
-import AxeBuilder from "@axe-core/playwright";
+import AxeBuilder from '@axe-core/playwright'
 
-test("should not have any accessibility issues", async ({ page }) => {
-  await page.goto("/");
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
-});
+test('should not have any accessibility issues', async ({ page }) => {
+  await page.goto('/')
+  const results = await new AxeBuilder({ page }).analyze()
+  expect(results.violations).toEqual([])
+})
 ```
 
 **Handling i18n with Accessibility Locators**
@@ -786,23 +786,23 @@ When testing apps with translations, avoid brittle DOM paths (e.g. `page.locator
 
 ```typescript
 // Example: locating a button dynamically based on the current testing language
-await page.getByRole("button", { name: i18nConfig.colors.red }).click();
+await page.getByRole('button', { name: i18nConfig.colors.red }).click()
 ```
 
 **Accessibility Score via Google Lighthouse**
 
 ```typescript
-import { playAudit } from "playwright-lighthouse";
+import { playAudit } from 'playwright-lighthouse'
 
-test("should meet the accessibility threshold using Google Lighthouse", async ({ page }) => {
+test('should meet the accessibility threshold using Google Lighthouse', async ({ page }) => {
   await playAudit({
     page: page,
     thresholds: {
-      accessibility: 90,
+      accessibility: 90
     },
-    port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0),
-  });
-});
+    port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)
+  })
+})
 ```
 
 **How to verify:**
@@ -818,62 +818,62 @@ npx playwright test e2e/tests/a11y.spec.ts -g "Lighthouse"
 **What is it?**
 Performance testing evaluates how the system behaves under load. We use [k6](https://k6.io/) to implement two types of tests:
 
-* **API Performance Testing**: Simulating hundreds of virtual users (VUs) sending HTTP requests directly to the backend.
-* **UI Performance Testing**: Using the `k6/experimental/browser` module to launch headless Chromium, simulating a user interacting with the rendered React application to measure frontend rendering time.
+- **API Performance Testing**: Simulating hundreds of virtual users (VUs) sending HTTP requests directly to the backend.
+- **UI Performance Testing**: Using the `k6/experimental/browser` module to launch headless Chromium, simulating a user interacting with the rendered React application to measure frontend rendering time.
 
 **Why it matters:**
 
-* **Preventing Outages:** A system that works perfectly for 1 user might crash due to database connection exhaustion at 100 users. Load testing proves your architecture can handle production traffic.
-* **Perceived vs. Actual Speed:** The backend API might return data in 20ms, but if the React frontend takes 3 seconds to parse and render a massive DOM, the user experience is poor. Testing both layers provides a holistic performance picture.
+- **Preventing Outages:** A system that works perfectly for 1 user might crash due to database connection exhaustion at 100 users. Load testing proves your architecture can handle production traffic.
+- **Perceived vs. Actual Speed:** The backend API might return data in 20ms, but if the React frontend takes 3 seconds to parse and render a massive DOM, the user experience is poor. Testing both layers provides a holistic performance picture.
 
 **How to implement:**
 
 **API Load Test:**
 
 ```javascript
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+import http from 'k6/http'
+import { check, sleep } from 'k6'
 
 export const options = {
   stages: [
-    { duration: '5s', target: 10 }, 
-    { duration: '10s', target: 10 }, 
-    { duration: '5s', target: 0 },   
+    { duration: '5s', target: 10 },
+    { duration: '10s', target: 10 },
+    { duration: '5s', target: 0 }
   ],
   thresholds: {
-    http_req_duration: ['p(95)<500'], // 95% of requests < 500ms
-  },
-};
+    http_req_duration: ['p(95)<500'] // 95% of requests < 500ms
+  }
+}
 
 export default function () {
-  const res = http.get('http://localhost:5001/api/colors');
-  check(res, { 'status is 200': (r) => r.status === 200 });
-  sleep(1);
+  const res = http.get('http://localhost:5001/api/colors')
+  check(res, { 'status is 200': (r) => r.status === 200 })
+  sleep(1)
 }
 ```
 
 **Browser-level UI Test:**
 
 ```javascript
-import { browser } from 'k6/experimental/browser';
-import { check } from 'k6';
+import { browser } from 'k6/experimental/browser'
+import { check } from 'k6'
 
 export const options = {
   scenarios: {
     ui: {
       executor: 'shared-iterations',
-      options: { browser: { type: 'chromium' } },
-    },
-  },
-};
+      options: { browser: { type: 'chromium' } }
+    }
+  }
+}
 
 export default async function () {
-  const page = browser.newPage();
+  const page = browser.newPage()
   try {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000')
     // ... Check UI interactions
   } finally {
-    page.close();
+    page.close()
   }
 }
 ```
@@ -894,7 +894,7 @@ Schemathesis is an automated fuzzing tool. Instead of writing manual API tests, 
 
 **Why it matters:**
 
-* **Uncovering Unknown Unknowns:** Developers write tests for edge cases they *think* of. Schemathesis tests the edge cases developers *forget*, often exposing unhandled exceptions that would otherwise result in 500 Server Errors in production.
+- **Uncovering Unknown Unknowns:** Developers write tests for edge cases they _think_ of. Schemathesis tests the edge cases developers _forget_, often exposing unhandled exceptions that would otherwise result in 500 Server Errors in production.
 
 **How to implement:**
 
@@ -902,10 +902,10 @@ Schemathesis is an automated fuzzing tool. Instead of writing manual API tests, 
 
 ```javascript
 // server/index.js
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
+const swaggerSpec = swaggerJsdoc(swaggerOptions)
 app.get('/openapi.json', (req, res) => {
-  res.json(swaggerSpec);
-});
+  res.json(swaggerSpec)
+})
 ```
 
 **Step 2:** Define clear schema constraints (patterns, min/max length, required fields).
@@ -943,12 +943,12 @@ A pipeline execution strategy based on the **Test Automation Pyramid**. It stric
 
 **Why it matters:**
 
-* **Optimal Feedback Loops:** If the database is down, the API tests will fail in 10 seconds. If you ran UI tests concurrently, you might wait 5 minutes just for them to timeout and tell you the same thing.
-* **Isolating the Root Cause:** If API tests pass but UI tests fail, the QA engineer knows definitively that the bug exists purely in the frontend presentation layer, drastically reducing debugging time.
+- **Optimal Feedback Loops:** If the database is down, the API tests will fail in 10 seconds. If you ran UI tests concurrently, you might wait 5 minutes just for them to timeout and tell you the same thing.
+- **Isolating the Root Cause:** If API tests pass but UI tests fail, the QA engineer knows definitively that the bug exists purely in the frontend presentation layer, drastically reducing debugging time.
 
 **How to implement:**
 
-In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step *without* `continue-on-error`. This instantly fails the workflow if any API endpoints regress. The subsequent E2E steps declare an `if: success()` condition, ensuring they only trigger if the API test step completes flawlessly.
+In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step _without_ `continue-on-error`. This instantly fails the workflow if any API endpoints regress. The subsequent E2E steps declare an `if: success()` condition, ensuring they only trigger if the API test step completes flawlessly.
 
 ```yaml
 - name: Run API tests (host Playwright)
@@ -971,7 +971,7 @@ A Docker-based testing environment that guarantees identical rendering and test 
 
 **Why it matters:**
 
-* **Solving "Works on My Machine":** Font rendering, sub-pixel anti-aliasing, and system dependencies differ wildly between Windows, macOS, and Linux. This causes visual regression tests to fail randomly across different machines. Docker locks the rendering engine to a single, consistent Linux environment, eliminating false positives entirely.
+- **Solving "Works on My Machine":** Font rendering, sub-pixel anti-aliasing, and system dependencies differ wildly between Windows, macOS, and Linux. This causes visual regression tests to fail randomly across different machines. Docker locks the rendering engine to a single, consistent Linux environment, eliminating false positives entirely.
 
 **How to implement:**
 
@@ -989,13 +989,14 @@ CMD ["npm", "test"]
 > [!CAUTION]
 > **Local prerequisite — remove BuildKit cache mounts.**
 > Before running locally, replace the cache-mount `RUN` lines in both `Dockerfile` and `server/Dockerfile`:
+>
 > ```dockerfile
 > # ❌ CI-only — remove locally
 > RUN --mount=type=cache,target=/root/.npm \
 >     npm ci --legacy-peer-deps
-> 
+>
 > # ✅ Replace with plain npm ci
-> 
+>
 > RUN npm ci --legacy-peer-deps
 > ```
 
@@ -1041,11 +1042,11 @@ npm run test:cross-browser # Deep coverage (All browsers)
 **Files:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) · [`playwright.config.ts`](/playwright.config.ts)
 
 **What is it?**
-While parallelism runs multiple tests on a *single* machine's CPU cores, Sharding takes this a step further by splitting the entire test suite into fractions and distributing them across *multiple separate CI runner machines* simultaneously.
+While parallelism runs multiple tests on a _single_ machine's CPU cores, Sharding takes this a step further by splitting the entire test suite into fractions and distributing them across _multiple separate CI runner machines_ simultaneously.
 
 **Why it matters:**
 
-* **Horizontal Scalability:** An E2E test suite will inevitably grow until it takes an hour to run on one machine. By sharding across 5 machines, execution drops to 12 minutes. This ensures the CI pipeline remains fast enough to run on every Pull Request, preserving the continuous integration philosophy.
+- **Horizontal Scalability:** An E2E test suite will inevitably grow until it takes an hour to run on one machine. By sharding across 5 machines, execution drops to 12 minutes. This ensures the CI pipeline remains fast enough to run on every Pull Request, preserving the continuous integration philosophy.
 
 **How to implement:**
 
@@ -1062,6 +1063,7 @@ strategy:
     shardIndex: [1, 2, 3, 4]
     shardTotal: [4]
 ```
+
 This spawns 4 identical CI runners. Each runner spins up an isolated Docker environment and is passed a specific slice of the test suite via the CLI flag: `--shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}`.
 
 **How to verify:**
@@ -1080,8 +1082,8 @@ A scheduled Continuous Integration (CI) chron-job that executes the entire test 
 
 **Why it matters:**
 
-* **Catching Time/Date Bugs:** Some bugs only trigger at the end of the month or across timezone boundaries. Nightly runs act as a heartbeat monitor.
-* **Third-Party Drift:** If a third-party API your app relies on deploys a breaking change silently at 3 AM, your scheduled pipeline will catch the failure, allowing your team to react before users wake up.
+- **Catching Time/Date Bugs:** Some bugs only trigger at the end of the month or across timezone boundaries. Nightly runs act as a heartbeat monitor.
+- **Third-Party Drift:** If a third-party API your app relies on deploys a breaking change silently at 3 AM, your scheduled pipeline will catch the failure, allowing your team to react before users wake up.
 
 **How to implement:**
 
@@ -1090,7 +1092,7 @@ Using GitHub actions, we configure the `schedule` keyword paired with a standard
 ```yaml
 on:
   schedule:
-    - cron: "0 0 * * *" # Executes daily at Midnight UTC
+    - cron: '0 0 * * *' # Executes daily at Midnight UTC
 ```
 
 ---
@@ -1106,8 +1108,8 @@ An automated pipeline step using **[MegaLinter](https://megalinter.io/)** that p
 
 **Why it matters:**
 
-* **Security Shift-Left:** It instantly catches developers accidentally committing AWS keys or database passwords to the repository.
-* **Cultural Consistency:** It ends subjective arguments in code review about formatting or syntax styles. The linter acts as the objective, automated arbiter of code quality.
+- **Security Shift-Left:** It instantly catches developers accidentally committing AWS keys or database passwords to the repository.
+- **Cultural Consistency:** It ends subjective arguments in code review about formatting or syntax styles. The linter acts as the objective, automated arbiter of code quality.
 
 **How to verify:**
 
@@ -1124,8 +1126,8 @@ Using [Istanbul/nyc](https://github.com/istanbuljs/nyc) to track exactly which l
 
 **Why it matters:**
 
-* **Exposing Blind Spots:** You may have 500 UI tests, but if code coverage is only 40%, you have massive gaps in your testing strategy. It objectively highlights which features are completely untested.
-* **CI/CD integration** — Coverage data is uploaded to [Coveralls](https://coveralls.io/) on every push, providing historical trends and PR-level deltas.
+- **Exposing Blind Spots:** You may have 500 UI tests, but if code coverage is only 40%, you have massive gaps in your testing strategy. It objectively highlights which features are completely untested.
+- **CI/CD integration** — Coverage data is uploaded to [Coveralls](https://coveralls.io/) on every push, providing historical trends and PR-level deltas.
 
 **How to implement:**
 
@@ -1142,7 +1144,7 @@ The custom `baseFixtures.ts` extends Playwright's test runner to:
 
 ```typescript
 // e2e/tests/coverage.spec.ts
-import { test, expect } from "../baseFixtures"; // ← NOT from @playwright/test
+import { test, expect } from '../baseFixtures' // ← NOT from @playwright/test
 ```
 
 **How to verify:**
@@ -1160,7 +1162,7 @@ A strict validation step in the CI pipeline (`nyc check-coverage`) that automati
 
 **Why it matters:**
 
-* **Preventing Technical Debt:** It enforces a zero-tolerance policy for untested code. Developers cannot merge new features unless they also provide the automation tests to cover them, ensuring the repository's health never degrades over time.
+- **Preventing Technical Debt:** It enforces a zero-tolerance policy for untested code. Developers cannot merge new features unless they also provide the automation tests to cover them, ensuring the repository's health never degrades over time.
 
 **How to implement:**
 
@@ -1186,8 +1188,8 @@ In `ci.yml`, this step runs after the main test execution:
 
 **Why it matters:**
 
-* **Actionable Observability:** A raw terminal output of `Test Failed` is useless to a manager. Allure translates pipeline data into business intelligence, cleanly categorizing failures into "Product Bugs" vs "Test Flakiness".
-* **Visual Evidence:** Screenshots (like visual regression diffs), videos, and traces collected by Playwright are natively embedded into the Allure report for easy debugging.
+- **Actionable Observability:** A raw terminal output of `Test Failed` is useless to a manager. Allure translates pipeline data into business intelligence, cleanly categorizing failures into "Product Bugs" vs "Test Flakiness".
+- **Visual Evidence:** Screenshots (like visual regression diffs), videos, and traces collected by Playwright are natively embedded into the Allure report for easy debugging.
 
 **How to implement:**
 
@@ -1211,7 +1213,7 @@ npm install -g allure-commandline
             categories: [
               {
                 name: "Flaky Network Issues",
-                messageRegex: ".*timeout.*|.*ECONNRESET.*|.*fetch failed.*", 
+                messageRegex: ".*timeout.*|.*ECONNRESET.*|.*fetch failed.*",
                 matchedStatuses: ["failed", "broken"],
                 flaky: true,
               },
@@ -1241,21 +1243,24 @@ To avoid manual reporting boilerplate, we use an auto-fixture that maps Gherkin 
 // e2e/baseFixtures.ts
 export const test = baseTest.extend<{ homePage: HomePage; allureBddMapper: void }>({
   // Auto-fixture that maps Gherkin tags to Allure metadata
-  allureBddMapper: [async ({}, use, testInfo) => {
-    for (const tag of testInfo.tags) {
-      const cleanTag = tag.replace('@', '');
-      if (cleanTag.startsWith('epic:')) allure.epic(cleanTag.split(':')[1].replace(/_/g, ' '));
-      if (cleanTag.startsWith('feature:')) allure.feature(cleanTag.split(':')[1].replace(/_/g, ' '));
-      if (cleanTag.startsWith('story:')) allure.story(cleanTag.split(':')[1].replace(/_/g, ' '));
-      if (cleanTag.startsWith('severity:')) allure.severity(cleanTag.split(':')[1]);
-      if (cleanTag.startsWith('jira:')) {
-        const issueId = cleanTag.split(':')[1];
-        allure.issue(issueId); 
+  allureBddMapper: [
+    async ({}, use, testInfo) => {
+      for (const tag of testInfo.tags) {
+        const cleanTag = tag.replace('@', '')
+        if (cleanTag.startsWith('epic:')) allure.epic(cleanTag.split(':')[1].replace(/_/g, ' '))
+        if (cleanTag.startsWith('feature:')) allure.feature(cleanTag.split(':')[1].replace(/_/g, ' '))
+        if (cleanTag.startsWith('story:')) allure.story(cleanTag.split(':')[1].replace(/_/g, ' '))
+        if (cleanTag.startsWith('severity:')) allure.severity(cleanTag.split(':')[1])
+        if (cleanTag.startsWith('jira:')) {
+          const issueId = cleanTag.split(':')[1]
+          allure.issue(issueId)
+        }
       }
-    }
-    await use();
-  }, { auto: true }],
-});
+      await use()
+    },
+    { auto: true }
+  ]
+})
 ```
 
 **Gherkin Implementation:**
@@ -1287,9 +1292,9 @@ Mutation testing introduces small, deliberate code changes ("mutants") — like 
 
 **Why it matters:**
 
-* **Coverage ≠ Confidence:** A test can execute every line of code (100% line coverage) and still be completely useless if it lacks meaningful assertions. Consider a test that calls `POST /api/colors` but never checks the response status — it would pass even if the endpoint always returned 500.
-* **Quantifying Assertion Quality:** The **mutation score** (percentage of killed mutants) measures how well your tests actually *detect bugs*, not just how much code they *touch*. It is the difference between "exercised" and "verified".
-* **CI Quality Gate:** We enforce a ≥70% mutation score threshold in CI, separate from the 80% code coverage gate. If the mutation score drops below 70%, the pipeline fails — guaranteeing that new code comes with substantive, bug-detecting tests.
+- **Coverage ≠ Confidence:** A test can execute every line of code (100% line coverage) and still be completely useless if it lacks meaningful assertions. Consider a test that calls `POST /api/colors` but never checks the response status — it would pass even if the endpoint always returned 500.
+- **Quantifying Assertion Quality:** The **mutation score** (percentage of killed mutants) measures how well your tests actually _detect bugs_, not just how much code they _touch_. It is the difference between "exercised" and "verified".
+- **CI Quality Gate:** We enforce a ≥70% mutation score threshold in CI, separate from the 80% code coverage gate. If the mutation score drops below 70%, the pipeline fails — guaranteeing that new code comes with substantive, bug-detecting tests.
 
 **How to implement:**
 
@@ -1312,13 +1317,13 @@ beforeAll(async () => {
   Color = server.Color
 })
 
-beforeEach(async () => { await seedDatabase() })
+beforeEach(async () => {
+  await seedDatabase()
+})
 
 test('returns 409 for a duplicate color name', async () => {
-  const res = await request(app)
-    .post('/api/colors')
-    .send({ name: 'Red', hex: '#ff0000' })
-  expect(res.status).toBe(409)         // ← Asserts status code
+  const res = await request(app).post('/api/colors').send({ name: 'Red', hex: '#ff0000' })
+  expect(res.status).toBe(409) // ← Asserts status code
   expect(res.body.error).toContain('already exists') // ← Asserts message content
 })
 ```
@@ -1383,9 +1388,9 @@ Dependabot is an automated tool that scans your project's dependencies for outda
 
 **Why it matters:**
 
-* **Version Upgrade Testing:** Dependencies evolve rapidly, and breaking changes in a minor or major release can quietly break your application. Having automated tests run against every Dependabot PR ensures that before you merge a potentially destructive package upgrade, you have concrete proof that your application's core functionality remains intact.
-* **Backwards Compatibility Testing:** Upgrading a backend library (like Express or Mongoose) shouldn't break existing API clients or frontend applications. The automated E2E testing triggered by these upgrades guarantees that the new versions remain backward compatible with your current implementation, giving you confidence to merge updates without manual regression testing.
-* **Security & Maintenance:** The longer you wait to update dependencies, the harder it becomes due to accumulated breaking changes, and the higher the risk of unpatched vulnerabilities. Automated, well-tested updates turn security patches into a non-event.
+- **Version Upgrade Testing:** Dependencies evolve rapidly, and breaking changes in a minor or major release can quietly break your application. Having automated tests run against every Dependabot PR ensures that before you merge a potentially destructive package upgrade, you have concrete proof that your application's core functionality remains intact.
+- **Backwards Compatibility Testing:** Upgrading a backend library (like Express or Mongoose) shouldn't break existing API clients or frontend applications. The automated E2E testing triggered by these upgrades guarantees that the new versions remain backward compatible with your current implementation, giving you confidence to merge updates without manual regression testing.
+- **Security & Maintenance:** The longer you wait to update dependencies, the harder it becomes due to accumulated breaking changes, and the higher the risk of unpatched vulnerabilities. Automated, well-tested updates turn security patches into a non-event.
 
 **How to implement:**
 
@@ -1396,35 +1401,35 @@ We define a configuration file that targets the different ecosystems in our repo
 version: 2
 updates:
   # 1. Update root frontend/misc npm packages
-  - package-ecosystem: "npm"
-    directory: "/"
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: 'weekly'
+      day: 'monday'
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "frontend"
+      - 'dependencies'
+      - 'frontend'
 
   # 2. Update server-side npm packages
-  - package-ecosystem: "npm"
-    directory: "/server"
+  - package-ecosystem: 'npm'
+    directory: '/server'
     schedule:
-      interval: "weekly"
-      day: "monday"
+      interval: 'weekly'
+      day: 'monday'
     open-pull-requests-limit: 5
     labels:
-      - "dependencies"
-      - "backend"
+      - 'dependencies'
+      - 'backend'
 
   # 3. Update GitHub Actions
-  - package-ecosystem: "github-actions"
-    directory: "/"
+  - package-ecosystem: 'github-actions'
+    directory: '/'
     schedule:
-      interval: "monthly"
+      interval: 'monthly'
     labels:
-      - "dependencies"
-      - "ci"
+      - 'dependencies'
+      - 'ci'
 ```
 
 Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwright E2E and Jest tests against the new dependency context, ensuring flawless integration.
@@ -1438,9 +1443,9 @@ Security scanning adds an automated layer of defense by inspecting your project'
 
 **Why it matters:**
 
-* **Supply Chain Security:** Many modern applications rely heavily on third-party libraries. If a dependency introduces a security flaw, automated scanning catches it before it ships.
-* **Container Hardening:** Docker images often inherit vulnerabilities from their base images (e.g., outdated OS libraries). Container scanning ensures that the environment your application runs in is as secure as the code itself.
-* **Continuous Monitoring:** By integrating these checks into every CI run, security becomes a continuous process rather than an infrequent manual audit, preventing vulnerable code or images from ever reaching production.
+- **Supply Chain Security:** Many modern applications rely heavily on third-party libraries. If a dependency introduces a security flaw, automated scanning catches it before it ships.
+- **Container Hardening:** Docker images often inherit vulnerabilities from their base images (e.g., outdated OS libraries). Container scanning ensures that the environment your application runs in is as secure as the code itself.
+- **Continuous Monitoring:** By integrating these checks into every CI run, security becomes a continuous process rather than an infrequent manual audit, preventing vulnerable code or images from ever reaching production.
 
 **How to implement:**
 
@@ -1451,6 +1456,7 @@ Security scanning adds an automated layer of defense by inspecting your project'
 Our setup includes local scripts in \`package.json\` for quick developer feedback. In GitHub Actions, we separate the security auditing into parallel jobs for optimal execution speed: one for the filesystem/dependencies, one for the frontend container, and one for the backend container.
 
 **Local Checks (package.json):**
+
 ```json
 "scripts": {
   "security:audit": "npm audit --audit-level=high",

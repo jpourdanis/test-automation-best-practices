@@ -72,15 +72,15 @@ jobs:
       - name: Run Trivy vulnerability scanner on fs
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
-          scan-type: 'fs'
+          scan-type: "fs"
           ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-          trivy-version: '0.69.3'
+          severity: "CRITICAL,HIGH"
+          trivy-version: "0.69.3"
           # Fail the pipeline and output as JUnit for Allure
-          exit-code: '1'
-          format: 'template'
-          template: '@${{ github.workspace }}/junit.tpl'
-          output: 'allure-results/trivy-fs.xml'
+          exit-code: "1"
+          format: "template"
+          template: "@${{ github.workspace }}/junit.tpl"
+          output: "allure-results/trivy-fs.xml"
 
       - name: Upload Trivy FS Allure Results
         if: always() # Ensure this runs even if Trivy fails the build
@@ -112,14 +112,14 @@ jobs:
       - name: Run Trivy vulnerability scanner on frontend image
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
-          scan-type: 'image'
-          image-ref: 'test-automation-best-practices-app:latest'
+          scan-type: "image"
+          image-ref: "test-automation-best-practices-app:latest"
           ignore-unfixed: true
-          severity: 'CRITICAL,HIGH'
-          trivy-version: '0.69.3'
-          format: 'template'
-          template: '@${{ github.workspace }}/junit.tpl'
-          output: 'allure-results/trivy-frontend.xml'
+          severity: "CRITICAL,HIGH"
+          trivy-version: "0.69.3"
+          format: "template"
+          template: "@${{ github.workspace }}/junit.tpl"
+          output: "allure-results/trivy-frontend.xml"
 
       - name: Upload Trivy Frontend Allure Results
         if: always()
@@ -151,14 +151,14 @@ jobs:
       - name: Run Trivy vulnerability scanner on API image
         uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
         with:
-          scan-type: 'image'
-          image-ref: 'test-automation-best-practices-api:latest'
-          severity: 'CRITICAL,HIGH'
-          trivy-version: '0.69.3'
-          exit-code: '1'
-          format: 'template'
-          template: '@${{ github.workspace }}/junit.tpl'
-          output: 'allure-results/trivy-api.xml'
+          scan-type: "image"
+          image-ref: "test-automation-best-practices-api:latest"
+          severity: "CRITICAL,HIGH"
+          trivy-version: "0.69.3"
+          exit-code: "1"
+          format: "template"
+          template: "@${{ github.workspace }}/junit.tpl"
+          output: "allure-results/trivy-api.xml"
 
       - name: Upload Trivy API Allure Results
         if: always()
@@ -485,7 +485,7 @@ jobs:
             return 1
           }
           wait_for http://127.0.0.1:5001/api/colors
-      
+
       # Runs Schemathesis against the OpenAPI spec to discover edge-case bugs via property testing
       - name: Run schemathesis tests
         uses: schemathesis/action@v2
@@ -721,7 +721,7 @@ jobs:
       - name: Run UI Performance Test
         env:
           K6_BROWSER_ENABLED: true
-          TEST_TYPE: 'smoke'
+          TEST_TYPE: "smoke"
           DBUS_SESSION_BUS_ADDRESS: /dev/null
         run: k6 run performance/ui-performance.spec.ts
 
@@ -734,14 +734,24 @@ jobs:
           path: allure-results/**
           retention-days: 1
 
-
   # ==========================================
   # 3. REPORTING & PUBLISHING (The Fan-In)
   # ==========================================
   publish-reports:
     name: Merge Reports & Publish
     # This job 'fans in', running only after all the test runners finish
-    needs: [security-testing-fs, security-testing-frontend, security-testing-api, tests-misc, api-property-testing, e2e-sharded, performance-testing, mutation-testing, mutation-testing-frontend]
+    needs:
+      [
+        security-testing-fs,
+        security-testing-frontend,
+        security-testing-api,
+        tests-misc,
+        api-property-testing,
+        e2e-sharded,
+        performance-testing,
+        mutation-testing,
+        mutation-testing-frontend
+      ]
     if: always()
     runs-on: ubuntu-latest
     steps:

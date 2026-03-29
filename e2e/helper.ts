@@ -1,4 +1,4 @@
-import * as crypto from "crypto";
+import * as crypto from 'crypto'
 /**
  * Converts a hexadecimal color string to RGB values
  * @param hex - The hexadecimal color string (with or without '#' prefix)
@@ -9,19 +9,19 @@ import * as crypto from "crypto";
  */
 export function convertHexToRGB(hex: any) {
   // Remove the '#' if it's included in the input
-  hex = hex.replace(/^#/, "");
+  hex = hex.replace(/^#/, '')
 
   // Parse the hex values into separate R, G, and B values
-  const red = parseInt(hex.substring(0, 2), 16);
-  const green = parseInt(hex.substring(2, 4), 16);
-  const blue = parseInt(hex.substring(4, 6), 16);
+  const red = parseInt(hex.substring(0, 2), 16)
+  const green = parseInt(hex.substring(2, 4), 16)
+  const blue = parseInt(hex.substring(4, 6), 16)
 
   // Return the RGB values in an object
   return {
     red: red,
     green: green,
-    blue: blue,
-  };
+    blue: blue
+  }
 }
 
 /**
@@ -33,11 +33,11 @@ export function convertHexToRGB(hex: any) {
  * extractHexColor('No color here')          // returns null
  */
 export function extractHexColor(text: any) {
-  const hexMatch = text.match(/#([0-9a-fA-F]{6})/);
+  const hexMatch = text.match(/#([0-9a-fA-F]{6})/)
   if (hexMatch) {
-    return hexMatch[1];
+    return hexMatch[1]
   }
-  return null;
+  return null
 }
 
 /**
@@ -46,5 +46,5 @@ export function extractHexColor(text: any) {
  * @example generateUUID() // returns "1a2b3c4d5e6f7890..."
  */
 export function generateUUID(): string {
-  return crypto.randomBytes(16).toString("hex");
+  return crypto.randomBytes(16).toString('hex')
 }

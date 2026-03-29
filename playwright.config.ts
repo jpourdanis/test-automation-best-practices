@@ -1,120 +1,122 @@
-import { PlaywrightTestConfig, devices } from "@playwright/test";
-import { defineBddConfig } from "playwright-bdd";
+import { PlaywrightTestConfig, devices } from '@playwright/test'
+import { defineBddConfig } from 'playwright-bdd'
 
 const testDir = defineBddConfig({
-  features: "e2e/features/*.feature",
-  steps: "e2e/tests/bdd.spec.ts",
-});
+  features: 'e2e/features/*.feature',
+  steps: 'e2e/tests/bdd.spec.ts'
+})
 
 const config: PlaywrightTestConfig = {
   // If a test fails then passes on a retry, Allure marks it as flaky automatically.
   retries: process.env.CI ? 2 : 0,
 
   // Global setup for one-time initialization
-  globalSetup: require.resolve("./e2e/global-setup"),
+  globalSetup: require.resolve('./e2e/global-setup'),
   // Parralelize all tests, including BDD tests, to speed up execution
   fullyParallel: true,
-  testDir: "e2e",
+  testDir: 'e2e',
   // Where to store visual snapshots
-  snapshotDir: "e2e/snapshots",
+  snapshotDir: 'e2e/snapshots',
   // Template used for snapshot paths
-  snapshotPathTemplate: "e2e/snapshots/{arg}{ext}",
+  snapshotPathTemplate: 'e2e/snapshots/{arg}{ext}',
   // When running in CI/Docker we expect the app to be started externally
   webServer: process.env.CI
     ? undefined
     : {
-        command: "docker-compose up",
+        command: 'docker-compose up',
         port: 3000,
         timeout: 120000, // 2 minutes timeout for server to start
-        reuseExistingServer: true,
+        reuseExistingServer: true
       },
   projects: [
     {
-      name: "Chrome",
+      name: 'Chrome',
       use: {
-        ...devices["Desktop Chrome"],
+        ...devices['Desktop Chrome'],
         launchOptions: {
-          args: [`--remote-debugging-port=${9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)}`],
-        },
+          args: [
+            `--remote-debugging-port=${9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)}`
+          ]
+        }
       },
       // Exclude BDD tests from the default Chrome run to avoid duplicate runs
-      testIgnore: /.*\.feature\.spec.*$/,
+      testIgnore: /.*\.feature\.spec.*$/
     },
     {
-      name: "BDD",
+      name: 'BDD',
       testDir,
       use: {
-        ...devices["Desktop Chrome"],
-      },
+        ...devices['Desktop Chrome']
+      }
     },
-    ...(process.env.CROSS_BROWSER === "true"
+    ...(process.env.CROSS_BROWSER === 'true'
       ? [
           {
-            name: "Firefox",
+            name: 'Firefox',
             use: {
-              ...devices["Desktop Firefox"],
+              ...devices['Desktop Firefox']
             },
-            testMatch: /.*cross-browser\.spec\.ts/,
+            testMatch: /.*cross-browser\.spec\.ts/
           },
           {
-            name: "WebKit",
+            name: 'WebKit',
             use: {
-              ...devices["Desktop Safari"],
+              ...devices['Desktop Safari']
             },
-            testMatch: /.*cross-browser\.spec\.ts/,
+            testMatch: /.*cross-browser\.spec\.ts/
           },
           {
-            name: "Chrome",
+            name: 'Chrome',
             use: {
-              ...devices["Desktop Chrome"],
+              ...devices['Desktop Chrome']
             },
-            testMatch: /.*cross-browser\.spec\.ts/,
-          },
+            testMatch: /.*cross-browser\.spec\.ts/
+          }
         ]
-      : []),
+      : [])
   ],
   use: {
     headless: true,
     viewport: { width: 1280, height: 720 },
     ignoreHTTPSErrors: true,
-    video: "retain-on-failure",
-    trace: "retain-on-failure",
-    baseURL: process.env.BASE_URL || "http://localhost:3000",
+    video: 'retain-on-failure',
+    trace: 'retain-on-failure',
+    baseURL: process.env.BASE_URL || 'http://localhost:3000'
   },
-  
+
   //Configured the allure-playwright reporter to handle specific flaky categories
   reporter: process.env.CI
     ? [
         [
-          "allure-playwright",
+          'allure-playwright',
           {
             detail: true,
             suiteTitle: false,
             // Automatically mark known random errors as flaky without needing a retry pass
             categories: [
               {
-                name: "Flaky Network Issues",
-                messageRegex: ".*timeout.*|.*ECONNRESET.*|.*fetch failed.*", 
-                matchedStatuses: ["failed", "broken"],
-                flaky: true,
-              },
+                name: 'Flaky Network Issues',
+                messageRegex: '.*timeout.*|.*ECONNRESET.*|.*fetch failed.*',
+                matchedStatuses: ['failed', 'broken'],
+                flaky: true
+              }
             ],
             links: {
               issue: {
-                urlTemplate: "https://your-company.atlassian.net/browse/%s",
-                nameTemplate: "Jira: %s",
-              },
-            },
-          },
+                urlTemplate: 'https://your-company.atlassian.net/browse/%s',
+                nameTemplate: 'Jira: %s'
+              }
+            }
+          }
         ],
-        ["list"],
-        ["html", { open: "never" }],
+        ['list'],
+        ['html', { open: 'never' }]
       ]
     : [
-        ["html", { open: "never" }],
-        ["allure-playwright"], // Kept default for local runs, but you can copy the object above if you want categories locally too
-        ["list"],
-      ],
-};
+        ['html', { open: 'never' }],
+        ['allure-playwright'], // Kept default for local runs, but you can copy the object above if you want categories locally too
+        ['list']
+      ]
+}
 
-export default config;
+export default config
