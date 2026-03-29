@@ -41,7 +41,70 @@ jobs:
           VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
   # ==========================================
-  # 1a. SECURITY TESTING (npm audit & Trivy FS)
+  # 1a. UNIT TESTING (API)
+  # ==========================================
+  backend-unit-tests:
+    name: Unit Testing (API)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install server dependencies
+        run: npm ci
+        working-directory: server
+
+      - name: Run Backend Unit Tests
+        run: npm test
+        working-directory: server
+
+      - name: Upload Backend Unit Test Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-unit-server
+          path: server/allure-results/
+          retention-days: 1
+
+  # ==========================================
+  # 1b. UNIT TESTING (Frontend)
+  # ==========================================
+  frontend-unit-tests:
+    name: Unit Testing (Frontend)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Run Frontend Unit Tests
+        run: npm run test:unit
+
+      - name: Upload Frontend Unit Test Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-unit-frontend
+          path: allure-results/
+          retention-days: 1
+
+  # ==========================================
+  # 1c. SECURITY TESTING (npm audit & Trivy FS)
   # ==========================================
   security-testing-fs:
     name: Security Testing (FS & NPM)
@@ -91,7 +154,7 @@ jobs:
           retention-days: 1
 
   # ==========================================
-  # 1b. SECURITY TESTING (Frontend Image)
+  # 1d. SECURITY TESTING (Frontend Image)
   # ==========================================
   security-testing-frontend:
     name: Container Scanning (Frontend)
@@ -130,7 +193,7 @@ jobs:
           retention-days: 1
 
   # ==========================================
-  # 1c. SECURITY TESTING (API Image)
+  # 1e. SECURITY TESTING (API Image)
   # ==========================================
   security-testing-api:
     name: Container Scanning (API)
@@ -168,7 +231,7 @@ jobs:
           path: allure-results/**
           retention-days: 1
   # ==========================================
-  # 1d. MUTATION TESTING (Stryker)
+  # 1f. MUTATION TESTING (Stryker)
   # ==========================================
   mutation-testing:
     name: Mutation Testing on Server
@@ -228,7 +291,7 @@ jobs:
           retention-days: 1
 
   # ==========================================
-  # 1e. MUTATION TESTING (Stryker) - Frontend
+  # 1g. MUTATION TESTING (Stryker) - Frontend
   # ==========================================
   mutation-testing-frontend:
     name: Mutation Testing on Frontend
@@ -750,7 +813,9 @@ jobs:
         e2e-sharded,
         performance-testing,
         mutation-testing,
-        mutation-testing-frontend
+        mutation-testing-frontend,
+        backend-unit-tests,
+        frontend-unit-tests
       ]
     if: always()
     runs-on: ubuntu-latest

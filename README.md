@@ -21,27 +21,28 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [4. Data-Driven Testing](#4-data-driven-testing)
     - [5. Random Data Generation with faker.js](#5-random-data-generation-with-fakerjs)
   - [Part 2: Comprehensive Test Coverage](#part-2-comprehensive-test-coverage)
-    - [6. Hybrid E2E Testing](#6-hybrid-e2e-testing)
-    - [7. Network Mocking & Interception](#7-network-mocking--interception)
-    - [8. API Schema Validation with Zod](#8-api-schema-validation-with-zod)
-    - [9. Visual Regression & Responsive Testing](#9-visual-regression--responsive-testing)
-    - [10. Accessibility (a11y) Testing](#10-accessibility-a11y-testing)
-    - [11. Performance Testing with k6](#11-performance-testing-with-k6)
-    - [12. API Property-Based Testing with Schemathesis](#12-api-property-based-testing-with-schemathesis)
+    - [6. Unit Testing](#6-unit-testing)
+    - [7. Hybrid E2E Testing](#7-hybrid-e2e-testing)
+    - [8. Network Mocking & Interception](#8-network-mocking--interception)
+    - [9. API Schema Validation with Zod](#9-api-schema-validation-with-zod)
+    - [10. Visual Regression & Responsive Testing](#10-visual-regression--responsive-testing)
+    - [11. Accessibility (a11y) Testing](#11-accessibility-a11y-testing)
+    - [12. Performance Testing with k6](#12-performance-testing-with-k6)
+    - [13. API Property-Based Testing with Schemathesis](#13-api-property-based-testing-with-schemathesis)
   - [Part 3: CI/CD & Execution Strategy](#part-3-cicd--execution-strategy)
-    - [13. Test Automation Pyramid: API First](#13-test-automation-pyramid-api-first)
-    - [14. Consistent Cross-Platform Testing with Docker](#14-consistent-cross-platform-testing-with-docker)
-    - [15. Cross-Browser Testing Strategy](#15-cross-browser-testing-strategy)
-    - [16. Parallel Execution & Sharding](#16-parallel-execution--sharding)
-    - [17. Nightly Builds & Scheduled Playwright Runs](#17-nightly-builds--scheduled-playwright-runs)
+    - [14. Test Automation Pyramid: API First](#14-test-automation-pyramid-api-first)
+    - [15. Consistent Cross-Platform Testing with Docker](#15-consistent-cross-platform-testing-with-docker)
+    - [16. Cross-Browser Testing Strategy](#16-cross-browser-testing-strategy)
+    - [17. Parallel Execution & Sharding](#17-parallel-execution--sharding)
+    - [18. Nightly Builds & Scheduled Playwright Runs](#18-nightly-builds--scheduled-playwright-runs)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
-    - [18. Static Code Analysis with MegaLinter](#18-static-code-analysis-with-megalinter)
-    - [19. E2E Code Coverage](#19-e2e-code-coverage)
-    - [20. Quality Gates & Code Coverage Limits](#20-quality-gates--code-coverage-limits)
-    - [21. Allure Reports with Historical Data & Flaky Test Detection](#21-allure-reports-with-historical-data--flaky-test-detection)
-    - [22. Mutation Testing with Stryker Mutator](#22-mutation-testing-with-stryker-mutator)
-    - [23. Automated Dependency Updates & Version Testing](#23-automated-dependency-updates--version-testing)
-    - [24. Security Scanning for Code & Containers](#24-security-scanning-for-code--containers)
+    - [19. Static Code Analysis with MegaLinter](#19-static-code-analysis-with-megalinter)
+    - [20. E2E Code Coverage](#20-e2e-code-coverage)
+    - [21. Quality Gates & Code Coverage Limits](#21-quality-gates--code-coverage-limits)
+    - [22. Allure Reports with Historical Data & Flaky Test Detection](#22-allure-reports-with-historical-data--flaky-test-detection)
+    - [23. Mutation Testing with Stryker Mutator](#23-mutation-testing-with-stryker-mutator)
+    - [24. Automated Dependency Updates & Version Testing](#24-automated-dependency-updates--version-testing)
+    - [25. Security Scanning for Code & Containers](#25-security-scanning-for-code--containers)
 
 ---
 
@@ -484,7 +485,42 @@ npx playwright test e2e/tests/random-data.spec.ts
 
 ## Part 2: Comprehensive Test Coverage
 
-### 6. Hybrid E2E Testing
+### 6. Unit Testing
+
+**Files:** [`src/App.test.tsx`](/src/App.test.tsx) · [`server/index.test.js`](/server/index.test.js)
+
+**What is it?**
+Unit testing involves testing the smallest testable parts of an application (functions, components, or classes) in complete isolation. Unlike E2E tests which boot up the entire system, unit tests focus on pure logic and UI component rendering without hitting a real database or network.
+
+**Why it matters:**
+
+- **Instant Feedback** — Unit tests run in milliseconds. Developers can run hundreds of tests in seconds, catching regressions the moment a line of code is changed.
+- **Isolation & Debugging** — When a unit test fails, you know *exactly* which function is broken. There's no ambiguity about whether the failure was caused by a flaky network or a database timeout.
+- **Foundation of Quality** — They form the base of the Test Automation Pyramid. High unit test coverage allows for a leaner, faster E2E layer by handling edge cases at the logic level rather than the UI level.
+
+**How to implement:**
+
+**Backend (Express):** We use Jest and Supertest to verify API logic and validation schemas in isolation.
+```bash
+# Navigate to server and run tests
+cd server && npm test
+```
+
+**Frontend (React):** We use React Testing Library to verify component rendering, user interactions, and i18n support.
+```bash
+# Run frontend unit tests
+npm run test:unit
+```
+
+**How to verify:**
+```bash
+# Run all project unit tests
+npm run test:unit && cd server && npm test
+```
+
+---
+
+### 7. Hybrid E2E Testing
 
 **File:** [`e2e/tests/hybrid.spec.ts`](/e2e/tests/hybrid.spec.ts)
 
@@ -528,7 +564,7 @@ test('should create color via API and verify through UI', async ({ page, request
 })
 ```
 
-### 7. Network Mocking & Interception
+### 8. Network Mocking & Interception
 
 **Files:** [`e2e/tests/network-mocking.spec.ts`](/e2e/tests/network-mocking.spec.ts) · [`e2e/tests/error-handling.spec.ts`](/e2e/tests/error-handling.spec.ts)
 
@@ -628,7 +664,7 @@ test('should handle fetch colors network failure gracefully', async ({ page }) =
 npx playwright test e2e/tests/network-mocking.spec.ts e2e/tests/error-handling.spec.ts
 ```
 
-### 8. API Schema Validation with Zod
+### 9. API Schema Validation with Zod
 
 **Files:** [`server/index.js`](/server/index.js) · [`e2e/tests/api.spec.ts`](/e2e/tests/api.spec.ts)
 
@@ -703,7 +739,7 @@ test('should reject missing name', async ({ request }) => {
 npx playwright test e2e/tests/api.spec.ts
 ```
 
-### 9. Visual Regression & Responsive Testing
+### 10. Visual Regression & Responsive Testing
 
 **File:** [`e2e/tests/visual.spec.ts`](/e2e/tests/visual.spec.ts)
 
@@ -752,7 +788,7 @@ test.describe('Responsive Design Testing', () => {
 npx playwright test e2e/tests/visual.spec.ts
 ```
 
-### 10. Accessibility (a11y) Testing
+### 11. Accessibility (a11y) Testing
 
 **File:** [`e2e/tests/a11y.spec.ts`](/e2e/tests/a11y.spec.ts)
 
@@ -811,7 +847,7 @@ test('should meet the accessibility threshold using Google Lighthouse', async ({
 npx playwright test e2e/tests/a11y.spec.ts -g "Lighthouse"
 ```
 
-### 11. Performance Testing with k6
+### 12. Performance Testing with k6
 
 **Files:** [`performance/api-performance.spec.ts`](/performance/api-performance.spec.ts) · [`performance/ui-performance.spec.ts`](/performance/ui-performance.spec.ts)
 
@@ -885,7 +921,7 @@ npm run test:perf:api:smoke
 npm run test:perf:ui:load
 ```
 
-### 12. API Property-Based Testing with Schemathesis
+### 13. API Property-Based Testing with Schemathesis
 
 **Files:** [`server/index.js`](/server/index.js) · [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -934,7 +970,7 @@ npm run test:api:schemathesis
 
 ## Part 3: CI/CD & Execution Strategy
 
-### 13. Test Automation Pyramid: API First
+### 14. Test Automation Pyramid: API First
 
 **File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -962,7 +998,7 @@ In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step
   run: npm test
 ```
 
-### 14. Consistent Cross-Platform Testing with Docker
+### 15. Consistent Cross-Platform Testing with Docker
 
 **Files:** [`Dockerfile`](/Dockerfile), [`docker-compose.yml`](/docker-compose.yml)
 
@@ -1000,7 +1036,7 @@ CMD ["npm", "test"]
 > RUN npm ci --legacy-peer-deps
 > ```
 
-### 15. Cross-Browser Testing Strategy
+### 16. Cross-Browser Testing Strategy
 
 **File:** [`playwright.config.ts`](/playwright.config.ts)
 
@@ -1037,7 +1073,7 @@ npm run test # Fast (Chromium)
 npm run test:cross-browser # Deep coverage (All browsers)
 ```
 
-### 16. Parallel Execution & Sharding
+### 17. Parallel Execution & Sharding
 
 **Files:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) · [`playwright.config.ts`](/playwright.config.ts)
 
@@ -1073,7 +1109,7 @@ npx playwright test --shard=1/4
 
 ```
 
-### 17. Nightly Builds & Scheduled Playwright Runs
+### 18. Nightly Builds & Scheduled Playwright Runs
 
 **File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1099,7 +1135,7 @@ on:
 
 ## Part 4: Quality Gates & Reporting
 
-### 18. Static Code Analysis with MegaLinter
+### 19. Static Code Analysis with MegaLinter
 
 **Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1117,7 +1153,7 @@ An automated pipeline step using **[MegaLinter](https://megalinter.io/)** that p
 npx --yes mega-linter-runner@latest
 ```
 
-### 19. E2E Code Coverage
+### 20. E2E Code Coverage
 
 **Files:** [`e2e/baseFixtures.ts`](/e2e/baseFixtures.ts) · [`e2e/tests/coverage.spec.ts`](/e2e/tests/coverage.spec.ts)
 
@@ -1153,7 +1189,7 @@ import { test, expect } from '../baseFixtures' // ← NOT from @playwright/test
 npm run coverage
 ```
 
-### 20. Quality Gates & Code Coverage Limits
+### 21. Quality Gates & Code Coverage Limits
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1179,7 +1215,7 @@ In `ci.yml`, this step runs after the main test execution:
   run: npm run coverage:check
 ```
 
-### 21. Allure Reports with Historical Data & Flaky Test Detection
+### 22. Allure Reports with Historical Data & Flaky Test Detection
 
 **Link:** [Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/)
 
@@ -1283,7 +1319,7 @@ Feature: Home Page Background Color
 npx allure serve allure-results
 ```
 
-### 22. Mutation Testing with Stryker Mutator
+### 23. Mutation Testing with Stryker Mutator
 
 **Files:** [`server/index.js`](/server/index.js) · [`server/index.test.js`](/server/index.test.js) · [`server/stryker.config.json`](/server/stryker.config.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1379,7 +1415,7 @@ cd server && npm run mutation
 
 Stryker generates a detailed HTML report showing each mutant, whether it was killed or survived, and links directly to the mutated line of code.
 
-### 23. Automated Dependency Updates & Version Testing
+### 24. Automated Dependency Updates & Version Testing
 
 **File:** [`.github/workflows/dependabot.yml`](/.github/workflows/dependabot.yml)
 
@@ -1434,7 +1470,7 @@ updates:
 
 Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwright E2E and Jest tests against the new dependency context, ensuring flawless integration.
 
-### 24. Security Scanning for Code & Containers
+### 25. Security Scanning for Code & Containers
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
