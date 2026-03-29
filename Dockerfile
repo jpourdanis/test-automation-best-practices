@@ -3,13 +3,6 @@ FROM mcr.microsoft.com/playwright:v1.58.2-noble AS base
 WORKDIR /app
 ENV CI=true
 
-# Apply OS-level security patches from Ubuntu's security repository
-# This resolves HIGH/MEDIUM CVEs in base image packages (libvpx9, openssh-client, etc.)
-RUN apt-get update -qq \
-    && apt-get upgrade -y --no-install-recommends \
-    && apt-get clean \
-    && rm -rf /var/lib/apt/lists/*
-
 # Install dependencies using npm (this repo uses npm)
 COPY package.json package-lock.json* ./
 RUN --mount=type=cache,target=/root/.npm \
@@ -24,7 +17,6 @@ RUN mkdir -p /app/test-results /app/playwright-report /app/allure-results /app/t
 
 # ---- App stage: runs the frontend server ----
 FROM base AS app
-USER pwuser
 EXPOSE 3000
 CMD ["npm", "run", "start"]
 
