@@ -1,0 +1,2 @@
+[NETWORK INFO] should create color via API and verify through UI: 200 GET http://localhost:3000/api/colors
+[NETWORK INFO] should create color via API and verify through UI: 200 GET http://localhost:3000/api/colors/Ertsed5qeoTwTnk
