@@ -1,4 +1,4 @@
-import { test, expect } from '../baseFixtures';
+import { test, expect } from '../baseFixtures'
 
 /**
  * Test Suite: Cross-Browser Testing Demonstration
@@ -17,18 +17,18 @@ import { test, expect } from '../baseFixtures';
  */
 test.describe('Cross-Browser Core Functionality', () => {
   test.beforeEach(async ({ homePage }) => {
-    await homePage.goto();
-  });
+    await homePage.goto()
+  })
 
   test('should load the application and verify core functionality across browsers', async ({
-    homePage,
+    homePage
   }) => {
     // Verify core UI loads
-    await expect(homePage.header).toBeVisible();
-    await expect(homePage.currentColorText).toBeVisible();
+    await expect(homePage.header).toBeVisible()
+    await expect(homePage.currentColorText).toBeVisible()
 
     // Verify interactivity works across different browser engines
-    await homePage.clickColorButton('Yellow');
-    await expect(homePage.currentColorText).toContainText('#f1c40f');
-  });
-});
+    await homePage.clickColorButton('Yellow')
+    await expect(homePage.currentColorText).toContainText('#f1c40f')
+  })
+})

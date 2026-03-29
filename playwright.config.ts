@@ -1,10 +1,10 @@
-import { PlaywrightTestConfig, devices } from '@playwright/test';
-import { defineBddConfig } from 'playwright-bdd';
+import { PlaywrightTestConfig, devices } from '@playwright/test'
+import { defineBddConfig } from 'playwright-bdd'
 
 const testDir = defineBddConfig({
   features: 'e2e/features/*.feature',
-  steps: 'e2e/tests/bdd.spec.ts',
-});
+  steps: 'e2e/tests/bdd.spec.ts'
+})
 
 const config: PlaywrightTestConfig = {
   // If a test fails then passes on a retry, Allure marks it as flaky automatically.
@@ -26,7 +26,7 @@ const config: PlaywrightTestConfig = {
         command: 'docker-compose up',
         port: 3000,
         timeout: 120000, // 2 minutes timeout for server to start
-        reuseExistingServer: true,
+        reuseExistingServer: true
       },
   projects: [
     {
@@ -35,45 +35,45 @@ const config: PlaywrightTestConfig = {
         ...devices['Desktop Chrome'],
         launchOptions: {
           args: [
-            `--remote-debugging-port=${9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)}`,
-          ],
-        },
+            `--remote-debugging-port=${9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)}`
+          ]
+        }
       },
       // Exclude BDD tests from the default Chrome run to avoid duplicate runs
-      testIgnore: /.*\.feature\.spec.*$/,
+      testIgnore: /.*\.feature\.spec.*$/
     },
     {
       name: 'BDD',
       testDir,
       use: {
-        ...devices['Desktop Chrome'],
-      },
+        ...devices['Desktop Chrome']
+      }
     },
     ...(process.env.CROSS_BROWSER === 'true'
       ? [
           {
             name: 'Firefox',
             use: {
-              ...devices['Desktop Firefox'],
+              ...devices['Desktop Firefox']
             },
-            testMatch: /.*cross-browser\.spec\.ts/,
+            testMatch: /.*cross-browser\.spec\.ts/
           },
           {
             name: 'WebKit',
             use: {
-              ...devices['Desktop Safari'],
+              ...devices['Desktop Safari']
             },
-            testMatch: /.*cross-browser\.spec\.ts/,
+            testMatch: /.*cross-browser\.spec\.ts/
           },
           {
             name: 'Chrome',
             use: {
-              ...devices['Desktop Chrome'],
+              ...devices['Desktop Chrome']
             },
-            testMatch: /.*cross-browser\.spec\.ts/,
-          },
+            testMatch: /.*cross-browser\.spec\.ts/
+          }
         ]
-      : []),
+      : [])
   ],
   use: {
     headless: true,
@@ -81,7 +81,7 @@ const config: PlaywrightTestConfig = {
     ignoreHTTPSErrors: true,
     video: 'retain-on-failure',
     trace: 'retain-on-failure',
-    baseURL: process.env.BASE_URL || 'http://localhost:3000',
+    baseURL: process.env.BASE_URL || 'http://localhost:3000'
   },
 
   //Configured the allure-playwright reporter to handle specific flaky categories
@@ -98,25 +98,25 @@ const config: PlaywrightTestConfig = {
                 name: 'Flaky Network Issues',
                 messageRegex: '.*timeout.*|.*ECONNRESET.*|.*fetch failed.*',
                 matchedStatuses: ['failed', 'broken'],
-                flaky: true,
-              },
+                flaky: true
+              }
             ],
             links: {
               issue: {
                 urlTemplate: 'https://your-company.atlassian.net/browse/%s',
-                nameTemplate: 'Jira: %s',
-              },
-            },
-          },
+                nameTemplate: 'Jira: %s'
+              }
+            }
+          }
         ],
         ['list'],
-        ['html', { open: 'never' }],
+        ['html', { open: 'never' }]
       ]
     : [
         ['html', { open: 'never' }],
         ['allure-playwright'], // Kept default for local runs, but you can copy the object above if you want categories locally too
-        ['list'],
-      ],
-};
+        ['list']
+      ]
+}
 
-export default config;
+export default config

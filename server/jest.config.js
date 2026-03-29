@@ -9,8 +9,8 @@ module.exports = {
       {
         outputDirectory: 'allure-results',
         outputName: 'junit-unit-tests.xml',
-        suiteName: 'Server Unit Tests (Mutation Testing Baseline)',
-      },
-    ],
-  ],
-};
+        suiteName: 'Server Unit Tests (Mutation Testing Baseline)'
+      }
+    ]
+  ]
+}

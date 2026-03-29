@@ -1,6 +1,6 @@
-import { test, expect } from '../baseFixtures';
-import AxeBuilder from '@axe-core/playwright';
-import { playAudit } from 'playwright-lighthouse';
+import { test, expect } from '../baseFixtures'
+import AxeBuilder from '@axe-core/playwright'
+import { playAudit } from 'playwright-lighthouse'
 
 /**
  * Test Suite: Accessibility Tests
@@ -11,8 +11,8 @@ import { playAudit } from 'playwright-lighthouse';
  */
 test.describe('Accessibility Tests', () => {
   test.beforeEach(async ({ homePage }) => {
-    await homePage.goto();
-  });
+    await homePage.goto()
+  })
 
   /**
    * Test: Automatically detectable accessibility issues
@@ -22,17 +22,17 @@ test.describe('Accessibility Tests', () => {
    */
   test('should not have any automatically detectable accessibility issues', async ({
     homePage,
-    page,
+    page
   }) => {
     // Wait for the main elements to render
-    await expect(homePage.header).toBeVisible();
+    await expect(homePage.header).toBeVisible()
 
     // Run Axe to check for accessibility violations
-    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
 
     // Verify there are no violations
-    expect(accessibilityScanResults.violations).toEqual([]);
-  });
+    expect(accessibilityScanResults.violations).toEqual([])
+  })
 
   /**
    * Test: Accessibility after state change
@@ -43,22 +43,22 @@ test.describe('Accessibility Tests', () => {
    */
   test('should maintain accessibility after state change (color update)', async ({
     homePage,
-    page,
+    page
   }) => {
     // Change color to verify contrast and other rules still pass
-    await homePage.clickColorButton('Yellow');
+    await homePage.clickColorButton('Yellow')
 
     // Wait for the color change to apply (indicated by the text changing)
-    await expect(homePage.currentColorText).toContainText('#f1c40f');
+    await expect(homePage.currentColorText).toContainText('#f1c40f')
 
-    const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
+    const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
 
     // We specifically check contrast rules after a background color change
     const contrastViolations = accessibilityScanResults.violations.filter(
       (v) => v.id === 'color-contrast'
-    );
-    expect(contrastViolations).toEqual([]);
-  });
+    )
+    expect(contrastViolations).toEqual([])
+  })
 
   /**
    * Test: Accessibility Score via Google Lighthouse
@@ -70,25 +70,25 @@ test.describe('Accessibility Tests', () => {
    */
   test('should meet the accessibility threshold using Google Lighthouse', async ({
     homePage,
-    page,
+    page
   }) => {
     // Wait for the main elements to render
-    await expect(homePage.header).toBeVisible();
+    await expect(homePage.header).toBeVisible()
 
     // Run the Lighthouse audit
     await playAudit({
       page: page,
       thresholds: {
-        accessibility: 90,
+        accessibility: 90
       },
-      port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0),
-    });
-  });
-});
+      port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)
+    })
+  })
+})
 
-import enTranslations from '../../src/locales/en.json';
-import esTranslations from '../../src/locales/es.json';
-import elTranslations from '../../src/locales/el.json';
+import enTranslations from '../../src/locales/en.json'
+import esTranslations from '../../src/locales/es.json'
+import elTranslations from '../../src/locales/el.json'
 
 /**
  * Test Suite: i18n Accessibility Tests
@@ -101,32 +101,32 @@ test.describe('i18n Accessibility Tests', () => {
   const languages = [
     { code: 'en', i18n: enTranslations },
     { code: 'es', i18n: esTranslations },
-    { code: 'el', i18n: elTranslations },
-  ];
+    { code: 'el', i18n: elTranslations }
+  ]
 
   for (const lang of languages) {
     test(`should maintain accessibility in ${lang.code} language and verify resilient locators`, async ({
       homePage,
-      page,
+      page
     }) => {
-      await homePage.goto();
+      await homePage.goto()
 
       // Change the language. Default is English, so the label starts as English.
       const languageDropdown = page.getByRole('combobox', {
-        name: enTranslations.languageSelector,
-      });
-      await languageDropdown.selectOption(lang.code);
+        name: enTranslations.languageSelector
+      })
+      await languageDropdown.selectOption(lang.code)
 
       // Verify page layout using dynamic, translation-aware accessibility locators!
       // This is the clean, resilient way over falling back to CSS selectors.
-      await expect(page.getByRole('heading', { name: lang.i18n.title })).toBeVisible();
-      await expect(page.getByRole('button', { name: lang.i18n.colors.turquoise })).toBeVisible();
-      await expect(page.getByRole('button', { name: lang.i18n.colors.red })).toBeVisible();
-      await expect(page.getByRole('button', { name: lang.i18n.colors.yellow })).toBeVisible();
+      await expect(page.getByRole('heading', { name: lang.i18n.title })).toBeVisible()
+      await expect(page.getByRole('button', { name: lang.i18n.colors.turquoise })).toBeVisible()
+      await expect(page.getByRole('button', { name: lang.i18n.colors.red })).toBeVisible()
+      await expect(page.getByRole('button', { name: lang.i18n.colors.yellow })).toBeVisible()
 
       // Run Axe to check for accessibility violations in the translated state
-      const accessibilityScanResults = await new AxeBuilder({ page }).analyze();
-      expect(accessibilityScanResults.violations).toEqual([]);
-    });
+      const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
+      expect(accessibilityScanResults.violations).toEqual([])
+    })
   }
-});
+})

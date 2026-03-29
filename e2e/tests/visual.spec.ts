@@ -1,4 +1,4 @@
-import { test, expect } from '../baseFixtures';
+import { test, expect } from '../baseFixtures'
 
 /**
  * Test Suite: Visual Regression & Responsive Design Testing
@@ -31,18 +31,18 @@ test.describe('Visual Regression', () => {
    * what changed in a visual diff report.
    */
   test('homepage should match snapshot', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForSelector('header');
+    await page.goto('/')
+    await page.waitForSelector('header')
 
     // Mask the animated React logo to prevent its CSS spin animation
     // from producing non-deterministic pixel diffs between runs.
     const screenshot = await page.screenshot({
       fullPage: true,
-      mask: [page.locator('.App-logo')],
-    });
-    expect(screenshot).toMatchSnapshot('home.png', { maxDiffPixelRatio: 0.05 });
-  });
-});
+      mask: [page.locator('.App-logo')]
+    })
+    expect(screenshot).toMatchSnapshot('home.png', { maxDiffPixelRatio: 0.05 })
+  })
+})
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Responsive Design Tests (constrained mobile viewport)
@@ -50,11 +50,11 @@ test.describe('Visual Regression', () => {
 
 test.describe('Responsive Design Testing', () => {
   test.beforeEach(async ({ homePage }) => {
-    await homePage.goto();
-  });
+    await homePage.goto()
+  })
 
   // Simulate an iPhone SE viewport (375×667)
-  test.use({ viewport: { width: 375, height: 667 } });
+  test.use({ viewport: { width: 375, height: 667 } })
 
   /**
    * Test: Render correctly on mobile viewport
@@ -66,13 +66,13 @@ test.describe('Responsive Design Testing', () => {
    */
   test('should render correctly on mobile viewport', async ({ homePage, page }) => {
     // Check that core elements remain visible on a small screen
-    await expect(homePage.header).toBeVisible();
-    await expect(homePage.currentColorText).toBeVisible();
+    await expect(homePage.header).toBeVisible()
+    await expect(homePage.currentColorText).toBeVisible()
 
     // Check for proper stacking or visibility of buttons
-    await expect(homePage.turquoiseBtn).toBeVisible();
-    await expect(homePage.redBtn).toBeVisible();
-    await expect(homePage.yellowBtn).toBeVisible();
+    await expect(homePage.turquoiseBtn).toBeVisible()
+    await expect(homePage.redBtn).toBeVisible()
+    await expect(homePage.yellowBtn).toBeVisible()
 
     // Verify button clicks still work at this viewport size.
     //
@@ -80,20 +80,20 @@ test.describe('Responsive Design Testing', () => {
     // 1. Register the listener BEFORE the click
     const responsePromise = page.waitForResponse(
       (resp) => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
-    );
+    )
     // 2. Fire the action
-    await homePage.clickColorButton('Yellow');
+    await homePage.clickColorButton('Yellow')
     // 3. Await the response (resolves as soon as it arrives)
-    await responsePromise;
+    await responsePromise
     // 4. Use auto-retrying assertion to handle React state update
-    await expect(homePage.currentColorText).toContainText('#f1c40f');
+    await expect(homePage.currentColorText).toContainText('#f1c40f')
 
     // Visual regression check for the mobile viewport layout.
     // Mask the animated logo to avoid flaky diffs from its CSS animation.
     const screenshot = await page.screenshot({
       fullPage: true,
-      mask: [page.locator('.App-logo')],
-    });
-    expect(screenshot).toMatchSnapshot('home-mobile.png', { maxDiffPixelRatio: 0.05 });
-  });
-});
+      mask: [page.locator('.App-logo')]
+    })
+    expect(screenshot).toMatchSnapshot('home-mobile.png', { maxDiffPixelRatio: 0.05 })
+  })
+})

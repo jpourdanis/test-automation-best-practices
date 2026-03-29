@@ -1,11 +1,11 @@
-import { test, expect } from '../baseFixtures';
-import { convertHexToRGB, extractHexColor } from '../helper';
+import { test, expect } from '../baseFixtures'
+import { convertHexToRGB, extractHexColor } from '../helper'
 
 const colors = [
   { name: 'Turquoise', hex: '1abc9c' },
   { name: 'Red', hex: 'e74c3c' },
-  { name: 'Yellow', hex: 'f1c40f' },
-];
+  { name: 'Yellow', hex: 'f1c40f' }
+]
 
 /**
  * Test Suite: POM Refactored
@@ -16,8 +16,8 @@ const colors = [
  */
 test.describe('POM Refactored: Background color tests', () => {
   test.beforeEach(async ({ homePage }) => {
-    await homePage.goto();
-  });
+    await homePage.goto()
+  })
 
   for (const color of colors) {
     /**
@@ -27,16 +27,16 @@ test.describe('POM Refactored: Background color tests', () => {
      * change the color and verify the new hexadecimal and RGB values.
      */
     test(`verify ${color.name} ( #${color.hex} ) is applied as the background color`, async ({
-      homePage,
+      homePage
     }) => {
-      await homePage.clickColorButton(color.name);
-      await expect(homePage.currentColorText).toContainText(color.hex);
+      await homePage.clickColorButton(color.name)
+      await expect(homePage.currentColorText).toContainText(color.hex)
 
-      const rgb = convertHexToRGB(`#${color.hex}`);
+      const rgb = convertHexToRGB(`#${color.hex}`)
       await expect(homePage.header).toHaveCSS(
         'background-color',
         `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`
-      );
-    });
+      )
+    })
   }
-});
+})

@@ -233,25 +233,25 @@ The Page Object Model is a design pattern that creates an abstraction layer betw
 
 ```typescript
 // e2e/pages/HomePage.ts
-import { Page, Locator } from '@playwright/test';
+import { Page, Locator } from '@playwright/test'
 
 export class HomePage {
-  readonly page: Page;
-  readonly header: Locator;
-  readonly currentColorText: Locator;
+  readonly page: Page
+  readonly header: Locator
+  readonly currentColorText: Locator
 
   constructor(page: Page) {
-    this.page = page;
-    this.header = page.locator('header');
-    this.currentColorText = page.locator('text=Current color:');
+    this.page = page
+    this.header = page.locator('header')
+    this.currentColorText = page.locator('text=Current color:')
   }
 
   async goto() {
-    await this.page.goto('/');
+    await this.page.goto('/')
   }
 
   async clickColorButton(colorName: string) {
-    await this.page.click(`text=${colorName}`);
+    await this.page.click(`text=${colorName}`)
   }
 }
 ```
@@ -260,34 +260,34 @@ export class HomePage {
 
 ```typescript
 // e2e/baseFixtures.ts
-import { test as baseTest } from '@playwright/test';
-import { HomePage } from './pages/HomePage';
+import { test as baseTest } from '@playwright/test'
+import { HomePage } from './pages/HomePage'
 
 export const test = baseTest.extend<{ homePage: HomePage }>({
   // Automatically instantiate Page Objects
   homePage: async ({ page }, use) => {
-    await use(new HomePage(page));
-  },
-});
-export const expect = test.expect;
+    await use(new HomePage(page))
+  }
+})
+export const expect = test.expect
 ```
 
 **Step 3:** Use the fixture in your tests:
 
 ```typescript
 // e2e/tests/pom-refactored.spec.ts
-import { test, expect } from '../baseFixtures';
+import { test, expect } from '../baseFixtures'
 
 test.describe('POM Refactored: Background color tests', () => {
   test.beforeEach(async ({ homePage }) => {
-    await homePage.goto();
-  });
+    await homePage.goto()
+  })
 
   test('verify Red (#e74c3c) is applied as the background color', async ({ homePage }) => {
-    await homePage.clickColorButton('Red');
-    await expect(homePage.currentColorText).toContainText('e74c3c');
-  });
-});
+    await homePage.clickColorButton('Red')
+    await expect(homePage.currentColorText).toContainText('e74c3c')
+  })
+})
 ```
 
 **How to verify:**
@@ -331,16 +331,16 @@ Feature: Home Page Background Color
 
 ```typescript
 // e2e/tests/bdd.spec.ts
-import { createBdd } from 'playwright-bdd';
-import { HomePage } from '../pages/HomePage';
+import { createBdd } from 'playwright-bdd'
+import { HomePage } from '../pages/HomePage'
 
-const { Given, When, Then } = createBdd();
-let homePage: HomePage;
+const { Given, When, Then } = createBdd()
+let homePage: HomePage
 
 Given('I am on the home page', async ({ page }) => {
-  homePage = new HomePage(page);
-  await homePage.goto();
-});
+  homePage = new HomePage(page)
+  await homePage.goto()
+})
 // ... Map other steps
 ```
 
@@ -368,22 +368,22 @@ Using Playwright's `page.waitForResponse()` to synchronise test execution with a
 
 ```typescript
 // ❌ Anti-pattern — arbitrary delay, non-deterministic
-await homePage.clickColorButton('Yellow');
-await page.waitForTimeout(2000); // Hope the API responds within 2s
-const hex = await homePage.getCurrentColorText();
-expect(hex).toContain('#f1c40f');
+await homePage.clickColorButton('Yellow')
+await page.waitForTimeout(2000) // Hope the API responds within 2s
+const hex = await homePage.getCurrentColorText()
+expect(hex).toContain('#f1c40f')
 
 // ✅ Best practice — deterministic, no wasted time
 // 1. Register the listener BEFORE the click
 const responsePromise = page.waitForResponse(
   (resp) => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
-);
+)
 // 2. Fire the action
-await homePage.clickColorButton('Yellow');
+await homePage.clickColorButton('Yellow')
 // 3. Await the response (resolves as soon as it arrives)
-await responsePromise;
+await responsePromise
 // 4. Use auto-retrying assertion to handle React state update
-await expect(homePage.currentColorText).toContainText('#f1c40f');
+await expect(homePage.currentColorText).toContainText('#f1c40f')
 ```
 
 **How to verify:**
@@ -413,8 +413,8 @@ A pattern where a single test template is executed multiple times with different
 const testData = [
   { name: 'Turquoise', expectedHex: '#1abc9c', expectedRgb: 'rgb(26, 188, 156)' },
   { name: 'Red', expectedHex: '#e74c3c', expectedRgb: 'rgb(231, 76, 60)' },
-  { name: 'Yellow', expectedHex: '#f1c40f', expectedRgb: 'rgb(241, 196, 15)' },
-];
+  { name: 'Yellow', expectedHex: '#f1c40f', expectedRgb: 'rgb(241, 196, 15)' }
+]
 ```
 
 **Step 2:** Loop over the data to generate tests:
@@ -423,12 +423,12 @@ const testData = [
 test.describe('Data-Driven Testing', () => {
   for (const data of testData) {
     test(`changing color to ${data.name} should reflect in UI and DOM`, async ({ page }) => {
-      await homePage.clickColorButton(data.name);
-      await expect(homePage.currentColorText).toContainText(data.expectedHex);
-      await expect(homePage.header).toHaveCSS('background-color', data.expectedRgb);
-    });
+      await homePage.clickColorButton(data.name)
+      await expect(homePage.currentColorText).toContainText(data.expectedHex)
+      await expect(homePage.header).toHaveCSS('background-color', data.expectedRgb)
+    })
   }
-});
+})
 ```
 
 **How to verify:**
@@ -456,22 +456,22 @@ npm install -D @faker-js/faker
 ```
 
 ```typescript
-import { test, expect } from '../baseFixtures';
-import { faker } from '@faker-js/faker';
+import { test, expect } from '../baseFixtures'
+import { faker } from '@faker-js/faker'
 
 test('should handle randomized color generation', async ({ page, request }) => {
-  const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`;
-  const randomHex = faker.color.rgb();
+  const randomColorName = `e2e_random_${faker.word.adjective()}_${faker.color.human()}`
+  const randomHex = faker.color.rgb()
 
   await request.post('/api/colors', {
-    data: { name: randomColorName, hex: randomHex },
-  });
+    data: { name: randomColorName, hex: randomHex }
+  })
 
-  await page.goto('/');
-  await page.getByRole('button', { name: `colors.${randomColorName}` }).click();
+  await page.goto('/')
+  await page.getByRole('button', { name: `colors.${randomColorName}` }).click()
 
-  await expect(page.locator('text=Current color:')).toContainText(randomHex);
-});
+  await expect(page.locator('text=Current color:')).toContainText(randomHex)
+})
 ```
 
 **How to verify:**
@@ -500,32 +500,32 @@ A hybrid test leverages both backend API calls and frontend UI interactions in a
 **How to implement:**
 
 ```typescript
-import { test, expect } from '../baseFixtures';
-import { HomePage } from '../pages/HomePage';
+import { test, expect } from '../baseFixtures'
+import { HomePage } from '../pages/HomePage'
 
 test('should create color via API and verify through UI', async ({ page, request }) => {
-  const newColor = { name: 'Purple', hex: '#8e44ad' };
+  const newColor = { name: 'Purple', hex: '#8e44ad' }
 
   // 1. Arrange - Fast state setup via API
-  const createResponse = await request.post('/api/colors', { data: newColor });
-  expect(createResponse.ok()).toBeTruthy();
+  const createResponse = await request.post('/api/colors', { data: newColor })
+  expect(createResponse.ok()).toBeTruthy()
 
   // 2. Act - Navigate and interact via UI
-  const homePage = new HomePage(page);
-  await homePage.goto();
+  const homePage = new HomePage(page)
+  await homePage.goto()
 
   const responsePromise = page.waitForResponse(
     (resp) => resp.url().includes(`/api/colors/${newColor.name}`) && resp.status() === 200
-  );
-  await page.getByRole('button', { name: 'colors.purple' }).click();
-  await responsePromise;
+  )
+  await page.getByRole('button', { name: 'colors.purple' }).click()
+  await responsePromise
 
   // 3. Assert - Validating UI reflects the state correctly
-  await expect(homePage.currentColorText).toContainText(newColor.hex);
+  await expect(homePage.currentColorText).toContainText(newColor.hex)
 
   // 4. Teardown - Clean up via API to maintain isolation
-  await request.delete(`/api/colors/${newColor.name}`);
-});
+  await request.delete(`/api/colors/${newColor.name}`)
+})
 ```
 
 ### 7. Network Mocking & Interception
@@ -547,11 +547,11 @@ Playwright's `page.route()` API allows you to intercept any network request and 
 
 ```typescript
 test('should handle missing image gracefully', async ({ page }) => {
-  await page.route('**/logo.svg', (route) => route.abort());
-  await page.goto('/');
-  const logoImg = page.getByRole('img', { name: 'logo' });
-  await expect(logoImg).toHaveAttribute('alt', 'logo');
-});
+  await page.route('**/logo.svg', (route) => route.abort())
+  await page.goto('/')
+  const logoImg = page.getByRole('img', { name: 'logo' })
+  await expect(logoImg).toHaveAttribute('alt', 'logo')
+})
 ```
 
 **Mocking data that doesn't exist in the database**:
@@ -562,17 +562,17 @@ test('should display colors that do not exist in the database', async ({ page })
     await route.fulfill({
       status: 200,
       contentType: 'application/json',
-      body: JSON.stringify([{ name: 'Magenta', hex: '#ff00ff' }]),
-    });
-  });
+      body: JSON.stringify([{ name: 'Magenta', hex: '#ff00ff' }])
+    })
+  })
   // ... Rest of test
-});
+})
 ```
 
 **Handling a color not found (404 response)**:
 
 ```typescript
-import enTranslations from '../../src/locales/en.json';
+import enTranslations from '../../src/locales/en.json'
 
 test('should gracefully handle a color not found in the database', async ({ page }) => {
   await page.route('**/api/colors', async (route) => {
@@ -581,30 +581,30 @@ test('should gracefully handle a color not found in the database', async ({ page
       contentType: 'application/json',
       body: JSON.stringify([
         { name: 'Turquoise', hex: '#1abc9c' },
-        { name: 'Red', hex: '#e74c3c' },
-      ]),
-    });
-  });
+        { name: 'Red', hex: '#e74c3c' }
+      ])
+    })
+  })
 
   // Simulate a 404 for the "Red" color endpoint
   await page.route('**/api/colors/Red', async (route) => {
     await route.fulfill({
       status: 404,
       contentType: 'application/json',
-      body: JSON.stringify({ error: 'Color not found' }),
-    });
-  });
+      body: JSON.stringify({ error: 'Color not found' })
+    })
+  })
 
-  await homePage.goto();
-  await expect(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)');
+  await homePage.goto()
+  await expect(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)')
 
   // Use i18n-aware accessible locator for the button
-  const redBtn = page.getByRole('button', { name: enTranslations.colors.red });
-  await redBtn.click();
+  const redBtn = page.getByRole('button', { name: enTranslations.colors.red })
+  await redBtn.click()
 
   // Background should not have changed since the API returned a 404
-  await expect(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)');
-});
+  await expect(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)')
+})
 ```
 
 > **Important:** Always call `page.route()` _before_ the action that triggers the network request (e.g., `page.goto()`).
@@ -614,12 +614,12 @@ test('should gracefully handle a color not found in the database', async ({ page
 ```typescript
 test('should handle fetch colors network failure gracefully', async ({ page }) => {
   // Abort the initial colors fetch
-  await page.route('**/api/colors', (route) => route.abort('failed'));
-  await homePage.goto();
+  await page.route('**/api/colors', (route) => route.abort('failed'))
+  await homePage.goto()
 
   // Verify UI reacts to the empty/failed data state instead of crashing
-  await expect(page.locator('text=Loading colors...')).toBeVisible();
-});
+  await expect(page.locator('text=Loading colors...')).toBeVisible()
+})
 ```
 
 **How to verify:**
@@ -647,54 +647,54 @@ Schema validation strictly enforces the exact shape, data types, and requirement
 
 ```javascript
 // server/index.js
-const { z } = require('zod');
+const { z } = require('zod')
 const colorZodSchema = z.object({
   name: z.string({ required_error: 'name is required' }).trim().min(1),
   hex: z
     .string({ required_error: 'hex is required' })
     .trim()
-    .regex(/^#[0-9A-Fa-f]{6}$/),
-});
+    .regex(/^#[0-9A-Fa-f]{6}$/)
+})
 ```
 
 **Step 2:** Use `safeParse` in Express route handlers.
 
 ```javascript
 app.post('/api/colors', async (req, res) => {
-  const parseResult = colorZodSchema.safeParse(req.body);
+  const parseResult = colorZodSchema.safeParse(req.body)
   if (!parseResult.success) {
-    return res.status(400).json({ error: parseResult.error.issues[0].message });
+    return res.status(400).json({ error: parseResult.error.issues[0].message })
   }
   // ...
-});
+})
 ```
 
 **Step 3:** In Playwright tests, parse every API response through the matching schema.
 
 ```typescript
 // e2e/tests/api.spec.ts
-import { z } from 'zod';
+import { z } from 'zod'
 const ColorSchema = z.object({
   name: z.string(),
-  hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/),
-});
+  hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/)
+})
 
 test('should create a new color with valid schema', async ({ request }) => {
-  const response = await request.post(`/api/colors`, { data: { name: 'Orange', hex: '#ffa500' } });
-  const data = await response.json();
-  ColorSchema.parse(data); // Throws if response shape is wrong
-});
+  const response = await request.post(`/api/colors`, { data: { name: 'Orange', hex: '#ffa500' } })
+  const data = await response.json()
+  ColorSchema.parse(data) // Throws if response shape is wrong
+})
 ```
 
 **Step 4:** Write explicit negative tests.
 
 ```typescript
 test('should reject missing name', async ({ request }) => {
-  const response = await request.post(`/api/colors`, { data: { hex: '#ffa500' } });
-  expect(response.status()).toBe(400);
-  const data = await response.json();
-  expect(data.error).toBe('name is required');
-});
+  const response = await request.post(`/api/colors`, { data: { hex: '#ffa500' } })
+  expect(response.status()).toBe(400)
+  const data = await response.json()
+  expect(data.error).toBe('name is required')
+})
 ```
 
 **How to verify:**
@@ -722,28 +722,28 @@ Visual regression testing captures a full-page screenshot and compares it pixel-
 ```typescript
 test.describe('Visual Regression', () => {
   test('homepage should match snapshot', async ({ page }) => {
-    await page.goto('/');
-    await page.waitForSelector('header');
+    await page.goto('/')
+    await page.waitForSelector('header')
     const screenshot = await page.screenshot({
       fullPage: true,
-      mask: [page.locator('.App-logo')], // Mask animated elements!
-    });
-    expect(screenshot).toMatchSnapshot('home.png');
-  });
-});
+      mask: [page.locator('.App-logo')] // Mask animated elements!
+    })
+    expect(screenshot).toMatchSnapshot('home.png')
+  })
+})
 ```
 
 **Responsive Design:**
 
 ```typescript
 test.describe('Responsive Design Testing', () => {
-  test.use({ viewport: { width: 375, height: 667 } }); // iPhone SE
+  test.use({ viewport: { width: 375, height: 667 } }) // iPhone SE
 
   test('should render correctly on mobile viewport', async ({ page }) => {
-    await page.goto('/');
-    await expect(page.locator('header')).toBeVisible();
-  });
-});
+    await page.goto('/')
+    await expect(page.locator('header')).toBeVisible()
+  })
+})
 ```
 
 **How to verify:**
@@ -772,13 +772,13 @@ npm install -D @axe-core/playwright
 
 ```typescript
 // e2e/tests/a11y.spec.ts
-import AxeBuilder from '@axe-core/playwright';
+import AxeBuilder from '@axe-core/playwright'
 
 test('should not have any accessibility issues', async ({ page }) => {
-  await page.goto('/');
-  const results = await new AxeBuilder({ page }).analyze();
-  expect(results.violations).toEqual([]);
-});
+  await page.goto('/')
+  const results = await new AxeBuilder({ page }).analyze()
+  expect(results.violations).toEqual([])
+})
 ```
 
 **Handling i18n with Accessibility Locators**
@@ -786,23 +786,23 @@ When testing apps with translations, avoid brittle DOM paths (e.g. `page.locator
 
 ```typescript
 // Example: locating a button dynamically based on the current testing language
-await page.getByRole('button', { name: i18nConfig.colors.red }).click();
+await page.getByRole('button', { name: i18nConfig.colors.red }).click()
 ```
 
 **Accessibility Score via Google Lighthouse**
 
 ```typescript
-import { playAudit } from 'playwright-lighthouse';
+import { playAudit } from 'playwright-lighthouse'
 
 test('should meet the accessibility threshold using Google Lighthouse', async ({ page }) => {
   await playAudit({
     page: page,
     thresholds: {
-      accessibility: 90,
+      accessibility: 90
     },
-    port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0),
-  });
-});
+    port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)
+  })
+})
 ```
 
 **How to verify:**
@@ -831,49 +831,49 @@ Performance testing evaluates how the system behaves under load. We use [k6](htt
 **API Load Test:**
 
 ```javascript
-import http from 'k6/http';
-import { check, sleep } from 'k6';
+import http from 'k6/http'
+import { check, sleep } from 'k6'
 
 export const options = {
   stages: [
     { duration: '5s', target: 10 },
     { duration: '10s', target: 10 },
-    { duration: '5s', target: 0 },
+    { duration: '5s', target: 0 }
   ],
   thresholds: {
-    http_req_duration: ['p(95)<500'], // 95% of requests < 500ms
-  },
-};
+    http_req_duration: ['p(95)<500'] // 95% of requests < 500ms
+  }
+}
 
 export default function () {
-  const res = http.get('http://localhost:5001/api/colors');
-  check(res, { 'status is 200': (r) => r.status === 200 });
-  sleep(1);
+  const res = http.get('http://localhost:5001/api/colors')
+  check(res, { 'status is 200': (r) => r.status === 200 })
+  sleep(1)
 }
 ```
 
 **Browser-level UI Test:**
 
 ```javascript
-import { browser } from 'k6/experimental/browser';
-import { check } from 'k6';
+import { browser } from 'k6/experimental/browser'
+import { check } from 'k6'
 
 export const options = {
   scenarios: {
     ui: {
       executor: 'shared-iterations',
-      options: { browser: { type: 'chromium' } },
-    },
-  },
-};
+      options: { browser: { type: 'chromium' } }
+    }
+  }
+}
 
 export default async function () {
-  const page = browser.newPage();
+  const page = browser.newPage()
   try {
-    await page.goto('http://localhost:3000');
+    await page.goto('http://localhost:3000')
     // ... Check UI interactions
   } finally {
-    page.close();
+    page.close()
   }
 }
 ```
@@ -902,10 +902,10 @@ Schemathesis is an automated fuzzing tool. Instead of writing manual API tests, 
 
 ```javascript
 // server/index.js
-const swaggerSpec = swaggerJsdoc(swaggerOptions);
+const swaggerSpec = swaggerJsdoc(swaggerOptions)
 app.get('/openapi.json', (req, res) => {
-  res.json(swaggerSpec);
-});
+  res.json(swaggerSpec)
+})
 ```
 
 **Step 2:** Define clear schema constraints (patterns, min/max length, required fields).
@@ -1144,7 +1144,7 @@ The custom `baseFixtures.ts` extends Playwright's test runner to:
 
 ```typescript
 // e2e/tests/coverage.spec.ts
-import { test, expect } from '../baseFixtures'; // ← NOT from @playwright/test
+import { test, expect } from '../baseFixtures' // ← NOT from @playwright/test
 ```
 
 **How to verify:**
@@ -1246,22 +1246,22 @@ export const test = baseTest.extend<{ homePage: HomePage; allureBddMapper: void 
   allureBddMapper: [
     async ({}, use, testInfo) => {
       for (const tag of testInfo.tags) {
-        const cleanTag = tag.replace('@', '');
-        if (cleanTag.startsWith('epic:')) allure.epic(cleanTag.split(':')[1].replace(/_/g, ' '));
+        const cleanTag = tag.replace('@', '')
+        if (cleanTag.startsWith('epic:')) allure.epic(cleanTag.split(':')[1].replace(/_/g, ' '))
         if (cleanTag.startsWith('feature:'))
-          allure.feature(cleanTag.split(':')[1].replace(/_/g, ' '));
-        if (cleanTag.startsWith('story:')) allure.story(cleanTag.split(':')[1].replace(/_/g, ' '));
-        if (cleanTag.startsWith('severity:')) allure.severity(cleanTag.split(':')[1]);
+          allure.feature(cleanTag.split(':')[1].replace(/_/g, ' '))
+        if (cleanTag.startsWith('story:')) allure.story(cleanTag.split(':')[1].replace(/_/g, ' '))
+        if (cleanTag.startsWith('severity:')) allure.severity(cleanTag.split(':')[1])
         if (cleanTag.startsWith('jira:')) {
-          const issueId = cleanTag.split(':')[1];
-          allure.issue(issueId);
+          const issueId = cleanTag.split(':')[1]
+          allure.issue(issueId)
         }
       }
-      await use();
+      await use()
     },
-    { auto: true },
-  ],
-});
+    { auto: true }
+  ]
+})
 ```
 
 **Gherkin Implementation:**
@@ -1303,30 +1303,30 @@ Mutation testing introduces small, deliberate code changes ("mutants") — like 
 
 ```javascript
 // server/index.test.js
-const request = require('supertest');
-const { MongoMemoryServer } = require('mongodb-memory-server');
-const mongoose = require('mongoose');
+const request = require('supertest')
+const { MongoMemoryServer } = require('mongodb-memory-server')
+const mongoose = require('mongoose')
 
-let app, seedDatabase, Color, mongoServer;
+let app, seedDatabase, Color, mongoServer
 
 beforeAll(async () => {
-  mongoServer = await MongoMemoryServer.create();
-  await mongoose.connect(mongoServer.getUri());
-  const server = require('./index');
-  app = server.app;
-  seedDatabase = server.seedDatabase;
-  Color = server.Color;
-});
+  mongoServer = await MongoMemoryServer.create()
+  await mongoose.connect(mongoServer.getUri())
+  const server = require('./index')
+  app = server.app
+  seedDatabase = server.seedDatabase
+  Color = server.Color
+})
 
 beforeEach(async () => {
-  await seedDatabase();
-});
+  await seedDatabase()
+})
 
 test('returns 409 for a duplicate color name', async () => {
-  const res = await request(app).post('/api/colors').send({ name: 'Red', hex: '#ff0000' });
-  expect(res.status).toBe(409); // ← Asserts status code
-  expect(res.body.error).toContain('already exists'); // ← Asserts message content
-});
+  const res = await request(app).post('/api/colors').send({ name: 'Red', hex: '#ff0000' })
+  expect(res.status).toBe(409) // ← Asserts status code
+  expect(res.body.error).toContain('already exists') // ← Asserts message content
+})
 ```
 
 > **Key Insight:** The assertions must be specific. `expect(res.status).toBe(409)` kills the mutant that changes `409` → `200`. `expect(res.body.error).toContain('already exists')` kills the mutant that swaps the error string to an empty string.

@@ -1,21 +1,21 @@
-import { check } from 'k6';
-import { Rate } from 'k6/metrics';
-import http from 'k6/http';
-import { browser } from 'k6/browser';
-import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js';
-import { getConfig } from './utils/utils.ts';
-import { generateAllureReport } from './utils/allure-reporter.js';
+import { check } from 'k6'
+import { Rate } from 'k6/metrics'
+import http from 'k6/http'
+import { browser } from 'k6/browser'
+import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js'
+import { getConfig } from './utils/utils.ts'
+import { generateAllureReport } from './utils/allure-reporter.js'
 
 // Base URLs
-const BASE_URL = 'http://127.0.0.1:3000'; // The app is hosted locally on 3000
-const API_URL = 'http://127.0.0.1:5001'; // The API is hosted locally on 5001
+const BASE_URL = 'http://127.0.0.1:3000' // The app is hosted locally on 3000
+const API_URL = 'http://127.0.0.1:5001' // The API is hosted locally on 5001
 
-const testType = __ENV.TEST_TYPE;
-const successfulActionsRate = new Rate('successful_actions_rate');
+const testType = __ENV.TEST_TYPE
+const successfulActionsRate = new Rate('successful_actions_rate')
 
 // Load test configurations from external JSON file
-const configs = JSON.parse(open('./configs/test-config.json'));
-const testConfig = getConfig(configs, testType);
+const configs = JSON.parse(open('./configs/test-config.json'))
+const testConfig = getConfig(configs, testType)
 
 export const options = {
   scenarios: {
@@ -31,105 +31,105 @@ export const options = {
             '--no-sandbox',
             '--disable-setuid-sandbox',
             '--disable-dev-shm-usage',
-            '--disable-gpu',
-          ],
-        },
-      },
-    },
+            '--disable-gpu'
+          ]
+        }
+      }
+    }
   },
   thresholds: testConfig.thresholds || {
     checks: ['rate==1.0'],
-    browser_http_req_duration: ['p(95)<200'],
-  },
-};
+    browser_http_req_duration: ['p(95)<200']
+  }
+}
 
 export function setup() {
-  console.log(`Running UI ${testType?.toUpperCase() || 'DEFAULT'} test 🚀`);
-  const serverCheck = http.get(`${API_URL}/api/colors`);
+  console.log(`Running UI ${testType?.toUpperCase() || 'DEFAULT'} test 🚀`)
+  const serverCheck = http.get(`${API_URL}/api/colors`)
   if (serverCheck.status !== 200) {
-    throw new Error(`Server is not reachable. Status: ${serverCheck.status}`);
+    throw new Error(`Server is not reachable. Status: ${serverCheck.status}`)
   }
 }
 
 export default async function () {
-  const page = await browser.newPage();
+  const page = await browser.newPage()
 
   page.on('request', (request) => {
-    const payload = request.postData() ? `Payload: ${request.postData()}` : 'No payload';
-    console.log(`[UI Request] ${request.method()} ${request.url()} - ${payload}`);
-  });
+    const payload = request.postData() ? `Payload: ${request.postData()}` : 'No payload'
+    console.log(`[UI Request] ${request.method()} ${request.url()} - ${payload}`)
+  })
 
   page.on('response', async (response) => {
-    let bodyInfo = '';
+    let bodyInfo = ''
     if (response.url().includes('/api/')) {
       try {
-        const jsonBody = await (response as any).json();
-        bodyInfo = ` - Body: ${JSON.stringify(jsonBody)}`;
+        const jsonBody = await (response as any).json()
+        bodyInfo = ` - Body: ${JSON.stringify(jsonBody)}`
       } catch (e) {
-        bodyInfo = ' - Body: [Could not read]';
+        bodyInfo = ' - Body: [Could not read]'
       }
     }
-    console.log(`[UI Response] ${response.url()} - Status: ${response.status()}${bodyInfo}`);
-  });
+    console.log(`[UI Response] ${response.url()} - Status: ${response.status()}${bodyInfo}`)
+  })
 
   try {
-    await page.goto(BASE_URL);
+    await page.goto(BASE_URL)
 
     // Assert header is visible using native k6 browser locators
-    const header = page.locator('header');
-    await header.waitFor({ state: 'visible' });
-    const isHeaderVisible = await header.isVisible();
+    const header = page.locator('header')
+    await header.waitFor({ state: 'visible' })
+    const isHeaderVisible = await header.isVisible()
 
     check(page, {
-      'Homepage header is visible': () => isHeaderVisible,
-    });
+      'Homepage header is visible': () => isHeaderVisible
+    })
 
     // Click a random color button and verify the change
     const testData = [
       { name: 'Turquoise', expectedHex: '#1abc9c' },
       { name: 'Red', expectedHex: '#e74c3c' },
-      { name: 'Yellow', expectedHex: '#f1c40f' },
-    ];
-    const randomColor = testData[Math.floor(Math.random() * testData.length)];
+      { name: 'Yellow', expectedHex: '#f1c40f' }
+    ]
+    const randomColor = testData[Math.floor(Math.random() * testData.length)]
 
     // Wait for the buttons to be rendered and click the randomly selected one
-    const colorButton = page.locator('button', { hasText: randomColor.name });
-    await colorButton.click();
-    await page.waitForTimeout(1000); //Simulate that the user is thinking.
+    const colorButton = page.locator('button', { hasText: randomColor.name })
+    await colorButton.click()
+    await page.waitForTimeout(1000) //Simulate that the user is thinking.
 
     // Locate the text element showing the current color hex and wait for it to update
-    const currentColorText = page.locator('header span', { hasText: randomColor.expectedHex });
-    await currentColorText.waitFor({ state: 'visible' });
-    const textContext = await currentColorText.textContent();
+    const currentColorText = page.locator('header span', { hasText: randomColor.expectedHex })
+    await currentColorText.waitFor({ state: 'visible' })
+    const textContext = await currentColorText.textContent()
 
     // Assert the update propagated
     const colorUpdated = check(page, {
       [`${randomColor.name} color updated successfully`]: () =>
-        textContext !== null && textContext.includes(randomColor.expectedHex),
-    });
+        textContext !== null && textContext.includes(randomColor.expectedHex)
+    })
 
     if (isHeaderVisible && colorUpdated) {
-      successfulActionsRate.add(1);
+      successfulActionsRate.add(1)
     } else {
-      successfulActionsRate.add(0);
+      successfulActionsRate.add(0)
     }
   } finally {
-    page.close();
+    page.close()
   }
 }
 
 export function handleSummary(data: any) {
-  const testName = 'UI Performance Test';
-  const fileName = 'ui-performance.spec.ts';
-  const allureResult = generateAllureReport(data, testName, fileName);
-  const uuid = allureResult.uuid;
+  const testName = 'UI Performance Test'
+  const fileName = 'ui-performance.spec.ts'
+  const allureResult = generateAllureReport(data, testName, fileName)
+  const uuid = allureResult.uuid
 
   return {
     stdout: textSummary(data, { indent: ' ', enableColors: true }),
     [`allure-results/${uuid}-result.json`]: JSON.stringify(allureResult),
     [`allure-results/${uuid}-attachment.txt`]: textSummary(data, {
       indent: ' ',
-      enableColors: false,
-    }),
-  };
+      enableColors: false
+    })
+  }
 }

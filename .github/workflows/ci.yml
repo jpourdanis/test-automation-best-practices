@@ -750,7 +750,7 @@ jobs:
         e2e-sharded,
         performance-testing,
         mutation-testing,
-        mutation-testing-frontend,
+        mutation-testing-frontend
       ]
     if: always()
     runs-on: ubuntu-latest

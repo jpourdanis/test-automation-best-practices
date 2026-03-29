@@ -1,10 +1,10 @@
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import LanguageDetector from 'i18next-browser-languagedetector';
+import i18n from 'i18next'
+import { initReactI18next } from 'react-i18next'
+import LanguageDetector from 'i18next-browser-languagedetector'
 
-import enTranslations from './locales/en.json';
-import esTranslations from './locales/es.json';
-import elTranslations from './locales/el.json';
+import enTranslations from './locales/en.json'
+import esTranslations from './locales/es.json'
+import elTranslations from './locales/el.json'
 
 i18n
   // detect user language
@@ -18,13 +18,13 @@ i18n
     debug: true,
     fallbackLng: 'en',
     interpolation: {
-      escapeValue: false, // not needed for react as it escapes by default
+      escapeValue: false // not needed for react as it escapes by default
     },
     resources: {
       en: { translation: enTranslations },
       es: { translation: esTranslations },
-      el: { translation: elTranslations },
-    },
-  });
+      el: { translation: elTranslations }
+    }
+  })
 
-export default i18n;
+export default i18n
