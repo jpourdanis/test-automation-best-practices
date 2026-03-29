@@ -1,0 +1,26 @@
+     ✓ Homepage header is visible
+
+     browser_data_received..........: 7.1 MB  134 kB/s
+     browser_data_sent..............: 4.1 kB  77 B/s
+     browser_http_req_duration......: avg=36.39ms  min=4.75ms   med=23.56ms  max=118.54ms p(90)=87.81ms  p(95)=117.45ms
+     browser_http_req_failed........: 0.00%   ✓ 0                    ✗ 20 
+     browser_web_vital_fcp..........: avg=175ms    min=44ms     med=160ms    max=372ms    p(90)=321.59ms p(95)=346.79ms
+     browser_web_vital_ttfb.........: avg=5.35ms   min=4.5ms    med=5.3ms    max=6.3ms    p(90)=6.21ms   p(95)=6.25ms  
+     checks.........................: 100.00% ✓ 4                    ✗ 0  
+     data_received..................: 371 B   6.956357478766454 B/s
+     data_sent......................: 80 B    1.5000231760143297 B/s
+     http_req_blocked...............: avg=255.58µs min=255.58µs med=255.58µs max=255.58µs p(90)=255.58µs p(95)=255.58µs
+     http_req_connecting............: avg=115.07µs min=115.07µs med=115.07µs max=115.07µs p(90)=115.07µs p(95)=115.07µs
+   ✓ http_req_duration..............: avg=2.32ms   min=2.32ms   med=2.32ms   max=2.32ms   p(90)=2.32ms   p(95)=2.32ms  
+       { expected_response:true }...: avg=2.32ms   min=2.32ms   med=2.32ms   max=2.32ms   p(90)=2.32ms   p(95)=2.32ms  
+     http_req_failed................: 0.00%   ✓ 0                    ✗ 1  
+     http_req_receiving.............: avg=60.42µs  min=60.42µs  med=60.42µs  max=60.42µs  p(90)=60.42µs  p(95)=60.42µs 
+     http_req_sending...............: avg=49.37µs  min=49.37µs  med=49.37µs  max=49.37µs  p(90)=49.37µs  p(95)=49.37µs 
+     http_req_tls_handshaking.......: avg=0s       min=0s       med=0s       max=0s       p(90)=0s       p(95)=0s      
+     http_req_waiting...............: avg=2.22ms   min=2.22ms   med=2.22ms   max=2.22ms   p(90)=2.22ms   p(95)=2.22ms  
+     http_reqs......................: 1       0.01875/s
+     iteration_duration.............: avg=30.84s   min=30.53s   med=30.57s   max=31.7s    p(90)=31.36s   p(95)=31.53s  
+     iterations.....................: 4       0.075001/s
+   ✓ successful_actions_rate........: 0.00%   ✓ 0                    ✗ 0  
+     vus............................: 1       min=1                  max=4
+     vus_max........................: 5       min=5                  max=5
