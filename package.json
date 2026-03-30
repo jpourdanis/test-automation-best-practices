@@ -8,7 +8,10 @@
     "serialize-javascript": "^7.0.5",
     "@tootallnate/once": "^3.0.1",
     "path-to-regexp": "^0.1.13",
-    "picomatch": "^2.3.1",
+    "picomatch": "^2.3.2",
+    "lint-staged": {
+      "picomatch": "^4.0.4"
+    },
     "qs": "^6.14.1",
     "rollup": "^2.79.2",
     "semver": "^7.5.3",
@@ -61,7 +64,7 @@
     "security:audit": "npm audit --audit-level=high",
     "security:scan:code": "docker run --rm -v $(pwd):/app aquasec/trivy:0.69.3 fs /app",
     "security:scan:container:app": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3 image test-automation-best-practices-app:latest",
-    "security:scan:container:api": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3 image test-automation-best-practices-api:latest",
+    "security:scan:container:api": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/.trivyignore:/.trivyignore aquasec/trivy:0.69.3 image --ignorefile /.trivyignore test-automation-best-practices-api:latest",
     "security:scan": "npm run security:audit && npm run security:scan:code"
   },
   "eslintConfig": {

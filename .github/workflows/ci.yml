@@ -15,6 +15,7 @@ env:
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
   NYC_OUTPUT_DIR: .nyc_output
+  K6_LOG_LEVEL: debug
 
 jobs:
   # ==========================================
@@ -259,6 +260,7 @@ jobs:
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-api.xml"
+          ignorefile: ".trivyignore"
 
       - name: Upload Trivy API Allure Results
         if: always()
@@ -886,6 +888,9 @@ jobs:
           PID_PROXY=$!
           wait $PID_API $PID_APP $PID_PROXY
 
+      - name: Install DBus for Headless Browser
+        run: sudo apt-get update && sudo apt-get install -y dbus dbus-x11
+
       # Installs k6 performance testing tool with browser support
       - name: Setup k6
         uses: grafana/setup-k6-action@v1
@@ -893,13 +898,14 @@ jobs:
           browser: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Executes k6 smoke tests against the UI using browser automation
       - name: Run UI Performance Test
         env:
-          K6_BROWSER_ENABLED: true
+          K6_BROWSER_ENABLED: "true"
           TEST_TYPE: "smoke"
-          DBUS_SESSION_BUS_ADDRESS: /dev/null
-        run: k6 run performance/ui-performance.spec.ts
+        # dbus-run-session creates a virtual bus just for this test, allowing safe teardown
+        run: |
+          mkdir -p allure-results
+          dbus-run-session -- k6 run performance/ui-performance.spec.ts
 
       # Uploads the k6 execution data (JUnit/Allure)
       - name: Upload k6 UI Allure Results

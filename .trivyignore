@@ -1,0 +1,6 @@
+# picomatch vulnerability in base image global npm
+CVE-2026-33671
+CVE-2026-33672
+
+# brace-expansion vulnerability in base image global npm
+CVE-2026-33750

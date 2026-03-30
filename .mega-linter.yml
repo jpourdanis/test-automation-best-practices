@@ -6,7 +6,7 @@
 # ------------------------------------------------------------------------------
 # Only analyze specific folders
 FILTER_REGEX_INCLUDE: "(src|server)/.*"
-FILTER_REGEX_EXCLUDE: '(node_modules|megalinter-reports)/.*'
+FILTER_REGEX_EXCLUDE: "(node_modules|megalinter-reports)/.*"
 
 # Disable linters that conflict with existing setups or are too noisy
 DISABLE_LINTERS:

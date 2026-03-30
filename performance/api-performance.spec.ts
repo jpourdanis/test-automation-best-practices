@@ -1,4 +1,5 @@
 import http from 'k6/http'
+/* eslint-disable no-restricted-globals */
 import { check, group, sleep } from 'k6'
 import { Counter, Rate } from 'k6/metrics'
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js'
@@ -27,7 +28,7 @@ export function setup() {
   }
 }
 
-export default function () {
+export default function apiPerformanceTest() {
   // Generate a name that strictly conforms to /^[a-zA-Z0-9 ]*[a-zA-Z0-9][a-zA-Z0-9 ]*$/
   const newColorName = 'TestColor ' + Math.random().toString(36).substring(2, 8)
   // Generate a valid hex color conforming to /^#[0-9A-Fa-f]{6}$/

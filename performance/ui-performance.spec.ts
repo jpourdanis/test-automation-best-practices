@@ -2,6 +2,7 @@ import { check } from 'k6'
 import { Rate } from 'k6/metrics'
 import http from 'k6/http'
 import { browser } from 'k6/browser'
+/* eslint-disable no-restricted-globals */
 import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js'
 import { getConfig } from './utils/utils.ts'
 import { generateAllureReport } from './utils/allure-reporter.js'
@@ -20,9 +21,8 @@ const testConfig = getConfig(configs, testType)
 export const options = {
   scenarios: {
     Browser: {
-      executor: 'ramping-vus',
-      stages: testConfig.stages,
-      gracefulRampDown: '30s',
+      executor: testConfig.executor || 'ramping-vus',
+      // Common options
       options: {
         browser: {
           type: 'chromium',
@@ -37,7 +37,18 @@ export const options = {
             '--disable-default-apps'
           ]
         }
-      }
+      },
+      // Conditional options based on executor
+      ...(testConfig.executor === 'per-vu-iterations'
+        ? {
+            vus: testConfig.vus,
+            iterations: testConfig.iterations,
+            maxDuration: testConfig.maxDuration
+          }
+        : {
+            stages: testConfig.stages,
+            gracefulRampDown: '30s'
+          })
     }
   },
   thresholds: testConfig.thresholds || {
@@ -54,16 +65,28 @@ export function setup() {
   }
 }
 
-export default async function () {
-  const context = await browser.newContext()
-  const page = await context.newPage()
+let context: any
 
-  page.on('request', (request) => {
+export default async function performanceTest() {
+  if (!context) {
+    context = await browser.newContext()
+  }
+  let page
+  try {
+    page = await context.newPage()
+  } catch (e) {
+    // If context is closed/canceled (e.g. WebSocket 1000), recreate it
+    console.log('Browser context was closed, recreating...')
+    context = await browser.newContext()
+    page = await context.newPage()
+  }
+
+  page.on('request', (request: any) => {
     const payload = request.postData() ? `Payload: ${request.postData()}` : 'No payload'
     console.log(`[UI Request] ${request.method()} ${request.url()} - ${payload}`)
   })
 
-  page.on('response', async (response) => {
+  page.on('response', async (response: any) => {
     let bodyInfo = ''
     if (response.url().includes('/api/')) {
       try {
@@ -76,50 +99,67 @@ export default async function () {
     console.log(`[UI Response] ${response.url()} - Status: ${response.status()}${bodyInfo}`)
   })
 
+  const startTime = Date.now()
+  const maxRuntime = 30000 // 30 seconds
+
   try {
-    await page.goto(BASE_URL)
+    do {
+      await page.goto(BASE_URL)
 
-    // Assert header is visible using native k6 browser locators
-    const header = page.locator('header')
-    await header.waitFor({ state: 'visible' })
-    const isHeaderVisible = await header.isVisible()
+      // Assert header is visible using native k6 browser locators
+      const header = page.locator('header')
+      await header.waitFor({ state: 'visible' })
+      const isHeaderVisible = await header.isVisible()
 
-    check(page, {
-      'Homepage header is visible': () => isHeaderVisible
-    })
+      check(page, {
+        'Homepage header is visible': () => isHeaderVisible
+      })
 
-    // Click a random color button and verify the change
-    const testData = [
-      { name: 'Turquoise', expectedHex: '#1abc9c' },
-      { name: 'Red', expectedHex: '#e74c3c' },
-      { name: 'Yellow', expectedHex: '#f1c40f' }
-    ]
-    const randomColor = testData[Math.floor(Math.random() * testData.length)]
+      // Click a random color button and verify the change
+      const testData = [
+        { name: 'Turquoise', expectedHex: '#1abc9c' },
+        { name: 'Red', expectedHex: '#e74c3c' },
+        { name: 'Yellow', expectedHex: '#f1c40f' }
+      ]
+      const randomColor = testData[Math.floor(Math.random() * testData.length)]
 
-    // Wait for the buttons to be rendered and click the randomly selected one
-    const colorButton = page.locator('button', { hasText: randomColor.name })
-    await colorButton.click()
-    await page.waitForTimeout(1000) //Simulate that the user is thinking.
+      // Wait for the buttons to be rendered and click the randomly selected one
+      const colorButton = page.locator('button', { hasText: randomColor.name })
+      await colorButton.click()
+      await page.waitForTimeout(1000) //Simulate that the user is thinking.
 
-    // Locate the text element showing the current color hex and wait for it to update
-    const currentColorText = page.locator('header span', { hasText: randomColor.expectedHex })
-    await currentColorText.waitFor({ state: 'visible' })
-    const textContext = await currentColorText.textContent()
+      // Locate the text element showing the current color hex and wait for it to update
+      const currentColorText = page.locator('header span', { hasText: randomColor.expectedHex })
+      await currentColorText.waitFor({ state: 'visible' })
+      const textContext = await currentColorText.textContent()
 
-    // Assert the update propagated
-    const colorUpdated = check(page, {
-      [`${randomColor.name} color updated successfully`]: () =>
-        textContext !== null && textContext.includes(randomColor.expectedHex)
-    })
+      // Assert the update propagated
+      const colorUpdated = check(page, {
+        [`${randomColor.name} color updated successfully`]: () =>
+          textContext !== null && textContext.includes(randomColor.expectedHex)
+      })
 
-    if (isHeaderVisible && colorUpdated) {
-      successfulActionsRate.add(1)
-    } else {
-      successfulActionsRate.add(0)
-    }
+      if (isHeaderVisible && colorUpdated) {
+        successfulActionsRate.add(1)
+      } else {
+        successfulActionsRate.add(0)
+      }
+
+      // If smoke test, continue looping until duration is reached
+      if (testType === 'smoke' && Date.now() - startTime < maxRuntime) {
+        console.log(
+          `[Smoke] Action complete. Time remaining: ${Math.round((maxRuntime - (Date.now() - startTime)) / 1000)}s. Looping...`
+        )
+        await page.waitForTimeout(1000)
+      } else {
+        break
+      }
+    } while (true)
+  } catch (e) {
+    console.error(`[Test Error] ${e}`)
+    throw e
   } finally {
     await page.close()
-    await context.close()
   }
 }
 

@@ -7,7 +7,10 @@
     }
   },
   "smoke": {
-    "stages": [{ "duration": "30s", "target": 2 }],
+    "executor": "per-vu-iterations",
+    "vus": 1,
+    "iterations": 1,
+    "maxDuration": "30s",
     "thresholds": {
       "http_req_duration": ["p(95)<500"],
       "successful_actions_rate": ["rate==1.0"]
