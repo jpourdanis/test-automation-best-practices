@@ -1,6 +1,6 @@
 module.exports = {
   testEnvironment: 'node',
-  testMatch: ['**/index.test.js'],
+  testMatch: ['**/*.test.js'],
   testTimeout: 30000,
   reporters: [
     'default',

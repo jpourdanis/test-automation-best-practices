@@ -74,6 +74,40 @@ jobs:
           retention-days: 1
 
   # ==========================================
+  # 1a-2. INTEGRATION TESTING (API)
+  # ==========================================
+  backend-integration-tests:
+    name: Integration Testing (API)
+    runs-on: ubuntu-latest
+    needs: backend-unit-tests
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+          cache-dependency-path: server/package-lock.json
+
+      - name: Install server dependencies
+        run: npm ci
+        working-directory: server
+
+      - name: Run Backend Integration Tests
+        run: npm run test:int
+        working-directory: server
+
+      - name: Upload Backend Integration Test Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-int-server
+          path: server/allure-results/
+          retention-days: 1
+
+  # ==========================================
   # 1b. UNIT TESTING (Frontend)
   # ==========================================
   frontend-unit-tests:
