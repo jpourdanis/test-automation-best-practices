@@ -26,7 +26,7 @@ jobs:
     steps:
       # Checks out the repository code so the workflow can access it
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           # Fetches all history for all tags and branches so MegaLinter can check the diff
@@ -48,7 +48,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -114,7 +114,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -144,7 +144,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Use Node.js
         uses: actions/setup-node@v6
@@ -194,7 +194,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build Frontend Docker image for container scanning
         run: docker compose build app
@@ -233,7 +233,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Build API Docker image for container scanning
         run: docker compose build api
@@ -271,7 +271,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Sets up Node.js for the mutation testing environment
       - name: Use Node.js
@@ -331,7 +331,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Sets up Node.js for the mutation testing environment
       - name: Use Node.js
@@ -381,7 +381,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the code
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Sets up Node.js for this job
       - name: Use Node.js
@@ -547,7 +547,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Configures Docker Buildx to enable advanced build features like layer caching
       - name: Set up Docker Buildx
@@ -621,7 +621,7 @@ jobs:
         shardTotal: [4]
     steps:
       # Checks out the code for this specific shard runner
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Sets up Node.js for this shard runner
       - name: Use Node.js
@@ -759,7 +759,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Configures Docker Buildx to enable advanced build features like layer caching
       - name: Set up Docker Buildx
@@ -831,7 +831,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Configures Docker Buildx to enable advanced build features like layer caching
       - name: Set up Docker Buildx
@@ -930,7 +930,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the code to gather reporting logic
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       # Sets up Node JS
       - name: Use Node.js
@@ -1015,7 +1015,7 @@ jobs:
 
       # Checks out the gh-pages branch to access historical Allure test data
       - name: Load test report history
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         continue-on-error: true
         with:
           ref: gh-pages
