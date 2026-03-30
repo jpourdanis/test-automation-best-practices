@@ -893,12 +893,12 @@ jobs:
           browser: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Executes k6 smoke tests against the UI using browser automation
       - name: Run UI Performance Test
         env:
-          K6_BROWSER_ENABLED: true
+          K6_BROWSER_ENABLED: "true"
           TEST_TYPE: "smoke"
           DBUS_SESSION_BUS_ADDRESS: /dev/null
+          K6_BROWSER_ARGS: "no-sandbox,disable-setuid-sandbox,disable-dev-shm-usage,disable-gpu,disable-software-rasterizer"
         run: k6 run performance/ui-performance.spec.ts
 
       # Uploads the k6 execution data (JUnit/Allure)
