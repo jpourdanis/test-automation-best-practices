@@ -6,7 +6,7 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js index.test.js",
     "test:int": "TESTCONTAINERS_RYUK_DISABLED=true jest index.int.test.js",
     "test:watch": "npm test -- --watch",
-    "mutation:check": "stryker run"
+    "mutation": "stryker run"
   },
   "keywords": [],
   "author": "",
