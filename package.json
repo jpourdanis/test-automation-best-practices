@@ -88,7 +88,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^12.1.5",
     "@testing-library/user-event": "^13.5.0",
-    "@types/k6": "^1.6.0",
+    "@types/k6": "^1.7.0",
     "@types/node": "^22.13.10",
     "allure-playwright": "^3.5.0",
     "http-proxy-middleware": "^3.0.5",
