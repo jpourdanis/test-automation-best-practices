@@ -396,7 +396,7 @@ jobs:
       # Restores the Playwright browsers (if cached) or installs them if missing
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
@@ -636,7 +636,7 @@ jobs:
       # Restores the Playwright browsers (if cached) or installs them if missing
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
