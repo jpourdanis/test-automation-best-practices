@@ -99,7 +99,7 @@
     "jest-junit": "^16.0.0",
     "lighthouse": "^13.0.3",
     "lint-staged": "^16.4.0",
-    "playwright-bdd": "^8.4.2",
+    "playwright-bdd": "^8.5.0",
     "playwright-lighthouse": "^4.0.0",
     "zod": "^4.3.6"
   },
