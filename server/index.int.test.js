@@ -1,3 +1,4 @@
+/* eslint-env jest */
 const request = require('supertest')
 const { MongoDBContainer } = require('@testcontainers/mongodb')
 const mongoose = require('mongoose')
