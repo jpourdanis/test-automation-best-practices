@@ -69,7 +69,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-unit-server
+          name: allure-results-api-unit-testing
           path: server/allure-results/
           retention-days: 1
 
@@ -99,11 +99,11 @@ jobs:
         run: npm run test:int
         working-directory: server
 
-      - name: Upload Backend Integration Test Allure Results
+      - name: Upload Integration Testing Allure Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-int-server
+          name: allure-results-api-integration-testing
           path: server/allure-results/
           retention-days: 1
 
@@ -133,7 +133,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-unit-frontend
+          name: allure-results-frontend-unit-testing
           path: allure-results/
           retention-days: 1
 
@@ -183,7 +183,7 @@ jobs:
         if: always() # Ensure this runs even if Trivy fails the build
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-trivy-fs
+          name: allure-results-security-fs
           path: allure-results/**
           retention-days: 1
 
@@ -222,7 +222,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-trivy-frontend
+          name: allure-results-security-frontend
           path: allure-results/**
           retention-days: 1
 
@@ -261,7 +261,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-trivy-api
+          name: allure-results-security-api
           path: allure-results/**
           retention-days: 1
   # ==========================================
@@ -319,7 +319,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-mutation-server
+          name: allure-results-api-mutation-testing
           path: server/allure-results/
           if-no-files-found: ignore
           retention-days: 1
@@ -369,7 +369,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-mutation-frontend
+          name: allure-results-frontend-mutation-testing
           path: allure-results/
           if-no-files-found: ignore
           retention-days: 1
@@ -485,6 +485,15 @@ jobs:
         run: |
           mkdir -p e2e/snapshots test-results allure-results
           docker compose run --rm playwright e2e/tests/visual.spec.ts
+      # Uploads Allure Results for Merge
+      - name: Upload Allure Results Misc
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-misc-tests
+          path: allure-results/
+          retention-days: 1
+
       # Packs and uploads the generated test artifacts (reports, traces, snapshots) for download
       - name: Upload Misc Test Artifacts
         if: always()
@@ -494,7 +503,6 @@ jobs:
           path: |
             test-results/**
             e2e/snapshots/**
-            allure-results/**
 
       # List coverage summary for visibility
       - name: Coverage Summary
@@ -596,7 +604,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-schemathesis
+          name: allure-results-api-property-testing
           path: allure-results/**
           retention-days: 1
 
@@ -740,7 +748,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-shard-${{ matrix.shardIndex }}
+          name: allure-results-e2e-shard-${{ matrix.shardIndex }}
           path: allure-results/**
           retention-days: 1
 
@@ -827,7 +835,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-k6
+          name: allure-results-performance-testing
           path: allure-results/**
           retention-days: 1
 
@@ -849,6 +857,7 @@ jobs:
         mutation-testing,
         mutation-testing-frontend,
         backend-unit-tests,
+        backend-integration-tests,
         frontend-unit-tests
       ]
     if: always()
