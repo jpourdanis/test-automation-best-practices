@@ -15,6 +15,7 @@ env:
   DOCKER_BUILDKIT: 1
   COMPOSE_DOCKER_CLI_BUILD: 1
   NYC_OUTPUT_DIR: .nyc_output
+  K6_LOG_LEVEL: debug
 
 jobs:
   # ==========================================
