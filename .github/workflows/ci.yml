@@ -67,7 +67,7 @@ jobs:
 
       - name: Upload Backend Unit Test Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-api-unit-testing
           path: server/allure-results/
@@ -100,7 +100,7 @@ jobs:
 
       - name: Upload Integration Testing Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-api-integration-testing
           path: server/allure-results/
@@ -130,7 +130,7 @@ jobs:
 
       - name: Upload Frontend Unit Test Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-frontend-unit-testing
           path: allure-results/
@@ -180,7 +180,7 @@ jobs:
 
       - name: Upload Trivy FS Allure Results
         if: always() # Ensure this runs even if Trivy fails the build
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-security-fs
           path: allure-results/**
@@ -219,7 +219,7 @@ jobs:
 
       - name: Upload Trivy Frontend Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-security-frontend
           path: allure-results/**
@@ -258,7 +258,7 @@ jobs:
 
       - name: Upload Trivy API Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-security-api
           path: allure-results/**
@@ -306,7 +306,7 @@ jobs:
       # Preserves the detailed HTML/JSON Stryker mutation reports as build artifacts
       - name: Upload Stryker Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: stryker-mutation-report
           path: server/reports/
@@ -316,7 +316,7 @@ jobs:
       # Uploads the Allure results specifically for the mutation test run
       - name: Upload Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-api-mutation-testing
           path: server/allure-results/
@@ -355,7 +355,7 @@ jobs:
       # Preserves the detailed HTML/JSON Stryker mutation reports as build artifacts
       - name: Upload Stryker Report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: stryker-mutation-report-frontend
           path: reports/mutation/frontend/
@@ -366,7 +366,7 @@ jobs:
       # Note: We need to ensure Allure results are generated if configured in Stryker
       - name: Upload Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-frontend-mutation-testing
           path: allure-results/
@@ -487,7 +487,7 @@ jobs:
       # Uploads Allure Results for Merge
       - name: Upload Allure Results Misc
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-misc-tests
           path: allure-results/
@@ -496,7 +496,7 @@ jobs:
       # Packs and uploads the generated test artifacts (reports, traces, snapshots) for download
       - name: Upload Misc Test Artifacts
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: misc-test-artifacts
           path: |
@@ -526,7 +526,7 @@ jobs:
       # Uploads Istanbul coverage data collected by baseFixtures for merging
       - name: Upload coverage data
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nyc-output-misc
           path: ${{ env.NYC_OUTPUT_DIR }}
@@ -601,7 +601,7 @@ jobs:
       # Uploads the Schemathesis execution results for inclusion in the final Allure report
       - name: Upload Schemathesis Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-api-property-testing
           path: allure-results/**
@@ -715,7 +715,7 @@ jobs:
       # Uploads the fragmented Playwright execution data (blob) to be merged later
       - name: Upload blob report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: e2e-blob-report-${{ matrix.shardIndex }}
           path: blob-report
@@ -734,7 +734,7 @@ jobs:
       # Uploads Istanbul coverage data from this shard for merging
       - name: Upload coverage data
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nyc-output-shard-${{ matrix.shardIndex }}
           path: ${{ env.NYC_OUTPUT_DIR }}
@@ -745,7 +745,7 @@ jobs:
       # Uploads the raw Allure test result tracking data for this shard fraction
       - name: Upload Allure Results for Shard
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-e2e-shard-${{ matrix.shardIndex }}
           path: allure-results/**
@@ -817,7 +817,7 @@ jobs:
       # Uploads the k6 execution data (JUnit/Allure)
       - name: Upload k6 API Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-performance-api
           path: allure-results/**
@@ -898,7 +898,7 @@ jobs:
       # Uploads the k6 execution data (JUnit/Allure)
       - name: Upload k6 UI Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-performance-frontend
           path: allure-results/**
@@ -970,7 +970,7 @@ jobs:
 
       # Uploads the finalized, unified Playwright HTML report
       - name: Upload Merged Playwright HTML
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-merged-html-report
           path: playwright-report
