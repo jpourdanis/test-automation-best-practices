@@ -3,10 +3,10 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "jest",
-    "mutation": "stryker run",
-    "mutation:check": "stryker run"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js index.test.js",
+    "test:int": "TESTCONTAINERS_RYUK_DISABLED=true jest index.int.test.js",
+    "test:watch": "npm test -- --watch",
+    "mutation": "stryker run"
   },
   "keywords": [],
   "author": "",
@@ -23,9 +23,16 @@
   "devDependencies": {
     "@stryker-mutator/core": "^9.6.0",
     "@stryker-mutator/jest-runner": "^9.6.0",
+    "@testcontainers/mongodb": "^11.13.0",
     "jest": "^30.3.0",
     "jest-junit": "^16.0.0",
     "mongodb-memory-server": "^11.0.1",
-    "supertest": "^7.2.2"
+    "supertest": "^7.2.2",
+    "testcontainers": "^11.13.0"
+  },
+  "standard": {
+    "env": [
+      "jest"
+    ]
   }
 }

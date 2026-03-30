@@ -29,20 +29,21 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [11. Accessibility (a11y) Testing](#11-accessibility-a11y-testing)
     - [12. Performance Testing with k6](#12-performance-testing-with-k6)
     - [13. API Property-Based Testing with Schemathesis](#13-api-property-based-testing-with-schemathesis)
+    - [14. Integration Testing with Testcontainers](#14-integration-testing-with-testcontainers)
   - [Part 3: CI/CD & Execution Strategy](#part-3-cicd--execution-strategy)
-    - [14. Test Automation Pyramid: API First](#14-test-automation-pyramid-api-first)
-    - [15. Consistent Cross-Platform Testing with Docker](#15-consistent-cross-platform-testing-with-docker)
-    - [16. Cross-Browser Testing Strategy](#16-cross-browser-testing-strategy)
-    - [17. Parallel Execution & Sharding](#17-parallel-execution--sharding)
-    - [18. Nightly Builds & Scheduled Playwright Runs](#18-nightly-builds--scheduled-playwright-runs)
+    - [15. Test Automation Pyramid: API First](#15-test-automation-pyramid-api-first)
+    - [16. Consistent Cross-Platform Testing with Docker](#16-consistent-cross-platform-testing-with-docker)
+    - [17. Cross-Browser Testing Strategy](#17-cross-browser-testing-strategy)
+    - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
+    - [19. Nightly Builds & Scheduled Playwright Runs](#19-nightly-builds--scheduled-playwright-runs)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
-    - [19. Static Code Analysis with MegaLinter](#19-static-code-analysis-with-megalinter)
-    - [20. E2E Code Coverage](#20-e2e-code-coverage)
-    - [21. Quality Gates & Code Coverage Limits](#21-quality-gates--code-coverage-limits)
-    - [22. Allure Reports with Historical Data & Flaky Test Detection](#22-allure-reports-with-historical-data--flaky-test-detection)
-    - [23. Mutation Testing with Stryker Mutator](#23-mutation-testing-with-stryker-mutator)
-    - [24. Automated Dependency Updates & Version Testing](#24-automated-dependency-updates--version-testing)
-    - [25. Security Scanning for Code & Containers](#25-security-scanning-for-code--containers)
+    - [20. Static Code Analysis with MegaLinter](#20-static-code-analysis-with-megalinter)
+    - [21. E2E Code Coverage](#21-e2e-code-coverage)
+    - [22. Quality Gates & Code Coverage Limits](#22-quality-gates--code-coverage-limits)
+    - [23. Allure Reports with Historical Data & Flaky Test Detection](#23-allure-reports-with-historical-data--flaky-test-detection)
+    - [24. Mutation Testing with Stryker Mutator](#24-mutation-testing-with-stryker-mutator)
+    - [25. Automated Dependency Updates & Version Testing](#25-automated-dependency-updates--version-testing)
+    - [26. Security Scanning for Code & Containers](#26-security-scanning-for-code--containers)
 
 ---
 
@@ -159,7 +160,22 @@ npx playwright test --headed
 
 # Run BDD (Cucumber) tests
 npm run test:bdd
+
+# Run Backend Integration tests (requires Docker/Colima)
+npm run test:int
 ```
+
+### Local Docker Configuration (Colima Users)
+
+If you are using Colima or a custom Docker socket, create or update `.docker-local/config.json` in the project root:
+
+```json
+{
+  "DOCKER_HOST": "unix:///Users/your-user/.colima/default/docker.sock"
+}
+```
+
+The `test:int` script will automatically pick up this configuration.
 
 ### Project structure
 
@@ -198,6 +214,7 @@ performance/
 server/
 ├── index.js                     # Express API Backend & MongoDB Seed
 ├── index.test.js                # Jest + Supertest unit tests
+├── index.int.test.js            # Integration tests with Testcontainers
 ├── jest.config.js               # Jest configuration
 ├── stryker.config.json          # Stryker mutation testing configuration
 └── Dockerfile                   # Docker configuration for backend
@@ -495,24 +512,27 @@ Unit testing involves testing the smallest testable parts of an application (fun
 **Why it matters:**
 
 - **Instant Feedback** — Unit tests run in milliseconds. Developers can run hundreds of tests in seconds, catching regressions the moment a line of code is changed.
-- **Isolation & Debugging** — When a unit test fails, you know *exactly* which function is broken. There's no ambiguity about whether the failure was caused by a flaky network or a database timeout.
+- **Isolation & Debugging** — When a unit test fails, you know _exactly_ which function is broken. There's no ambiguity about whether the failure was caused by a flaky network or a database timeout.
 - **Foundation of Quality** — They form the base of the Test Automation Pyramid. High unit test coverage allows for a leaner, faster E2E layer by handling edge cases at the logic level rather than the UI level.
 
 **How to implement:**
 
 **Backend (Express):** We use Jest and Supertest to verify API logic and validation schemas in isolation.
+
 ```bash
 # Navigate to server and run tests
 cd server && npm test
 ```
 
 **Frontend (React):** We use React Testing Library to verify component rendering, user interactions, and i18n support.
+
 ```bash
 # Run frontend unit tests
 npm run test:unit
 ```
 
 **How to verify:**
+
 ```bash
 # Run all project unit tests
 npm run test:unit && cd server && npm test
@@ -966,11 +986,60 @@ app.get('/openapi.json', (req, res) => {
 npm run test:api:schemathesis
 ```
 
+### 14. Integration Testing with Testcontainers
+
+**File:** [`server/index.int.test.js`](/server/index.int.test.js)
+
+**What is it?**
+Integration testing with **Testcontainers** involves spinning up real, throwaway instances of your infrastructure (like MongoDB) inside Docker containers during the test execution. Unlike unit tests that use memory-servers or mocks, integration tests validate that your application correctly interacts with a real, production-like database.
+
+**Why it matters:**
+
+- **Real Database Behavior:** Catch issues that mocks miss, such as unique constraint violations, complex query behavior, or database-specific features (e.g., MongoDB's `directConnection`).
+- **Clean State for Every Run:** Testcontainers creates a fresh container for each test run and automatically cleans it up, ensuring zero side-effects between local development and CI.
+- **Environment Parity:** The exact same database version used in production is used in your tests, eliminating "it works on my machine" bugs.
+- **Improved DevOps Workflow:** Developers don't need to manually install or manage a local MongoDB instance; just running the test command handles everything.
+
+**How to implement:**
+
+We use the `@testcontainers/mongodb` module to orchestrate the database lifecycle:
+
+```javascript
+const { MongoDBContainer } = require('@testcontainers/mongodb')
+
+beforeAll(async () => {
+  // 1. Start a real MongoDB container
+  mongodbContainer = await new MongoDBContainer('mongo:7.0.5').start()
+  const uri = `${mongodbContainer.getConnectionString()}?directConnection=true`
+
+  // 2. Point the app to the container's randomized port
+  process.env.MONGO_URI = uri
+  await mongoose.connect(uri)
+})
+
+afterAll(async () => {
+  await mongoose.disconnect()
+  // 3. Automatically stop and remove the container
+  await mongodbContainer.stop()
+})
+```
+
+**How to verify:**
+
+```bash
+# In the server directory
+npm run test:int
+```
+
+> [!TIP]
+> **Colima / Custom Docker Socket**
+> If you are using Colima, ensure your `DOCKER_HOST` is correctly set in `.docker-local/config.json`. The `test:int` script is designed to load this automatically if present.
+
 ---
 
 ## Part 3: CI/CD & Execution Strategy
 
-### 14. Test Automation Pyramid: API First
+### 15. Test Automation Pyramid: API First
 
 **File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -998,7 +1067,7 @@ In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step
   run: npm test
 ```
 
-### 15. Consistent Cross-Platform Testing with Docker
+### 16. Consistent Cross-Platform Testing with Docker
 
 **Files:** [`Dockerfile`](/Dockerfile), [`docker-compose.yml`](/docker-compose.yml)
 
@@ -1036,7 +1105,7 @@ CMD ["npm", "test"]
 > RUN npm ci --legacy-peer-deps
 > ```
 
-### 16. Cross-Browser Testing Strategy
+### 17. Cross-Browser Testing Strategy
 
 **File:** [`playwright.config.ts`](/playwright.config.ts)
 
@@ -1073,7 +1142,7 @@ npm run test # Fast (Chromium)
 npm run test:cross-browser # Deep coverage (All browsers)
 ```
 
-### 17. Parallel Execution & Sharding
+### 18. Parallel Execution & Sharding
 
 **Files:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) · [`playwright.config.ts`](/playwright.config.ts)
 
@@ -1109,7 +1178,7 @@ npx playwright test --shard=1/4
 
 ```
 
-### 18. Nightly Builds & Scheduled Playwright Runs
+### 19. Nightly Builds & Scheduled Playwright Runs
 
 **File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1135,7 +1204,7 @@ on:
 
 ## Part 4: Quality Gates & Reporting
 
-### 19. Static Code Analysis with MegaLinter
+### 20. Static Code Analysis with MegaLinter
 
 **Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1153,7 +1222,7 @@ An automated pipeline step using **[MegaLinter](https://megalinter.io/)** that p
 npx --yes mega-linter-runner@latest
 ```
 
-### 20. E2E Code Coverage
+### 21. E2E Code Coverage
 
 **Files:** [`e2e/baseFixtures.ts`](/e2e/baseFixtures.ts) · [`e2e/tests/coverage.spec.ts`](/e2e/tests/coverage.spec.ts)
 
@@ -1189,7 +1258,7 @@ import { test, expect } from '../baseFixtures' // ← NOT from @playwright/test
 npm run coverage
 ```
 
-### 21. Quality Gates & Code Coverage Limits
+### 22. Quality Gates & Code Coverage Limits
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1215,7 +1284,7 @@ In `ci.yml`, this step runs after the main test execution:
   run: npm run coverage:check
 ```
 
-### 22. Allure Reports with Historical Data & Flaky Test Detection
+### 23. Allure Reports with Historical Data & Flaky Test Detection
 
 **Link:** [Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/)
 
@@ -1319,7 +1388,7 @@ Feature: Home Page Background Color
 npx allure serve allure-results
 ```
 
-### 23. Mutation Testing with Stryker Mutator
+### 24. Mutation Testing with Stryker Mutator
 
 **Files:** [`server/index.js`](/server/index.js) · [`server/index.test.js`](/server/index.test.js) · [`server/stryker.config.json`](/server/stryker.config.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1415,7 +1484,7 @@ cd server && npm run mutation
 
 Stryker generates a detailed HTML report showing each mutant, whether it was killed or survived, and links directly to the mutated line of code.
 
-### 24. Automated Dependency Updates & Version Testing
+### 25. Automated Dependency Updates & Version Testing
 
 **File:** [`.github/workflows/dependabot.yml`](/.github/workflows/dependabot.yml)
 
@@ -1470,7 +1539,7 @@ updates:
 
 Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwright E2E and Jest tests against the new dependency context, ensuring flawless integration.
 
-### 25. Security Scanning for Code & Containers
+### 26. Security Scanning for Code & Containers
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1531,8 +1600,6 @@ security-testing-api:
         scan-type: 'image'
         image-ref: 'test-automation-best-practices-api:latest'
 ```
-
-**How to verify:**
 
 ```bash
 npm run security:scan
