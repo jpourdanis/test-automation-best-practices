@@ -887,6 +887,9 @@ jobs:
           PID_PROXY=$!
           wait $PID_API $PID_APP $PID_PROXY
 
+      - name: Install DBus for Headless Browser
+        run: sudo apt-get update && sudo apt-get install -y dbus dbus-x11
+
       # Installs k6 performance testing tool with browser support
       - name: Setup k6
         uses: grafana/setup-k6-action@v1
@@ -898,11 +901,10 @@ jobs:
         env:
           K6_BROWSER_ENABLED: "true"
           TEST_TYPE: "smoke"
-          DBUS_FATAL_WARNINGS: "0"
-          K6_BROWSER_ARGS: "no-sandbox,disable-setuid-sandbox,disable-dev-shm-usage,disable-gpu,disable-software-rasterizer,disable-features=dbus"
+        # dbus-run-session creates a virtual bus just for this test, allowing safe teardown
         run: |
           mkdir -p allure-results
-          k6 run performance/ui-performance.spec.ts
+          dbus-run-session -- k6 run performance/ui-performance.spec.ts
 
       # Uploads the k6 execution data (JUnit/Allure)
       - name: Upload k6 UI Allure Results
