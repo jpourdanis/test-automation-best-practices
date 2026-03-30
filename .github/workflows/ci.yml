@@ -79,7 +79,6 @@ jobs:
   backend-integration-tests:
     name: Integration Testing (API)
     runs-on: ubuntu-latest
-    needs: backend-unit-tests
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -847,7 +846,6 @@ jobs:
     # This job 'fans in', running only after all the test runners finish
     needs:
       [
-        static-code-analysis,
         security-testing-fs,
         security-testing-frontend,
         security-testing-api,
