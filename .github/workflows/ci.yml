@@ -414,7 +414,7 @@ jobs:
       # config-inline wires the GHA cache backend into the BuildKit daemon so that
       # the cache_from/cache_to: type=gha entries in docker-compose.yml are honoured.
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           driver-opts: |
             image=moby/buildkit:latest
@@ -551,7 +551,7 @@ jobs:
 
       # Configures Docker Buildx to enable advanced build features like layer caching
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           driver-opts: |
             image=moby/buildkit:latest
@@ -652,7 +652,7 @@ jobs:
 
       # Sets up Docker Buildx for advanced image building
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           driver-opts: |
             image=moby/buildkit:latest
@@ -763,7 +763,7 @@ jobs:
 
       # Configures Docker Buildx to enable advanced build features like layer caching
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           driver-opts: |
             image=moby/buildkit:latest
@@ -835,7 +835,7 @@ jobs:
 
       # Configures Docker Buildx to enable advanced build features like layer caching
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
         with:
           driver-opts: |
             image=moby/buildkit:latest
