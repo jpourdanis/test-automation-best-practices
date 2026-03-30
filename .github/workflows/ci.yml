@@ -259,6 +259,7 @@ jobs:
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-api.xml"
+          ignorefile: ".trivyignore"
 
       - name: Upload Trivy API Allure Results
         if: always()
