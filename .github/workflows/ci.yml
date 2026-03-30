@@ -592,7 +592,7 @@ jobs:
 
       # Runs Schemathesis against the OpenAPI spec to discover edge-case bugs via property testing
       - name: Run schemathesis tests
-        uses: schemathesis/action@v2
+        uses: schemathesis/action@v3
         with:
           schema: http://127.0.0.1:5001/openapi.json
           checks: all
