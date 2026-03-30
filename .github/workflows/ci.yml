@@ -752,10 +752,82 @@ jobs:
           retention-days: 1
 
   # ==========================================
-  # 2c. PERFORMANCE TESTS (k6)
+  # 2c-1. PERFORMANCE TESTING (k6 API)
   # ==========================================
-  performance-testing:
-    name: API & UI Performance Tests
+  performance-testing-api:
+    name: Performance Testing (API)
+    runs-on: ubuntu-latest
+    steps:
+      # Checks out the repository code
+      - uses: actions/checkout@v4
+
+      # Configures Docker Buildx to enable advanced build features like layer caching
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+        with:
+          driver-opts: |
+            image=moby/buildkit:latest
+            network=host
+          config-inline: |
+            [registry]
+            [worker.oci]
+              max-parallelism = 4
+            [worker.containerd]
+              max-parallelism = 4
+
+            [cache]
+              [cache.gha]
+                token = "${{ env.ACTIONS_RUNTIME_TOKEN }}"
+                url   = "${{ env.ACTIONS_CACHE_URL }}"
+                scope = "buildkit"
+
+      # Starts the backend API and MongoDB database via Docker
+      - name: Start API & Mongo (Docker Compose)
+        run: docker compose up -d --build api mongo
+
+      # Waits until the backend service is fully running and responding to requests
+      - name: Health Checks for API
+        run: |
+          wait_for() {
+            local url=$1
+            for i in {1..90}; do
+              if curl -sSf "$url" > /dev/null 2>&1; then
+                echo "✓ $url is ready"
+                return 0
+              fi
+              sleep 1
+            done
+            echo "✗ $url failed to start"
+            return 1
+          }
+          wait_for http://127.0.0.1:5001/api/colors
+
+      # Installs k6 performance testing tool
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Executes k6 smoke tests against the API
+      - name: Run API Performance Test
+        run: |
+          mkdir -p allure-results
+          npm run test:perf:api:smoke
+
+      # Uploads the k6 execution data (JUnit/Allure)
+      - name: Upload k6 API Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-performance-api
+          path: allure-results/**
+          retention-days: 1
+
+  # ==========================================
+  # 2c-2. PERFORMANCE TESTING (k6 UI)
+  # ==========================================
+  performance-testing-frontend:
+    name: Performance Testing (Frontend)
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
@@ -782,7 +854,7 @@ jobs:
                 scope = "buildkit"
 
       # Spins up the application frontend, backend API, and MongoDB database via Docker
-      - name: Start app service (Docker Compose)
+      - name: Start Full Stack (Docker Compose)
         run: docker compose up -d --build app api mongo
 
       # Waits until the frontend and backend services are fully running and responding to requests
@@ -815,13 +887,7 @@ jobs:
           browser: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Executes k6 smoke tests against the API to verify baseline latency and throughput
-      - name: Run API Performance Test
-        run: |
-          mkdir -p allure-results
-          npm run test:perf:api:smoke
-
-      # Executes k6 smoke tests against the UI using browser automation to verify frontend performance
+      # Executes k6 smoke tests against the UI using browser automation
       - name: Run UI Performance Test
         env:
           K6_BROWSER_ENABLED: true
@@ -829,12 +895,12 @@ jobs:
           DBUS_SESSION_BUS_ADDRESS: /dev/null
         run: k6 run performance/ui-performance.spec.ts
 
-      # Uploads the k6 execution data (JUnit/Allure) for inclusion in the final report
-      - name: Upload k6 Allure Results
+      # Uploads the k6 execution data (JUnit/Allure)
+      - name: Upload k6 UI Allure Results
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: allure-results-performance-testing
+          name: allure-results-performance-frontend
           path: allure-results/**
           retention-days: 1
 
@@ -852,7 +918,8 @@ jobs:
         tests-misc,
         api-property-testing,
         e2e-sharded,
-        performance-testing,
+        performance-testing-api,
+        performance-testing-frontend,
         mutation-testing,
         mutation-testing-frontend,
         backend-unit-tests,
