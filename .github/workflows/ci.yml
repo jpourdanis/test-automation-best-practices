@@ -897,8 +897,8 @@ jobs:
         env:
           K6_BROWSER_ENABLED: "true"
           TEST_TYPE: "smoke"
-          DBUS_SESSION_BUS_ADDRESS: /dev/null
-          K6_BROWSER_ARGS: "no-sandbox,disable-setuid-sandbox,disable-dev-shm-usage,disable-gpu,disable-software-rasterizer"
+          DBUS_FATAL_WARNINGS: "0"
+          K6_BROWSER_ARGS: "no-sandbox,disable-setuid-sandbox,disable-dev-shm-usage,disable-gpu,disable-software-rasterizer,disable-features=dbus"
         run: |
           mkdir -p allure-results
           k6 run performance/ui-performance.spec.ts
