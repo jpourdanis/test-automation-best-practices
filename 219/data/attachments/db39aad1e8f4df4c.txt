@@ -1,1 +1,0 @@
-[NETWORK INFO] changing color to Turquoise should reflect in UI and DOM: 200 GET http://localhost:3000/api/colors

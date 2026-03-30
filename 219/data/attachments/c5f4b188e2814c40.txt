@@ -1,7 +1,0 @@
-[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 200 GET http://localhost:3000/api/colors
-
-
--------- playwright lighthouse audit reports --------
-
-
-accessibility record is 90 and desired threshold was 90
