@@ -847,6 +847,7 @@ jobs:
     # This job 'fans in', running only after all the test runners finish
     needs:
       [
+        static-code-analysis,
         security-testing-fs,
         security-testing-frontend,
         security-testing-api,
