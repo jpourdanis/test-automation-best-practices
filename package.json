@@ -90,7 +90,7 @@
     "@testing-library/user-event": "^13.5.0",
     "@types/k6": "^1.7.0",
     "@types/node": "^22.13.10",
-    "allure-playwright": "^3.5.0",
+    "allure-playwright": "^3.6.0",
     "http-proxy-middleware": "^3.0.5",
     "husky": "^9.1.7",
     "jest-junit": "^16.0.0",
