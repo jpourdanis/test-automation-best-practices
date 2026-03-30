@@ -35,7 +35,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [16. Consistent Cross-Platform Testing with Docker](#16-consistent-cross-platform-testing-with-docker)
     - [17. Cross-Browser Testing Strategy](#17-cross-browser-testing-strategy)
     - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
-    - [19. Nightly Builds & Scheduled Playwright Runs](#19-nightly-builds--scheduled-playwright-runs)
+    - [19. Nightly Builds & Scheduled Runs](#19-nightly-builds--scheduled-playwright-runs)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
     - [20. Static Code Analysis with MegaLinter](#20-static-code-analysis-with-megalinter)
     - [21. E2E Code Coverage](#21-e2e-code-coverage)
@@ -1178,7 +1178,7 @@ npx playwright test --shard=1/4
 
 ```
 
-### 19. Nightly Builds & Scheduled Playwright Runs
+### 19. Nightly Builds & Scheduled Runs
 
 **File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1604,3 +1604,5 @@ security-testing-api:
 ```bash
 npm run security:scan
 ```
+
+<!-- husky test -->
