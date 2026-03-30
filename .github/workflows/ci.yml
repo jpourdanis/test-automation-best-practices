@@ -899,7 +899,9 @@ jobs:
           TEST_TYPE: "smoke"
           DBUS_SESSION_BUS_ADDRESS: /dev/null
           K6_BROWSER_ARGS: "no-sandbox,disable-setuid-sandbox,disable-dev-shm-usage,disable-gpu,disable-software-rasterizer"
-        run: k6 run performance/ui-performance.spec.ts
+        run: |
+          mkdir -p allure-results
+          k6 run performance/ui-performance.spec.ts
 
       # Uploads the k6 execution data (JUnit/Allure)
       - name: Upload k6 UI Allure Results
