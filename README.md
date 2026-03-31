@@ -36,7 +36,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [17. Cross-Browser Testing Strategy](#17-cross-browser-testing-strategy)
     - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
     - [19. Testing in Production & Ephemeral Environments](#19-testing-in-production--ephemeral-environments)
-    - [20. Nightly Builds & Scheduled Runs](#20-nightly-builds--scheduled-playwright-runs)
+    - [20. Weekly Builds & Scheduled Runs](#20-weekly-builds--scheduled-playwright-runs)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
     - [21. Static Code Analysis with MegaLinter](#21-static-code-analysis-with-megalinter)
     - [22. E2E Code Coverage](#22-e2e-code-coverage)
@@ -1119,7 +1119,7 @@ Many teams configure Playwright to run every test on all three browsers. While t
 **How to implement:**
 
 1. **Pull Requests / Local Dev:** Run tests fast on one primary engine (e.g., Chromium).
-2. **Nightly / Release Branches:** Run full regression across all browsers using an environment variable flag.
+2. **Weekly / Release Branches:** Run full regression across all browsers using an environment variable flag.
 
 ```typescript
   projects: [
@@ -1228,16 +1228,16 @@ You can manually run tests against any live URL (including production) from your
 BASE_URL=https://test-automation-best-practices.vercel.app npm run test:e2e:prod
 ```
 
-### 20. Nightly Builds & Scheduled Runs
+### 20. Weekly Builds & Scheduled Runs
 
 **File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
 **What is it?**
-A scheduled Continuous Integration (CI) chron-job that executes the entire test suite unconditionally at a specific time every day (e.g., midnight), regardless of whether any commits were pushed.
+A scheduled Continuous Integration (CI) chron-job that executes the entire test suite unconditionally at a specific time every week (e.g., Sunday at midnight), regardless of whether any commits were pushed.
 
 **Why it matters:**
 
-- **Catching Time/Date Bugs:** Some bugs only trigger at the end of the month or across timezone boundaries. Nightly runs act as a heartbeat monitor.
+- **Catching Time/Date Bugs:** Some bugs only trigger at the end of the month or across timezone boundaries. Weekly runs act as a heartbeat monitor.
 - **Third-Party Drift:** If a third-party API your app relies on deploys a breaking change silently at 3 AM, your scheduled pipeline will catch the failure, allowing your team to react before users wake up.
 
 **How to implement:**
@@ -1247,7 +1247,7 @@ Using GitHub actions, we configure the `schedule` keyword paired with a standard
 ```yaml
 on:
   schedule:
-    - cron: '0 0 * * *' # Executes daily at Midnight UTC
+    - cron: '0 0 * * 0' # Executes weekly on Sunday at Midnight UTC
 ```
 
 ---
