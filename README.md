@@ -35,15 +35,16 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [16. Consistent Cross-Platform Testing with Docker](#16-consistent-cross-platform-testing-with-docker)
     - [17. Cross-Browser Testing Strategy](#17-cross-browser-testing-strategy)
     - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
-    - [19. Nightly Builds & Scheduled Runs](#19-nightly-builds--scheduled-playwright-runs)
+    - [19. Testing in Production & Ephemeral Environments](#19-testing-in-production--ephemeral-environments)
+    - [20. Nightly Builds & Scheduled Runs](#20-nightly-builds--scheduled-playwright-runs)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
-    - [20. Static Code Analysis with MegaLinter](#20-static-code-analysis-with-megalinter)
-    - [21. E2E Code Coverage](#21-e2e-code-coverage)
-    - [22. Quality Gates & Code Coverage Limits](#22-quality-gates--code-coverage-limits)
-    - [23. Allure Reports with Historical Data & Flaky Test Detection](#23-allure-reports-with-historical-data--flaky-test-detection)
-    - [24. Mutation Testing with Stryker Mutator](#24-mutation-testing-with-stryker-mutator)
-    - [25. Automated Dependency Updates & Version Testing](#25-automated-dependency-updates--version-testing)
-    - [26. Security Scanning for Code & Containers](#26-security-scanning-for-code--containers)
+    - [21. Static Code Analysis with MegaLinter](#21-static-code-analysis-with-megalinter)
+    - [22. E2E Code Coverage](#22-e2e-code-coverage)
+    - [23. Quality Gates & Code Coverage Limits](#23-quality-gates--code-coverage-limits)
+    - [24. Allure Reports with Historical Data & Flaky Test Detection](#24-allure-reports-with-historical-data--flaky-test-detection)
+    - [25. Mutation Testing with Stryker Mutator](#25-mutation-testing-with-stryker-mutator)
+    - [26. Automated Dependency Updates & Version Testing](#26-automated-dependency-updates--version-testing)
+    - [27. Security Scanning for Code & Containers](#27-security-scanning-for-code--containers)
 
 ---
 
@@ -1178,7 +1179,56 @@ npx playwright test --shard=1/4
 
 ```
 
-### 19. Nightly Builds & Scheduled Runs
+### 19. Testing in Production & Ephemeral Environments
+
+**File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) · [`vercel.json`](/vercel.json)
+
+**What is it?**
+Ephemeral environments are short-lived, isolated instances of your entire application (frontend + backend) created automatically for every Pull Request. We use **Vercel Preview Deployments** to host these environments and then point our Playwright test suite at the live preview URL instead of a local Docker container.
+
+**Why it matters:**
+
+- **Environmental Parity** — Testing against a local Docker container is great, but testing against the _actual_ production-grade infrastructure (Vercel's edge network, serverless functions, and routing) provides the ultimate confidence that a deployment will succeed.
+- **Stakeholder Review** — PRs generate a live link that Product Managers and Designers can use for manual exploratory testing while the automated E2E suite verifies the technical requirements simultaneously.
+- **Zero-Configuration Scalability** — You don't need to manage CI runner resources or Docker daemon complexity for these tests; Vercel handles the heavy lifting of orchestration.
+
+**How to implement:**
+
+**1. Update package.json:**
+We add a dedicated script that uses `cross-env` to pass a `BASE_URL` to Playwright:
+
+```json
+"test:e2e:prod" : "cross-env npx playwright test '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'"
+```
+
+**2. Configure CI Job (`ci.yml`):**
+In GitHub Actions, we use the `amondnet/vercel-action` to trigger a preview deployment and capture its URL:
+
+```yaml
+- name: Deploy to Vercel (Preview)
+  id: vercel-deploy
+  uses: amondnet/vercel-action@v25
+  with:
+    vercel-token: ${{ secrets.VERCEL_TOKEN }}
+    vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+    vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    vercel-args: '--yes'
+
+- name: Run E2E tests against Vercel Preview
+  env:
+    BASE_URL: ${{ steps.vercel-deploy.outputs.preview-url }}
+  run: npm run test:e2e:prod
+```
+
+**How to verify:**
+You can manually run tests against any live URL (including production) from your local machine:
+
+```bash
+BASE_URL=https://test-automation-best-practices.vercel.app npm run test:e2e:prod
+```
+
+### 20. Nightly Builds & Scheduled Runs
 
 **File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
