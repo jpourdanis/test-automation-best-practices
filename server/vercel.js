@@ -1,8 +1,12 @@
-const { app, mongoose } = require('./index.js')
+const { app, mongoose, MONGO_URI } = require('./index.js')
 
 // Vercel Serverless Functions spin up and down, so we must ensure
 // the database connects when the function wakes up.
-const MONGO_URI = process.env.MONGO_URI
+
+// Fail fast if MONGO_URI is missing in production/Vercel
+if (!process.env.MONGO_URI && process.env.VERCEL) {
+  throw new Error('MONGO_URI environment variable is required on Vercel.')
+}
 
 if (mongoose.connection.readyState === 0) {
   mongoose

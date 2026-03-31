@@ -512,4 +512,4 @@ if (require.main === module) {
 }
 // Stryker restore all
 
-module.exports = { app, seedDatabase, Color, mongoose }
+module.exports = { app, seedDatabase, Color, mongoose, MONGO_URI }
