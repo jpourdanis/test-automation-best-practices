@@ -1,0 +1,5 @@
+[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 204 GET https://test-automation-best-practices-v18yrdl2l-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-v18yrdl2l-jpourdanis-projects.vercel.app&deploymentId=dpl_6xW1eb1vS24nU4bzxoMHYCKSMHQ5
+[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 200 GET https://test-automation-best-practices-v18yrdl2l-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 204 HEAD https://test-automation-best-practices-v18yrdl2l-jpourdanis-projects.vercel.app/
+[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 200 GET https://test-automation-best-practices-v18yrdl2l-jpourdanis-projects.vercel.app/api/colors/Red

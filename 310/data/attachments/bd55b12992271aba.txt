@@ -1,0 +1,2 @@
+[NETWORK ERROR] should create dynamic random color via API and verify through UI: GET https://test-automation-best-practices-v18yrdl2l-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] should create dynamic random color via API and verify through UI: HEAD https://test-automation-best-practices-v18yrdl2l-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
