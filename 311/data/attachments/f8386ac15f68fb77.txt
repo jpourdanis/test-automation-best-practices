@@ -1,0 +1,14 @@
+[NETWORK ERROR] should handle color click network failure gracefully: GET https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] should handle color click network failure gracefully: GET https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/api/colors/Turquoise - net::ERR_FAILED
+[CONSOLE ERROR] should handle color click network failure gracefully: Failed to load resource: net::ERR_FAILED
+[CONSOLE ERROR] should handle color click network failure gracefully: Failed to fetch hex for Turquoise TypeError: Failed to fetch
+    at https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/static/js/main.c2ce2f3a.js:2:210190
+    at onClick (https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/static/js/main.c2ce2f3a.js:2:210311)
+    at Object.Be (https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/static/js/main.c2ce2f3a.js:2:17089)
+    at Ye (https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/static/js/main.c2ce2f3a.js:2:17243)
+    at https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/static/js/main.c2ce2f3a.js:2:35464
+    at Lr (https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/static/js/main.c2ce2f3a.js:2:35558)
+    at _r (https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/static/js/main.c2ce2f3a.js:2:35973)
+    at https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/static/js/main.c2ce2f3a.js:2:41618
+    at $e (https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/static/js/main.c2ce2f3a.js:2:117243)
+    at https://test-automation-best-practices-an1xh3eci-jpourdanis-projects.vercel.app/static/js/main.c2ce2f3a.js:2:37439
