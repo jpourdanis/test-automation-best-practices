@@ -35,15 +35,16 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [16. Consistent Cross-Platform Testing with Docker](#16-consistent-cross-platform-testing-with-docker)
     - [17. Cross-Browser Testing Strategy](#17-cross-browser-testing-strategy)
     - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
-    - [19. Nightly Builds & Scheduled Runs](#19-nightly-builds--scheduled-playwright-runs)
+    - [19. Testing in Production & Ephemeral Environments](#19-testing-in-production--ephemeral-environments)
+    - [20. Weekly Builds & Scheduled Runs](#20-weekly-builds--scheduled-runs)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
-    - [20. Static Code Analysis with MegaLinter](#20-static-code-analysis-with-megalinter)
-    - [21. E2E Code Coverage](#21-e2e-code-coverage)
-    - [22. Quality Gates & Code Coverage Limits](#22-quality-gates--code-coverage-limits)
-    - [23. Allure Reports with Historical Data & Flaky Test Detection](#23-allure-reports-with-historical-data--flaky-test-detection)
-    - [24. Mutation Testing with Stryker Mutator](#24-mutation-testing-with-stryker-mutator)
-    - [25. Automated Dependency Updates & Version Testing](#25-automated-dependency-updates--version-testing)
-    - [26. Security Scanning for Code & Containers](#26-security-scanning-for-code--containers)
+    - [21. Static Code Analysis with MegaLinter](#21-static-code-analysis-with-megalinter)
+    - [22. E2E Code Coverage](#22-e2e-code-coverage)
+    - [23. Quality Gates & Code Coverage Limits](#23-quality-gates--code-coverage-limits)
+    - [24. Allure Reports with Historical Data & Flaky Test Detection](#24-allure-reports-with-historical-data--flaky-test-detection)
+    - [25. Mutation Testing with Stryker Mutator](#25-mutation-testing-with-stryker-mutator)
+    - [26. Automated Dependency Updates & Version Testing](#26-automated-dependency-updates--version-testing)
+    - [27. Security Scanning for Code & Containers](#27-security-scanning-for-code--containers)
 
 ---
 
@@ -1118,7 +1119,7 @@ Many teams configure Playwright to run every test on all three browsers. While t
 **How to implement:**
 
 1. **Pull Requests / Local Dev:** Run tests fast on one primary engine (e.g., Chromium).
-2. **Nightly / Release Branches:** Run full regression across all browsers using an environment variable flag.
+2. **Weekly / Release Branches:** Run full regression across all browsers using an environment variable flag.
 
 ```typescript
   projects: [
@@ -1178,16 +1179,65 @@ npx playwright test --shard=1/4
 
 ```
 
-### 19. Nightly Builds & Scheduled Runs
+### 19. Testing in Production & Ephemeral Environments
+
+**File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) · [`vercel.json`](/vercel.json)
+
+**What is it?**
+Ephemeral environments are short-lived, isolated instances of your entire application (frontend + backend) created automatically for every Pull Request. We use **Vercel Preview Deployments** to host these environments and then point our Playwright test suite at the live preview URL instead of a local Docker container.
+
+**Why it matters:**
+
+- **Environmental Parity** — Testing against a local Docker container is great, but testing against the _actual_ production-grade infrastructure (Vercel's edge network, serverless functions, and routing) provides the ultimate confidence that a deployment will succeed.
+- **Stakeholder Review** — PRs generate a live link that Product Managers and Designers can use for manual exploratory testing while the automated E2E suite verifies the technical requirements simultaneously.
+- **Zero-Configuration Scalability** — You don't need to manage CI runner resources or Docker daemon complexity for these tests; Vercel handles the heavy lifting of orchestration.
+
+**How to implement:**
+
+**1. Update package.json:**
+We add a dedicated script that uses `cross-env` to pass a `BASE_URL` to Playwright:
+
+```json
+"test:e2e:prod" : "cross-env npx playwright test '^(?!.*visual\\.spec\\.ts).*\\.spec\\.ts$'"
+```
+
+**2. Configure CI Job (`ci.yml`):**
+In GitHub Actions, we use the `amondnet/vercel-action` to trigger a preview deployment and capture its URL:
+
+```yaml
+- name: Deploy to Vercel (Preview)
+  id: vercel-deploy
+  uses: amondnet/vercel-action@v25
+  with:
+    vercel-token: ${{ secrets.VERCEL_TOKEN }}
+    vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+    vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+    github-token: ${{ secrets.GITHUB_TOKEN }}
+    vercel-args: '--yes'
+
+- name: Run E2E tests against Vercel Preview
+  env:
+    BASE_URL: ${{ steps.vercel-deploy.outputs.preview-url }}
+  run: npm run test:e2e:prod
+```
+
+**How to verify:**
+You can manually run tests against any live URL (including production) from your local machine:
+
+```bash
+BASE_URL=https://test-automation-best-practices.vercel.app npm run test:e2e:prod
+```
+
+### 20. Weekly Builds & Scheduled Runs
 
 **File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
 **What is it?**
-A scheduled Continuous Integration (CI) chron-job that executes the entire test suite unconditionally at a specific time every day (e.g., midnight), regardless of whether any commits were pushed.
+A scheduled Continuous Integration (CI) chron-job that executes the entire test suite unconditionally at a specific time every week (e.g., Sunday at midnight), regardless of whether any commits were pushed.
 
 **Why it matters:**
 
-- **Catching Time/Date Bugs:** Some bugs only trigger at the end of the month or across timezone boundaries. Nightly runs act as a heartbeat monitor.
+- **Catching Time/Date Bugs:** Some bugs only trigger at the end of the month or across timezone boundaries. Weekly runs act as a heartbeat monitor.
 - **Third-Party Drift:** If a third-party API your app relies on deploys a breaking change silently at 3 AM, your scheduled pipeline will catch the failure, allowing your team to react before users wake up.
 
 **How to implement:**
@@ -1197,14 +1247,14 @@ Using GitHub actions, we configure the `schedule` keyword paired with a standard
 ```yaml
 on:
   schedule:
-    - cron: '0 0 * * *' # Executes daily at Midnight UTC
+    - cron: '0 0 * * 0' # Executes weekly on Sunday at Midnight UTC
 ```
 
 ---
 
 ## Part 4: Quality Gates & Reporting
 
-### 20. Static Code Analysis with MegaLinter
+### 21. Static Code Analysis with MegaLinter
 
 **Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1222,7 +1272,7 @@ An automated pipeline step using **[MegaLinter](https://megalinter.io/)** that p
 npx --yes mega-linter-runner@latest
 ```
 
-### 21. E2E Code Coverage
+### 22. E2E Code Coverage
 
 **Files:** [`e2e/baseFixtures.ts`](/e2e/baseFixtures.ts) · [`e2e/tests/coverage.spec.ts`](/e2e/tests/coverage.spec.ts)
 
@@ -1258,7 +1308,7 @@ import { test, expect } from '../baseFixtures' // ← NOT from @playwright/test
 npm run coverage
 ```
 
-### 22. Quality Gates & Code Coverage Limits
+### 23. Quality Gates & Code Coverage Limits
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1284,7 +1334,7 @@ In `ci.yml`, this step runs after the main test execution:
   run: npm run coverage:check
 ```
 
-### 23. Allure Reports with Historical Data & Flaky Test Detection
+### 24. Allure Reports with Historical Data & Flaky Test Detection
 
 **Link:** [Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/)
 
@@ -1388,7 +1438,7 @@ Feature: Home Page Background Color
 npx allure serve allure-results
 ```
 
-### 24. Mutation Testing with Stryker Mutator
+### 25. Mutation Testing with Stryker Mutator
 
 **Files:** [`server/index.js`](/server/index.js) · [`server/index.test.js`](/server/index.test.js) · [`server/stryker.config.json`](/server/stryker.config.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1484,7 +1534,7 @@ cd server && npm run mutation
 
 Stryker generates a detailed HTML report showing each mutant, whether it was killed or survived, and links directly to the mutated line of code.
 
-### 25. Automated Dependency Updates & Version Testing
+### 26. Automated Dependency Updates & Version Testing
 
 **File:** [`.github/workflows/dependabot.yml`](/.github/workflows/dependabot.yml)
 
@@ -1539,7 +1589,7 @@ updates:
 
 Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwright E2E and Jest tests against the new dependency context, ensuring flawless integration.
 
-### 26. Security Scanning for Code & Containers
+### 27. Security Scanning for Code & Containers
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 

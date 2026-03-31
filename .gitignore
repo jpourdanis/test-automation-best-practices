@@ -19,3 +19,4 @@
 /reports/
 .env
 server/.env
+.vercel
