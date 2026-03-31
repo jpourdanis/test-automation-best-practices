@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js index.test.js",
     "test:int": "TESTCONTAINERS_RYUK_DISABLED=true jest index.int.test.js",
     "test:watch": "npm test -- --watch",
@@ -14,6 +15,7 @@
   "description": "Test Automation Best Practices demo API",
   "dependencies": {
     "cors": "^2.8.6",
+    "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "mongoose": "^9.2.3",
     "swagger-jsdoc": "^6.2.8",
@@ -27,9 +29,9 @@
     "jest": "^30.3.0",
     "jest-junit": "^16.0.0",
     "mongodb-memory-server": "^11.0.1",
+    "picomatch": "^4.0.4",
     "supertest": "^7.2.2",
-    "testcontainers": "^11.13.0",
-    "picomatch": "^4.0.4"
+    "testcontainers": "^11.13.0"
   },
   "overrides": {
     "picomatch": "^4.0.4"
