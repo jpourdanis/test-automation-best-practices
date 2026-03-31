@@ -923,6 +923,9 @@ jobs:
     name: E2E Tests (Vercel Preview)
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
     steps:
       - uses: actions/checkout@v6
 
