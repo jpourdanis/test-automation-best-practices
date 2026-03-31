@@ -18,3 +18,4 @@
 .stryker-tmp/
 /reports/
 .env
+server/.env
