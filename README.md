@@ -36,7 +36,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [17. Cross-Browser Testing Strategy](#17-cross-browser-testing-strategy)
     - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
     - [19. Testing in Production & Ephemeral Environments](#19-testing-in-production--ephemeral-environments)
-    - [20. Weekly Builds & Scheduled Runs](#20-weekly-builds--scheduled-playwright-runs)
+    - [20. Weekly Builds & Scheduled Runs](#20-weekly-builds--scheduled-runs)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
     - [21. Static Code Analysis with MegaLinter](#21-static-code-analysis-with-megalinter)
     - [22. E2E Code Coverage](#22-e2e-code-coverage)
@@ -1254,7 +1254,7 @@ on:
 
 ## Part 4: Quality Gates & Reporting
 
-### 20. Static Code Analysis with MegaLinter
+### 21. Static Code Analysis with MegaLinter
 
 **Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1272,7 +1272,7 @@ An automated pipeline step using **[MegaLinter](https://megalinter.io/)** that p
 npx --yes mega-linter-runner@latest
 ```
 
-### 21. E2E Code Coverage
+### 22. E2E Code Coverage
 
 **Files:** [`e2e/baseFixtures.ts`](/e2e/baseFixtures.ts) · [`e2e/tests/coverage.spec.ts`](/e2e/tests/coverage.spec.ts)
 
@@ -1308,7 +1308,7 @@ import { test, expect } from '../baseFixtures' // ← NOT from @playwright/test
 npm run coverage
 ```
 
-### 22. Quality Gates & Code Coverage Limits
+### 23. Quality Gates & Code Coverage Limits
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1334,7 +1334,7 @@ In `ci.yml`, this step runs after the main test execution:
   run: npm run coverage:check
 ```
 
-### 23. Allure Reports with Historical Data & Flaky Test Detection
+### 24. Allure Reports with Historical Data & Flaky Test Detection
 
 **Link:** [Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/)
 
@@ -1438,7 +1438,7 @@ Feature: Home Page Background Color
 npx allure serve allure-results
 ```
 
-### 24. Mutation Testing with Stryker Mutator
+### 25. Mutation Testing with Stryker Mutator
 
 **Files:** [`server/index.js`](/server/index.js) · [`server/index.test.js`](/server/index.test.js) · [`server/stryker.config.json`](/server/stryker.config.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1534,7 +1534,7 @@ cd server && npm run mutation
 
 Stryker generates a detailed HTML report showing each mutant, whether it was killed or survived, and links directly to the mutated line of code.
 
-### 25. Automated Dependency Updates & Version Testing
+### 26. Automated Dependency Updates & Version Testing
 
 **File:** [`.github/workflows/dependabot.yml`](/.github/workflows/dependabot.yml)
 
@@ -1589,7 +1589,7 @@ updates:
 
 Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwright E2E and Jest tests against the new dependency context, ensuring flawless integration.
 
-### 26. Security Scanning for Code & Containers
+### 27. Security Scanning for Code & Containers
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
