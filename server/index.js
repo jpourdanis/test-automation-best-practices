@@ -73,7 +73,7 @@ const swaggerOptions = {
     },
     servers: [
       {
-        url: `https://test-automation-best-practices.vercel.app`,
+        url: 'https://test-automation-best-practices.vercel.app',
         description: 'Vercel Production Server'
       },
       {
