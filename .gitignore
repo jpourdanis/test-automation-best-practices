@@ -17,3 +17,5 @@
 /server/allure-results/
 .stryker-tmp/
 /reports/
+.env
+server/.env

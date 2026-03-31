@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
@@ -511,4 +512,4 @@ if (require.main === module) {
 }
 // Stryker restore all
 
-module.exports = { app, seedDatabase, Color, mongoose }
+module.exports = { app, seedDatabase, Color, mongoose, MONGO_URI }
