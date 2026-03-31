@@ -73,6 +73,10 @@ const swaggerOptions = {
     },
     servers: [
       {
+        url: `https://test-automation-best-practices.vercel.app`,
+        description: 'Vercel Production Server'
+      },
+      {
         url: `http://localhost:${process.env.PORT || 5001}`,
         description: 'Local development server'
       }
