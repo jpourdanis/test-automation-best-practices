@@ -1,0 +1,5 @@
+[NETWORK INFO] changing color to Red should reflect in UI and DOM: 204 GET https://test-automation-best-practices-1vb1zdbok-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] changing color to Red should reflect in UI and DOM: 200 GET https://test-automation-best-practices-1vb1zdbok-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] changing color to Red should reflect in UI and DOM: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-1vb1zdbok-jpourdanis-projects.vercel.app&deploymentId=dpl_AmTMaoV3RgXmeH7ndT9ZuMzxr3ie
+[NETWORK INFO] changing color to Red should reflect in UI and DOM: 204 HEAD https://test-automation-best-practices-1vb1zdbok-jpourdanis-projects.vercel.app/
+[NETWORK INFO] changing color to Red should reflect in UI and DOM: 200 GET https://test-automation-best-practices-1vb1zdbok-jpourdanis-projects.vercel.app/api/colors/Red
