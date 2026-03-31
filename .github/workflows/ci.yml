@@ -921,6 +921,22 @@ jobs:
   # ==========================================
   e2e-production-tests:
     name: E2E Tests Against Ephemeral Environment
+    needs:
+      [
+        security-testing-fs,
+        security-testing-frontend,
+        security-testing-api,
+        tests-misc,
+        api-property-testing,
+        e2e-sharded,
+        performance-testing-api,
+        performance-testing-frontend,
+        mutation-testing,
+        mutation-testing-frontend,
+        backend-unit-tests,
+        backend-integration-tests,
+        frontend-unit-tests
+      ]
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     permissions:
