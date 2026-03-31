@@ -20,3 +20,4 @@
 .env
 server/.env
 .vercel
+.env*.local
