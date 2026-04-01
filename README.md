@@ -31,7 +31,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [13. API Property-Based Testing with Schemathesis](#13-api-property-based-testing-with-schemathesis)
     - [14. Integration Testing with Testcontainers](#14-integration-testing-with-testcontainers)
   - [Part 3: CI/CD & Execution Strategy](#part-3-cicd--execution-strategy)
-    - [15. Test Automation Pyramid: API First](#15-test-automation-pyramid-api-first)
+    - [15. Test Automation Pyramid: Unit Tests First](#15-test-automation-pyramid-unit-tests-first)
     - [16. Consistent Cross-Platform Testing with Docker](#16-consistent-cross-platform-testing-with-docker)
     - [17. Cross-Browser Testing Strategy](#17-cross-browser-testing-strategy)
     - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
@@ -1040,33 +1040,22 @@ npm run test:int
 
 ## Part 3: CI/CD & Execution Strategy
 
-### 15. Test Automation Pyramid: API First
-
-**File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+### 15. Test Automation Pyramid: Unit Tests First
 
 **What is it?**
-A pipeline execution strategy based on the **Test Automation Pyramid**. It strictly enforces that fast, reliable API test suites must pass before any slower, brittle UI/E2E test suites are allowed to start executing.
+A pipeline execution strategy based on the **Test Automation Pyramid**. It strictly enforces a "Fail Fast" mechanism: the fastest, most isolated tests (Unit Tests) must pass before any heavier Integration or UI/E2E test suites are allowed to start executing. Static code analysis runs completely in parallel.
 
 **Why it matters:**
 
-- **Optimal Feedback Loops:** If the database is down, the API tests will fail in 10 seconds. If you ran UI tests concurrently, you might wait 5 minutes just for them to timeout and tell you the same thing.
-- **Isolating the Root Cause:** If API tests pass but UI tests fail, the QA engineer knows definitively that the bug exists purely in the frontend presentation layer, drastically reducing debugging time.
+- **Fail Fast & Save Resources:** If a core utility function is broken, unit tests will fail in milliseconds. Halting the pipeline immediately prevents wasting minutes (and CI compute costs) downloading images, spinning up Docker databases, and launching headless browsers for E2E tests that are mathematically guaranteed to fail anyway.
+- **Isolating the Root Cause:** If unit tests pass but integration or E2E tests fail, developers know definitively that the core logic is sound, and the issue lies strictly in the configuration, database layer, or UI presentation layer.
 
 **How to implement:**
+In the CI workflow (`.github/workflows/ci.yml`), we use the `needs` keyword to create a strict dependency graph that maps directly to the layers of the test pyramid:
 
-In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step _without_ `continue-on-error`. This instantly fails the workflow if any API endpoints regress. The subsequent E2E steps declare an `if: success()` condition, ensuring they only trigger if the API test step completes flawlessly.
-
-```yaml
-- name: Run API tests (host Playwright)
-  id: api-tests
-  run: npm run test:api
-
-- name: Run end-to-end tests (host Playwright)
-  id: e2e-tests
-  continue-on-error: true
-  if: success() # Only triggers if API tests passed
-  run: npm test
-```
+1. **Base Layer:** `backend-unit-tests` & `frontend-unit-tests` run immediately.
+2. **Middle Layer:** `backend-integration-tests`, `mutation-testing`, and `security-testing` jobs use `needs: [backend-unit-tests]` or `[frontend-unit-tests]` to wait for the base layer.
+3. **Top Layer:** Heavy `e2e-sharded`, `performance-testing`, and `api-property-testing` jobs use `needs: [backend-integration-tests, frontend-unit-tests]` so they only trigger once the middle layer has proven the API and database contracts are stable.
 
 ### 16. Consistent Cross-Platform Testing with Docker
 
