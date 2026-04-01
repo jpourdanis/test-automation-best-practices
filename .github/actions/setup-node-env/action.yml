@@ -1,0 +1,31 @@
+name: "Setup Node Environment"
+description: "Sets up Node.js and installs dependencies with caching"
+inputs:
+  working-directory:
+    description: "Directory to run npm ci in"
+    required: false
+    default: "."
+  node-version:
+    description: "Node.js version to use"
+    required: false
+    default: "22"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Use Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node-version }}
+        cache: "npm"
+        cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
+
+    - name: Install dependencies
+      run: |
+        if [ "${{ inputs.working-directory }}" == "." ]; then
+          npm ci --legacy-peer-deps
+        else
+          npm ci
+        fi
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
