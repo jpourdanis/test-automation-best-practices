@@ -129,7 +129,7 @@ jobs:
   # 1c. SECURITY TESTING (npm audit & Trivy FS)
   # ==========================================
   security-testing-fs:
-    name: Security Tests (FS & NPM)
+    name: Security Tests (Frontend & Backend)
     needs: [backend-unit-tests, frontend-unit-tests]
     runs-on: ubuntu-latest
     steps:
