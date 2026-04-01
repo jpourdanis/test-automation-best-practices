@@ -22,6 +22,18 @@ services:
       - ./public:/app/public
       - ./package.json:/app/package.json
       - ./.nyc_output:/app/.nyc_output
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "node",
+          "-e",
+          "const http = require('http'); http.get('http://127.0.0.1:3000/api/colors', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));"
+        ]
+      interval: 5s
+      timeout: 5s
+      start_period: 15s
+      retries: 10
 
   api:
     image: test-automation-best-practices-api:latest

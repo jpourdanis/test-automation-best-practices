@@ -6,6 +6,10 @@ on:
     branches: [main, gh-pages]
   schedule:
     - cron: "0 0 * * 0"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: write
   pages: write
@@ -45,22 +49,15 @@ jobs:
   # 1a. UNIT TESTING (API)
   # ==========================================
   backend-unit-tests:
-    name: Unit Testing (API)
+    name: Unit Tests (Backend)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - uses: ./.github/actions/setup-node-env
         with:
-          node-version: 22
-          cache: "npm"
-          cache-dependency-path: server/package-lock.json
-
-      - name: Install server dependencies
-        run: npm ci
-        working-directory: server
+          working-directory: server
 
       - name: Run Backend Unit Tests
         env:
@@ -80,22 +77,16 @@ jobs:
   # 1a-2. INTEGRATION TESTING (API)
   # ==========================================
   backend-integration-tests:
-    name: Integration Testing (API)
+    name: Integration Tests (Backend)
+    needs: [backend-unit-tests]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - uses: ./.github/actions/setup-node-env
         with:
-          node-version: 22
-          cache: "npm"
-          cache-dependency-path: server/package-lock.json
-
-      - name: Install server dependencies
-        run: npm ci
-        working-directory: server
+          working-directory: server
 
       - name: Run Backend Integration Tests
         env:
@@ -115,20 +106,13 @@ jobs:
   # 1b. UNIT TESTING (Frontend)
   # ==========================================
   frontend-unit-tests:
-    name: Unit Testing (Frontend)
+    name: Unit Tests (Frontend)
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - uses: ./.github/actions/setup-node-env
 
       - name: Run Frontend Unit Tests
         run: npm run test:unit
@@ -145,20 +129,14 @@ jobs:
   # 1c. SECURITY TESTING (npm audit & Trivy FS)
   # ==========================================
   security-testing-fs:
-    name: Security Testing (FS & NPM)
+    name: Security Tests (Frontend & Backend)
+    needs: [backend-unit-tests, frontend-unit-tests]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
 
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - uses: ./.github/actions/setup-node-env
 
       - name: NPM Vulnerability Audit
         run: npm audit --audit-level=high
@@ -195,7 +173,8 @@ jobs:
   # 1d. SECURITY TESTING (Frontend Image)
   # ==========================================
   security-testing-frontend:
-    name: Container Scanning (Frontend)
+    name: Security Tests (Containers - Frontend)
+    needs: [frontend-unit-tests]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -234,7 +213,8 @@ jobs:
   # 1e. SECURITY TESTING (API Image)
   # ==========================================
   security-testing-api:
-    name: Container Scanning (API)
+    name: Security Tests (Containers - Backend)
+    needs: [backend-unit-tests]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
@@ -273,24 +253,17 @@ jobs:
   # 1f. MUTATION TESTING (Stryker)
   # ==========================================
   mutation-testing:
-    name: Mutation Testing on Server
+    name: Mutation Tests (Backend)
+    needs: [backend-unit-tests]
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
       - uses: actions/checkout@v6
 
       # Sets up Node.js for the mutation testing environment
-      - name: Use Node.js
-        uses: actions/setup-node@v6
+      - uses: ./.github/actions/setup-node-env
         with:
-          node-version: 22
-          cache: "npm"
-          cache-dependency-path: server/package-lock.json
-
-      # Installs only the server-side dependencies
-      - name: Install server dependencies
-        run: npm ci
-        working-directory: server
+          working-directory: server
 
       # Runs unit tests for the server to ensure baseline stability before mutation
       - name: Run unit tests (with JUnit for Allure)
@@ -335,22 +308,15 @@ jobs:
   # 1g. MUTATION TESTING (Stryker) - Frontend
   # ==========================================
   mutation-testing-frontend:
-    name: Mutation Testing on Frontend
+    name: Mutation Tests (Frontend)
+    needs: [frontend-unit-tests]
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
       - uses: actions/checkout@v6
 
       # Sets up Node.js for the mutation testing environment
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: "npm"
-
-      # Installs all project dependencies (including dev deps for Stryker)
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - uses: ./.github/actions/setup-node-env
 
       # Runs unit tests for the frontend to ensure baseline stability
       - name: Run unit tests
@@ -385,21 +351,14 @@ jobs:
   # 2a. NON-SHARDED TESTS (API, BDD, Visual, etc.)
   # ==========================================
   tests-misc:
-    name: API, BDD, Visual Regression, Cross-Browser Tests
+    name: UI & Integration Tests (Misc)
+    needs: [backend-integration-tests, frontend-unit-tests]
     runs-on: ubuntu-latest
     steps:
       # Checks out the code
       - uses: actions/checkout@v6
 
-      # Sets up Node.js for this job
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: "npm"
-
-      # Installs project dependencies
-      - run: npm ci --legacy-peer-deps
+      - uses: ./.github/actions/setup-node-env
 
       # Restores the Playwright browsers (if cached) or installs them if missing
       - name: Cache Playwright browsers
@@ -442,30 +401,7 @@ jobs:
 
       # Spins up the application frontend, backend API, and MongoDB database via Docker
       - name: Start app service (Docker Compose)
-        run: docker compose up -d --build app api mongo
-
-      # Waits until the frontend and backend services are fully running and responding to requests
-      - name: Health Checks for service
-        run: |
-          wait_for() {
-            local url=$1
-            for i in {1..90}; do
-              if curl -sSf "$url" > /dev/null 2>&1; then
-                echo "✓ $url is ready"
-                return 0
-              fi
-              sleep 1
-            done
-            echo "✗ $url failed to start"
-            return 1
-          }
-          wait_for http://127.0.0.1:5001/api/colors &
-          PID_API=$!
-          wait_for http://127.0.0.1:3000 &
-          PID_APP=$!
-          wait_for http://127.0.0.1:3000/api/colors &
-          PID_PROXY=$!
-          wait $PID_API $PID_APP $PID_PROXY
+        run: docker compose up -d --build --wait app api mongo
 
       # Runs fast API tests first; failures here indicate backend issues
       - name: Run API tests
@@ -551,7 +487,8 @@ jobs:
   # 2b. API PROPERTY TESTING (Schemathesis)
   # ==========================================
   api-property-testing:
-    name: API Property Based Testing
+    name: Property-Based Tests (Backend)
+    needs: [backend-integration-tests]
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
@@ -579,24 +516,7 @@ jobs:
 
       # Spins up the backend API and MongoDB database via Docker for testing
       - name: Start app service (Docker Compose)
-        run: docker compose up -d --build api mongo
-
-      # Verifies the API is up and responding before starting property-based tests
-      - name: Health Checks for service
-        run: |
-          wait_for() {
-            local url=$1
-            for i in {1..90}; do
-              if curl -sSf "$url" > /dev/null 2>&1; then
-                echo "✓ $url is ready"
-                return 0
-              fi
-              sleep 1
-            done
-            echo "✗ $url failed to start"
-            return 1
-          }
-          wait_for http://127.0.0.1:5001/api/colors
+        run: docker compose up -d --build --wait api mongo
 
       # Runs Schemathesis against the OpenAPI spec to discover edge-case bugs via property testing
       - name: Run schemathesis tests
@@ -619,7 +539,8 @@ jobs:
   # 2b. SHARDED E2E TESTS (Parallel Execution)
   # ==========================================
   e2e-sharded:
-    name: E2E Tests Shard ${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+    name: E2E Tests (Sharded - ${{ matrix.shardIndex }}/${{ matrix.shardTotal }})
+    needs: [backend-integration-tests, frontend-unit-tests]
     runs-on: ubuntu-latest
     # Strategy matrix allows running multiple instances of this job concurrently
     strategy:
@@ -631,15 +552,7 @@ jobs:
       # Checks out the code for this specific shard runner
       - uses: actions/checkout@v6
 
-      # Sets up Node.js for this shard runner
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: "npm"
-
-      # Installs project dependencies
-      - run: npm ci --legacy-peer-deps
+      - uses: ./.github/actions/setup-node-env
 
       # Restores the Playwright browsers (if cached) or installs them if missing
       - name: Cache Playwright browsers
@@ -680,29 +593,7 @@ jobs:
 
       # Completely isolated environment spin-up for this exact shard runner
       - name: Start app service (Docker Compose)
-        run: docker compose up -d --build app api mongo
-
-      # Verifies the application is healthy inside this shard's Docker environment
-      - name: Health Checks for service
-        run: |
-          wait_for() {
-            local url=$1
-            for i in {1..90}; do
-              if curl -sSf "$url" > /dev/null 2>&1; then
-                echo "✓ $url is ready"
-                return 0
-              fi
-              sleep 1
-            done
-            return 1
-          }
-          wait_for http://127.0.0.1:5001/api/colors &
-          PID_API=$!
-          wait_for http://127.0.0.1:3000 &
-          PID_APP=$!
-          wait_for http://127.0.0.1:3000/api/colors &
-          PID_PROXY=$!
-          wait $PID_API $PID_APP $PID_PROXY
+        run: docker compose up -d --build --wait app api mongo
 
       # Executes precisely the assigned fraction (shard) of the test suite (skipping visual tests)
       - name: Run sharded e2e tests
@@ -763,7 +654,8 @@ jobs:
   # 2c-1. PERFORMANCE TESTING (k6 API)
   # ==========================================
   performance-testing-api:
-    name: Performance Testing (API)
+    name: Performance Tests (Backend)
+    needs: [backend-integration-tests]
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
@@ -791,24 +683,7 @@ jobs:
 
       # Starts the backend API and MongoDB database via Docker
       - name: Start API & Mongo (Docker Compose)
-        run: docker compose up -d --build api mongo
-
-      # Waits until the backend service is fully running and responding to requests
-      - name: Health Checks for API
-        run: |
-          wait_for() {
-            local url=$1
-            for i in {1..90}; do
-              if curl -sSf "$url" > /dev/null 2>&1; then
-                echo "✓ $url is ready"
-                return 0
-              fi
-              sleep 1
-            done
-            echo "✗ $url failed to start"
-            return 1
-          }
-          wait_for http://127.0.0.1:5001/api/colors
+        run: docker compose up -d --build --wait api mongo
 
       # Installs k6 performance testing tool
       - name: Setup k6
@@ -835,7 +710,8 @@ jobs:
   # 2c-2. PERFORMANCE TESTING (k6 UI)
   # ==========================================
   performance-testing-frontend:
-    name: Performance Testing (Frontend)
+    name: Performance Tests (Frontend)
+    needs: [backend-integration-tests, frontend-unit-tests]
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
@@ -863,30 +739,7 @@ jobs:
 
       # Spins up the application frontend, backend API, and MongoDB database via Docker
       - name: Start Full Stack (Docker Compose)
-        run: docker compose up -d --build app api mongo
-
-      # Waits until the frontend and backend services are fully running and responding to requests
-      - name: Health Checks for service
-        run: |
-          wait_for() {
-            local url=$1
-            for i in {1..90}; do
-              if curl -sSf "$url" > /dev/null 2>&1; then
-                echo "✓ $url is ready"
-                return 0
-              fi
-              sleep 1
-            done
-            echo "✗ $url failed to start"
-            return 1
-          }
-          wait_for http://127.0.0.1:5001/api/colors &
-          PID_API=$!
-          wait_for http://127.0.0.1:3000 &
-          PID_APP=$!
-          wait_for http://127.0.0.1:3000/api/colors &
-          PID_PROXY=$!
-          wait $PID_API $PID_APP $PID_PROXY
+        run: docker compose up -d --build --wait app api mongo
 
       - name: Install DBus for Headless Browser
         run: sudo apt-get update && sudo apt-get install -y dbus dbus-x11
@@ -945,14 +798,7 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci --legacy-peer-deps
+      - uses: ./.github/actions/setup-node-env
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
@@ -1008,24 +854,21 @@ jobs:
       # Checks out the code to gather reporting logic
       - uses: actions/checkout@v6
 
-      # Sets up Node JS
-      - name: Use Node.js
-        uses: actions/setup-node@v6
-        with:
-          node-version: 22
-          cache: "npm"
-
-      # Installs reporting dependencies via package-lock.json
-      - run: npm ci --legacy-peer-deps
+      # Sets up Node JS and installs reporting dependencies
+      - uses: ./.github/actions/setup-node-env
 
       # Downloads the artifacts generated by the non-sharded test runner
       - name: Download Misc Artifacts
+        if: needs.tests-misc.result != 'skipped'
+        continue-on-error: true
         uses: actions/download-artifact@v8
         with:
           name: misc-test-artifacts
 
       # Downloads the fractional blob reports from every concurrent shard runner
       - name: Download all Playwright blob reports
+        if: needs.e2e-sharded.result != 'skipped'
+        continue-on-error: true
         uses: actions/download-artifact@v8
         with:
           path: all-blob-reports
@@ -1034,6 +877,7 @@ jobs:
 
       # Downloads the raw Allure results from every concurrent shard runner
       - name: Download all Allure results
+        continue-on-error: true
         uses: actions/download-artifact@v8
         with:
           path: allure-results
@@ -1042,7 +886,12 @@ jobs:
 
       # Merges the distributed Playwright blobs into a single readable HTML report
       - name: Merge Playwright Reports
-        run: npx playwright merge-reports --reporter html ./all-blob-reports
+        run: |
+          if [ -d "all-blob-reports" ] && [ "$(ls -A all-blob-reports 2>/dev/null)" ]; then
+            npx playwright merge-reports --reporter html ./all-blob-reports
+          else
+            echo "No blob reports found. Skipping merge."
+          fi
 
       # Uploads the finalized, unified Playwright HTML report
       - name: Upload Merged Playwright HTML

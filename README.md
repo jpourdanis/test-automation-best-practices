@@ -31,20 +31,21 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [13. API Property-Based Testing with Schemathesis](#13-api-property-based-testing-with-schemathesis)
     - [14. Integration Testing with Testcontainers](#14-integration-testing-with-testcontainers)
   - [Part 3: CI/CD & Execution Strategy](#part-3-cicd--execution-strategy)
-    - [15. Test Automation Pyramid: API First](#15-test-automation-pyramid-api-first)
+    - [15. Test Automation Pyramid: Unit Tests First](#15-test-automation-pyramid-unit-tests-first)
     - [16. Consistent Cross-Platform Testing with Docker](#16-consistent-cross-platform-testing-with-docker)
     - [17. Cross-Browser Testing Strategy](#17-cross-browser-testing-strategy)
     - [18. Parallel Execution & Sharding](#18-parallel-execution--sharding)
     - [19. Testing in Production & Ephemeral Environments](#19-testing-in-production--ephemeral-environments)
     - [20. Weekly Builds & Scheduled Runs](#20-weekly-builds--scheduled-runs)
+    - [21. Automated Container Healthness Testing](#21-automated-container-healthness-testing)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
-    - [21. Static Code Analysis with MegaLinter](#21-static-code-analysis-with-megalinter)
-    - [22. E2E Code Coverage](#22-e2e-code-coverage)
-    - [23. Quality Gates & Code Coverage Limits](#23-quality-gates--code-coverage-limits)
-    - [24. Allure Reports with Historical Data & Flaky Test Detection](#24-allure-reports-with-historical-data--flaky-test-detection)
-    - [25. Mutation Testing with Stryker Mutator](#25-mutation-testing-with-stryker-mutator)
-    - [26. Automated Dependency Updates & Version Testing](#26-automated-dependency-updates--version-testing)
-    - [27. Security Scanning for Code & Containers](#27-security-scanning-for-code--containers)
+    - [22. Static Code Analysis with MegaLinter](#22-static-code-analysis-with-megalinter)
+    - [23. E2E Code Coverage](#23-e2e-code-coverage)
+    - [24. Quality Gates & Code Coverage Limits](#24-quality-gates-code-coverage-limits)
+    - [25. Allure Reports with Historical Data & Flaky Test Detection](#25-allure-reports-with-historical-data--flaky-test-detection)
+    - [26. Mutation Testing with Stryker Mutator](#26-mutation-testing-with-stryker-mutator)
+    - [27. Automated Dependency Updates & Version Testing](#27-automated-dependency-updates--version-testing)
+    - [28. Security Scanning for Code & Containers](#28-security-scanning-for-code--containers)
 
 ---
 
@@ -1040,33 +1041,38 @@ npm run test:int
 
 ## Part 3: CI/CD & Execution Strategy
 
-### 15. Test Automation Pyramid: API First
+### 15. Test Automation Pyramid: Unit Tests First
 
-**File:** [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+```text
+               / \
+              /   \
+             / E2E \           <-- TOP (UI, Sharded, Perf)
+            /       \              "The Tip" (Slowest)
+           /---------\
+          /           \
+         / Integration \       <-- MIDDLE (API, Security, Mutation)
+        /               \          "The Body" (Medium Speed)
+       /-----------------\
+      /                   \
+     /     Unit Tests      \   <-- BASE (API & Frontend)
+    /                       \        "The Foundation" (Fastest)
+   /-------------------------\
+```
 
 **What is it?**
-A pipeline execution strategy based on the **Test Automation Pyramid**. It strictly enforces that fast, reliable API test suites must pass before any slower, brittle UI/E2E test suites are allowed to start executing.
+A pipeline execution strategy based on the **Test Automation Pyramid**. It strictly enforces a "Fail Fast" mechanism: the fastest, most isolated tests (Unit Tests) must pass before any heavier Integration or UI/E2E test suites are allowed to start executing. Static code analysis runs completely in parallel.
 
 **Why it matters:**
 
-- **Optimal Feedback Loops:** If the database is down, the API tests will fail in 10 seconds. If you ran UI tests concurrently, you might wait 5 minutes just for them to timeout and tell you the same thing.
-- **Isolating the Root Cause:** If API tests pass but UI tests fail, the QA engineer knows definitively that the bug exists purely in the frontend presentation layer, drastically reducing debugging time.
+- **Fail Fast & Save Resources:** If a core utility function is broken, unit tests will fail in milliseconds. Halting the pipeline immediately prevents wasting minutes (and CI compute costs) downloading images, spinning up Docker databases, and launching headless browsers for E2E tests that are mathematically guaranteed to fail anyway.
+- **Isolating the Root Cause:** If unit tests pass but integration or E2E tests fail, developers know definitively that the core logic is sound, and the issue lies strictly in the configuration, database layer, or UI presentation layer.
 
 **How to implement:**
+In the CI workflow (`.github/workflows/ci.yml`), we use the `needs` keyword to create a strict dependency graph that maps directly to the layers of the test pyramid:
 
-In the CI workflow (`.github/workflows/ci.yml`), we declare the API testing step _without_ `continue-on-error`. This instantly fails the workflow if any API endpoints regress. The subsequent E2E steps declare an `if: success()` condition, ensuring they only trigger if the API test step completes flawlessly.
-
-```yaml
-- name: Run API tests (host Playwright)
-  id: api-tests
-  run: npm run test:api
-
-- name: Run end-to-end tests (host Playwright)
-  id: e2e-tests
-  continue-on-error: true
-  if: success() # Only triggers if API tests passed
-  run: npm test
-```
+1. **Base Layer:** `backend-unit-tests` & `frontend-unit-tests` run immediately.
+2. **Middle Layer:** `backend-integration-tests`, `mutation-testing`, and `security-testing` jobs use `needs: [backend-unit-tests]` or `[frontend-unit-tests]` to wait for the base layer.
+3. **Top Layer:** Heavy `e2e-sharded`, `performance-testing`, and `api-property-testing` jobs use `needs: [backend-integration-tests, frontend-unit-tests]` so they only trigger once the middle layer has proven the API and database contracts are stable.
 
 ### 16. Consistent Cross-Platform Testing with Docker
 
@@ -1252,9 +1258,60 @@ on:
 
 ---
 
+### 21. Automated Container Healthness Testing
+
+**Files:** [`docker-compose.yml`](/docker-compose.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+
+**What is it?**
+Instead of using custom bash scripts with `curl` loops and `sleep` commands to wait for services to start, we use native **Docker Healthchecks** defined in `docker-compose.yml` combined with the `--wait` flag in GitHub Actions.
+
+**Why it matters:**
+
+- **Reliability:** Bash loops are brittle, hard to debug, and don't natively understand container lifecycles. Docker health checks provide a standardized way for the engine itself to report when a service is truly "Ready" (not just "Running").
+- **Observability:** Health status is visible via `docker ps`. If a service fails to start, Docker provides the exact reason and log output natively.
+- **CI Performance:** The `--wait` flag is more efficient than manual polling, as it detects transitions instantly and stops the pipeline immediately if a health check fails repeatedly.
+
+**How to implement:**
+
+**1. Define the Check (`docker-compose.yml`):**
+We use a lightweight `node` one-liner to verify the specific endpoint (`/api/colors`) is responding with a 200 OK.
+
+```yaml
+healthcheck:
+  test:
+    [
+      'CMD',
+      'node',
+      '-e',
+      "const http = require('http'); http.get('http://127.0.0.1:3000/api/colors', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));"
+    ]
+  interval: 5s
+  timeout: 5s
+  start_period: 15s
+  retries: 10
+```
+
+**2. Use the Wait Flag (`ci.yml`):**
+In GitHub Actions, we simply add `--wait` to the `up` command. No more `wait_for` scripts!
+
+```yaml
+- name: Start app service (Docker Compose)
+  run: docker compose up -d --build --wait app api mongo
+```
+
+**How to verify:**
+You can check the health status of your containers locally after starting them:
+
+```bash
+docker ps --format "{{.Names}}: {{.Status}}"
+# Output: test-automation-app: Up 2 minutes (healthy)
+```
+
+---
+
 ## Part 4: Quality Gates & Reporting
 
-### 21. Static Code Analysis with MegaLinter
+### 22. Static Code Analysis with MegaLinter
 
 **Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1272,7 +1329,7 @@ An automated pipeline step using **[MegaLinter](https://megalinter.io/)** that p
 npx --yes mega-linter-runner@latest
 ```
 
-### 22. E2E Code Coverage
+### 23. E2E Code Coverage
 
 **Files:** [`e2e/baseFixtures.ts`](/e2e/baseFixtures.ts) · [`e2e/tests/coverage.spec.ts`](/e2e/tests/coverage.spec.ts)
 
@@ -1308,7 +1365,7 @@ import { test, expect } from '../baseFixtures' // ← NOT from @playwright/test
 npm run coverage
 ```
 
-### 23. Quality Gates & Code Coverage Limits
+### 24. Quality Gates & Code Coverage Limits
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1334,7 +1391,7 @@ In `ci.yml`, this step runs after the main test execution:
   run: npm run coverage:check
 ```
 
-### 24. Allure Reports with Historical Data & Flaky Test Detection
+### 25. Allure Reports with Historical Data & Flaky Test Detection
 
 **Link:** [Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/)
 
@@ -1438,7 +1495,7 @@ Feature: Home Page Background Color
 npx allure serve allure-results
 ```
 
-### 25. Mutation Testing with Stryker Mutator
+### 26. Mutation Testing with Stryker Mutator
 
 **Files:** [`server/index.js`](/server/index.js) · [`server/index.test.js`](/server/index.test.js) · [`server/stryker.config.json`](/server/stryker.config.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1534,7 +1591,7 @@ cd server && npm run mutation
 
 Stryker generates a detailed HTML report showing each mutant, whether it was killed or survived, and links directly to the mutated line of code.
 
-### 26. Automated Dependency Updates & Version Testing
+### 27. Automated Dependency Updates & Version Testing
 
 **File:** [`.github/workflows/dependabot.yml`](/.github/workflows/dependabot.yml)
 
@@ -1589,7 +1646,7 @@ updates:
 
 Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwright E2E and Jest tests against the new dependency context, ensuring flawless integration.
 
-### 27. Security Scanning for Code & Containers
+### 28. Security Scanning for Code & Containers
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
