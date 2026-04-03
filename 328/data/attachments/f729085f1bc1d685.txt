@@ -1,0 +1,2 @@
+[NETWORK INFO] check Turquoise ( #1abc9c) is the default background color.: 204 GET https://test-automation-best-practices-gi93xtng3-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] check Turquoise ( #1abc9c) is the default background color.: 200 GET https://test-automation-best-practices-gi93xtng3-jpourdanis-projects.vercel.app/api/colors
