@@ -34,7 +34,8 @@
     "testcontainers": "^11.13.0"
   },
   "overrides": {
-    "picomatch": "^4.0.4"
+    "picomatch": "^4.0.4",
+    "lodash": "^4.18.1"
   },
   "standard": {
     "env": [
