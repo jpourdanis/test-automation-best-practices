@@ -182,6 +182,8 @@ The `test:int` script will automatically pick up this configuration.
 ### Project structure
 
 ```text
+api/
+└── index.js                     # Vercel serverless function wrapper
 e2e/
 ├── features/
 │   └── home.feature             # Gherkin BDD scenarios
@@ -199,11 +201,11 @@ e2e/
 │   ├── network-mocking.spec.ts  # Network mocking & interception
 │   ├── pom-refactored.spec.ts   # POM demonstration
 │   ├── random-data.spec.ts      # Random data generation with faker.js
+│   ├── security-audit.spec.ts   # Dependency & security testing
 │   └── visual.spec.ts           # Visual regression & responsive testing
-├── snapshots/
-│   ├── home.png                 # Visual regression baseline for desktop
-│   └── home-mobile.png          # Visual regression baseline for mobile
+├── snapshots/                     # Visual regression baseline screenshots
 ├── baseFixtures.ts              # Playwright fixtures (POM, Coverage)
+├── global-setup.ts              # Global initialization logic
 └── helper.ts                    # Utility functions
 performance/
 ├── configs/
@@ -214,18 +216,27 @@ performance/
 ├── api-performance.spec.ts      # k6 API load tests
 └── ui-performance.spec.ts       # k6 Browser performance tests
 server/
+├── .env.example                 # Example environment variables template
+├── Dockerfile                   # Docker configuration for backend API
+├── index.int.test.js            # Integration tests with Testcontainers
 ├── index.js                     # Express API Backend & MongoDB Seed
 ├── index.test.js                # Jest + Supertest unit tests
-├── index.int.test.js            # Integration tests with Testcontainers
-├── jest.config.js               # Jest configuration
+├── jest.config.js               # Jest suite configuration
 ├── stryker.config.json          # Stryker mutation testing configuration
-└── Dockerfile                   # Docker configuration for backend
+└── vercel.js                    # Vercel deployment entry point wrapper
 src/
 ├── locales/                     # i18n translation files (en, es, el)
-├── App.tsx                      # Main React application
-└── index.tsx                    # Frontend entry point
-docker-compose.yml               # Multi-container orchestration
-playwright.config.ts             # Playwright configuration
+├── App.tsx                      # Main React application entry point
+├── index.tsx                    # React DOM bootstrapper
+└── setupProxy.js                # Local API proxy for development
+.github/
+└── workflows/
+    ├── ci.yml                   # GitHub Actions Continuous Integration pipeline
+    └── dependabot.yml           # Automated dependency update configuration
+.husky/                          # Pre-commit git hooks managed by Husky
+docker-compose.yml               # Multi-container local orchestration
+playwright.config.ts             # Playwright test execution configuration
+vercel.json                      # Vercel deployment configuration
 ```
 
 ---
