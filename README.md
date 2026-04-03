@@ -13,6 +13,7 @@ A comprehensive reference project demonstrating **test automation engineering be
 
 - [Application Architecture](#application-architecture)
 - [Getting Started](#getting-started)
+- [Want to contribute?](#want-to-contribute)
 - [Best Practices Implemented](#best-practices-implemented)
   - [Part 1: Core Framework & Test Design](#part-1-core-framework--test-design)
     - [1. Page Object Model (POM)](#1-page-object-model-pom)
@@ -240,6 +241,56 @@ vercel.json                      # Vercel deployment configuration
 ```
 
 ---
+
+## Want to contribute?
+
+### Prerequisites
+
+Node.js 16+
+
+Docker (for visual regression and consistent cross-platform tests)
+
+### Local Installation Guide
+
+To get the project running locally, you need to set up both the frontend and backend dependencies:
+
+**Install frontend dependencies:**
+
+```bash
+npm install
+npx playwright install
+```
+
+**Install backend dependencies:**
+
+```bash
+cd server
+npm install
+cd ..
+```
+
+Once installed, you can use `docker compose up -d` to run the full stack (React frontend, Express backend, and MongoDB).
+
+### ⚠️ Important: Docker BuildKit Caching
+
+Before running the application locally via Docker, it is a local prerequisite to remove the BuildKit cache mounts. These cache mounts are strictly meant for CI environments.
+
+You must modify the `RUN` commands in both the main `Dockerfile` and `server/Dockerfile`.
+
+**Remove this CI-only configuration:**
+
+```dockerfile
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --legacy-peer-deps
+```
+
+**Replace it with plain npm ci:**
+
+```dockerfile
+RUN npm ci --legacy-peer-deps
+```
+
+(Note: Apply the equivalent plain `npm ci` change to `server/Dockerfile` depending on its specific install command).
 
 ## Best Practices Implemented
 
