@@ -3,7 +3,8 @@ import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import App from './App'
 
 // Mock fetch globally
-global.fetch = jest.fn() as jest.Mock
+;(global as any).fetch = jest.fn()
+const mockFetch = (global as any).fetch as jest.Mock
 
 // Import en translations for precision
 const en: any = {
@@ -59,8 +60,9 @@ jest.mock('react-i18next', () => ({
 describe('Frontend Unit Tests', () => {
   describe('App Component', () => {
     beforeEach(() => {
-      ;(global.fetch as jest.Mock).mockReset()
-      ;(global.fetch as jest.Mock).mockResolvedValue({
+      mockFetch.mockReset()
+      mockFetch.mockResolvedValue({
+        ok: true,
         json: async () => []
       })
       jest.spyOn(console, 'error').mockImplementation(() => {})
@@ -91,6 +93,7 @@ describe('Frontend Unit Tests', () => {
       ]
 
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
         json: async () => mockColors
       })
 
@@ -112,6 +115,7 @@ describe('Frontend Unit Tests', () => {
         { name: 'Red', hex: '#e74c3c' }
       ]
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
         json: async () => mockColors
       })
 
@@ -119,13 +123,14 @@ describe('Frontend Unit Tests', () => {
       const redButton = await screen.findByRole('button', { name: 'Change background to Red' })
 
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
         json: async () => ({ name: 'Red', hex: '#e74c3c' })
       })
 
       fireEvent.click(redButton)
 
       await waitFor(() => {
-        expect(global.fetch).toHaveBeenCalledWith('/api/colors/Red')
+        expect(global.fetch).toHaveBeenCalledWith('/api/colors/Red', { cache: 'no-store' })
         const header = container.querySelector('.App-header')
         expect(header).toHaveStyle('background-color: rgb(231, 76, 60)')
       })
@@ -144,6 +149,7 @@ describe('Frontend Unit Tests', () => {
     test('handleColorClick handles fetch rejection and logs exact message', async () => {
       const mockColors = [{ name: 'Red', hex: '#ff0000' }]
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
         json: async () => mockColors
       })
 
@@ -160,7 +166,7 @@ describe('Frontend Unit Tests', () => {
     })
 
     test('handles null data or non-array from initial fetch and stays default', async () => {
-      ;(global.fetch as jest.Mock).mockResolvedValueOnce({ json: async () => null })
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({ ok: true, json: async () => null })
       const { container } = render(<App />)
       await new Promise((r) => setTimeout(r, 50))
       const header = container.querySelector('.App-header')
@@ -169,7 +175,7 @@ describe('Frontend Unit Tests', () => {
     })
 
     test('handles empty array data from initial fetch and stays default', async () => {
-      ;(global.fetch as jest.Mock).mockResolvedValueOnce({ json: async () => [] })
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({ ok: true, json: async () => [] })
       const { container } = render(<App />)
       await new Promise((r) => setTimeout(r, 50))
       const header = container.querySelector('.App-header')
@@ -204,6 +210,7 @@ describe('Frontend Unit Tests', () => {
     test('handleColorClick does nothing if hex is missing (kills Line 34 mutants)', async () => {
       const mockColors = [{ name: 'Emerald', hex: '#2ecc71' }]
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
         json: async () => mockColors
       })
 
@@ -219,6 +226,7 @@ describe('Frontend Unit Tests', () => {
 
       // Mock fetch returning data WITHOUT hex
       ;(global.fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
         json: async () => ({ name: 'Emerald' })
       })
 
@@ -243,7 +251,7 @@ describe('Frontend Unit Tests', () => {
     test('handles non-array with length property from initial fetch', async () => {
       // Mutant 1: Array.isArray(data) && data.length > 0 -> Array.isArray(data) || data.length > 0
       // If we return { length: 1 }, original skips, mutant enters and throws.
-      ;(global.fetch as jest.Mock).mockResolvedValueOnce({ json: async () => ({ length: 1 }) })
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({ ok: true, json: async () => ({ length: 1 }) })
       render(<App />)
       await new Promise((r) => setTimeout(r, 50))
       // Original should not call console.error for "Failed to fetch colors" with the throw
@@ -254,7 +262,7 @@ describe('Frontend Unit Tests', () => {
     test('handles empty array data and ensures no errors are logged', async () => {
       // Mutants 2 & 3: data.length > 0 -> true or >= 0
       // If we return [], original skips, mutant enters and throws.
-      ;(global.fetch as jest.Mock).mockResolvedValueOnce({ json: async () => [] })
+      ;(global.fetch as jest.Mock).mockResolvedValueOnce({ ok: true, json: async () => [] })
       render(<App />)
       await new Promise((r) => setTimeout(r, 50))
       expect(console.error).not.toHaveBeenCalled()
@@ -274,15 +282,79 @@ describe('Frontend Unit Tests', () => {
 
     test('handleColorClick does nothing if data is null', async () => {
       const mockColors = [{ name: 'Emerald', hex: '#2ecc71' }]
-      ;(global.fetch as jest.Mock).mockResolvedValueOnce({ json: async () => mockColors })
+      mockFetch.mockResolvedValueOnce({ ok: true, json: async () => mockColors })
       render(<App />)
       const button = await screen.findByRole('button')
 
-      ;(global.fetch as jest.Mock).mockResolvedValueOnce({ json: async () => null })
+      mockFetch.mockResolvedValueOnce({ ok: true, json: async () => null })
       fireEvent.click(button)
       await new Promise((r) => setTimeout(r, 50))
 
       expect(console.error).not.toHaveBeenCalledWith(expect.stringContaining('Failed to fetch hex'), expect.anything())
+    })
+
+    test('handles initial fetch with ok: false (non-200 status)', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500
+      })
+
+      render(<App />)
+
+      await waitFor(() => {
+        expect(console.error).toHaveBeenCalledWith(
+          'Failed to fetch colors:',
+          expect.objectContaining({ message: expect.stringContaining('HTTP error! status: 500') })
+        )
+        expect(screen.getByRole('alert')).toHaveTextContent('Failed to load colors')
+      })
+    })
+
+    test('handleColorClick handles ok: false (non-200 status) and shows specific error', async () => {
+      const mockColors = [{ name: 'Red', hex: '#ff0000' }]
+      mockFetch.mockResolvedValueOnce({ ok: true, json: async () => mockColors })
+
+      render(<App />)
+      const redButton = await screen.findByRole('button', { name: 'Change background to Red' })
+
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 404
+      })
+
+      fireEvent.click(redButton)
+
+      await waitFor(() => {
+        expect(console.error).toHaveBeenCalledWith(
+          'Failed to fetch hex for Red',
+          expect.objectContaining({ message: expect.stringContaining('HTTP error! status: 404') })
+        )
+        expect(screen.getByRole('alert')).toHaveTextContent('Failed to load color: Red')
+      })
+    })
+
+    test('clears previous error on new successful handleColorClick', async () => {
+      const mockColors = [{ name: 'Red', hex: '#ff0000' }]
+      mockFetch.mockResolvedValueOnce({ ok: true, json: async () => mockColors })
+
+      render(<App />)
+      const redButton = await screen.findByRole('button', { name: 'Change background to Red' })
+
+      // 1. Trigger error
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 500 })
+      fireEvent.click(redButton)
+      await screen.findByRole('alert')
+
+      // 2. Trigger success
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ name: 'Red', hex: '#00ff00' })
+      })
+      fireEvent.click(redButton)
+
+      await waitFor(() => {
+        expect(screen.queryByRole('alert')).not.toBeInTheDocument()
+      })
     })
   })
 })

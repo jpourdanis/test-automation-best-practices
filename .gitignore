@@ -21,3 +21,5 @@
 server/.env
 .vercel
 .env*.local
+/coverage
+/server/coverage
