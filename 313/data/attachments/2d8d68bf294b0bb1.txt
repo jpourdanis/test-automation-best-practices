@@ -1,5 +1,0 @@
-[NETWORK INFO] should maintain accessibility after state change (color update): 204 GET https://test-automation-best-practices-ob2gwoyra-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] should maintain accessibility after state change (color update): 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-ob2gwoyra-jpourdanis-projects.vercel.app&deploymentId=dpl_4gCBPY1Z6NM8cLFrmhUPFF1FEyJ6
-[NETWORK INFO] should maintain accessibility after state change (color update): 204 HEAD https://test-automation-best-practices-ob2gwoyra-jpourdanis-projects.vercel.app/
-[NETWORK INFO] should maintain accessibility after state change (color update): 200 GET https://test-automation-best-practices-ob2gwoyra-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] should maintain accessibility after state change (color update): 200 GET https://test-automation-best-practices-ob2gwoyra-jpourdanis-projects.vercel.app/api/colors/Yellow
