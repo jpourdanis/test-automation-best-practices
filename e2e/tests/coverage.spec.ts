@@ -68,3 +68,62 @@ test.describe('Background color tests', () => {
     })
   }
 })
+
+/**
+ * Test: Verify language switcher correctly updates the document's lang attribute
+ */
+test('verify language switcher changes document language', async ({ page }) => {
+  // Select Spanish
+  await page.selectOption('select', 'es')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'es')
+
+  // Select Greek
+  await page.selectOption('select', 'el')
+  await expect(page.locator('html')).toHaveAttribute('lang', 'el')
+})
+
+/**
+ * Test Suite: Edge cases and error handling for coverage
+ */
+test.describe('Edge cases and error handling', () => {
+  test('handle initial fetch error', async ({ page }) => {
+    // Mock 500 error for initial colors fetch
+    await page.route('/api/colors', (route) => route.fulfill({ status: 500 }))
+    await page.goto('/')
+    await expect(page.locator('.error-message')).toHaveText('Failed to load colors')
+  })
+
+  test('handle initial fetch with empty data', async ({ page }) => {
+    // Mock empty array response
+    await page.route('/api/colors', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify([])
+      })
+    )
+    await page.goto('/')
+    await expect(page.locator('text=Loading colors...')).toBeVisible()
+  })
+
+  test('handle color selection fetch error', async ({ page }) => {
+    // Mock 500 error for specific color fetch
+    await page.route('/api/colors/Red', (route) => route.fulfill({ status: 500 }))
+    await page.click('text=Red')
+    await expect(page.locator('.error-message')).toHaveText('Failed to load color: Red')
+  })
+
+  test('handle color response missing hex property', async ({ page }) => {
+    // Mock response missing hex property
+    await page.route('/api/colors/Yellow', (route) =>
+      route.fulfill({
+        status: 200,
+        contentType: 'application/json',
+        body: JSON.stringify({ name: 'Yellow' })
+      })
+    )
+    await page.click('text=Yellow')
+    // Expect no crash and current color text to remain unchanged (or still be default)
+    await expect(page.locator('text=Current color:')).not.toContainText('undefined')
+  })
+})
