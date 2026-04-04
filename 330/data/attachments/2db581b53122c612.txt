@@ -1,0 +1,1 @@
+[NETWORK INFO] should handle fetch colors network failure gracefully: 204 GET https://test-automation-best-practices-59fn7kmxk-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
