@@ -343,6 +343,7 @@ app.post('/api/colors', async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
+ *           pattern: '^[a-zA-Z0-9 ]*[a-zA-Z0-9][a-zA-Z0-9 ]*$'
  *         description: Current name of the color to update
  *         example: Turquoise
  *     requestBody:
@@ -371,6 +372,10 @@ app.post('/api/colors', async (req, res) => {
  */
 app.put('/api/colors/:name', async (req, res) => {
   try {
+    const currentName = req.params.name
+    if (!STRICT_NAME_REGEX.test(currentName)) {
+      return res.status(400).json({ error: STRICT_NAME_MSG })
+    }
     const parseResult = updateColorZodSchema.safeParse(req.body)
     if (!parseResult.success) {
       return res.status(400).json({ error: parseResult.error.issues[0].message })
@@ -383,7 +388,7 @@ app.put('/api/colors/:name', async (req, res) => {
     if (hex) update.hex = hex
 
     // Find by current name and apply the update, returning the new document
-    const color = await Color.findOneAndUpdate({ name: req.params.name }, update, {
+    const color = await Color.findOneAndUpdate({ name: currentName }, update, {
       new: true,
       projection: { _id: 0, __v: 0 }
     })
