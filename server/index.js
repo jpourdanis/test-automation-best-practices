@@ -7,6 +7,7 @@ const swaggerUi = require('swagger-ui-express')
 const { z } = require('zod')
 
 const app = express()
+app.disable('x-powered-by')
 
 // ---------------------------------------------------------------------------
 // Validation Schemas
@@ -82,8 +83,8 @@ const swaggerOptions = {
       }
     ]
   },
-  // Scan this file for JSDoc @swagger annotations
-  apis: [__filename]
+  // Scan this and api/index.js for JSDoc @swagger annotations
+  apis: [__filename, 'api/index.js']
 }
 // Stryker restore all
 
@@ -244,36 +245,13 @@ app.get('/api/colors', async (req, res) => {
 // GET /api/colors/:name – Get a single color by name
 // ---------------------------------------------------------------------------
 
-/**
- * @swagger
- * /api/colors/{name}:
- *   get:
- *     summary: Retrieve a single color by name
- *     description: Looks up a color by its name (case-sensitive).
- *     tags: [Colors]
- *     parameters:
- *       - in: path
- *         name: name
- *         required: true
- *         schema:
- *           type: string
- *         description: The color name to look up
- *         example: Red
- *     responses:
- *       200:
- *         description: The matching color
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/Color'
- *       404:
- *         description: Color not found
- *       500:
- *         description: Server error
- */
 app.get('/api/colors/:name', async (req, res) => {
   try {
-    const color = await Color.findOne({ name: req.params.name }, { _id: 0, __v: 0 })
+    const { name } = req.params
+    if (!STRICT_NAME_REGEX.test(name)) {
+      return res.status(400).json({ error: STRICT_NAME_MSG })
+    }
+    const color = await Color.findOne({ name }, { _id: 0, __v: 0 })
     if (!color) {
       return res.status(404).json({ error: 'Color not found' })
     }
