@@ -1,0 +1,26 @@
+     █ Color Management
+
+       ✓ Color creation status is 201
+       ✓ Retrieve color status is 200
+       ✓ Retrieved correct hex
+
+     checks.........................: 100.00% ✓ 3        ✗ 0  
+     data_received..................: 1.3 kB  470 B/s
+     data_sent......................: 457 B   162 B/s
+     group_duration.................: avg=33.9ms  min=33.9ms  med=33.9ms  max=33.9ms   p(90)=33.9ms   p(95)=33.9ms  
+     http_req_blocked...............: avg=87.16µs min=4.39µs  med=75.69µs max=192.87µs p(90)=179.03µs p(95)=185.95µs
+     http_req_connecting............: avg=54.49µs min=0s      med=46.74µs max=124.49µs p(90)=115.19µs p(95)=119.84µs
+   ✓ http_req_duration..............: avg=9.03ms  min=3.15ms  med=4.42ms  max=24.15ms  p(90)=18.44ms  p(95)=21.29ms 
+       { expected_response:true }...: avg=9.03ms  min=3.15ms  med=4.42ms  max=24.15ms  p(90)=18.44ms  p(95)=21.29ms 
+     http_req_failed................: 0.00%   ✓ 0        ✗ 4  
+     http_req_receiving.............: avg=55.83µs min=38.02µs med=54.81µs max=75.67µs  p(90)=70.91µs  p(95)=73.29µs 
+     http_req_sending...............: avg=32.58µs min=9.98µs  med=32.4µs  max=55.54µs  p(90)=54.14µs  p(95)=54.84µs 
+     http_req_tls_handshaking.......: avg=0s      min=0s      med=0s      max=0s       p(90)=0s       p(95)=0s      
+     http_req_waiting...............: avg=8.94ms  min=3.1ms   med=4.33ms  max=24.01ms  p(90)=18.33ms  p(95)=21.17ms 
+     http_reqs......................: 4       1.420249/s
+     iteration_duration.............: avg=2.81s   min=2.81s   med=2.81s   max=2.81s    p(90)=2.81s    p(95)=2.81s   
+     iterations.....................: 1       0.355062/s
+     successful_actions_count.......: 1       0.355062/s
+   ✓ successful_actions_rate........: 100.00% ✓ 1        ✗ 0  
+     vus............................: 1       min=1      max=1
+     vus_max........................: 1       min=1      max=1
