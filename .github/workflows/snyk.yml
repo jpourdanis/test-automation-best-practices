@@ -1,0 +1,105 @@
+name: Snyk Security
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: "0 0 * * 6" # Weekly on Saturdays
+
+permissions:
+  contents: read
+  security-events: write # Required for SARIF upload (if enabled)
+
+jobs:
+  # ==========================================
+  # 1. Snyk Open Source (OSS) Scanning
+  # ==========================================
+  snyk-oss:
+    name: Snyk OSS (Dependencies)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Snyk Scan Root
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high
+
+      - name: Snyk Scan Backend
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          args: --severity-threshold=high --file=server/package.json
+
+  # ==========================================
+  # 2. Snyk Code (SAST) Scanning
+  # ==========================================
+  snyk-code:
+    name: Snyk Code (SAST)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Snyk Code Test
+        uses: snyk/actions/node@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          command: code test
+          args: --severity-threshold=high
+
+  # ==========================================
+  # 3. Snyk Container Scanning
+  # ==========================================
+  snyk-container:
+    name: Snyk Container (Docker)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Build Frontend image for scanning
+        run: docker build -t test-automation-best-practices-app:latest .
+
+      - name: Snyk Container Scan (Frontend)
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: test-automation-best-practices-app:latest
+          args: --severity-threshold=high --file=Dockerfile
+
+      - name: Build Backend image for scanning
+        run: docker build -t test-automation-best-practices-api:latest server/
+
+      - name: Snyk Container Scan (Backend)
+        uses: snyk/actions/docker@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: test-automation-best-practices-api:latest
+          args: --severity-threshold=high --file=server/Dockerfile
+
+  # ==========================================
+  # 4. Snyk Infrastructure as Code (IaC) Scanning
+  # ==========================================
+  snyk-iac:
+    name: Snyk IaC (Docker Compose)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Snyk IAC Test
+        uses: snyk/actions/iac@master
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          file: docker-compose.yml
+          args: --severity-threshold=high

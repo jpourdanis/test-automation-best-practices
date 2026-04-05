@@ -7,7 +7,9 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js index.test.js",
     "test:int": "TESTCONTAINERS_RYUK_DISABLED=true jest index.int.test.js",
     "test:watch": "npm test -- --watch",
-    "mutation": "stryker run"
+    "mutation": "stryker run",
+    "snyk:test": "snyk test",
+    "snyk:container:api": "snyk container test test-automation-best-practices-api:latest --file=Dockerfile"
   },
   "keywords": [],
   "author": "",

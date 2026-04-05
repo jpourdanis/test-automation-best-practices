@@ -46,7 +46,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [25. Allure Reports with Historical Data & Flaky Test Detection](#25-allure-reports-with-historical-data--flaky-test-detection)
     - [26. Mutation Testing with Stryker Mutator](#26-mutation-testing-with-stryker-mutator)
     - [27. Automated Dependency Updates & Version Testing](#27-automated-dependency-updates--version-testing)
-    - [28. Security Scanning for Code & Containers](#28-security-scanning-for-code--containers)
+    - [28. Security Scanning with Trivy & Snyk](#28-security-scanning-with-trivy--snyk)
 
 ---
 
@@ -1792,21 +1792,22 @@ updates:
 
 Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwright E2E and Jest tests against the new dependency context, ensuring flawless integration.
 
-### 28. Security Scanning for Code & Containers
+### 28. Security Scanning with Trivy & Snyk
 
-**Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+**Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) · [`.github/workflows/snyk.yml`](/.github/workflows/snyk.yml)
 
 **What is it?**
-Security scanning adds an automated layer of defense by inspecting your project's codebase, dependencies, and Docker container images for known vulnerabilities (CVEs). We use `npm audit` for Node.js dependencies and **Trivy** for deep filesystem and container scanning.
+Security scanning adds an automated layer of defense by inspecting your project's codebase, dependencies, and Docker container images for known vulnerabilities (CVEs). We use `npm audit` for Node.js dependencies, **Trivy** for deep filesystem and container scanning, and **Snyk** for a developer-first approach including SAST, Container images, and Infrastructure as Code (IaC).
 
 **The Problem**
-Vulnerabilities in third-party npm packages or outdated base Docker images can easily be exploited by attackers if not actively monitored and patched.
+Vulnerabilities in third-party npm packages or outdated base Docker images can easily be exploited by attackers if not actively monitored and patched. Traditional security is often treated as a "gate" at the end of the development cycle, leading to friction and late-stage discovery of vulnerabilities that are expensive to fix.
 
 **Why it matters:**
 
 - **Supply Chain Security:** Many modern applications rely heavily on third-party libraries. If a dependency introduces a security flaw, automated scanning catches it before it ships.
 - **Container Hardening:** Docker images often inherit vulnerabilities from their base images (e.g., outdated OS libraries). Container scanning ensures that the environment your application runs in is as secure as the code itself.
-- **Continuous Monitoring:** By integrating these checks into every CI run, security becomes a continuous process rather than an infrequent manual audit, preventing vulnerable code or images from ever reaching production.
+- **Developer-Focused Feedback:** Snyk provides actionable remediation advice (e.g., "Upgrade to version X.Y.Z") directly in the CLI and CI logs, allowing security to be handled early.
+- **Full Stack Visibility & Governance:** Centralized dashboards allow security teams to monitor projects, set policies, and track remediation across the entire stack—from `package.json` to `docker-compose.yml`.
 
 **How to implement:**
 
@@ -1814,7 +1815,7 @@ Vulnerabilities in third-party npm packages or outdated base Docker images can e
 > **Trivy Supply Chain Incident (March 2026)**
 > In March 2026, malicious actors compromised Aqua Security's build pipeline and injected credential-stealing viruses into `latest` and versions `0.69.4` - `0.69.6` AND performed tag-repointing attacks on the GitHub Action release tags. To avoid execution of weaponized images or binaries, we **strict-pin** the GitHub Action to an immutable commit SHA (`@57a97c7e7821a5776cebc9bb87c984fa69cba8f1`), explicitly pass `trivy-version: '0.69.3'`, and hardcode the Docker image pulls to `:0.69.3`.
 
-Our setup includes local scripts in \`package.json\` for quick developer feedback. In GitHub Actions, we separate the security auditing into parallel jobs for optimal execution speed: one for the filesystem/dependencies, one for the frontend container, and one for the backend container.
+Our setup includes local scripts in \`package.json\` and dedicated GitHub Actions workflows.
 
 **Local Checks (package.json):**
 
@@ -1822,14 +1823,18 @@ Our setup includes local scripts in \`package.json\` for quick developer feedbac
 "scripts": {
   "security:audit": "npm audit --audit-level=high",
   "security:scan:code": "docker run --rm -v $(pwd):/app aquasec/trivy:0.69.3 fs /app",
-  "security:scan": "npm run security:audit"
+  "snyk:test": "snyk test",
+  "snyk:code": "snyk code test",
+  "snyk:container:app": "snyk container test test-automation-best-practices-app:latest --file=Dockerfile",
+  "snyk:iac": "snyk iac test docker-compose.yml"
 }
 ```
 
-**CI Pipeline (ci.yml):**
-We run \`npm audit\` alongside the official \`aquasecurity/trivy-action\` (pinned to safe releases) to catch \`HIGH\` and \`CRITICAL\` vulnerabilities. Scanning the frontend and API Docker images happens in distinct parallel jobs.
+**CI Pipeline (Trivy & Snyk):**
+We run specialized jobs for OSS, Code, Containers, and IaC, ensuring that vulnerabilities are caught and reported efficiently.
 
 ```yaml
+# Trivy (in ci.yml)
 security-testing-fs:
   name: Security Testing (FS & NPM)
   steps:
@@ -1838,27 +1843,22 @@ security-testing-fs:
       with:
         scan-type: 'fs'
 
-security-testing-frontend:
-  name: Container Scanning (Frontend)
-  steps:
-    - run: docker compose build app
-    - uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
-      with:
-        scan-type: 'image'
-        image-ref: 'test-automation-best-practices-app:latest'
-
-security-testing-api:
-  name: Container Scanning (API)
-  steps:
-    - run: docker compose build api
-    - uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
-      with:
-        scan-type: 'image'
-        image-ref: 'test-automation-best-practices-api:latest'
+# Snyk (in snyk.yml)
+jobs:
+  snyk-oss:
+    name: Snyk OSS (Dependencies)
+  snyk-code:
+    name: Snyk Code (SAST)
+  snyk-container:
+    name: Snyk Container (Docker)
+  snyk-iac:
+    name: Snyk IaC (Docker Compose)
 ```
 
-```bash
-npm run security:scan
-```
+**How to verify:**
+
+1. Ensure `SNYK_TOKEN` is added to your GitHub Secrets.
+2. Run `npm run snyk:test` locally after installing the Snyk CLI.
+3. Run `npm run security:audit` for a local NPM audit.
 
 <!-- husky test -->
