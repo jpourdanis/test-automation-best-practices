@@ -1,5 +1,0 @@
-[NETWORK INFO] should load the application and verify core functionality across browsers: 204 GET https://test-automation-best-practices-p4l8ohzob-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] should load the application and verify core functionality across browsers: 200 GET https://test-automation-best-practices-p4l8ohzob-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] should load the application and verify core functionality across browsers: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-p4l8ohzob-jpourdanis-projects.vercel.app&deploymentId=dpl_4tkbyjaSvDfb4FSWt9KBzppU6hA1
-[NETWORK INFO] should load the application and verify core functionality across browsers: 204 HEAD https://test-automation-best-practices-p4l8ohzob-jpourdanis-projects.vercel.app/
-[NETWORK INFO] should load the application and verify core functionality across browsers: 200 GET https://test-automation-best-practices-p4l8ohzob-jpourdanis-projects.vercel.app/api/colors/Yellow
