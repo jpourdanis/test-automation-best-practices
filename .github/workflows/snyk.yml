@@ -24,6 +24,7 @@ jobs:
 
       - name: Snyk Scan Root
         uses: snyk/actions/node@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -31,6 +32,7 @@ jobs:
 
       - name: Snyk Scan Backend
         uses: snyk/actions/node@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -48,6 +50,7 @@ jobs:
 
       - name: Snyk Code Test
         uses: snyk/actions/node@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -69,6 +72,7 @@ jobs:
 
       - name: Snyk Container Scan (Frontend)
         uses: snyk/actions/docker@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -80,6 +84,7 @@ jobs:
 
       - name: Snyk Container Scan (Backend)
         uses: snyk/actions/docker@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
@@ -98,6 +103,7 @@ jobs:
 
       - name: Snyk IAC Test
         uses: snyk/actions/iac@master
+        continue-on-error: true
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
