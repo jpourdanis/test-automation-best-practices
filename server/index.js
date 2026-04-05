@@ -5,8 +5,14 @@ const cors = require('cors')
 const swaggerJsdoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 const { z } = require('zod')
+const rateLimit = require('express-rate-limit')
 
 const app = express()
+
+const createColorLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 create-color requests per windowMs
+})
 
 // ---------------------------------------------------------------------------
 // Validation Schemas
@@ -320,7 +326,7 @@ app.get('/api/colors/:name', async (req, res) => {
  *       500:
  *         description: Server error
  */
-app.post('/api/colors', async (req, res) => {
+app.post('/api/colors', createColorLimiter, async (req, res) => {
   try {
     const parseResult = colorZodSchema.safeParse(req.body)
     if (!parseResult.success) {
