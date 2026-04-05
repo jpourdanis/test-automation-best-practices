@@ -8,10 +8,11 @@ const { z } = require('zod')
 const rateLimit = require('express-rate-limit')
 
 const app = express()
+app.disable('x-powered-by')
 
 const createColorLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // limit each IP to 100 create-color requests per windowMs
+  max: 100 // limit each IP to 100 create-color requests per windowMs
 })
 
 // ---------------------------------------------------------------------------
@@ -279,7 +280,11 @@ app.get('/api/colors', async (req, res) => {
  */
 app.get('/api/colors/:name', async (req, res) => {
   try {
-    const color = await Color.findOne({ name: req.params.name }, { _id: 0, __v: 0 })
+    const { name } = req.params
+    if (!STRICT_NAME_REGEX.test(name)) {
+      return res.status(400).json({ error: STRICT_NAME_MSG })
+    }
+    const color = await Color.findOne({ name }, { _id: 0, __v: 0 })
     if (!color) {
       return res.status(404).json({ error: 'Color not found' })
     }
@@ -399,6 +404,10 @@ app.post('/api/colors', createColorLimiter, async (req, res) => {
  */
 app.put('/api/colors/:name', async (req, res) => {
   try {
+    const currentName = req.params.name
+    if (!STRICT_NAME_REGEX.test(currentName)) {
+      return res.status(400).json({ error: STRICT_NAME_MSG })
+    }
     const parseResult = updateColorZodSchema.safeParse(req.body)
     if (!parseResult.success) {
       return res.status(400).json({ error: parseResult.error.issues[0].message })
@@ -411,7 +420,7 @@ app.put('/api/colors/:name', async (req, res) => {
     if (hex) update.hex = hex
 
     // Find by current name and apply the update, returning the new document
-    const color = await Color.findOneAndUpdate({ name: req.params.name }, update, {
+    const color = await Color.findOneAndUpdate({ name: currentName }, update, {
       new: true,
       projection: { _id: 0, __v: 0 }
     })
@@ -465,7 +474,11 @@ app.put('/api/colors/:name', async (req, res) => {
  */
 app.delete('/api/colors/:name', async (req, res) => {
   try {
-    const color = await Color.findOneAndDelete({ name: req.params.name })
+    const { name } = req.params
+    if (!STRICT_NAME_REGEX.test(name)) {
+      return res.status(400).json({ error: STRICT_NAME_MSG })
+    }
+    const color = await Color.findOneAndDelete({ name })
 
     if (!color) {
       return res.status(404).json({ error: 'Color not found' })
