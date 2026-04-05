@@ -1858,7 +1858,8 @@ jobs:
 **How to verify:**
 
 1. Ensure `SNYK_TOKEN` is added to your GitHub Secrets.
-2. Run `npm run snyk:test` locally after installing the Snyk CLI.
-3. Run `npm run security:audit` for a local NPM audit.
+2. Set the `SNYK_ORG` environment variable locally:
+3. Run `npm run snyk:test` locally after installing the Snyk CLI.
+4. Run `npm run security:audit` for a local NPM audit.
 
 <!-- husky test -->

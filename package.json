@@ -69,10 +69,10 @@
     "security:scan:container:app": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3 image test-automation-best-practices-app:latest",
     "security:scan:container:api": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/.trivyignore:/.trivyignore aquasec/trivy:0.69.3 image --ignorefile /.trivyignore test-automation-best-practices-api:latest",
     "security:scan": "npm run security:audit && npm run security:scan:code",
-    "snyk:test": "npx snyk test",
-    "snyk:code": "npx snyk code test",
-    "snyk:container:app": "npx snyk container test test-automation-best-practices-app:latest --file=Dockerfile",
-    "snyk:iac": "npx snyk iac test docker-compose.yml"
+    "snyk:test": "npx snyk test --org=$SNYK_ORG",
+    "snyk:code": "npx snyk code test --org=$SNYK_ORG",
+    "snyk:container:app": "npx snyk container test test-automation-best-practices-app:latest --file=Dockerfile --org=$SNYK_ORG",
+    "snyk:iac": "npx snyk iac test docker-compose.yml --org=$SNYK_ORG"
   },
   "eslintConfig": {
     "extends": "react-app"
