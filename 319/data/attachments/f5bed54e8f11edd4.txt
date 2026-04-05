@@ -1,1 +1,0 @@
-[NETWORK ERROR] should display colors that do not exist in the database: GET https://test-automation-best-practices-5uwpo9af8-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
