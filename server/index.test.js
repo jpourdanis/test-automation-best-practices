@@ -453,7 +453,7 @@ describe('Server Unit Tests', () => {
     })
 
     it('PUT /api/colors/:name returns 500 when database fails', async () => {
-      jest.spyOn(Color, 'findOneAndUpdate').mockRejectedValue(new Error('DB Error'))
+      jest.spyOn(Color, 'findOne').mockRejectedValue(new Error('DB Error'))
       const res = await request(app).put('/api/colors/Red').send({ hex: '#ff0000' })
       expect(res.status).toBe(500)
       expect(res.body.error).toBe('Failed to update color')
