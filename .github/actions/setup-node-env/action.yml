@@ -21,11 +21,13 @@ runs:
         cache-dependency-path: ${{ inputs.working-directory }}/package-lock.json
 
     - name: Install dependencies
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      env:
+        WORKING_DIR: ${{ inputs.working-directory }}
       run: |
-        if [ "${{ inputs.working-directory }}" == "." ]; then
+        if [ "$WORKING_DIR" == "." ]; then
           npm ci --legacy-peer-deps
         else
           npm ci
         fi
-      shell: bash
-      working-directory: ${{ inputs.working-directory }}
