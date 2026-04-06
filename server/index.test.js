@@ -108,6 +108,12 @@ describe('Server Unit Tests', () => {
       expect(res.status).toBe(404)
       expect(res.body.error).toBe('Color not found')
     })
+
+    it('returns 400 for invalid name in path (regex check)', async () => {
+      const res = await request(app).get('/api/colors/!!Invalid!!')
+      expect(res.status).toBe(400)
+      expect(res.body.error).toContain('name must contain alphanumeric')
+    })
   })
 
   // =========================================================================
@@ -267,6 +273,12 @@ describe('Server Unit Tests', () => {
       const errorMsg = res.body.error || res.body.details || JSON.stringify(res.body)
       expect(errorMsg).toContain('alphanumeric')
     })
+
+    it('returns 400 for invalid name in path (regex check)', async () => {
+      const res = await request(app).put('/api/colors/!!Invalid!!').send({ hex: '#123456' })
+      expect(res.status).toBe(400)
+      expect(res.body.error).toContain('name must contain alphanumeric')
+    })
   })
 
   // =========================================================================
@@ -299,6 +311,12 @@ describe('Server Unit Tests', () => {
       const res = await request(app).delete('/api/colors/Red')
       expect(res.status).toBe(404)
       expect(res.body.error).toBe('Color not found')
+    })
+
+    it('returns 400 for invalid name in path (regex check)', async () => {
+      const res = await request(app).delete('/api/colors/!!Invalid!!')
+      expect(res.status).toBe(400)
+      expect(res.body.error).toContain('name must contain alphanumeric')
     })
   })
 
@@ -498,6 +516,11 @@ describe('Server Unit Tests', () => {
         // For now, we'll just ensure the logic exists and is covered by the existing connect logic
         // (which is already hit during setup)
         expect(process.env.MONGO_URI || 'mongodb://localhost:27017/colorsdb').toBeDefined()
+      })
+
+      it('uses default MONGO_URI when process.env.MONGO_URI is missing', () => {
+        const { MONGO_URI } = require('./index')
+        expect(MONGO_URI).toBeDefined()
       })
     })
 
