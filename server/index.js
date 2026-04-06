@@ -14,7 +14,7 @@ app.disable('x-powered-by')
 // ---------------------------------------------------------------------------
 
 // Strict regex: allows spaces, but REQUIRES at least one letter or number
-const STRICT_NAME_REGEX = /^[a-zA-Z0-9 ]*[a-zA-Z0-9][a-zA-Z0-9 ]*$/
+const STRICT_NAME_REGEX = /^(?=.*[a-zA-Z0-9])[a-zA-Z0-9 ]+$/
 const STRICT_NAME_MSG =
   'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
 
@@ -117,7 +117,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '^[a-zA-Z0-9 ]*[a-zA-Z0-9][a-zA-Z0-9 ]*$'
+ *           pattern: '^(?=.*[a-zA-Z0-9])[a-zA-Z0-9 ]+$'
  *           description: Human-readable color name
  *           example: Turquoise
  *         hex:
@@ -141,7 +141,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '^[a-zA-Z0-9 ]*[a-zA-Z0-9][a-zA-Z0-9 ]*$'
+ *           pattern: '^(?=.*[a-zA-Z0-9])[a-zA-Z0-9 ]+$'
  *           description: New name for the color
  *           example: Turquoise
  *         hex:
@@ -244,6 +244,40 @@ app.get('/api/colors', async (req, res) => {
 // ---------------------------------------------------------------------------
 // GET /api/colors/:name – Get a single color by name
 // ---------------------------------------------------------------------------
+/**
+ * @swagger
+ * /api/colors/{name}:
+ *   get:
+ *     summary: Retrieve a single color by name
+ *     description: Looks up a color by its name (case-sensitive).
+ *     tags: [Colors]
+ *     parameters:
+ *       - in: path
+ *         name: name
+ *         required: true
+ *         schema:
+ *           type: string
+ *           pattern: '^(?=.*[a-zA-Z0-9])[a-zA-Z0-9 ]+$'
+ *         description: The color name to look up
+ *         example: Red
+ *     responses:
+ *       200:
+ *         description: The matching color
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Color'
+ *       400:
+ *         description: Invalid color name format
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       404:
+ *         description: Color not found
+ *       500:
+ *         description: Server error
+ */
 
 app.get('/api/colors/:name', async (req, res) => {
   try {
@@ -251,7 +285,7 @@ app.get('/api/colors/:name', async (req, res) => {
     if (!STRICT_NAME_REGEX.test(name)) {
       return res.status(400).json({ error: STRICT_NAME_MSG })
     }
-    const color = await Color.findOne({ name }, { _id: 0, __v: 0 })
+    const color = await Color.findOne({ name: String(name) }, { _id: 0, __v: 0 })
     if (!color) {
       return res.status(404).json({ error: 'Color not found' })
     }
@@ -307,13 +341,13 @@ app.post('/api/colors', async (req, res) => {
     const { name, hex } = parseResult.data
 
     // Prevent duplicate color names
-    const existing = await Color.findOne({ name })
+    const existing = await Color.findOne({ name: String(name) })
     if (existing) {
       return res.status(409).json({ error: `Color "${name}" already exists` })
     }
 
     // Create and persist the new color
-    const color = await Color.create({ name, hex })
+    const color = await Color.create({ name: String(name), hex: String(hex) })
 
     // Return the created color without internal fields
     res.status(201).json({ name: color.name, hex: color.hex })
@@ -343,7 +377,7 @@ app.post('/api/colors', async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           pattern: '^[a-zA-Z0-9 ]*[a-zA-Z0-9][a-zA-Z0-9 ]*$'
+ *           pattern: '^(?=.*[a-zA-Z0-9])[a-zA-Z0-9 ]+$'
  *         description: Current name of the color to update
  *         example: Turquoise
  *     requestBody:
@@ -382,22 +416,20 @@ app.put('/api/colors/:name', async (req, res) => {
     }
     const { name, hex } = parseResult.data
 
-    // Build the update payload – only include provided fields
-    const update = {}
-    if (name) update.name = name
-    if (hex) update.hex = hex
-
-    // Find by current name and apply the update, returning the new document
-    const color = await Color.findOneAndUpdate({ name: currentName }, update, {
-      new: true,
-      projection: { _id: 0, __v: 0 }
-    })
-
+    // Find the existing color by its current name
+    const color = await Color.findOne({ name: String(currentName) })
     if (!color) {
       return res.status(404).json({ error: 'Color not found' })
     }
 
-    res.json(color)
+    // Apply updates
+    if (typeof name === 'string') color.name = name
+    if (typeof hex === 'string') color.hex = hex
+
+    // Save and return protected document
+    await color.save()
+    const result = { name: color.name, hex: color.hex }
+    res.json(result)
   } catch (error) {
     // Stryker disable next-line all: error logging only
     console.error('PUT /api/colors/:name error:', error)
@@ -442,7 +474,11 @@ app.put('/api/colors/:name', async (req, res) => {
  */
 app.delete('/api/colors/:name', async (req, res) => {
   try {
-    const color = await Color.findOneAndDelete({ name: req.params.name })
+    const { name } = req.params
+    if (!STRICT_NAME_REGEX.test(name)) {
+      return res.status(400).json({ error: STRICT_NAME_MSG })
+    }
+    const color = await Color.findOneAndDelete({ name: String(name) })
 
     if (!color) {
       return res.status(404).json({ error: 'Color not found' })
