@@ -248,7 +248,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: "test-automation-best-practices-app:latest"
-          args: --org=${{ vars.SNYK_ORG || secrets.SNYK_ORG }} --file=Dockerfile
+          args: --org=${{ secrets.SNYK_ORG }} --file=Dockerfile
 
       - name: Upload Trivy Frontend Allure Results
         if: always()
@@ -298,7 +298,7 @@ jobs:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         with:
           image: "test-automation-best-practices-api:latest"
-          args: --org=${{ vars.SNYK_ORG || secrets.SNYK_ORG }} --file=server/Dockerfile
+          args: --org=${{ secrets.SNYK_ORG }} --file=server/Dockerfile
 
       - name: Upload Trivy API Allure Results
         if: always()
