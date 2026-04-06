@@ -14,7 +14,7 @@ app.disable('x-powered-by')
 // ---------------------------------------------------------------------------
 
 // Strict regex: allows spaces, but REQUIRES at least one letter or number
-const STRICT_NAME_REGEX = /^[a-zA-Z0-9]([a-zA-Z0-9 ]*[a-zA-Z0-9])?$/
+const STRICT_NAME_REGEX = /^[a-zA-Z0-9]([a-zA-Z0-9 +]*[a-zA-Z0-9])?$/
 const STRICT_NAME_MSG =
   'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
 
@@ -117,7 +117,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9 ]*[a-zA-Z0-9])?$'
+ *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20+]*[a-zA-Z0-9])?$'
  *           description: Human-readable color name
  *           example: Turquoise
  *         hex:
@@ -141,7 +141,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9 ]*[a-zA-Z0-9])?$'
+ *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20+]*[a-zA-Z0-9])?$'
  *           description: New name for the color
  *           example: Turquoise
  *         hex:
@@ -257,7 +257,7 @@ app.get('/api/colors', async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9 ]*[a-zA-Z0-9])?$'
+ *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20+]*[a-zA-Z0-9])?$'
  *         description: The color name to look up
  *         example: Red
  *     responses:
@@ -377,7 +377,7 @@ app.post('/api/colors', async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9 ]*[a-zA-Z0-9])?$'
+ *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20+]*[a-zA-Z0-9])?$'
  *         description: Current name of the color to update
  *         example: Turquoise
  *     requestBody:
@@ -454,7 +454,7 @@ app.put('/api/colors/:name', async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9 ]*[a-zA-Z0-9])?$'
+ *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20+]*[a-zA-Z0-9])?$'
  *         description: Name of the color to delete
  *         example: Yellow
  *     responses:

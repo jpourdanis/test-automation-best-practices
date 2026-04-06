@@ -46,46 +46,6 @@ jobs:
           VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
   # ==========================================
-  # 1. SNYK SECURITY SCANNING (SAST, SCA, IaC)
-  # ==========================================
-  snyk-security:
-    name: Snyk Security Scan
-    runs-on: ubuntu-latest
-    env:
-      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v6
-
-      - name: Snyk Code Scan (SAST)
-        uses: snyk/actions/node@v1.0.0
-        continue-on-error: true
-        with:
-          command: code test
-          args: --org=${{ secrets.SNYK_ORG }}
-
-      - name: Snyk Open Source Scan (SCA - Root)
-        uses: snyk/actions/node@v1.0.0
-        continue-on-error: true
-        with:
-          command: test
-          args: --org=${{ secrets.SNYK_ORG }}
-
-      - name: Snyk Open Source Scan (SCA - Server)
-        uses: snyk/actions/node@v1.0.0
-        continue-on-error: true
-        with:
-          command: test
-          args: --org=${{ secrets.SNYK_ORG }} --file=server/package.json
-
-      - name: Snyk Infrastructure as Code (IaC) Scan
-        uses: snyk/actions/node@v1.0.0
-        continue-on-error: true
-        with:
-          command: iac test
-          args: --org=${{ secrets.SNYK_ORG }} docker-compose.yml
-
-  # ==========================================
   # 1a. UNIT TESTING (API)
   # ==========================================
   backend-unit-tests:
@@ -172,6 +132,8 @@ jobs:
     name: Security Tests (Frontend & Backend)
     needs: [backend-unit-tests, frontend-unit-tests]
     runs-on: ubuntu-latest
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -200,6 +162,13 @@ jobs:
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-fs.xml"
+
+      - name: Snyk Infrastructure as Code (IaC) Scan
+        uses: snyk/actions/node@v1.0.0
+        continue-on-error: true
+        with:
+          command: iac test
+          args: --org=${{ secrets.SNYK_ORG }} docker-compose.yml
 
       - name: Upload Trivy FS Allure Results
         if: always() # Ensure this runs even if Trivy fails the build
@@ -837,7 +806,6 @@ jobs:
         security-testing-fs,
         security-testing-frontend,
         security-testing-api,
-        snyk-security,
         tests-misc,
         api-property-testing,
         e2e-sharded,
@@ -895,7 +863,6 @@ jobs:
         security-testing-fs,
         security-testing-frontend,
         security-testing-api,
-        snyk-security,
         tests-misc,
         api-property-testing,
         e2e-sharded,
