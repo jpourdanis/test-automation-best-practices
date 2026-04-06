@@ -1,2 +1,0 @@
-[NETWORK ERROR] should meet the accessibility threshold using Google Lighthouse: GET https://test-automation-best-practices-gi93xtng3-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] should meet the accessibility threshold using Google Lighthouse: HEAD https://test-automation-best-practices-gi93xtng3-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
