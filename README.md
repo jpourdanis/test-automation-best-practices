@@ -1794,7 +1794,7 @@ Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwrigh
 
 ### 28. Security Scanning with Trivy & Snyk
 
-**Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml) · [`.github/workflows/snyk.yml`](/.github/workflows/snyk.yml)
+**Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
 **What is it?**
 Security scanning adds an automated layer of defense by inspecting your project's codebase, dependencies, and Docker container images for known vulnerabilities (CVEs). We use `npm audit` for Node.js dependencies, **Trivy** for deep filesystem and container scanning, and **Snyk** for a developer-first approach including SAST, Container images, and Infrastructure as Code (IaC).
@@ -1843,16 +1843,10 @@ security-testing-fs:
       with:
         scan-type: 'fs'
 
-# Snyk (in snyk.yml)
-jobs:
-  snyk-oss:
-    name: Snyk OSS (Dependencies)
-  snyk-code:
-    name: Snyk Code (SAST)
-  snyk-container:
-    name: Snyk Container (Docker)
-  snyk-iac:
-    name: Snyk IaC (Docker Compose)
+# Integrated Snyk (in ci.yml)
+- **security-testing-fs**: Runs `snyk iac test` on the Docker Compose configuration.
+- **security-testing-frontend**: Runs `snyk container test` on the Frontend production image.
+- **security-testing-api**: Runs `snyk container test` on the Backend API production image.
 ```
 
 **How to verify:**
