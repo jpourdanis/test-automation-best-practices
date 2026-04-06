@@ -27,7 +27,7 @@ jobs:
   # ==========================================
   static-code-analysis:
     name: Static Code Analysis
-    needs: [publish-reports]
+    needs: [backend-unit-tests, frontend-unit-tests]
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code so the workflow can access it
@@ -46,11 +46,23 @@ jobs:
           # Lint the full codebase on main branch pushes, otherwise only lint changed files in PRs
           VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
-      - name: Download Merged Coverage
+      - name: Download Backend Unit Coverage
         uses: actions/download-artifact@v8
         with:
-          name: merged-lcov
-          path: coverage
+          name: nyc-output-backend-unit
+          path: coverage-merge
+
+      - name: Download Frontend Unit Coverage
+        uses: actions/download-artifact@v8
+        with:
+          name: nyc-output-frontend-unit
+          path: coverage-merge
+
+      - name: Merge and Generate Unit Coverage Report
+        run: |
+          mkdir -p coverage/merged
+          npx nyc merge coverage-merge coverage/merged/coverage-final.json
+          npx nyc report --temp-dir=coverage/merged --reporter=lcov --report-dir=coverage
 
       - name: SonarQube Scan
         uses: sonarsource/sonarqube-scan-action@v5.0.0
