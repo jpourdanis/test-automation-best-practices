@@ -1,3 +1,0 @@
-[NETWORK INFO] should not have any automatically detectable accessibility issues: 204 GET https://test-automation-best-practices-9dzt7ljfi-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-9dzt7ljfi-jpourdanis-projects.vercel.app&deploymentId=dpl_73bPEuNWQjAcAcNty4rnxA3PBW1o
-[NETWORK INFO] should not have any automatically detectable accessibility issues: 204 HEAD https://test-automation-best-practices-9dzt7ljfi-jpourdanis-projects.vercel.app/
