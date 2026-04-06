@@ -129,5 +129,10 @@
     "*.md": [
       "npx prettier --write"
     ]
+  },
+  "nyc": {
+    "exclude": [
+      "src/setupProxy.js"
+    ]
   }
 }
