@@ -1,0 +1,3 @@
+[NETWORK INFO] should display colors that do not exist in the database: 200 GET https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] should display colors that do not exist in the database: 204 GET https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] should display colors that do not exist in the database: 200 GET https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/api/colors/Magenta

@@ -1,0 +1,18 @@
+[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] handle initial fetch error: POST https://vercel.live/login/validate?hostname=test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app&deploymentId=dpl_FWre2sk7iaPxLpyT7dJkqBovLoC4 - net::ERR_ABORTED
+[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/api/colors - net::ERR_ABORTED
+[CONSOLE ERROR] handle initial fetch error: Failed to fetch colors: TypeError: Failed to fetch
+    at https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/static/js/main.7c86dc5e.js:2:208852
+    at Ds (https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/static/js/main.7c86dc5e.js:2:105458)
+    at t.unstable_runWithPriority (https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/static/js/main.7c86dc5e.js:2:130083)
+    at Wa (https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/static/js/main.7c86dc5e.js:2:45817)
+    at zs (https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/static/js/main.7c86dc5e.js:2:104923)
+    at https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/static/js/main.7c86dc5e.js:2:104835
+    at $ (https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/static/js/main.7c86dc5e.js:2:129142)
+    at w.port1.onmessage (https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/static/js/main.7c86dc5e.js:2:127866)
+[API ERROR] handle initial fetch error: 500 GET https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/api/colors
+[CONSOLE ERROR] handle initial fetch error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[CONSOLE ERROR] handle initial fetch error: Failed to fetch colors: Error: HTTP error! status: 500
+    at https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/static/js/main.7c86dc5e.js:2:208897
+[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/api/colors - net::ERR_ABORTED
+[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-qjenpalct-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
