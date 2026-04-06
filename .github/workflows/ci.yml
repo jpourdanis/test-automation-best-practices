@@ -65,7 +65,7 @@ jobs:
           npx nyc report --temp-dir=coverage/merged --reporter=lcov --report-dir=coverage
 
       - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v5.0.0
+        uses: sonarsource/sonarqube-scan-action@v6.0.0
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
