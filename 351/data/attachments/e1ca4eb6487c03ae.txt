@@ -1,5 +1,0 @@
-[NETWORK ERROR] should gracefully handle a color not found in the database: GET https://test-automation-best-practices-bw9tnom9c-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[API ERROR] should gracefully handle a color not found in the database: 404 GET https://test-automation-best-practices-bw9tnom9c-jpourdanis-projects.vercel.app/api/colors/Red
-[CONSOLE ERROR] should gracefully handle a color not found in the database: Failed to load resource: the server responded with a status of 404 (Not Found)
-[CONSOLE ERROR] should gracefully handle a color not found in the database: Failed to fetch hex for Red Error: HTTP error! status: 404
-    at https://test-automation-best-practices-bw9tnom9c-jpourdanis-projects.vercel.app/static/js/main.7c86dc5e.js:2:210452
