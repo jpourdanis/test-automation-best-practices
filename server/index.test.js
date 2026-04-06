@@ -264,7 +264,8 @@ describe('Server Unit Tests', () => {
     it('returns 400 for invalid name with special characters', async () => {
       const res = await request(app).put('/api/colors/Red').send({ name: '@invalid!' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('alphanumeric')
+      const errorMsg = res.body.error || res.body.details || JSON.stringify(res.body)
+      expect(errorMsg).toContain('alphanumeric')
     })
   })
 

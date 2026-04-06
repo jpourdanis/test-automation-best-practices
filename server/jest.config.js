@@ -2,6 +2,9 @@ module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/*.test.js'],
   testTimeout: 30000,
+  collectCoverage: true,
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'json', 'clover'],
   reporters: [
     'default',
     [
