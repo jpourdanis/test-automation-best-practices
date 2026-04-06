@@ -8,6 +8,7 @@
     "test:int": "TESTCONTAINERS_RYUK_DISABLED=true jest index.int.test.js",
     "test:watch": "npm test -- --watch",
     "mutation": "stryker run",
+    "coverage": "npm test -- --coverage",
     "snyk:test": "snyk test --org=$SNYK_ORG",
     "snyk:container:api": "snyk container test test-automation-best-practices-api:latest --file=Dockerfile --org=$SNYK_ORG"
   },

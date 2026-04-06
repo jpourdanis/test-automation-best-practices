@@ -3,6 +3,7 @@ module.exports = {
   testMatch: ['**/*.test.js'],
   testTimeout: 30000,
   collectCoverage: true,
+  collectCoverageFrom: ['index.js'],
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov', 'json', 'clover'],
   reporters: [

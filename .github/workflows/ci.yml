@@ -95,7 +95,7 @@ jobs:
       - name: Run Backend Unit Tests
         env:
           JEST_JUNIT_OUTPUT_NAME: junit-api-unit-tests.xml
-        run: npm test
+        run: npm run coverage
         working-directory: server
 
       - name: Upload Backend Unit Test Allure Results
