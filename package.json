@@ -61,7 +61,8 @@
     "test:perf:ui:load": "K6_BROWSER_ENABLED=true TEST_TYPE=load k6 run performance/ui-performance.spec.ts",
     "test:perf": "npm run test:perf:ui:smoke",
     "test:api:schemathesis": "docker run --rm schemathesis/schemathesis run http://host.docker.internal:5001/openapi.json",
-    "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-frontend-unit-tests.xml react-scripts test --watchAll=false --reporters=default --reporters=jest-junit",
+    "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-frontend-unit-tests.xml react-scripts test --watchAll=false --reporters=default --reporters=jest-junit --coverage",
+    "sonar:scan": "sonar-scanner",
     "mutation:frontend": "stryker run",
     "docker:up": "docker-compose up -d --build",
     "security:audit": "npm audit --audit-level=high",
@@ -110,6 +111,7 @@
     "playwright-bdd": "^8.5.0",
     "playwright-lighthouse": "^4.0.0",
     "snyk": "^1.1303.2",
+    "sonarqube-scanner": "^4.3.5",
     "zod": "^4.3.6"
   },
   "lint-staged": {

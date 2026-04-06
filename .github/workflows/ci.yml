@@ -27,6 +27,7 @@ jobs:
   # ==========================================
   static-code-analysis:
     name: Static Code Analysis
+    needs: [publish-reports]
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code so the workflow can access it
@@ -44,6 +45,27 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # Lint the full codebase on main branch pushes, otherwise only lint changed files in PRs
           VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
+
+      - name: Download Merged Coverage
+        uses: actions/download-artifact@v8
+        with:
+          name: merged-lcov
+          path: coverage
+
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v5.0.0
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+        with:
+          args: >
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+      - name: SonarQube Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@v1.2.0
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   # ==========================================
   # 1a. UNIT TESTING (API)
@@ -71,6 +93,17 @@ jobs:
         with:
           name: allure-results-api-unit-testing
           path: server/allure-results/
+          retention-days: 1
+
+      - name: Upload Backend Unit Coverage
+        if: always()
+        run: |
+          mkdir -p coverage-unit
+          cp server/coverage/coverage-final.json coverage-unit/backend-unit.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nyc-output-backend-unit
+          path: coverage-unit/backend-unit.json
           retention-days: 1
 
   # ==========================================
@@ -102,6 +135,17 @@ jobs:
           path: server/allure-results/
           retention-days: 1
 
+      - name: Upload Backend Integration Coverage
+        if: always()
+        run: |
+          mkdir -p coverage-int
+          cp server/coverage/coverage-final.json coverage-int/backend-int.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nyc-output-backend-int
+          path: coverage-int/backend-int.json
+          retention-days: 1
+
   # ==========================================
   # 1b. UNIT TESTING (Frontend)
   # ==========================================
@@ -123,6 +167,17 @@ jobs:
         with:
           name: allure-results-frontend-unit-testing
           path: allure-results/
+          retention-days: 1
+
+      - name: Upload Frontend Unit Coverage
+        if: always()
+        run: |
+          mkdir -p coverage-frontend
+          cp coverage/coverage-final.json coverage-frontend/frontend-unit.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nyc-output-frontend-unit
+          path: coverage-frontend/frontend-unit.json
           retention-days: 1
 
   # ==========================================
@@ -957,6 +1012,13 @@ jobs:
           else
             echo "Skipping coverage check: lcov.info is missing or empty."
           fi
+
+      - name: Upload merged coverage (for Sonar)
+        uses: actions/upload-artifact@v7
+        with:
+          name: merged-lcov
+          path: coverage/lcov.info
+          retention-days: 1
 
       # Publishes the merged test coverage to Coveralls dashboard
       - name: Upload coverage to Coveralls
