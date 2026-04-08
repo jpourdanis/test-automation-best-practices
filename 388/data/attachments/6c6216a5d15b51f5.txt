@@ -1,0 +1,5 @@
+[NETWORK INFO] handle initial fetch with empty data: 204 GET https://test-automation-best-practices-6vxqyobol-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] handle initial fetch with empty data: 200 GET https://test-automation-best-practices-6vxqyobol-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] handle initial fetch with empty data: 204 GET https://test-automation-best-practices-6vxqyobol-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] handle initial fetch with empty data: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-6vxqyobol-jpourdanis-projects.vercel.app&deploymentId=dpl_3J2WLVWWZDTtZjScASCmvLrS9VnW
+[NETWORK INFO] handle initial fetch with empty data: 204 HEAD https://test-automation-best-practices-6vxqyobol-jpourdanis-projects.vercel.app/
