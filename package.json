@@ -26,7 +26,7 @@
   "dependencies": {
     "@playwright/test": "^1.59.1",
     "@types/react": "^17.0.38",
-    "@types/react-dom": "^17.0.11",
+    "@types/react-dom": "^19.2.3",
     "babel-plugin-istanbul": "^6.1.1",
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
@@ -35,7 +35,7 @@
     "nyc": "^18.0.0",
     "react": "^17.0.2",
     "react-app-rewired": "^2.1.11",
-    "react-dom": "^17.0.2",
+    "react-dom": "^19.2.4",
     "react-i18next": "^17.0.1",
     "react-scripts": "5.0.0",
     "typescript": "^6.0.2"
