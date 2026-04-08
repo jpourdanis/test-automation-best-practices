@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.58.2-noble AS base
+FROM mcr.microsoft.com/playwright:v1.59.1-noble AS base
 
 WORKDIR /app
 ENV CI=true
