@@ -256,7 +256,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Build Frontend Docker image for container scanning
-        run: docker compose build app
+        run: docker compose build web
 
       - name: Create Allure results directory
         run: mkdir -p allure-results
@@ -493,8 +493,8 @@ jobs:
                 scope = "buildkit"
 
       # Spins up the application frontend, backend API, and MongoDB database via Docker
-      - name: Start app service (Docker Compose)
-        run: docker compose up -d --build --wait app api mongo
+      - name: Start web service (Docker Compose)
+        run: docker compose up -d --build --wait web api mongo
 
       # Runs fast API tests first; failures here indicate backend issues
       - name: Run API tests
@@ -685,8 +685,8 @@ jobs:
                 scope = "buildkit"
 
       # Completely isolated environment spin-up for this exact shard runner
-      - name: Start app service (Docker Compose)
-        run: docker compose up -d --build --wait app api mongo
+      - name: Start web service (Docker Compose)
+        run: docker compose up -d --build --wait web api mongo
 
       # Executes precisely the assigned fraction (shard) of the test suite (skipping visual tests)
       - name: Run sharded e2e tests
@@ -832,7 +832,7 @@ jobs:
 
       # Spins up the application frontend, backend API, and MongoDB database via Docker
       - name: Start Full Stack (Docker Compose)
-        run: docker compose up -d --build --wait app api mongo
+        run: docker compose up -d --build --wait web api mongo
 
       - name: Install DBus for Headless Browser
         run: sudo apt-get update && sudo apt-get install -y dbus dbus-x11
