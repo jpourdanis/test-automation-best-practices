@@ -24,7 +24,7 @@
     "node-forge": "^1.3.0"
   },
   "dependencies": {
-    "@playwright/test": "^1.51.1",
+    "@playwright/test": "^1.59.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.0.0",
     "babel-plugin-istanbul": "^6.1.1",
@@ -129,6 +129,11 @@
     ],
     "*.md": [
       "npx prettier --write"
+    ]
+  },
+  "nyc": {
+    "exclude": [
+      "src/setupProxy.js"
     ]
   }
 }
