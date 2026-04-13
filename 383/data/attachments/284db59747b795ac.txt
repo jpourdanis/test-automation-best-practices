@@ -1,2 +1,0 @@
-[NETWORK INFO] handle initial fetch error: 204 GET https://test-automation-best-practices-4ym9wdaz7-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] handle initial fetch error: 204 GET https://test-automation-best-practices-4ym9wdaz7-jpourdanis-projects.vercel.app/.well-known/vercel/jwe

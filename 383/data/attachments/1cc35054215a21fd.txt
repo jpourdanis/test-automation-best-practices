@@ -1,5 +1,0 @@
-[NETWORK INFO] should create dynamic random color via API and verify through UI: 204 GET https://test-automation-best-practices-4ym9wdaz7-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] should create dynamic random color via API and verify through UI: 200 GET https://test-automation-best-practices-4ym9wdaz7-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] should create dynamic random color via API and verify through UI: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-4ym9wdaz7-jpourdanis-projects.vercel.app&deploymentId=dpl_7ZYXwk8uAX1kynZXgwJUmy7ZkdVo
-[NETWORK INFO] should create dynamic random color via API and verify through UI: 204 HEAD https://test-automation-best-practices-4ym9wdaz7-jpourdanis-projects.vercel.app/
-[NETWORK INFO] should create dynamic random color via API and verify through UI: 200 GET https://test-automation-best-practices-4ym9wdaz7-jpourdanis-projects.vercel.app/api/colors/uTO2iXnJ0Ueg28s

@@ -1,0 +1,4 @@
+[API ERROR] should gracefully handle a color not found in the database: 404 GET http://localhost:3000/api/colors/Red
+[CONSOLE ERROR] should gracefully handle a color not found in the database: Failed to load resource: the server responded with a status of 404 (Not Found)
+[CONSOLE ERROR] should gracefully handle a color not found in the database: Failed to fetch hex for Red Error: HTTP error! status: 404
+    at handleColorClick (http://localhost:3000/static/js/bundle.js:1045:15)
