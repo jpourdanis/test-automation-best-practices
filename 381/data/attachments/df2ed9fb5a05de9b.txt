@@ -1,1 +1,0 @@
-[NETWORK ERROR] should render correctly on mobile viewport: GET https://app:3000/ - net::ERR_SSL_PROTOCOL_ERROR
