@@ -5,7 +5,7 @@ describe('Frontend Unit Tests', () => {
     test('should be initialized with correct settings', () => {
       expect(i18n.isInitialized).toBe(true)
       expect(i18n.options.fallbackLng).toContain('en')
-      expect(i18n.options.debug).toBe(true)
+      expect(i18n.options.debug).toBe(process.env.NODE_ENV !== 'test')
     })
 
     test('should have defined resources for en, es, el', () => {
