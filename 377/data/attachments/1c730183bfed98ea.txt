@@ -1,4 +1,0 @@
-[NETWORK INFO] check Turquoise ( #1abc9c) is the default background color.: 200 GET https://test-automation-best-practices-ozzqixeb9-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] check Turquoise ( #1abc9c) is the default background color.: 204 GET https://test-automation-best-practices-ozzqixeb9-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] check Turquoise ( #1abc9c) is the default background color.: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-ozzqixeb9-jpourdanis-projects.vercel.app&deploymentId=dpl_CPdW7HuXWMJGVLp4XkZoFEgWnS8t
-[NETWORK INFO] check Turquoise ( #1abc9c) is the default background color.: 204 HEAD https://test-automation-best-practices-ozzqixeb9-jpourdanis-projects.vercel.app/
