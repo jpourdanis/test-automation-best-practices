@@ -1,2 +1,0 @@
-[NETWORK ERROR] verify Red ( #e74c3c ) is applied as the background color: GET https://test-automation-best-practices-80x0oc5e8-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] verify Red ( #e74c3c ) is applied as the background color: HEAD https://test-automation-best-practices-80x0oc5e8-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
