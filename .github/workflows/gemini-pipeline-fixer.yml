@@ -57,7 +57,7 @@ jobs:
           echo "Asking Gemini to investigate the pipeline failure..."
 
           # Run the Gemini CLI Agent to analyze the logs and edit the local files
-          gemini-cli agent --task "The GitHub Actions CI pipeline just failed. Here are the error logs from the failed steps: $LOGS. Please analyze the repository code to find the root cause of this failure, and modify the source code files locally to fix the broken tests or build errors."
+          gemini agent --task "The GitHub Actions CI pipeline just failed. Here are the error logs from the failed steps: $LOGS. Please analyze the repository code to find the root cause of this failure, and modify the source code files locally to fix the broken tests or build errors."
 
       - name: Create Pull Request with the AI Fix
         uses: peter-evans/create-pull-request@v6
