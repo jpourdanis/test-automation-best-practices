@@ -64,11 +64,11 @@ jobs:
           npx nyc merge coverage-merge coverage/merged/coverage-final.json
           npx nyc report --temp-dir=coverage/merged --reporter=lcov --report-dir=coverage
 
-      - name: SonarQube Scan
-        uses: sonarsource/sonarqube-scan-action@v5.0.0
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
         env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         with:
           args: >
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
@@ -867,6 +867,8 @@ jobs:
   # ==========================================
   e2e-production-tests:
     name: E2E Tests Against Ephemeral Environment
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     needs:
       [
         security-testing-fs,
@@ -894,10 +896,12 @@ jobs:
       - uses: ./.github/actions/setup-node-env
 
       - name: Install Playwright browsers
+        if: env.VERCEL_TOKEN != ''
         run: npx playwright install --with-deps
 
       - name: Deploy to Vercel (Preview)
         id: vercel-deploy
+        if: env.VERCEL_TOKEN != ''
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
@@ -906,12 +910,13 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run E2E tests against Vercel Preview
+        if: env.VERCEL_TOKEN != ''
         env:
           BASE_URL: ${{ steps.vercel-deploy.outputs.preview-url }}
         run: npm run test:e2e:prod
 
       - name: Upload Allure Results Production
-        if: always()
+        if: always() && env.VERCEL_TOKEN != ''
         uses: actions/upload-artifact@v7
         with:
           name: allure-results-production-tests
