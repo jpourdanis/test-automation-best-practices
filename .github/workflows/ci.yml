@@ -43,6 +43,7 @@ jobs:
         uses: oxsecurity/megalinter/flavors/javascript@v9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PARALLEL_PROCESS_NUMBER: 2
           # Lint the full codebase on main branch pushes, otherwise only lint changed files in PRs
           VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
 
