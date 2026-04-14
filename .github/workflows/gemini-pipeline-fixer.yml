@@ -36,10 +36,17 @@ jobs:
         run: |
           # Use GitHub CLI to extract ONLY the logs of the failed steps
           # This prevents overflowing the AI with successful log noise
-          gh run view $RUN_ID --log-failed > failed_logs.txt
+          if ! gh run view $RUN_ID --log-failed > failed_logs.txt; then
+            echo "Error: gh run view failed to extract logs for run $RUN_ID"
+            echo "Placeholder: Log extraction failed or no logs were found." > failed_logs.txt
+          fi
 
           # Optional: truncate if logs are massively huge (over 100k lines)
-          tail -n 2000 failed_logs.txt > failed_logs_trimmed.txt
+          if [ -s failed_logs.txt ]; then
+            tail -n 2000 failed_logs.txt > failed_logs_trimmed.txt
+          else
+            echo "Placeholder: failed_logs.txt is empty or does not exist." > failed_logs_trimmed.txt
+          fi
 
       - name: Analyze Logs and Generate Fix
         env:
