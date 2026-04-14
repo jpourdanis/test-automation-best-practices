@@ -1,0 +1,5 @@
+[NETWORK INFO] changing color to Yellow should reflect in UI and DOM: 204 GET https://test-automation-best-practices-r9rakgcld-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] changing color to Yellow should reflect in UI and DOM: 200 GET https://test-automation-best-practices-r9rakgcld-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] changing color to Yellow should reflect in UI and DOM: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-r9rakgcld-jpourdanis-projects.vercel.app&deploymentId=dpl_AjkXmGTErs6ZC6camv6uoy8nLZK7
+[NETWORK INFO] changing color to Yellow should reflect in UI and DOM: 204 HEAD https://test-automation-best-practices-r9rakgcld-jpourdanis-projects.vercel.app/
+[NETWORK INFO] changing color to Yellow should reflect in UI and DOM: 200 GET https://test-automation-best-practices-r9rakgcld-jpourdanis-projects.vercel.app/api/colors/Yellow
