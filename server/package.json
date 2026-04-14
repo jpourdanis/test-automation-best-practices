@@ -29,7 +29,7 @@
   "devDependencies": {
     "@stryker-mutator/core": "^9.6.0",
     "@stryker-mutator/jest-runner": "^9.6.0",
-    "@testcontainers/mongodb": "^11.13.0",
+    "@testcontainers/mongodb": "^11.14.0",
     "jest": "^30.3.0",
     "jest-junit": "^16.0.0",
     "mongodb-memory-server": "^11.0.1",
