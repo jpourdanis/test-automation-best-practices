@@ -1,0 +1,188 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/coverage.spec.ts >> check Turquoise ( #1abc9c) is the default background color.
+- Location: e2e/tests/coverage.spec.ts:35:5
+
+# Error details
+
+```
+Error: expect(locator).toHaveCSS(expected) failed
+
+Locator:  locator('header')
+Expected: "rgb(26, 188, 156)"
+Received: "rgb(241, 196, 15)"
+Timeout:  5000ms
+
+Call log:
+  - Expect "toHaveCSS" with timeout 5000ms
+  - waiting for locator('header')
+    9 × locator resolved to <header class="App-header">…</header>
+      - unexpected value "rgb(241, 196, 15)"
+
+```
+
+# Page snapshot
+
+```yaml
+- main [ref=e4]:
+  - generic [ref=e5]:
+    - combobox "Select Language" [ref=e7]:
+      - option "English" [selected]
+      - option "Español"
+      - option "Ελληνικά"
+    - img "logo"
+    - heading "Color Chooser App" [level=1] [ref=e8]
+    - paragraph [ref=e9]:
+      - text: Edit
+      - code [ref=e10]: src/App.js
+      - text: and save to reload.
+    - link "Learn React" [ref=e11] [cursor=pointer]:
+      - /url: https://reactjs.org
+    - generic [ref=e12]: "Current color: #f1c40f"
+    - generic [ref=e13]:
+      - button "Change background to Yellow" [ref=e14] [cursor=pointer]: Yellow
+      - button "Change background to Turquoise" [ref=e15] [cursor=pointer]: Turquoise
+      - button "Change background to Red" [ref=e16] [cursor=pointer]: Red
+```
+
+# Test source
+
+```ts
+  1   | import { test, expect } from '../baseFixtures'
+  2   | import { convertHexToRGB, extractHexColor } from '../helper'
+  3   | 
+  4   | /**
+  5   |  * Test Suite: Coverage Verification
+  6   |  *
+  7   |  * This suite focuses on ensuring that the basic UI functionality is covered
+  8   |  * and that the background color logic works as expected. It also serves
+  9   |  * as a baseline for Istanbul code coverage collection.
+  10  |  */
+  11  | test.beforeEach(async ({ page }) => {
+  12  |   await page.goto('/')
+  13  | })
+  14  | 
+  15  | interface Color {
+  16  |   name: string
+  17  |   hex: string
+  18  | }
+  19  | 
+  20  | const colors: Color[] = [
+  21  |   { name: 'Turquoise', hex: '1abc9c' },
+  22  |   { name: 'Red', hex: 'e74c3c' },
+  23  |   { name: 'Yellow', hex: 'f1c40f' }
+  24  | ]
+  25  | 
+  26  | /**
+  27  |  * Test: Verify that Turquoise is set as the default background color
+  28  |  * Steps:
+  29  |  * 1. Get the current color text from the page
+  30  |  * 2. Extract the hex code from the current color placeholder
+  31  |  * 3. Verify it matches the expected Turquoise hex code
+  32  |  * 4. Convert hex to RGB for CSS validation
+  33  |  * 5. Verify the header background color of the page matches the RGB values
+  34  |  */
+  35  | test('check Turquoise ( #1abc9c) is the default background color.', async ({ page }) => {
+  36  |   const turquoiseHex = colors.find((c) => c.name === 'Turquoise')?.hex || '1abc9c'
+  37  |   await expect(page.locator('text=Current color:')).toContainText(turquoiseHex)
+  38  | 
+  39  |   let rgbColors = convertHexToRGB(`#${turquoiseHex}`)
+> 40  |   await expect(page.locator('header')).toHaveCSS(
+      |                                        ^ Error: expect(locator).toHaveCSS(expected) failed
+  41  |     'background-color',
+  42  |     `rgb(${rgbColors.red}, ${rgbColors.green}, ${rgbColors.blue})`
+  43  |   )
+  44  | })
+  45  | 
+  46  | /**
+  47  |  * Test Suite: Background color tests
+  48  |  *
+  49  |  * This suite iterates over each color in the `colors` array and verifies:
+  50  |  * 1. Clicking the color name applies the correct background color to the header.
+  51  |  * 2. The displayed current color hex matches the expected hex code.
+  52  |  * 3. The header's CSS background-color matches the expected RGB value.
+  53  |  */
+  54  | test.describe('Background color tests', () => {
+  55  |   for (const color of colors) {
+  56  |     test(`verify ${color.name} ( #${color.hex} ) is applied as the background color`, async ({ page }) => {
+  57  |       // Click the color name to change the background color
+  58  |       await page.click(`text=${color.name}`)
+  59  | 
+  60  |       // Wait for React to fetch and update DOM
+  61  |       await expect(page.locator('text=Current color:')).toContainText(color.hex)
+  62  | 
+  63  |       // Convert hex to RGB for CSS validation
+  64  |       const rgb = convertHexToRGB(`#${color.hex}`)
+  65  | 
+  66  |       // Verify the header background color matches the expected RGB value
+  67  |       await expect(page.locator('header')).toHaveCSS('background-color', `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`)
+  68  |     })
+  69  |   }
+  70  | })
+  71  | 
+  72  | /**
+  73  |  * Test: Verify language switcher correctly updates the document's lang attribute
+  74  |  */
+  75  | test('verify language switcher changes document language', async ({ page }) => {
+  76  |   // Select Spanish
+  77  |   await page.selectOption('select', 'es')
+  78  |   await expect(page.locator('html')).toHaveAttribute('lang', 'es')
+  79  | 
+  80  |   // Select Greek
+  81  |   await page.selectOption('select', 'el')
+  82  |   await expect(page.locator('html')).toHaveAttribute('lang', 'el')
+  83  | })
+  84  | 
+  85  | /**
+  86  |  * Test Suite: Edge cases and error handling for coverage
+  87  |  */
+  88  | test.describe('Edge cases and error handling', () => {
+  89  |   test('handle initial fetch error', async ({ page }) => {
+  90  |     // Mock 500 error for initial colors fetch
+  91  |     await page.route('/api/colors', (route) => route.fulfill({ status: 500 }))
+  92  |     await page.goto('/')
+  93  |     await expect(page.locator('.error-message')).toHaveText('Failed to load colors')
+  94  |   })
+  95  | 
+  96  |   test('handle initial fetch with empty data', async ({ page }) => {
+  97  |     // Mock empty array response
+  98  |     await page.route('/api/colors', (route) =>
+  99  |       route.fulfill({
+  100 |         status: 200,
+  101 |         contentType: 'application/json',
+  102 |         body: JSON.stringify([])
+  103 |       })
+  104 |     )
+  105 |     await page.goto('/')
+  106 |     await expect(page.locator('text=Loading colors...')).toBeVisible()
+  107 |   })
+  108 | 
+  109 |   test('handle color selection fetch error', async ({ page }) => {
+  110 |     // Mock 500 error for specific color fetch
+  111 |     await page.route('/api/colors/Red', (route) => route.fulfill({ status: 500 }))
+  112 |     await page.click('text=Red')
+  113 |     await expect(page.locator('.error-message')).toHaveText('Failed to load color: Red')
+  114 |   })
+  115 | 
+  116 |   test('handle color response missing hex property', async ({ page }) => {
+  117 |     // Mock response missing hex property
+  118 |     await page.route('/api/colors/Yellow', (route) =>
+  119 |       route.fulfill({
+  120 |         status: 200,
+  121 |         contentType: 'application/json',
+  122 |         body: JSON.stringify({ name: 'Yellow' })
+  123 |       })
+  124 |     )
+  125 |     await page.click('text=Yellow')
+  126 |     // Expect no crash and current color text to remain unchanged (or still be default)
+  127 |     await expect(page.locator('text=Current color:')).not.toContainText('undefined')
+  128 |   })
+  129 | })
+  130 | 
+```
