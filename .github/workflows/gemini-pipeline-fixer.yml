@@ -1,0 +1,80 @@
+name: Gemini AI Pipeline Investigator
+
+# Trigger this workflow when your main "CI" workflow completes
+on:
+  workflow_run:
+    workflows: ["CI"] # This matches the 'name: CI' in your ci.yml
+    types:
+      - completed
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read # Required to download the failed logs
+
+jobs:
+  investigate-and-fix:
+    # Only run this job if the CI pipeline actually FAILED
+    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history so Gemini can understand the codebase
+
+      - name: Setup Node Environment
+        uses: ./.github/actions/setup-node-env
+
+      - name: Install Gemini CLI
+        run: npm install -g @google/gemini-cli
+
+      - name: Fetch Failed Pipeline Logs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+        run: |
+          # Use GitHub CLI to extract ONLY the logs of the failed steps
+          # This prevents overflowing the AI with successful log noise
+          if ! gh run view $RUN_ID --log-failed > failed_logs.txt; then
+            echo "Error: gh run view failed to extract logs for run $RUN_ID"
+            echo "Placeholder: Log extraction failed or no logs were found." > failed_logs.txt
+          fi
+
+          # Optional: truncate if logs are massively huge (over 100k lines)
+          if [ -s failed_logs.txt ]; then
+            tail -n 2000 failed_logs.txt > failed_logs_trimmed.txt
+          else
+            echo "Placeholder: failed_logs.txt is empty or does not exist." > failed_logs_trimmed.txt
+          fi
+
+      - name: Analyze Logs and Generate Fix
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          LOGS=$(cat failed_logs_trimmed.txt)
+
+          echo "Asking Gemini to investigate the pipeline failure..."
+
+          # Run the Gemini CLI Agent to analyze the logs and edit the local files
+          gemini-cli agent --task "The GitHub Actions CI pipeline just failed. Here are the error logs from the failed steps: $LOGS. Please analyze the repository code to find the root cause of this failure, and modify the source code files locally to fix the broken tests or build errors."
+
+      - name: Create Pull Request with the AI Fix
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "fix: resolve pipeline failure in run ${{ github.event.workflow_run.id }}"
+          title: "🚨 AI Fix: Resolved Pipeline Failure in ${{ github.event.workflow_run.name }}"
+          body: |
+            ### 🤖 Gemini AI Pipeline Investigator
+
+            This Pull Request was automatically generated because the `${{ github.event.workflow_run.name }}` pipeline failed on run [${{ github.event.workflow_run.id }}](${{ github.event.workflow_run.html_url }}).
+
+            **Gemini Pro** analyzed the failed logs, found the root cause in the codebase, and generated this patch. 
+
+            **Next Steps:**
+            1. Review the code changes.
+            2. Check if the newly triggered CI passes on this branch.
+            3. Approve and merge if the fix looks good!
+          branch: "gemini-fix/pipeline-failure-${{ github.event.workflow_run.id }}"
+          base: main

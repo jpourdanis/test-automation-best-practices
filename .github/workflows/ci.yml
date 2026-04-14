@@ -43,8 +43,9 @@ jobs:
         uses: oxsecurity/megalinter/flavors/javascript@v9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Lint the full codebase on main branch pushes, otherwise only lint changed files in PRs
-          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
+          PARALLEL_PROCESS_NUMBER: 2
+          # Lint only changed files to drastically improve performance
+          VALIDATE_ALL_CODEBASE: false
 
       - name: Download Backend Unit Coverage
         uses: actions/download-artifact@v8
