@@ -1,2 +1,0 @@
-[NETWORK INFO] should render correctly on mobile viewport: 200 GET http://web:3000/api/colors
-[NETWORK INFO] should render correctly on mobile viewport: 200 GET http://web:3000/api/colors/Yellow
