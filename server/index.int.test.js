@@ -49,7 +49,9 @@ describe('Server Integration Tests (Testcontainers)', () => {
 
   afterAll(async () => {
     await mongoose.disconnect()
-    await mongodbContainer.stop()
+    if (mongodbContainer) {
+      await mongodbContainer.stop()
+    }
   })
 
   describe('CRUD Operations with Real MongoDB', () => {
