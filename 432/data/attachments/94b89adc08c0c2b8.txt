@@ -1,0 +1,15 @@
+[NETWORK ERROR] should handle fetch colors network failure gracefully: GET https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/api/colors - net::ERR_FAILED
+[CONSOLE ERROR] should handle fetch colors network failure gracefully: Failed to load resource: net::ERR_FAILED
+[CONSOLE ERROR] should handle fetch colors network failure gracefully: Failed to fetch colors: TypeError: Failed to fetch
+    at https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:267846
+    at ms (https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:97439)
+    at eu (https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:113837)
+    at Zs (https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:113721)
+    at eu (https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:113882)
+    at Zs (https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:113721)
+    at eu (https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:113907)
+    at Sc (https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:132306)
+    at https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:127979
+    at MessagePort.O (https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:188603)
+[NETWORK ERROR] should handle fetch colors network failure gracefully: GET https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] should handle fetch colors network failure gracefully: HEAD https://test-automation-best-practices-76pzgnrnc-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
