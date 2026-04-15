@@ -1,11 +1,8 @@
 name: Gemini AI Pipeline Investigator
 
-# Trigger this workflow when your main "CI" workflow completes
 on:
-  workflow_run:
-    workflows: ["CI"] # This matches the 'name: CI' in your ci.yml
-    types:
-      - completed
+  pull_request:
+    types: [labeled]
 
 permissions:
   contents: write
@@ -14,14 +11,14 @@ permissions:
 
 jobs:
   investigate-and-fix:
-    # Only run this job if the CI pipeline actually FAILED
-    if: ${{ github.event.workflow_run.conclusion == 'failure' }}
+    if: contains(github.event.pull_request.labels.*.name, 'AI-Fix')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0 # Fetch all history so Gemini can understand the codebase
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Setup Node Environment
         uses: ./.github/actions/setup-node-env
@@ -32,13 +29,18 @@ jobs:
       - name: Fetch Failed Pipeline Logs
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          RUN_ID: ${{ github.event.workflow_run.id }}
         run: |
-          # Use GitHub CLI to extract ONLY the logs of the failed steps
-          # This prevents overflowing the AI with successful log noise
-          if ! gh run view $RUN_ID --log-failed > failed_logs.txt; then
-            echo "Error: gh run view failed to extract logs for run $RUN_ID"
+          # Find the failed CI run for this PR's HEAD commit
+          RUN_ID=$(gh run list --commit ${{ github.event.pull_request.head.sha }} --workflow "CI" --status failure --json databaseId -q '.[0].databaseId')
+
+          if [ -z "$RUN_ID" ] || [ "$RUN_ID" == "null" ]; then
+            echo "Error: Could not find a failed CI run for this PR."
             echo "Placeholder: Log extraction failed or no logs were found." > failed_logs.txt
+          else
+            if ! gh run view $RUN_ID --log-failed > failed_logs.txt; then
+              echo "Error: gh run view failed to extract logs for run $RUN_ID"
+              echo "Placeholder: Log extraction failed or no logs were found." > failed_logs.txt
+            fi
           fi
 
           # Optional: truncate if logs are massively huge (over 100k lines)
@@ -56,19 +58,22 @@ jobs:
 
           echo "Asking Gemini to investigate the pipeline failure..."
 
+          # Sleep to prevent hitting 5-requests-per-minute rate limits too quickly
+          sleep 60
+
           # Run the Gemini CLI Agent to analyze the logs and edit the local files
-          gemini -y --prompt "The GitHub Actions CI pipeline just failed. Here are the error logs from the failed steps: $LOGS. Please analyze the repository code to find the root cause of this failure, and modify the source code files locally to fix the broken tests or build errors."
+          gemini -y --prompt "The GitHub Actions CI pipeline just failed. Here are the logs: $LOGS. Analyze the issue and modify the files locally. Only make targeted fixes related to the error, do not launch open-ended extensive searches."
 
       - name: Create Pull Request with the AI Fix
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "fix: resolve pipeline failure in run ${{ github.event.workflow_run.id }}"
-          title: "🚨 AI Fix: Resolved Pipeline Failure in ${{ github.event.workflow_run.name }}"
+          commit-message: "fix: resolve pipeline failure for PR #${{ github.event.pull_request.number }}"
+          title: "🚨 AI Fix: Resolved Pipeline Failure in PR #${{ github.event.pull_request.number }}"
           body: |
             ### 🤖 Gemini AI Pipeline Investigator
 
-            This Pull Request was automatically generated because the `${{ github.event.workflow_run.name }}` pipeline failed on run [${{ github.event.workflow_run.id }}](${{ github.event.workflow_run.html_url }}).
+            This Pull Request was automatically generated because the pipeline failed on PR #${{ github.event.pull_request.number }}.
 
             **Gemini Pro** analyzed the failed logs, found the root cause in the codebase, and generated this patch. 
 
@@ -76,5 +81,5 @@ jobs:
             1. Review the code changes.
             2. Check if the newly triggered CI passes on this branch.
             3. Approve and merge if the fix looks good!
-          branch: "gemini-fix/pipeline-failure-${{ github.event.workflow_run.id }}"
-          base: main
+          branch: "gemini-fix/pipeline-failure-pr-${{ github.event.pull_request.number }}"
+          base: ${{ github.event.pull_request.head.ref }}
