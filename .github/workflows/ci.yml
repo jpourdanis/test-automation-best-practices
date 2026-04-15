@@ -905,6 +905,7 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-version: latest
 
       - name: Run E2E tests against Vercel Preview
         env:
