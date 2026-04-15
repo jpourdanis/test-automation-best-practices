@@ -35,7 +35,7 @@
     "nyc": "^18.0.0",
     "react": "^19.2.4",
     "react-app-rewired": "^2.2.1",
-    "react-dom": "^19.0.0",
+    "react-dom": "^19.2.5",
     "react-i18next": "^17.0.1",
     "react-scripts": "5.0.0",
     "typescript": "^6.0.2"
