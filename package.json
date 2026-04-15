@@ -37,7 +37,7 @@
     "react-app-rewired": "^2.2.1",
     "react-dom": "^19.0.0",
     "react-i18next": "^17.0.1",
-    "react-scripts": "5.0.0",
+    "react-scripts": "5.0.1",
     "typescript": "^6.0.2"
   },
   "scripts": {
