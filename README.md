@@ -44,7 +44,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [20. Weekly Builds & Scheduled Runs](#20-weekly-builds--scheduled-runs)
     - [21. Automated Container Healthness Testing](#21-automated-container-healthness-testing)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
-    - [22. Static Code Analysis with MegaLinter](#22-static-code-analysis-with-megalinter)
+    - [22. Static Code Analysis with MegaLinter & SonarCloud](#22-static-code-analysis-with-megalinter--sonarcloud)
     - [23. E2E Code Coverage](#23-e2e-code-coverage)
     - [24. Quality Gates & Code Coverage Limits](#24-quality-gates-code-coverage-limits)
     - [25. Allure Reports with Historical Data & Flaky Test Detection](#25-allure-reports-with-historical-data--flaky-test-detection)
@@ -1443,26 +1443,32 @@ docker ps --format "{{.Names}}: {{.Status}}"
 
 ## Part 4: Quality Gates & Reporting
 
-### 22. Static Code Analysis with MegaLinter
+### 22. Static Code Analysis with MegaLinter & SonarCloud
 
-**Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+**Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`sonar-project.properties`](/sonar-project.properties) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
 **What is it?**
-An automated pipeline step using **[MegaLinter](https://megalinter.io/)** that parses the raw source code against over 100 different linters (ESLint, Prettier, Checkov, Secretlint) before any tests are even run.
+Static Code Analysis is a multi-layered defense system. We use **[MegaLinter](https://megalinter.io/)** to parse raw source code against over 100 different linters (ESLint, Prettier, Checkov, Secretlint), and **[SonarQube/SonarCloud](https://sonarcloud.io/)** for deep, continuous inspection of bugs, vulnerabilities, and code smells over time.
 
 **The Problem**
-We want to ensure that our code is free of syntax errors, security vulnerabilities, and formatting issues before we run our tests. We also want to ensure that our code is consistent with our team's coding standards. Without static code analysis, we would have to manually check for these issues, which would be time-consuming and error-prone.
+Without automated code analysis, teams suffer from inconsistent formatting, leaked secrets, and "dead" code buildup. While traditional linters are great for syntax and style, they cannot catch deep logical bugs or measure long-term code maintainability. Relying on manual code review for these issues is extremely time-consuming and error-prone.
 
 **Why it matters:**
 
-- **Security Shift-Left:** It instantly catches developers accidentally committing AWS keys or database passwords to the repository.
-- **Cultural Consistency:** It ends subjective arguments in code review about formatting or syntax styles. The linter acts as the objective, automated arbiter of code quality.
+- **Security Shift-Left:** MegaLinter instantly catches developers accidentally committing AWS keys or database passwords.
+- **Cultural Consistency:** Automated linters end subjective arguments over formatting. The linter acts as an objective arbiter.
+- **Continuous Inspection:** SonarCloud dynamically tracks technical debt and maps unified frontend/backend coverage, ensuring the codebase strictly improves rather than degrades.
+- **Unified Quality Gate:** SonarCloud enforces strict conditions (e.g., minimum 80% coverage, 0 new bugs). PRs systematically fail the gate if they attempt to merge bad code, creating an impermeable shield for the `main` branch.
 
 **How to verify:**
+
+For MegaLinter local execution:
 
 ```bash
 npx --yes mega-linter-runner@latest
 ```
+
+For SonarCloud enforcement, verify the Quality Gate badge on the `README` or trigger a pipeline failure manually.
 
 ### 23. E2E Code Coverage
 
