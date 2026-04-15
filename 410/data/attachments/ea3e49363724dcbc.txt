@@ -1,2 +1,0 @@
-[NETWORK INFO] should handle missing image gracefully by showing alt text: 200 GET http://localhost:3000/api/colors
-[NETWORK INFO] should handle missing image gracefully by showing alt text: 200 GET http://localhost:3000/api/colors
