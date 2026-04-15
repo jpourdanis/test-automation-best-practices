@@ -1,2 +1,0 @@
-[NETWORK INFO] handle color selection fetch error: 200 GET http://localhost:3000/api/colors
-[NETWORK INFO] handle color selection fetch error: 200 GET http://localhost:3000/api/colors
