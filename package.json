@@ -113,7 +113,7 @@
     "playwright-bdd": "^8.5.0",
     "playwright-lighthouse": "^4.0.0",
     "snyk": "^1.1303.2",
-    "sonarqube-scanner": "^4.3.5",
+    "sonarqube-scanner": "^4.3.6",
     "zod": "^4.3.6"
   },
   "lint-staged": {
