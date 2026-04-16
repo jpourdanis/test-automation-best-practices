@@ -108,6 +108,12 @@ describe('Server Unit Tests', () => {
       expect(res.status).toBe(404)
       expect(res.body.error).toBe('Color not found')
     })
+
+    it('returns 400 for invalid name format in URL', async () => {
+      const res = await request(app).get('/api/colors/invalid!@#')
+      expect(res.status).toBe(400)
+      expect(res.body.error).toContain('alphanumeric')
+    })
   })
 
   // =========================================================================
@@ -266,6 +272,12 @@ describe('Server Unit Tests', () => {
       expect(res.status).toBe(400)
       expect(res.body.error).toContain('alphanumeric')
     })
+
+    it('returns 400 for invalid current name format in URL', async () => {
+      const res = await request(app).put('/api/colors/invalid!@#').send({ hex: '#000000' })
+      expect(res.status).toBe(400)
+      expect(res.body.error).toContain('alphanumeric')
+    })
   })
 
   // =========================================================================
@@ -298,6 +310,12 @@ describe('Server Unit Tests', () => {
       const res = await request(app).delete('/api/colors/Red')
       expect(res.status).toBe(404)
       expect(res.body.error).toBe('Color not found')
+    })
+
+    it('returns 400 for invalid name format in URL', async () => {
+      const res = await request(app).delete('/api/colors/invalid!@#')
+      expect(res.status).toBe(400)
+      expect(res.body.error).toContain('alphanumeric')
     })
   })
 
