@@ -1,0 +1,2 @@
+[NETWORK INFO] check Turquoise ( #1abc9c) is the default background color.: 200 GET http://localhost:3000/api/colors
+[NETWORK INFO] check Turquoise ( #1abc9c) is the default background color.: 200 GET http://localhost:3000/api/colors

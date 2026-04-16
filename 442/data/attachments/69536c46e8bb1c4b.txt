@@ -1,0 +1,2 @@
+[NETWORK ERROR] should handle missing image gracefully by showing alt text: GET https://test-automation-best-practices-ldy8fk3zz-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] should handle missing image gracefully by showing alt text: HEAD https://test-automation-best-practices-ldy8fk3zz-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED

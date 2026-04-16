@@ -1,0 +1,2 @@
+[NETWORK INFO] homepage should match snapshot: 200 GET http://web:3000/api/colors
+[NETWORK INFO] homepage should match snapshot: 200 GET http://web:3000/api/colors
