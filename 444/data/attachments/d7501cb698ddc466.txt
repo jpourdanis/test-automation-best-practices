@@ -1,0 +1,2 @@
+[NETWORK ERROR] changing color to Yellow should reflect in UI and DOM: GET https://test-automation-best-practices-gn4lqypc4-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] changing color to Yellow should reflect in UI and DOM: HEAD https://test-automation-best-practices-gn4lqypc4-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
