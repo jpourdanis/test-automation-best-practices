@@ -67,7 +67,7 @@ jobs:
       - name: Create Pull Request with the AI Fix
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_PAT_WORKFLOWS }}
           commit-message: "fix: resolve pipeline failure for PR #${{ github.event.pull_request.number }}"
           title: "🚨 AI Fix: Resolved Pipeline Failure in PR #${{ github.event.pull_request.number }}"
           body: |
