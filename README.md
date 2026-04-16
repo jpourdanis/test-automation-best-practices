@@ -2,6 +2,10 @@
 
 [![Coverage Status](https://coveralls.io/repos/github/jpourdanis/test-automation-best-practices/badge.svg?branch=main)](https://coveralls.io/github/jpourdanis/test-automation-best-practices?branch=main)
 [![CI](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jpourdanis_test-automation-best-practices&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpourdanis_test-automation-best-practices)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=jpourdanis_test-automation-best-practices&metric=bugs)](https://sonarcloud.io/summary/new_code?id=jpourdanis_test-automation-best-practices)
+[![Code Smells](https://sonarcloud.io/api/project_badges/measure?project=jpourdanis_test-automation-best-practices&metric=code_smells)](https://sonarcloud.io/summary/new_code?id=jpourdanis_test-automation-best-practices)
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpourdanis_test-automation-best-practices&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpourdanis_test-automation-best-practices)
 [![Passed Tests](https://img.shields.io/badge/dynamic/json?color=success&label=Passed&query=%24.statistic.passed&url=https%3A%2F%2Fjpourdanis.github.io%2Ftest-automation-best-practices%2Fwidgets%2Fsummary.json)](https://jpourdanis.github.io/test-automation-best-practices/)
 [![Failed Tests](https://img.shields.io/badge/dynamic/json?color=critical&label=Failed&query=%24.statistic.failed&url=https%3A%2F%2Fjpourdanis.github.io%2Ftest-automation-best-practices%2Fwidgets%2Fsummary.json)](https://jpourdanis.github.io/test-automation-best-practices/)
 
@@ -40,13 +44,13 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [20. Weekly Builds & Scheduled Runs](#20-weekly-builds--scheduled-runs)
     - [21. Automated Container Healthness Testing](#21-automated-container-healthness-testing)
   - [Part 4: Quality Gates & Reporting](#part-4-quality-gates--reporting)
-    - [22. Static Code Analysis with MegaLinter](#22-static-code-analysis-with-megalinter)
+    - [22. Static Code Analysis with MegaLinter & SonarCloud](#22-static-code-analysis-with-megalinter--sonarcloud)
     - [23. E2E Code Coverage](#23-e2e-code-coverage)
     - [24. Quality Gates & Code Coverage Limits](#24-quality-gates-code-coverage-limits)
     - [25. Allure Reports with Historical Data & Flaky Test Detection](#25-allure-reports-with-historical-data--flaky-test-detection)
     - [26. Mutation Testing with Stryker Mutator](#26-mutation-testing-with-stryker-mutator)
     - [27. Automated Dependency Updates & Version Testing](#27-automated-dependency-updates--version-testing)
-    - [28. Security Scanning for Code & Containers](#28-security-scanning-for-code--containers)
+    - [28. Security Scanning with Trivy & Snyk](#28-security-scanning-with-trivy--snyk)
 
 ---
 
@@ -1439,26 +1443,32 @@ docker ps --format "{{.Names}}: {{.Status}}"
 
 ## Part 4: Quality Gates & Reporting
 
-### 22. Static Code Analysis with MegaLinter
+### 22. Static Code Analysis with MegaLinter & SonarCloud
 
-**Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+**Files:** [`.mega-linter.yml`](/.mega-linter.yml) · [`sonar-project.properties`](/sonar-project.properties) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
 **What is it?**
-An automated pipeline step using **[MegaLinter](https://megalinter.io/)** that parses the raw source code against over 100 different linters (ESLint, Prettier, Checkov, Secretlint) before any tests are even run.
+Static Code Analysis is a multi-layered defense system. We use **[MegaLinter](https://megalinter.io/)** to parse raw source code against over 100 different linters (ESLint, Prettier, Checkov, Secretlint), and **[SonarQube/SonarCloud](https://sonarcloud.io/)** for deep, continuous inspection of bugs, vulnerabilities, and code smells over time.
 
 **The Problem**
-We want to ensure that our code is free of syntax errors, security vulnerabilities, and formatting issues before we run our tests. We also want to ensure that our code is consistent with our team's coding standards. Without static code analysis, we would have to manually check for these issues, which would be time-consuming and error-prone.
+Without automated code analysis, teams suffer from inconsistent formatting, leaked secrets, and "dead" code buildup. While traditional linters are great for syntax and style, they cannot catch deep logical bugs or measure long-term code maintainability. Relying on manual code review for these issues is extremely time-consuming and error-prone.
 
 **Why it matters:**
 
-- **Security Shift-Left:** It instantly catches developers accidentally committing AWS keys or database passwords to the repository.
-- **Cultural Consistency:** It ends subjective arguments in code review about formatting or syntax styles. The linter acts as the objective, automated arbiter of code quality.
+- **Security Shift-Left:** MegaLinter instantly catches developers accidentally committing AWS keys or database passwords.
+- **Cultural Consistency:** Automated linters end subjective arguments over formatting. The linter acts as an objective arbiter.
+- **Continuous Inspection:** SonarCloud dynamically tracks technical debt and maps unified frontend/backend coverage, ensuring the codebase strictly improves rather than degrades.
+- **Unified Quality Gate:** SonarCloud enforces strict conditions (e.g., minimum 80% coverage, 0 new bugs). PRs systematically fail the gate if they attempt to merge bad code, creating an impermeable shield for the `main` branch.
 
 **How to verify:**
+
+For MegaLinter local execution:
 
 ```bash
 npx --yes mega-linter-runner@latest
 ```
+
+For SonarCloud enforcement, verify the Quality Gate badge on the `README` or trigger a pipeline failure manually.
 
 ### 23. E2E Code Coverage
 
@@ -1792,21 +1802,22 @@ updates:
 
 Whenever Dependabot opens a PR, our CI pipeline automatically runs our Playwright E2E and Jest tests against the new dependency context, ensuring flawless integration.
 
-### 28. Security Scanning for Code & Containers
+### 28. Security Scanning with Trivy & Snyk
 
 **Files:** [`package.json`](/package.json) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
 **What is it?**
-Security scanning adds an automated layer of defense by inspecting your project's codebase, dependencies, and Docker container images for known vulnerabilities (CVEs). We use `npm audit` for Node.js dependencies and **Trivy** for deep filesystem and container scanning.
+Security scanning adds an automated layer of defense by inspecting your project's codebase, dependencies, and Docker container images for known vulnerabilities (CVEs). We use `npm audit` for Node.js dependencies, **Trivy** for deep filesystem and container scanning, and **Snyk** for a developer-first approach including SAST, Container images, and Infrastructure as Code (IaC).
 
 **The Problem**
-Vulnerabilities in third-party npm packages or outdated base Docker images can easily be exploited by attackers if not actively monitored and patched.
+Vulnerabilities in third-party npm packages or outdated base Docker images can easily be exploited by attackers if not actively monitored and patched. Traditional security is often treated as a "gate" at the end of the development cycle, leading to friction and late-stage discovery of vulnerabilities that are expensive to fix.
 
 **Why it matters:**
 
 - **Supply Chain Security:** Many modern applications rely heavily on third-party libraries. If a dependency introduces a security flaw, automated scanning catches it before it ships.
 - **Container Hardening:** Docker images often inherit vulnerabilities from their base images (e.g., outdated OS libraries). Container scanning ensures that the environment your application runs in is as secure as the code itself.
-- **Continuous Monitoring:** By integrating these checks into every CI run, security becomes a continuous process rather than an infrequent manual audit, preventing vulnerable code or images from ever reaching production.
+- **Developer-Focused Feedback:** Snyk provides actionable remediation advice (e.g., "Upgrade to version X.Y.Z") directly in the CLI and CI logs, allowing security to be handled early.
+- **Full Stack Visibility & Governance:** Centralized dashboards allow security teams to monitor projects, set policies, and track remediation across the entire stack—from `package.json` to `docker-compose.yml`.
 
 **How to implement:**
 
@@ -1814,7 +1825,7 @@ Vulnerabilities in third-party npm packages or outdated base Docker images can e
 > **Trivy Supply Chain Incident (March 2026)**
 > In March 2026, malicious actors compromised Aqua Security's build pipeline and injected credential-stealing viruses into `latest` and versions `0.69.4` - `0.69.6` AND performed tag-repointing attacks on the GitHub Action release tags. To avoid execution of weaponized images or binaries, we **strict-pin** the GitHub Action to an immutable commit SHA (`@57a97c7e7821a5776cebc9bb87c984fa69cba8f1`), explicitly pass `trivy-version: '0.69.3'`, and hardcode the Docker image pulls to `:0.69.3`.
 
-Our setup includes local scripts in \`package.json\` for quick developer feedback. In GitHub Actions, we separate the security auditing into parallel jobs for optimal execution speed: one for the filesystem/dependencies, one for the frontend container, and one for the backend container.
+Our setup includes local scripts in \`package.json\` and dedicated GitHub Actions workflows.
 
 **Local Checks (package.json):**
 
@@ -1822,14 +1833,18 @@ Our setup includes local scripts in \`package.json\` for quick developer feedbac
 "scripts": {
   "security:audit": "npm audit --audit-level=high",
   "security:scan:code": "docker run --rm -v $(pwd):/app aquasec/trivy:0.69.3 fs /app",
-  "security:scan": "npm run security:audit"
+  "snyk:test": "snyk test",
+  "snyk:code": "snyk code test",
+  "snyk:container:app": "snyk container test test-automation-best-practices-app:latest --file=Dockerfile",
+  "snyk:iac": "snyk iac test docker-compose.yml"
 }
 ```
 
-**CI Pipeline (ci.yml):**
-We run \`npm audit\` alongside the official \`aquasecurity/trivy-action\` (pinned to safe releases) to catch \`HIGH\` and \`CRITICAL\` vulnerabilities. Scanning the frontend and API Docker images happens in distinct parallel jobs.
+**CI Pipeline (Trivy & Snyk):**
+We run specialized jobs for OSS, Code, Containers, and IaC, ensuring that vulnerabilities are caught and reported efficiently.
 
 ```yaml
+# Trivy (in ci.yml)
 security-testing-fs:
   name: Security Testing (FS & NPM)
   steps:
@@ -1838,27 +1853,17 @@ security-testing-fs:
       with:
         scan-type: 'fs'
 
-security-testing-frontend:
-  name: Container Scanning (Frontend)
-  steps:
-    - run: docker compose build app
-    - uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
-      with:
-        scan-type: 'image'
-        image-ref: 'test-automation-best-practices-app:latest'
-
-security-testing-api:
-  name: Container Scanning (API)
-  steps:
-    - run: docker compose build api
-    - uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
-      with:
-        scan-type: 'image'
-        image-ref: 'test-automation-best-practices-api:latest'
+# Integrated Snyk (in ci.yml)
+- **security-testing-fs**: Runs `snyk iac test` on the Docker Compose configuration.
+- **security-testing-frontend**: Runs `snyk container test` on the Frontend production image.
+- **security-testing-api**: Runs `snyk container test` on the Backend API production image.
 ```
 
-```bash
-npm run security:scan
-```
+**How to verify:**
+
+1. Ensure `SNYK_TOKEN` is added to your GitHub Secrets.
+2. Set the `SNYK_ORG` environment variable locally:
+3. Run `npm run snyk:test` locally after installing the Snyk CLI.
+4. Run `npm run security:audit` for a local NPM audit.
 
 <!-- husky test -->

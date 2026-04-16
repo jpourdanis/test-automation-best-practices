@@ -1,3 +1,4 @@
+/* no test cases */
 import { createBdd } from 'playwright-bdd'
 import { expect } from '@playwright/test'
 import { HomePage } from '../pages/HomePage'

@@ -1,5 +1,6 @@
+version: "3.8"
 services:
-  app:
+  web:
     image: test-automation-best-practices-app:latest
     build:
       context: .
@@ -84,9 +85,9 @@ services:
       cache_to:
         - type=gha,mode=max,scope=playwright
     depends_on:
-      - app
+      - web
     environment:
-      - BASE_URL=http://app:3000
+      - BASE_URL=http://web:3000
       - CI=true
       - HOST_WORKSPACE_PATH=${GITHUB_WORKSPACE}
     tty: true

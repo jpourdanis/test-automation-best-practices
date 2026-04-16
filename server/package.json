@@ -7,7 +7,10 @@
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js index.test.js",
     "test:int": "TESTCONTAINERS_RYUK_DISABLED=true jest index.int.test.js",
     "test:watch": "npm test -- --watch",
-    "mutation": "stryker run"
+    "mutation": "stryker run",
+    "coverage": "npm test -- --coverage",
+    "snyk:test": "snyk test --org=$SNYK_ORG",
+    "snyk:container:api": "snyk container test test-automation-best-practices-api:latest --file=Dockerfile --org=$SNYK_ORG"
   },
   "keywords": [],
   "author": "",
@@ -15,9 +18,10 @@
   "description": "Test Automation Best Practices demo API",
   "dependencies": {
     "cors": "^2.8.6",
-    "dotenv": "^17.3.1",
+    "dotenv": "^17.4.1",
     "express": "^5.2.1",
-    "mongoose": "^9.2.3",
+    "mongoose": "^9.4.1",
+    "openapi-types": "^12.1.3",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
     "zod": "^4.3.6",
@@ -25,14 +29,14 @@
   },
   "devDependencies": {
     "@stryker-mutator/core": "^9.6.0",
-    "@stryker-mutator/jest-runner": "^9.6.0",
-    "@testcontainers/mongodb": "^11.13.0",
+    "@stryker-mutator/jest-runner": "^9.6.1",
+    "@testcontainers/mongodb": "^11.14.0",
     "jest": "^30.3.0",
     "jest-junit": "^16.0.0",
     "mongodb-memory-server": "^11.0.1",
     "picomatch": "^4.0.4",
     "supertest": "^7.2.2",
-    "testcontainers": "^11.13.0"
+    "testcontainers": "^11.14.0"
   },
   "overrides": {
     "picomatch": "^4.0.4",

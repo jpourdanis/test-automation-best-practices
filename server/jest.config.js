@@ -1,7 +1,12 @@
 module.exports = {
   testEnvironment: 'node',
   testMatch: ['**/*.test.js'],
+  testPathIgnorePatterns: process.env.TESTCONTAINERS_RYUK_DISABLED ? [] : ['\\.int\\.test\\.js$'],
   testTimeout: 30000,
+  collectCoverage: true,
+  collectCoverageFrom: ['index.js'],
+  coverageDirectory: 'coverage',
+  coverageReporters: ['text', 'lcov', 'json', 'clover'],
   reporters: [
     'default',
     [

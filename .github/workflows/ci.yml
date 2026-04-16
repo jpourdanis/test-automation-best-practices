@@ -27,6 +27,7 @@ jobs:
   # ==========================================
   static-code-analysis:
     name: Static Code Analysis
+    needs: [backend-unit-tests, frontend-unit-tests]
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code so the workflow can access it
@@ -42,9 +43,44 @@ jobs:
         uses: oxsecurity/megalinter/flavors/javascript@v9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Lint the full codebase on main branch pushes, otherwise only lint changed files in PRs
-          VALIDATE_ALL_CODEBASE: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' && 'true' || 'false' }}
+          PARALLEL_PROCESS_NUMBER: 2
+          # Lint only changed files to drastically improve performance
+          VALIDATE_ALL_CODEBASE: false
 
+      - name: Download Backend Unit Coverage
+        uses: actions/download-artifact@v8
+        with:
+          name: nyc-output-backend-unit
+          path: coverage-merge
+
+      - name: Download Frontend Unit Coverage
+        uses: actions/download-artifact@v8
+        with:
+          name: nyc-output-frontend-unit
+          path: coverage-merge
+
+      - name: Merge and Generate Unit Coverage Report
+        run: |
+          mkdir -p coverage/merged
+          npx nyc merge coverage-merge coverage/merged/coverage-final.json
+          npx nyc report --temp-dir=coverage/merged --reporter=lcov --report-dir=coverage
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarcloud-github-action@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=jpourdanis_test-automation-best-practices
+            -Dsonar.organization=jpourdanis
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+
+      - name: SonarQube Quality Gate
+        uses: sonarsource/sonarqube-quality-gate-action@v1.2.0
+        timeout-minutes: 5
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
   # ==========================================
   # 1a. UNIT TESTING (API)
   # ==========================================
@@ -62,7 +98,7 @@ jobs:
       - name: Run Backend Unit Tests
         env:
           JEST_JUNIT_OUTPUT_NAME: junit-api-unit-tests.xml
-        run: npm test
+        run: npm run coverage
         working-directory: server
 
       - name: Upload Backend Unit Test Allure Results
@@ -71,6 +107,17 @@ jobs:
         with:
           name: allure-results-api-unit-testing
           path: server/allure-results/
+          retention-days: 1
+
+      - name: Upload Backend Unit Coverage
+        if: always()
+        run: |
+          mkdir -p coverage-unit
+          cp server/coverage/coverage-final.json coverage-unit/backend-unit.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nyc-output-backend-unit
+          path: coverage-unit/backend-unit.json
           retention-days: 1
 
   # ==========================================
@@ -102,6 +149,17 @@ jobs:
           path: server/allure-results/
           retention-days: 1
 
+      - name: Upload Backend Integration Coverage
+        if: always()
+        run: |
+          mkdir -p coverage-int
+          cp server/coverage/coverage-final.json coverage-int/backend-int.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nyc-output-backend-int
+          path: coverage-int/backend-int.json
+          retention-days: 1
+
   # ==========================================
   # 1b. UNIT TESTING (Frontend)
   # ==========================================
@@ -125,6 +183,17 @@ jobs:
           path: allure-results/
           retention-days: 1
 
+      - name: Upload Frontend Unit Coverage
+        if: always()
+        run: |
+          mkdir -p coverage-frontend
+          cp coverage/coverage-final.json coverage-frontend/frontend-unit.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: nyc-output-frontend-unit
+          path: coverage-frontend/frontend-unit.json
+          retention-days: 1
+
   # ==========================================
   # 1c. SECURITY TESTING (npm audit & Trivy FS)
   # ==========================================
@@ -132,6 +201,8 @@ jobs:
     name: Security Tests (Frontend & Backend)
     needs: [backend-unit-tests, frontend-unit-tests]
     runs-on: ubuntu-latest
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -161,6 +232,13 @@ jobs:
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-fs.xml"
 
+      - name: Snyk Infrastructure as Code (IaC) Scan
+        uses: snyk/actions/node@v1.0.0
+        continue-on-error: true
+        with:
+          command: iac test
+          args: --org=${{ secrets.SNYK_ORG }} docker-compose.yml
+
       - name: Upload Trivy FS Allure Results
         if: always() # Ensure this runs even if Trivy fails the build
         uses: actions/upload-artifact@v7
@@ -181,7 +259,7 @@ jobs:
         uses: actions/checkout@v6
 
       - name: Build Frontend Docker image for container scanning
-        run: docker compose build app
+        run: docker compose build web
 
       - name: Create Allure results directory
         run: mkdir -p allure-results
@@ -200,6 +278,15 @@ jobs:
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-frontend.xml"
+
+      - name: Run Snyk Container scan on frontend image
+        uses: snyk/actions/docker@v1.0.0
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: "test-automation-best-practices-app:latest"
+          args: --org=${{ secrets.SNYK_ORG }} --file=Dockerfile
 
       - name: Upload Trivy Frontend Allure Results
         if: always()
@@ -241,6 +328,15 @@ jobs:
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-api.xml"
           ignorefile: ".trivyignore"
+
+      - name: Run Snyk Container scan on API image
+        uses: snyk/actions/docker@v1.0.0
+        continue-on-error: true
+        env:
+          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+        with:
+          image: "test-automation-best-practices-api:latest"
+          args: --org=${{ secrets.SNYK_ORG }} --file=server/Dockerfile
 
       - name: Upload Trivy API Allure Results
         if: always()
@@ -400,8 +496,8 @@ jobs:
                 scope = "buildkit"
 
       # Spins up the application frontend, backend API, and MongoDB database via Docker
-      - name: Start app service (Docker Compose)
-        run: docker compose up -d --build --wait app api mongo
+      - name: Start web service (Docker Compose)
+        run: docker compose up -d --build --wait web api mongo
 
       # Runs fast API tests first; failures here indicate backend issues
       - name: Run API tests
@@ -451,8 +547,8 @@ jobs:
       - name: Coverage Summary
         if: always()
         run: |
-          if [ -d "${{ env.NYC_OUTPUT_DIR }}" ] && [ "$(ls -A ${{ env.NYC_OUTPUT_DIR }} 2>/dev/null)" ]; then
-            npx nyc report --temp-dir=${{ env.NYC_OUTPUT_DIR }} --reporter=text
+          if [ -d "$NYC_OUTPUT_DIR" ] && [ "$(ls -A $NYC_OUTPUT_DIR 2>/dev/null)" ]; then
+            npx nyc report --temp-dir=$NYC_OUTPUT_DIR --reporter=text
           else
             echo "No coverage data collected in this job."
           fi
@@ -461,10 +557,10 @@ jobs:
       - name: List coverage data
         if: always()
         run: |
-          if [ -d "${{ env.NYC_OUTPUT_DIR }}" ]; then
-            ls -al ${{ env.NYC_OUTPUT_DIR }}
+          if [ -d "$NYC_OUTPUT_DIR" ]; then
+            ls -al $NYC_OUTPUT_DIR
           else
-            echo "${{ env.NYC_OUTPUT_DIR }} directory not found"
+            echo "$NYC_OUTPUT_DIR directory not found"
           fi
 
       # Uploads Istanbul coverage data collected by baseFixtures for merging
@@ -592,21 +688,21 @@ jobs:
                 scope = "buildkit"
 
       # Completely isolated environment spin-up for this exact shard runner
-      - name: Start app service (Docker Compose)
-        run: docker compose up -d --build --wait app api mongo
+      - name: Start web service (Docker Compose)
+        run: docker compose up -d --build --wait web api mongo
 
       # Executes precisely the assigned fraction (shard) of the test suite (skipping visual tests)
       - name: Run sharded e2e tests
         run: |
-          mkdir -p ${{ env.NYC_OUTPUT_DIR }}
+          mkdir -p $NYC_OUTPUT_DIR
           npx playwright test '^(?!.*visual\.spec\.ts).*\.spec\.ts$' --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }} --reporter=blob,allure-playwright
 
       # List coverage summary for visibility
       - name: Coverage Summary (Shard ${{ matrix.shardIndex }})
         if: always()
         run: |
-          if [ -d "${{ env.NYC_OUTPUT_DIR }}" ] && [ "$(ls -A ${{ env.NYC_OUTPUT_DIR }} 2>/dev/null)" ]; then
-            npx nyc report --temp-dir=${{ env.NYC_OUTPUT_DIR }} --reporter=text
+          if [ -d "$NYC_OUTPUT_DIR" ] && [ "$(ls -A $NYC_OUTPUT_DIR 2>/dev/null)" ]; then
+            npx nyc report --temp-dir=$NYC_OUTPUT_DIR --reporter=text
           else
             echo "No coverage data collected in this shard."
           fi
@@ -624,10 +720,10 @@ jobs:
       - name: List coverage data
         if: always()
         run: |
-          if [ -d "${{ env.NYC_OUTPUT_DIR }}" ]; then
-            ls -al ${{ env.NYC_OUTPUT_DIR }}
+          if [ -d "$NYC_OUTPUT_DIR" ]; then
+            ls -al $NYC_OUTPUT_DIR
           else
-            echo "${{ env.NYC_OUTPUT_DIR }} directory not found"
+            echo "$NYC_OUTPUT_DIR directory not found"
           fi
 
       # Uploads Istanbul coverage data from this shard for merging
@@ -739,7 +835,7 @@ jobs:
 
       # Spins up the application frontend, backend API, and MongoDB database via Docker
       - name: Start Full Stack (Docker Compose)
-        run: docker compose up -d --build --wait app api mongo
+        run: docker compose up -d --build --wait web api mongo
 
       - name: Install DBus for Headless Browser
         run: sudo apt-get update && sudo apt-get install -y dbus dbus-x11
@@ -774,6 +870,8 @@ jobs:
   # ==========================================
   e2e-production-tests:
     name: E2E Tests Against Ephemeral Environment
+    env:
+      VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
     needs:
       [
         security-testing-fs,
@@ -801,24 +899,28 @@ jobs:
       - uses: ./.github/actions/setup-node-env
 
       - name: Install Playwright browsers
+        if: env.VERCEL_TOKEN != ''
         run: npx playwright install --with-deps
 
       - name: Deploy to Vercel (Preview)
         id: vercel-deploy
+        if: env.VERCEL_TOKEN != ''
         uses: amondnet/vercel-action@v25
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
+          vercel-version: latest
 
       - name: Run E2E tests against Vercel Preview
+        if: env.VERCEL_TOKEN != ''
         env:
           BASE_URL: ${{ steps.vercel-deploy.outputs.preview-url }}
         run: npm run test:e2e:prod
 
       - name: Upload Allure Results Production
-        if: always()
+        if: always() && env.VERCEL_TOKEN != ''
         uses: actions/upload-artifact@v7
         with:
           name: allure-results-production-tests
@@ -912,11 +1014,11 @@ jobs:
       # Generates unified lcov report from merged coverage data
       - name: Generate merged code coverage
         run: |
-          mkdir -p ${{ env.NYC_OUTPUT_DIR }}
-          if [ "$(ls -A ${{ env.NYC_OUTPUT_DIR }})" ]; then
-            npx nyc report --temp-dir=${{ env.NYC_OUTPUT_DIR }} --reporter=lcovonly
+          mkdir -p $NYC_OUTPUT_DIR
+          if [ "$(ls -A $NYC_OUTPUT_DIR)" ]; then
+            npx nyc report --temp-dir=$NYC_OUTPUT_DIR --reporter=lcovonly
           else
-            echo "No coverage data found in ${{ env.NYC_OUTPUT_DIR }}. Creating empty lcov.info."
+            echo "No coverage data found in $NYC_OUTPUT_DIR. Creating empty lcov.info."
             mkdir -p coverage
             touch coverage/lcov.info
           fi
@@ -930,6 +1032,13 @@ jobs:
           else
             echo "Skipping coverage check: lcov.info is missing or empty."
           fi
+
+      - name: Upload merged coverage (for Sonar)
+        uses: actions/upload-artifact@v7
+        with:
+          name: merged-lcov
+          path: coverage/lcov.info
+          retention-days: 1
 
       # Publishes the merged test coverage to Coveralls dashboard
       - name: Upload coverage to Coveralls

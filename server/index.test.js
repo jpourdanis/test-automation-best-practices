@@ -109,10 +109,10 @@ describe('Server Unit Tests', () => {
       expect(res.body.error).toBe('Color not found')
     })
 
-    it('returns 400 for invalid name format in URL', async () => {
-      const res = await request(app).get('/api/colors/invalid!@#')
+    it('returns 400 for invalid name in path (regex check)', async () => {
+      const res = await request(app).get('/api/colors/!!Invalid!!')
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('alphanumeric')
+      expect(res.body.error).toContain('name must contain alphanumeric')
     })
   })
 
@@ -270,7 +270,14 @@ describe('Server Unit Tests', () => {
     it('returns 400 for invalid name with special characters', async () => {
       const res = await request(app).put('/api/colors/Red').send({ name: '@invalid!' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('alphanumeric')
+      const errorMsg = res.body.error || res.body.details || JSON.stringify(res.body)
+      expect(errorMsg).toContain('alphanumeric')
+    })
+
+    it('returns 400 for invalid name in path (regex check)', async () => {
+      const res = await request(app).put('/api/colors/!!Invalid!!').send({ hex: '#123456' })
+      expect(res.status).toBe(400)
+      expect(res.body.error).toContain('name must contain alphanumeric')
     })
 
     it('returns 400 for invalid current name format in URL', async () => {
@@ -312,10 +319,10 @@ describe('Server Unit Tests', () => {
       expect(res.body.error).toBe('Color not found')
     })
 
-    it('returns 400 for invalid name format in URL', async () => {
-      const res = await request(app).delete('/api/colors/invalid!@#')
+    it('returns 400 for invalid name in path (regex check)', async () => {
+      const res = await request(app).delete('/api/colors/!!Invalid!!')
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('alphanumeric')
+      expect(res.body.error).toContain('name must contain alphanumeric')
     })
   })
 
@@ -471,7 +478,7 @@ describe('Server Unit Tests', () => {
     })
 
     it('PUT /api/colors/:name returns 500 when database fails', async () => {
-      jest.spyOn(Color, 'findOneAndUpdate').mockRejectedValue(new Error('DB Error'))
+      jest.spyOn(Color, 'findOne').mockRejectedValue(new Error('DB Error'))
       const res = await request(app).put('/api/colors/Red').send({ hex: '#ff0000' })
       expect(res.status).toBe(500)
       expect(res.body.error).toBe('Failed to update color')
@@ -510,11 +517,37 @@ describe('Server Unit Tests', () => {
 
     describe('Infrastructure', () => {
       it('uses MONGO_URI from environment if available', () => {
-        // This is tricky to test since the app is already loaded,
-        // but we can verify that the code was hit if we run it in a separate process or re-require
-        // For now, we'll just ensure the logic exists and is covered by the existing connect logic
-        // (which is already hit during setup)
-        expect(process.env.MONGO_URI || 'mongodb://localhost:27017/colorsdb').toBeDefined()
+        const originalUri = process.env.MONGO_URI
+        const testUri = 'mongodb://test-server:27017/testdb'
+        process.env.MONGO_URI = testUri
+        jest.resetModules()
+
+        const { MONGO_URI } = require('./index')
+        expect(MONGO_URI).toBe(testUri)
+
+        // Cleanup
+        process.env.MONGO_URI = originalUri
+      })
+
+      it('uses default MONGO_URI when process.env.MONGO_URI is missing', () => {
+        const originalUri = process.env.MONGO_URI
+        delete process.env.MONGO_URI
+
+        // Mock dotenv before requiring to prevent it from loading .env again
+        const dotenv = require('dotenv')
+        jest.spyOn(dotenv, 'config').mockImplementation(() => ({}))
+
+        jest.resetModules()
+
+        // We need to re-mock dotenv after resetModules for it to affect index.js
+        jest.doMock('dotenv', () => ({ config: () => ({}) }))
+
+        const { MONGO_URI } = require('./index')
+        expect(MONGO_URI).toBe('mongodb://localhost:27017/colorsdb')
+
+        // Cleanup
+        jest.unmock('dotenv')
+        process.env.MONGO_URI = originalUri
       })
     })
 

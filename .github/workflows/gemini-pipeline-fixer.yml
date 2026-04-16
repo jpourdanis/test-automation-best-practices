@@ -1,0 +1,85 @@
+name: Gemini AI Pipeline Investigator
+
+on:
+  pull_request:
+    types: [labeled]
+
+permissions:
+  contents: write
+  pull-requests: write
+  actions: read # Required to download the failed logs
+
+jobs:
+  investigate-and-fix:
+    if: contains(github.event.pull_request.labels.*.name, 'AI-Fix')
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Fetch all history so Gemini can understand the codebase
+          ref: ${{ github.event.pull_request.head.ref }}
+
+      - name: Setup Node Environment
+        uses: ./.github/actions/setup-node-env
+
+      - name: Install Gemini CLI
+        run: npm install -g @google/gemini-cli
+
+      - name: Fetch Failed Pipeline Logs
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Find the failed CI run for this PR's HEAD commit
+          RUN_ID=$(gh run list --commit ${{ github.event.pull_request.head.sha }} --workflow "CI" --status failure --json databaseId -q '.[0].databaseId')
+
+          if [ -z "$RUN_ID" ] || [ "$RUN_ID" == "null" ]; then
+            echo "Error: Could not find a failed CI run for this PR."
+            echo "Placeholder: Log extraction failed or no logs were found." > failed_logs.txt
+          else
+            if ! gh run view $RUN_ID --log-failed > failed_logs.txt; then
+              echo "Error: gh run view failed to extract logs for run $RUN_ID"
+              echo "Placeholder: Log extraction failed or no logs were found." > failed_logs.txt
+            fi
+          fi
+
+          # Optional: truncate if logs are massively huge (over 100k lines)
+          if [ -s failed_logs.txt ]; then
+            tail -n 2000 failed_logs.txt > failed_logs_trimmed.txt
+          else
+            echo "Placeholder: failed_logs.txt is empty or does not exist." > failed_logs_trimmed.txt
+          fi
+
+      - name: Analyze Logs and Generate Fix
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          LOGS=$(cat failed_logs_trimmed.txt)
+
+          echo "Asking Gemini to investigate the pipeline failure..."
+
+          # Sleep to prevent hitting 5-requests-per-minute rate limits too quickly
+          sleep 60
+
+          # Run the Gemini CLI Agent to analyze the logs and edit the local files
+          gemini -y --prompt "The GitHub Actions CI pipeline just failed. Here are the logs: $LOGS. Analyze the issue and modify the files locally. Only make targeted fixes related to the error, do not launch open-ended extensive searches."
+
+      - name: Create Pull Request with the AI Fix
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "fix: resolve pipeline failure for PR #${{ github.event.pull_request.number }}"
+          title: "🚨 AI Fix: Resolved Pipeline Failure in PR #${{ github.event.pull_request.number }}"
+          body: |
+            ### 🤖 Gemini AI Pipeline Investigator
+
+            This Pull Request was automatically generated because the pipeline failed on PR #${{ github.event.pull_request.number }}.
+
+            **Gemini Pro** analyzed the failed logs, found the root cause in the codebase, and generated this patch. 
+
+            **Next Steps:**
+            1. Review the code changes.
+            2. Check if the newly triggered CI passes on this branch.
+            3. Approve and merge if the fix looks good!
+          branch: "gemini-fix/pipeline-failure-pr-${{ github.event.pull_request.number }}"
+          base: ${{ github.event.pull_request.head.ref }}
