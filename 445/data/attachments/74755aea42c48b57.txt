@@ -1,0 +1,2 @@
+[NETWORK INFO] should handle color click network failure gracefully: 200 GET http://localhost:3000/api/colors
+[NETWORK INFO] should handle color click network failure gracefully: 200 GET http://localhost:3000/api/colors
