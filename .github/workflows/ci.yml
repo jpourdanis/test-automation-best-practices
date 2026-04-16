@@ -72,6 +72,8 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
           args: >
+            -Dsonar.projectKey=jpourdanis_test-automation-best-practices
+            -Dsonar.organization=jpourdanis
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
       - name: SonarQube Quality Gate
