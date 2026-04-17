@@ -1,0 +1,1 @@
+{"total":2,"items":[{"uid":"8fb3a91ba5aaf9de24cc8a92edc82b5d","name":"Product defects","statistic":{"failed":12,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":12}},{"uid":"4969f7c4d589af3df8a8e01467054c3b","name":"Flaky Network Issues","statistic":{"failed":1,"broken":0,"skipped":0,"passed":0,"unknown":0,"total":1}}]}
