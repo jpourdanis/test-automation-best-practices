@@ -112,7 +112,9 @@ describe('Server Unit Tests', () => {
     it('returns 400 for invalid name in path (regex check)', async () => {
       const res = await request(app).get('/api/colors/!!Invalid!!')
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('name must contain alphanumeric')
+      expect(res.body.error).toBe(
+        'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
+      )
     })
   })
 
@@ -138,8 +140,7 @@ describe('Server Unit Tests', () => {
     it('returns 409 for a duplicate color name with descriptive error', async () => {
       const res = await request(app).post('/api/colors').send({ name: 'Red', hex: '#ff0000' })
       expect(res.status).toBe(409)
-      expect(res.body.error).toContain('Red')
-      expect(res.body.error).toContain('already exists')
+      expect(res.body.error).toBe('Color "Red" already exists')
     })
 
     it('returns 400 when name is missing', async () => {
@@ -157,13 +158,13 @@ describe('Server Unit Tests', () => {
     it('returns 400 for invalid hex format (no hash)', async () => {
       const res = await request(app).post('/api/colors').send({ name: 'BadHex', hex: 'aabbcc' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('hex')
+      expect(res.body.error).toBe('hex must be a valid 6-digit hex format (e.g., #1abc9c)')
     })
 
     it('returns 400 for invalid hex format (too short)', async () => {
       const res = await request(app).post('/api/colors').send({ name: 'Short', hex: '#abc' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('hex')
+      expect(res.body.error).toBe('hex must be a valid 6-digit hex format (e.g., #1abc9c)')
     })
 
     it('returns 400 for extra unknown fields (strict schema)', async () => {
@@ -175,13 +176,17 @@ describe('Server Unit Tests', () => {
     it('returns 400 for name with only spaces', async () => {
       const res = await request(app).post('/api/colors').send({ name: '   ', hex: '#aabbcc' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toBeDefined()
+      expect(res.body.error).toBe(
+        'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
+      )
     })
 
     it('returns 400 for name with special characters', async () => {
       const res = await request(app).post('/api/colors').send({ name: '@#$!', hex: '#aabbcc' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('alphanumeric')
+      expect(res.body.error).toBe(
+        'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
+      )
     })
 
     it('returns 400 for name with whitespace', async () => {
@@ -192,7 +197,8 @@ describe('Server Unit Tests', () => {
     it('returns 400 for completely empty body', async () => {
       const res = await request(app).post('/api/colors').send({})
       expect(res.status).toBe(400)
-      expect(res.body.error).toBeDefined()
+      // Name is required should be the first error
+      expect(res.body.error).toBe('Invalid input: expected string, received undefined')
     })
 
     it('accepts names with alphanumeric characters and spaces', async () => {
@@ -267,13 +273,13 @@ describe('Server Unit Tests', () => {
     it('returns 400 when no fields are provided (empty body)', async () => {
       const res = await request(app).put('/api/colors/Red').send({})
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('At least one field')
+      expect(res.body.error).toBe('At least one field to update must be provided')
     })
 
     it('returns 400 for invalid hex on update', async () => {
       const res = await request(app).put('/api/colors/Red').send({ hex: 'badhex' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('hex')
+      expect(res.body.error).toBe('hex must be a valid 6-digit hex format')
     })
 
     it('returns 400 for extra unknown fields (strict schema)', async () => {
@@ -285,20 +291,25 @@ describe('Server Unit Tests', () => {
     it('returns 400 for invalid name with special characters', async () => {
       const res = await request(app).put('/api/colors/Red').send({ name: '@invalid!' })
       expect(res.status).toBe(400)
-      const errorMsg = res.body.error || res.body.details || JSON.stringify(res.body)
-      expect(errorMsg).toContain('alphanumeric')
+      expect(res.body.error).toBe(
+        'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
+      )
     })
 
     it('returns 400 for invalid name in path (regex check)', async () => {
       const res = await request(app).put('/api/colors/!!Invalid!!').send({ hex: '#123456' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('name must contain alphanumeric')
+      expect(res.body.error).toBe(
+        'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
+      )
     })
 
     it('returns 400 for invalid current name format in URL', async () => {
       const res = await request(app).put('/api/colors/invalid!@#').send({ hex: '#000000' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('alphanumeric')
+      expect(res.body.error).toBe(
+        'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
+      )
     })
   })
 
@@ -336,7 +347,9 @@ describe('Server Unit Tests', () => {
     it('returns 400 for invalid name in path (regex check)', async () => {
       const res = await request(app).delete('/api/colors/!!Invalid!!')
       expect(res.status).toBe(400)
-      expect(res.body.error).toContain('name must contain alphanumeric')
+      expect(res.body.error).toBe(
+        'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
+      )
     })
   })
 
@@ -347,17 +360,13 @@ describe('Server Unit Tests', () => {
     it('returns 405 for PATCH on /api/colors', async () => {
       const res = await request(app).patch('/api/colors')
       expect(res.status).toBe(405)
-      expect(res.body.error).toContain('not allowed')
-      expect(res.body.error).toContain('PATCH')
-      expect(res.body.error).toContain('/api/colors')
+      expect(res.body.error).toBe('Method PATCH not allowed on /api/colors')
     })
 
     it('returns 405 for PATCH on /api/colors/:name', async () => {
       const res = await request(app).patch('/api/colors/Red')
       expect(res.status).toBe(405)
-      expect(res.body.error).toContain('not allowed')
-      expect(res.body.error).toContain('PATCH')
-      expect(res.body.error).toContain('/api/colors/:name')
+      expect(res.body.error).toBe('Method PATCH not allowed on /api/colors/:name')
     })
 
     it('sets the Allow header on /api/colors with correct methods', async () => {
@@ -444,8 +453,9 @@ describe('Server Unit Tests', () => {
 
     it('handles non-JSON content type gracefully on POST', async () => {
       const res = await request(app).post('/api/colors').set('Content-Type', 'text/plain').send('not json')
-      // Should return 400 (validation fails) rather than 500
-      expect(res.status).toBeLessThan(500)
+      // Should return 400 (validation fails)
+      expect(res.status).toBe(400)
+      expect(res.body.error).toBe('Invalid input: expected object, received undefined')
     })
 
     it('returns 400 for malformed JSON body', async () => {
@@ -609,10 +619,10 @@ describe('Server Unit Tests', () => {
 
       it('Zod required_error messages are correct', async () => {
         const res1 = await request(app).post('/api/colors').send({ hex: '#123456' })
-        expect(res1.body.error).toBeDefined()
+        expect(res1.body.error).toBe('Invalid input: expected string, received undefined')
 
         const res2 = await request(app).post('/api/colors').send({ name: 'Name' })
-        expect(res2.body.error).toBeDefined()
+        expect(res2.body.error).toBe('Invalid input: expected string, received undefined')
       })
     })
 
@@ -650,6 +660,39 @@ describe('Server Unit Tests', () => {
       it('has application/json content-type', async () => {
         const res = await request(app).get('/openapi.json')
         expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
+      })
+    })
+
+    describe('Port Fallback', () => {
+      it('uses default PORT 5001 when process.env.PORT is missing', () => {
+        const originalPort = process.env.PORT
+        delete process.env.PORT
+        jest.resetModules()
+        const { app: localApp } = require('./index')
+        process.env.PORT = originalPort
+      })
+
+      it('reflects process.env.PORT in Swagger servers', async () => {
+        const originalPort = process.env.PORT
+        process.env.PORT = '9999'
+        jest.resetModules()
+        const { app: localApp } = require('./index')
+        const res = await request(localApp).get('/openapi.json')
+        expect(res.body.servers[1].url).toBe('http://localhost:9999')
+        process.env.PORT = originalPort
+      })
+    })
+
+    describe('Swagger Metadata', () => {
+      it('has correct title and version', async () => {
+        const res = await request(app).get('/openapi.json')
+        expect(res.body.info.title).toBe('Colors API')
+        expect(res.body.info.version).toBe('1.0.0')
+      })
+
+      it('has correct production server URL', async () => {
+        const res = await request(app).get('/openapi.json')
+        expect(res.body.servers[0].url).toBe('https://test-automation-best-practices.vercel.app')
       })
     })
   })

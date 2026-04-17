@@ -63,7 +63,7 @@ app.use((err, req, res, next) => {
 // Swagger / OpenAPI configuration
 // ---------------------------------------------------------------------------
 
-// Stryker disable all: Swagger metadata configuration, not business logic
+// Swagger metadata configuration, not business logic
 /** @type {import('swagger-jsdoc').Options} */
 const swaggerOptions = {
   definition: {
@@ -89,7 +89,6 @@ const swaggerOptions = {
   // Scan this and api/index.js for JSDoc @swagger annotations
   apis: [__filename, 'api/index.js']
 }
-// Stryker restore all
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions)
 
