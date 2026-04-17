@@ -145,15 +145,13 @@ describe('Server Unit Tests', () => {
     it('returns 400 when name is missing', async () => {
       const res = await request(app).post('/api/colors').send({ hex: '#aabbcc' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toBeDefined()
-      expect(typeof res.body.error).toBe('string')
+      expect(res.body.error).toBe('Invalid input: expected string, received undefined')
     })
 
     it('returns 400 when hex is missing', async () => {
       const res = await request(app).post('/api/colors').send({ name: 'Magenta' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toBeDefined()
-      expect(typeof res.body.error).toBe('string')
+      expect(res.body.error).toBe('Invalid input: expected string, received undefined')
     })
 
     it('returns 400 for invalid hex format (no hash)', async () => {
@@ -171,7 +169,7 @@ describe('Server Unit Tests', () => {
     it('returns 400 for extra unknown fields (strict schema)', async () => {
       const res = await request(app).post('/api/colors').send({ name: 'Orange', hex: '#e67e22', extra: 'field' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toBeDefined()
+      expect(res.body.error).toBe('Unrecognized key: "extra"')
     })
 
     it('returns 400 for name with only spaces', async () => {
@@ -186,11 +184,9 @@ describe('Server Unit Tests', () => {
       expect(res.body.error).toContain('alphanumeric')
     })
 
-    it('trims whitespace from name and hex', async () => {
-      const res = await request(app).post('/api/colors').send({ name: '  Green  ', hex: '  #2ecc71  ' })
-      expect(res.status).toBe(201)
-      expect(res.body.name).toBe('Green')
-      expect(res.body.hex).toBe('#2ecc71')
+    it('returns 400 for name with whitespace', async () => {
+      const res = await request(app).post('/api/colors').send({ name: '  Green  ', hex: '#2ecc71' })
+      expect(res.status).toBe(400)
     })
 
     it('returns 400 for completely empty body', async () => {
@@ -203,6 +199,25 @@ describe('Server Unit Tests', () => {
       const res = await request(app).post('/api/colors').send({ name: 'Light Blue 2', hex: '#add8e6' })
       expect(res.status).toBe(201)
       expect(res.body.name).toBe('Light Blue 2')
+    })
+
+    it('accepts single alphanumeric characters as names', async () => {
+      const res1 = await request(app).post('/api/colors').send({ name: 'A', hex: '#123456' })
+      expect(res1.status).toBe(201)
+      const res2 = await request(app).post('/api/colors').send({ name: '1', hex: '#654321' })
+      expect(res2.status).toBe(201)
+    })
+
+    it('accepts names with the + character', async () => {
+      const res = await request(app).post('/api/colors').send({ name: 'Red+Blue', hex: '#800080' })
+      expect(res.status).toBe(201)
+      expect(res.body.name).toBe('Red+Blue')
+    })
+
+    it('applies the createColorLimiter rate limit headers', async () => {
+      const res = await request(app).post('/api/colors').send({ name: 'RateLimitTest', hex: '#123456' })
+      expect(res.headers['x-ratelimit-limit']).toBe('100')
+      expect(res.headers['x-ratelimit-remaining']).toBeDefined()
     })
   })
 
@@ -264,7 +279,7 @@ describe('Server Unit Tests', () => {
     it('returns 400 for extra unknown fields (strict schema)', async () => {
       const res = await request(app).put('/api/colors/Red').send({ hex: '#ff0000', extra: 'field' })
       expect(res.status).toBe(400)
-      expect(res.body.error).toBeDefined()
+      expect(res.body.error).toBe('Unrecognized key: "extra"')
     })
 
     it('returns 400 for invalid name with special characters', async () => {
@@ -294,8 +309,7 @@ describe('Server Unit Tests', () => {
     it('deletes an existing color and returns success message', async () => {
       const res = await request(app).delete('/api/colors/Yellow')
       expect(res.status).toBe(200)
-      expect(res.body.message).toContain('Yellow')
-      expect(res.body.message).toContain('deleted successfully')
+      expect(res.body.message).toBe('Color "Yellow" deleted successfully')
 
       // Verify it is actually gone
       const check = await request(app).get('/api/colors/Yellow')
@@ -391,7 +405,7 @@ describe('Server Unit Tests', () => {
     it('serves the OpenAPI JSON spec with correct metadata', async () => {
       const res = await request(app).get('/openapi.json')
       expect(res.status).toBe(200)
-      expect(res.headers['content-type']).toMatch(/json/)
+      expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
       expect(res.body.openapi).toBe('3.0.0')
       expect(res.body.info.title).toBe('Colors API')
       expect(res.body.info.version).toBe('1.0.0')
@@ -421,6 +435,11 @@ describe('Server Unit Tests', () => {
     it('includes CORS headers', async () => {
       const res = await request(app).get('/api/colors')
       expect(res.headers['access-control-allow-origin']).toBe('*')
+    })
+
+    it('does not include X-Powered-By header', async () => {
+      const res = await request(app).get('/api/colors')
+      expect(res.headers['x-powered-by']).toBeUndefined()
     })
 
     it('handles non-JSON content type gracefully on POST', async () => {
@@ -564,6 +583,14 @@ describe('Server Unit Tests', () => {
         // Mutant: first required char is optional
         const res3 = await request(app).post('/api/colors').send({ name: ' ', hex: '#123456' })
         expect(res3.status).toBe(400)
+
+        // Leading space should fail (kills mutants that loosen the regex)
+        const res4 = await request(app).post('/api/colors').send({ name: ' Name', hex: '#123456' })
+        expect(res4.status).toBe(400)
+
+        // Trailing space should fail
+        const res5 = await request(app).post('/api/colors').send({ name: 'Name ', hex: '#123456' })
+        expect(res5.status).toBe(400)
       })
 
       it('hex regex kills mutants by testing boundaries and formats', async () => {
@@ -586,13 +613,6 @@ describe('Server Unit Tests', () => {
 
         const res2 = await request(app).post('/api/colors').send({ name: 'Name' })
         expect(res2.body.error).toBeDefined()
-      })
-
-      it('trim() kills mutants by verifying whitespace removal', async () => {
-        const res = await request(app).post('/api/colors').send({ name: '  TrimMe  ', hex: '  #123456  ' })
-        expect(res.status).toBe(201)
-        expect(res.body.name).toBe('TrimMe')
-        expect(res.body.hex).toBe('#123456')
       })
     })
 

@@ -25,20 +25,18 @@ const STRICT_NAME_MSG =
 
 const colorZodSchema = z
   .object({
-    name: z.string({ required_error: 'name is required' }).trim().regex(STRICT_NAME_REGEX, STRICT_NAME_MSG),
+    name: z.string({ required_error: 'name is required' }).regex(STRICT_NAME_REGEX, STRICT_NAME_MSG),
     hex: z
       .string({ required_error: 'hex is required' })
-      .trim()
       .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format (e.g., #1abc9c)')
   })
   .strict()
 
 const updateColorZodSchema = z
   .object({
-    name: z.string().trim().regex(STRICT_NAME_REGEX, STRICT_NAME_MSG).optional(),
+    name: z.string().regex(STRICT_NAME_REGEX, STRICT_NAME_MSG).optional(),
     hex: z
       .string()
-      .trim()
       .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format')
       .optional()
   })
