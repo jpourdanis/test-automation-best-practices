@@ -326,16 +326,16 @@ describe('Server Integration Tests (Testcontainers)', () => {
     it('should return 405 for PATCH /api/colors', async () => {
       const res = await request(app).patch('/api/colors').send({})
       expect(res.status).toBe(405)
-      expect(res.headers['allow']).toContain('GET')
-      expect(res.headers['allow']).toContain('POST')
+      expect(res.headers.allow).toContain('GET')
+      expect(res.headers.allow).toContain('POST')
     })
 
     it('should return 405 for PATCH /api/colors/:name', async () => {
       const res = await request(app).patch('/api/colors/Red').send({})
       expect(res.status).toBe(405)
-      expect(res.headers['allow']).toContain('GET')
-      expect(res.headers['allow']).toContain('PUT')
-      expect(res.headers['allow']).toContain('DELETE')
+      expect(res.headers.allow).toContain('GET')
+      expect(res.headers.allow).toContain('PUT')
+      expect(res.headers.allow).toContain('DELETE')
     })
   })
 

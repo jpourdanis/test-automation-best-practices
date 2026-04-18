@@ -51,12 +51,15 @@ const updateColorZodSchema = z
 app.use(cors()) // Enable CORS for all origins
 app.use(express.json()) // Parse incoming JSON request bodies
 
-// Middleware to catch JSON parsing errors and return a JSON response instead of HTML
+// Middleware to catch body-parser errors and return JSON instead of HTML
 app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Payload too large' })
+  }
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     return res.status(400).json({ error: 'Invalid JSON', details: err.message })
   }
-  next()
+  next(err)
 })
 
 // ---------------------------------------------------------------------------

@@ -51,6 +51,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [26. Mutation Testing with Stryker Mutator](#26-mutation-testing-with-stryker-mutator)
     - [27. Automated Dependency Updates & Version Testing](#27-automated-dependency-updates--version-testing)
     - [28. Security Scanning with Trivy & Snyk](#28-security-scanning-with-trivy--snyk)
+    - [29. Security E2E Testing with Playwright](#29-security-e2e-testing-with-playwright)
 
 ---
 
@@ -208,7 +209,7 @@ e2e/
 │   ├── network-mocking.spec.ts  # Network mocking & interception
 │   ├── pom-refactored.spec.ts   # POM demonstration
 │   ├── random-data.spec.ts      # Random data generation with faker.js
-│   ├── security-audit.spec.ts   # Dependency & security testing
+│   ├── security.spec.ts         # XSS, injection, rate limit & method security tests
 │   └── visual.spec.ts           # Visual regression & responsive testing
 ├── snapshots/                     # Visual regression baseline screenshots
 ├── baseFixtures.ts              # Playwright fixtures (POM, Coverage)
@@ -1960,5 +1961,87 @@ security-testing-fs:
 2. Set the `SNYK_ORG` environment variable locally:
 3. Run `npm run snyk:test` locally after installing the Snyk CLI.
 4. Run `npm run security:audit` for a local NPM audit.
+
+### 29. Security E2E Testing with Playwright
+
+**File:** [`e2e/tests/security.spec.ts`](/e2e/tests/security.spec.ts) · [`server/index.js`](/server/index.js)
+
+**What is it?**
+A dedicated Playwright test suite that exercises the application's security controls end-to-end: it fires real HTTP requests at the running stack and verifies that the server correctly rejects attack payloads, enforces rate limits, hides sensitive headers, and restricts HTTP methods. Unlike static analysis tools, these tests prove the defenses work at runtime against the full network path (Nginx → Express → MongoDB).
+
+**The Problem**
+Dependency scanners (Trivy, Snyk) reveal known CVEs in third-party packages but cannot verify that your own validation logic actually prevents an attacker from injecting a NoSQL operator into a request body, or that the rate limiter fires before the 101st request. A human must write tests that send the attack payload and assert the correct rejection.
+
+**Why it matters:**
+
+- **Defense-in-Depth Verification** — The server uses Zod strict schemas with an alphanumeric-only regex. These tests confirm that the guard actually fires in the running application, not just in unit tests against a mocked HTTP layer.
+- **Runtime Regression Protection** — A future refactor could accidentally remove `.strict()` from the Zod schema or swap `next(err)` back to `next()`, silently breaking security. These tests catch that in CI before it ships.
+- **Living Security Specification** — Each `test.describe` group documents a specific threat category and the exact HTTP behaviour that constitutes a correct defence.
+
+**Test groups and what they cover:**
+
+| Group                        | Tests | Threat modelled                                                                                                                                         |
+| ---------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **XSS Prevention**           | 4     | HTML/script/`javascript:` tags rejected at the Zod regex layer; no JS dialog fires in the rendered UI                                                   |
+| **Injection Prevention**     | 4     | `$gt`/`$where` objects rejected because Zod enforces `string` type before Mongoose sees the value; SQL special chars blocked by alphanumeric-only regex |
+| **Input Validation**         | 5     | `.strict()` rejects extra fields; `entity.too.large` returns 413; malformed JSON returns 400; empty/array bodies rejected                               |
+| **Security Headers**         | 2     | `X-Powered-By` absent (`app.disable('x-powered-by')`); error responses are always `application/json`                                                    |
+| **HTTP Method Restrictions** | 5     | `PATCH`/`DELETE` on the collection, `PATCH` on a resource, `POST` on `/api-docs`, `PUT` on `/openapi.json` all return 405 with a correct `Allow` header |
+| **Rate Limiting**            | 1     | 101 concurrent POSTs exhaust the 100-req/15-min limiter; at least one receives 429                                                                      |
+
+**Key implementation details:**
+
+**Serialized execution:** `test.describe.configure({ mode: 'serial' })` forces the groups to run one-at-a-time so the Rate Limiting group (which fires 101 POST requests and exhausts the quota) always executes last, leaving the other POST-based tests unaffected.
+
+```typescript
+// e2e/tests/security.spec.ts
+test.describe.configure({ mode: 'serial' })
+
+test.describe('Security', () => {
+  // XSS, Injection, Validation, Headers, Methods … then:
+
+  test.describe('Rate Limiting', () => {
+    test('POST /api/colors returns 429 after exceeding the rate limit', async ({ request }) => {
+      const names = Array.from({ length: 101 }, (_, i) => `RateLimit${i}`)
+      const responses = await Promise.all(
+        names.map((name) => request.post('/api/colors', { data: { name, hex: '#aabbcc' } }))
+      )
+      expect(responses.map((r) => r.status())).toContain(429)
+    })
+  })
+})
+```
+
+**Server fix — propagating `PayloadTooLargeError`:** The original error middleware called `next()` (discarding the error) instead of `next(err)`, causing oversized bodies to silently fall through to Zod validation and return 400. Adding an explicit `entity.too.large` check before the syntax-error branch fixes this:
+
+```javascript
+// server/index.js
+app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Payload too large' })
+  }
+  if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
+    return res.status(400).json({ error: 'Invalid JSON', details: err.message })
+  }
+  next(err)
+})
+```
+
+**NoSQL injection:** Zod's type coercion is the first line of defence. When `{ name: { $gt: '' } }` arrives, `z.string()` rejects it immediately — the object never reaches Mongoose.
+
+```typescript
+test('NoSQL injection object in name is rejected (400)', async ({ request }) => {
+  const res = await request.post('/api/colors', {
+    data: { name: { $gt: '' }, hex: '#ffffff' }
+  })
+  expect(res.status()).toBe(400)
+})
+```
+
+**How to verify:**
+
+```bash
+npx playwright test e2e/tests/security.spec.ts
+```
 
 <!-- husky test -->
