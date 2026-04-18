@@ -1,4 +1,0 @@
-[NETWORK INFO] verify language switcher changes document language: 204 GET https://test-automation-best-practices-huriyttnp-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] verify language switcher changes document language: 200 GET https://test-automation-best-practices-huriyttnp-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] verify language switcher changes document language: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-huriyttnp-jpourdanis-projects.vercel.app&deploymentId=dpl_3ZVzFnsk1afECr4qqVPeVoHRUq1D
-[NETWORK INFO] verify language switcher changes document language: 204 HEAD https://test-automation-best-practices-huriyttnp-jpourdanis-projects.vercel.app/
