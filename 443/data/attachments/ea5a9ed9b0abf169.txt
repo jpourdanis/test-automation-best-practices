@@ -1,3 +1,0 @@
-[NETWORK INFO] handle color response missing hex property: 200 GET http://localhost:3000/api/colors
-[NETWORK INFO] handle color response missing hex property: 200 GET http://localhost:3000/api/colors
-[NETWORK INFO] handle color response missing hex property: 200 GET http://localhost:3000/api/colors/Yellow

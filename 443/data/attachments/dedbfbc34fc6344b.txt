@@ -1,5 +1,0 @@
-[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 204 GET https://test-automation-best-practices-orjr43j2m-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 200 GET https://test-automation-best-practices-orjr43j2m-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-orjr43j2m-jpourdanis-projects.vercel.app&deploymentId=dpl_9Hyr7Mi3rDfX4PPnmo9BjxNpyc2Q
-[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 204 HEAD https://test-automation-best-practices-orjr43j2m-jpourdanis-projects.vercel.app/
-[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 200 GET https://test-automation-best-practices-orjr43j2m-jpourdanis-projects.vercel.app/api/colors/Turquoise
