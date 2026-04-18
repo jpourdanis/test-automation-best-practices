@@ -33,9 +33,9 @@
     "i18next": "^26.0.4",
     "i18next-browser-languagedetector": "^8.2.1",
     "nyc": "^18.0.0",
-    "react": "^19.2.4",
+    "react": "^19.2.5",
     "react-app-rewired": "^2.2.1",
-    "react-dom": "^19.0.0",
+    "react-dom": "^19.2.5",
     "react-i18next": "^17.0.1",
     "react-scripts": "5.0.1",
     "typescript": "^6.0.2"
@@ -113,7 +113,7 @@
     "playwright-bdd": "^8.5.0",
     "playwright-lighthouse": "^4.0.0",
     "snyk": "^1.1303.2",
-    "sonarqube-scanner": "^4.3.5",
+    "sonarqube-scanner": "^4.3.6",
     "zod": "^4.3.6"
   },
   "lint-staged": {

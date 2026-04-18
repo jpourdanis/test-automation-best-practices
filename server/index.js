@@ -5,9 +5,14 @@ const cors = require('cors')
 const swaggerJsdoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 const { z } = require('zod')
+const rateLimit = require('express-rate-limit')
 
 const app = express()
 app.disable('x-powered-by')
+const createColorLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100 // limit each IP to 100 create-color requests per windowMs
+})
 
 // ---------------------------------------------------------------------------
 // Validation Schemas
@@ -20,20 +25,18 @@ const STRICT_NAME_MSG =
 
 const colorZodSchema = z
   .object({
-    name: z.string({ required_error: 'name is required' }).trim().regex(STRICT_NAME_REGEX, STRICT_NAME_MSG),
+    name: z.string({ required_error: 'name is required' }).regex(STRICT_NAME_REGEX, STRICT_NAME_MSG),
     hex: z
       .string({ required_error: 'hex is required' })
-      .trim()
       .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format (e.g., #1abc9c)')
   })
   .strict()
 
 const updateColorZodSchema = z
   .object({
-    name: z.string().trim().regex(STRICT_NAME_REGEX, STRICT_NAME_MSG).optional(),
+    name: z.string().regex(STRICT_NAME_REGEX, STRICT_NAME_MSG).optional(),
     hex: z
       .string()
-      .trim()
       .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format')
       .optional()
   })
@@ -60,7 +63,7 @@ app.use((err, req, res, next) => {
 // Swagger / OpenAPI configuration
 // ---------------------------------------------------------------------------
 
-// Stryker disable all: Swagger metadata configuration, not business logic
+// Swagger metadata configuration, not business logic
 /** @type {import('swagger-jsdoc').Options} */
 const swaggerOptions = {
   definition: {
@@ -86,14 +89,27 @@ const swaggerOptions = {
   // Scan this and api/index.js for JSDoc @swagger annotations
   apis: [__filename, 'api/index.js']
 }
-// Stryker restore all
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions)
 
-// Serve Swagger UI at /api-docs
+// Serve Swagger UI at /api-docs (with 405 handler)
+app.all('/api-docs', (req, res, next) => {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET')
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api-docs` })
+  }
+  next()
+})
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-// Serve OpenAPI spec as JSON at /openapi.json
+// Serve OpenAPI spec as JSON at /openapi.json (with 405 handler)
+app.all('/openapi.json', (req, res, next) => {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET')
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /openapi.json` })
+  }
+  next()
+})
 app.get('/openapi.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.send(swaggerSpec)
@@ -332,7 +348,7 @@ app.get('/api/colors/:name', async (req, res) => {
  *       500:
  *         description: Server error
  */
-app.post('/api/colors', async (req, res) => {
+app.post('/api/colors', createColorLimiter, async (req, res) => {
   try {
     const parseResult = colorZodSchema.safeParse(req.body)
     if (!parseResult.success) {
