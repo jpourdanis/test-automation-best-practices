@@ -14,7 +14,7 @@
     "low": 70,
     "break": 70
   },
-  "concurrency": 2,
+  "concurrency": 4,
   "timeoutMS": 30000,
   "ignoreStatic": true
 }

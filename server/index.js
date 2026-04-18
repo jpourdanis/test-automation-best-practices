@@ -228,6 +228,38 @@ if (require.main === module) {
 // ===========================================================================
 
 // ---------------------------------------------------------------------------
+// 405 Method Not Allowed Handler
+// ---------------------------------------------------------------------------
+
+/**
+ * Middleware to catch methods that are not explicitly defined on existing routes
+ * and return 405 Method Not Allowed instead of 404 Not Found.
+ * Placed BEFORE routes to allow for strict method validation.
+ */
+const allowedMethods = {
+  '/api/colors': ['GET', 'POST'],
+  '/api/colors/:name': ['GET', 'PUT', 'DELETE'],
+  '/openapi.json': ['GET'],
+  '/api-docs': ['GET']
+}
+
+app.all('/api/colors', (req, res, next) => {
+  if (!allowedMethods['/api/colors'].includes(req.method)) {
+    res.setHeader('Allow', allowedMethods['/api/colors'].join(', '))
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors` })
+  }
+  next()
+})
+
+app.all('/api/colors/:name', (req, res, next) => {
+  if (!allowedMethods['/api/colors/:name'].includes(req.method)) {
+    res.setHeader('Allow', allowedMethods['/api/colors/:name'].join(', '))
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors/:name` })
+  }
+  next()
+})
+
+// ---------------------------------------------------------------------------
 // GET /api/colors – List all colors
 // ---------------------------------------------------------------------------
 
@@ -514,37 +546,6 @@ app.delete('/api/colors/:name', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete color' })
   }
-})
-
-// ---------------------------------------------------------------------------
-// 405 Method Not Allowed Handler
-// ---------------------------------------------------------------------------
-
-/**
- * Middleware to catch methods that are not explicitly defined on existing routes
- * and return 405 Method Not Allowed instead of 404 Not Found.
- */
-const allowedMethods = {
-  '/api/colors': ['GET', 'POST'],
-  '/api/colors/:name': ['GET', 'PUT', 'DELETE'],
-  '/openapi.json': ['GET'],
-  '/api-docs': ['GET']
-}
-
-app.all('/api/colors', (req, res, next) => {
-  if (!allowedMethods['/api/colors'].includes(req.method)) {
-    res.setHeader('Allow', allowedMethods['/api/colors'].join(', '))
-    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors` })
-  }
-  next()
-})
-
-app.all('/api/colors/:name', (req, res, next) => {
-  if (!allowedMethods['/api/colors/:name'].includes(req.method)) {
-    res.setHeader('Allow', allowedMethods['/api/colors/:name'].join(', '))
-    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors/:name` })
-  }
-  next()
 })
 
 // ---------------------------------------------------------------------------

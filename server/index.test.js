@@ -378,6 +378,26 @@ describe('Server Unit Tests', () => {
       expect(res.body.error).toBe('Method PATCH not allowed on /api/colors/:name')
     })
 
+    it('returns 405 for POST, PUT, DELETE on /openapi.json', async () => {
+      const methods = ['post', 'put', 'delete']
+      for (const method of methods) {
+        const res = await request(app)[method]('/openapi.json')
+        expect(res.status).toBe(405)
+        expect(res.body.error).toBe(`Method ${method.toUpperCase()} not allowed on /openapi.json`)
+        expect(res.headers.allow).toBe('GET')
+      }
+    })
+
+    it('returns 405 for POST, PUT, DELETE on /api-docs', async () => {
+      const methods = ['post', 'put', 'delete']
+      for (const method of methods) {
+        const res = await request(app)[method]('/api-docs')
+        expect(res.status).toBe(405)
+        expect(res.body.error).toBe(`Method ${method.toUpperCase()} not allowed on /api-docs`)
+        expect(res.headers.allow).toBe('GET')
+      }
+    })
+
     it('sets the Allow header on /api/colors with correct methods', async () => {
       const res = await request(app).patch('/api/colors')
       expect(res.status).toBe(405)
@@ -510,6 +530,17 @@ describe('Server Unit Tests', () => {
       expect(res.body.details).toBeDefined()
     })
 
+    it('returns 413 for payload too large', async () => {
+      // Generate a large string (> 100kb default limit)
+      const largeString = 'a'.repeat(1024 * 101)
+      const res = await request(app)
+        .post('/api/colors')
+        .set('Content-Type', 'application/json')
+        .send({ name: 'Large', hex: '#123456', data: largeString })
+      expect(res.status).toBe(413)
+      expect(res.body.error).toBe('Payload too large')
+    })
+
     it('JSON error middleware passes non-syntax errors to next()', async () => {
       // Create a temporary route that throws a non-syntax error
       app.get('/test-error-next', (req, res, next) => {
@@ -530,6 +561,8 @@ describe('Server Unit Tests', () => {
       })
       const res = await request(app).get('/test-syntax-500')
       expect(res.status).toBe(500)
+      // Verify it's NOT our custom JSON error
+      expect(res.body.error).toBeUndefined()
     })
 
     it('JSON error middleware ignores SyntaxError without body', async () => {
@@ -540,6 +573,8 @@ describe('Server Unit Tests', () => {
       })
       const res = await request(app).get('/test-syntax-no-body')
       expect(res.status).toBe(400)
+      // Verify it's NOT our custom JSON error
+      expect(res.body.error).toBeUndefined()
     })
   })
 
@@ -804,7 +839,18 @@ describe('Server Unit Tests', () => {
         expect(res.body.servers).toHaveLength(2)
         expect(res.body.servers[0].url).toBe('https://test-automation-best-practices.vercel.app')
         expect(res.body.servers[0].description).toBe('Vercel Production Server')
+        expect(res.body.servers[1].url).toBe(`http://localhost:${process.env.PORT || 5001}`)
         expect(res.body.servers[1].description).toBe('Local development server')
+      })
+
+      it('has exact API info', async () => {
+        const res = await request(app).get('/openapi.json')
+        expect(res.body.info.title).toBe('Colors API')
+        expect(res.body.info.version).toBe('1.0.0')
+        expect(res.body.info.description).toBe(
+          'A simple CRUD API for managing colors, backed by MongoDB. ' +
+            'This API is used by the Test Automation Best Practices demo application.'
+        )
       })
 
       it('has exact application/json content-type', async () => {
@@ -857,6 +903,69 @@ describe('Server Unit Tests', () => {
         expect(res.headers['x-ratelimit-reset']).toBeDefined()
         // Ensure it is a number
         expect(Number(res.headers['x-ratelimit-limit'])).toBe(100)
+      })
+    })
+
+    describe('Strict Path & Method Validation', () => {
+      it('kills mutants that change route paths to empty string', async () => {
+        const paths = ['/api/colors', '/api/colors/Red', '/openapi.json', '/api-docs']
+        for (const path of paths) {
+          const res = await request(app).get(path)
+          expect(res.status).not.toBe(404)
+        }
+        // Verify a truly random path IS 404
+        const res404 = await request(app).get('/api/not-a-route')
+        expect(res404.status).toBe(404)
+
+        // Verify root path IS 404 (to kill "" path mutants)
+        const resRoot = await request(app).get('/')
+        expect(resRoot.status).toBe(404)
+      })
+
+      it('kills allowedMethods mutants by exhaustive testing', async () => {
+        const routes = [
+          { path: '/api/colors', allowed: ['GET', 'POST'] },
+          { path: '/api/colors/Red', allowed: ['GET', 'PUT', 'DELETE'] },
+          { path: '/openapi.json', allowed: ['GET'] },
+          { path: '/api-docs', allowed: ['GET'] }
+        ]
+        const allMethods = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+
+        for (const route of routes) {
+          for (const method of allMethods) {
+            const res = await request(app)[method.toLowerCase()](route.path)
+            if (route.allowed.includes(method)) {
+              // Should NOT be 405. (Might be 200, 201, 404, 400 depending on the test, but NOT 405)
+              expect(res.status).not.toBe(405)
+            } else {
+              expect(res.status).toBe(405)
+              expect(res.headers.allow).toContain(route.allowed[0])
+            }
+          }
+        }
+      })
+    })
+
+    describe('Swagger JSDoc Integration', () => {
+      it('kills apis array mutants by verifying JSDoc content is present', async () => {
+        const res = await request(app).get('/openapi.json')
+        // This description comes from the JSDoc at line 238
+        expect(res.body.paths['/api/colors'].get.description).toBe(
+          'Returns the full list of colors stored in the database.'
+        )
+        // This comes from line 270
+        expect(res.body.paths['/api/colors/{name}'].get.description).toBe(
+          'Looks up a color by its name (case-sensitive).'
+        )
+      })
+    })
+
+    describe('Mongoose Schema Strictness', () => {
+      it('kills empty schema mutant by checking schema paths', () => {
+        expect(Color.schema.paths).toHaveProperty('name')
+        expect(Color.schema.paths).toHaveProperty('hex')
+        expect(Color.schema.paths.name.instance).toBe('String')
+        expect(Color.schema.paths.hex.instance).toBe('String')
       })
     })
   })
