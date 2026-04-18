@@ -244,10 +244,18 @@ describe('Server Unit Tests', () => {
       expect(check.body.hex).toBe('#ff0000')
     })
 
-    it('updates the name of an existing color', async () => {
+    it('does not change name when updating only hex', async () => {
+      const res = await request(app).put('/api/colors/Red').send({ hex: '#0000ff' })
+      expect(res.status).toBe(200)
+      expect(res.body.name).toBe('Red')
+      expect(res.body.hex).toBe('#0000ff')
+    })
+
+    it('updates the name of an existing color and preserves hex', async () => {
       const res = await request(app).put('/api/colors/Red').send({ name: 'Crimson' })
       expect(res.status).toBe(200)
       expect(res.body.name).toBe('Crimson')
+      expect(res.body.hex).toBe('#e74c3c') // Original hex for Red
 
       // Old name should not exist anymore
       const old = await request(app).get('/api/colors/Red')
@@ -255,6 +263,7 @@ describe('Server Unit Tests', () => {
       // New name should exist
       const newColor = await request(app).get('/api/colors/Crimson')
       expect(newColor.status).toBe(200)
+      expect(newColor.body.hex).toBe('#e74c3c')
     })
 
     it('updates both name and hex simultaneously', async () => {
@@ -380,6 +389,31 @@ describe('Server Unit Tests', () => {
       expect(res.status).toBe(405)
       expect(res.headers.allow).toBe('GET, PUT, DELETE')
     })
+
+    it('does not return 405 for allowed GET method on /api/colors', async () => {
+      const res = await request(app).get('/api/colors')
+      expect(res.status).toBe(200)
+    })
+
+    it('does not return 405 for allowed POST method on /api/colors', async () => {
+      const res = await request(app).post('/api/colors').send({ name: 'AllowedMethod', hex: '#123456' })
+      expect(res.status).toBe(201)
+    })
+
+    it('does not return 405 for allowed GET method on /api/colors/:name', async () => {
+      const res = await request(app).get('/api/colors/Red')
+      expect(res.status).toBe(200)
+    })
+
+    it('does not return 405 for allowed PUT method on /api/colors/:name', async () => {
+      const res = await request(app).put('/api/colors/Red').send({ hex: '#123456' })
+      expect(res.status).toBe(200)
+    })
+
+    it('does not return 405 for allowed DELETE method on /api/colors/:name', async () => {
+      const res = await request(app).delete('/api/colors/Red')
+      expect(res.status).toBe(200)
+    })
   })
 
   // =========================================================================
@@ -411,14 +445,17 @@ describe('Server Unit Tests', () => {
   // OpenAPI / Swagger
   // =========================================================================
   describe('OpenAPI endpoints', () => {
-    it('serves the OpenAPI JSON spec with correct metadata', async () => {
+    it('serves the OpenAPI JSON spec with exact metadata', async () => {
       const res = await request(app).get('/openapi.json')
       expect(res.status).toBe(200)
       expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
       expect(res.body.openapi).toBe('3.0.0')
       expect(res.body.info.title).toBe('Colors API')
       expect(res.body.info.version).toBe('1.0.0')
-      expect(res.body.info.description).toBeDefined()
+      expect(res.body.info.description).toBe(
+        'A simple CRUD API for managing colors, backed by MongoDB. ' +
+          'This API is used by the Test Automation Best Practices demo application.'
+      )
       expect(res.body.paths).toHaveProperty('/api/colors')
       expect(res.body.paths).toHaveProperty('/api/colors/{name}')
     })
@@ -434,6 +471,11 @@ describe('Server Unit Tests', () => {
       expect(res.body.components.schemas).toHaveProperty('Color')
       expect(res.body.components.schemas).toHaveProperty('UpdateColor')
       expect(res.body.components.schemas).toHaveProperty('Error')
+    })
+
+    it('has exact application/json content-type', async () => {
+      const res = await request(app).get('/openapi.json')
+      expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
     })
   })
 
@@ -466,6 +508,38 @@ describe('Server Unit Tests', () => {
       expect(res.status).toBe(400)
       expect(res.body.error).toBe('Invalid JSON')
       expect(res.body.details).toBeDefined()
+    })
+
+    it('JSON error middleware passes non-syntax errors to next()', async () => {
+      // Create a temporary route that throws a non-syntax error
+      app.get('/test-error-next', (req, res, next) => {
+        const err = new Error('Normal Error')
+        err.status = 400
+        next(err)
+      })
+      const res = await request(app).get('/test-error-next')
+      expect(res.status).toBe(400) // Default express handler or no matching route
+    })
+
+    it('JSON error middleware ignores SyntaxError with status != 400', async () => {
+      app.get('/test-syntax-500', (req, res, next) => {
+        const err = new SyntaxError('Syntax but 500')
+        err.status = 500
+        err.body = {}
+        next(err)
+      })
+      const res = await request(app).get('/test-syntax-500')
+      expect(res.status).toBe(500)
+    })
+
+    it('JSON error middleware ignores SyntaxError without body', async () => {
+      app.get('/test-syntax-no-body', (req, res, next) => {
+        const err = new SyntaxError('Syntax but no body')
+        err.status = 400
+        next(err)
+      })
+      const res = await request(app).get('/test-syntax-no-body')
+      expect(res.status).toBe(400)
     })
   })
 
@@ -603,6 +677,37 @@ describe('Server Unit Tests', () => {
         expect(res5.status).toBe(400)
       })
 
+      it('STRICT_NAME_REGEX kills mutants by testing multiple spaces and pluses in the middle', async () => {
+        const res1 = await request(app).post('/api/colors').send({ name: 'Red  Blue', hex: '#123456' })
+        expect(res1.status).toBe(201)
+        const res2 = await request(app).post('/api/colors').send({ name: 'Red++Blue', hex: '#123456' })
+        expect(res2.status).toBe(201)
+        const res3 = await request(app).post('/api/colors').send({ name: 'A + B', hex: '#123456' })
+        expect(res3.status).toBe(201)
+      })
+
+      it('STRICT_NAME_REGEX is strict on forbidden special characters in the middle', async () => {
+        const forbidden = ['Red$Blue', 'Red_Blue', 'Red.Blue', 'Red!Blue']
+        for (const name of forbidden) {
+          const res = await request(app).post('/api/colors').send({ name, hex: '#123456' })
+          expect(res.status).toBe(400)
+        }
+      })
+
+      it('STRICT_NAME_REGEX kills mutants on optionality and length', async () => {
+        // Single char should pass
+        const res1 = await request(app).post('/api/colors').send({ name: 'A', hex: '#123456' })
+        expect(res1.status).toBe(201)
+
+        // Two chars should pass
+        const res2 = await request(app).post('/api/colors').send({ name: 'A1', hex: '#123456' })
+        expect(res2.status).toBe(201)
+
+        // Three chars with space should pass
+        const res3 = await request(app).post('/api/colors').send({ name: 'A B', hex: '#123456' })
+        expect(res3.status).toBe(201)
+      })
+
       it('hex regex kills mutants by testing boundaries and formats', async () => {
         // Missing #
         const res1 = await request(app).post('/api/colors').send({ name: 'ValidName', hex: '123456' })
@@ -663,12 +768,35 @@ describe('Server Unit Tests', () => {
       })
     })
 
+    describe('Security & Infrastructure', () => {
+      it('kills mutants by verifying x-powered-by is removed', async () => {
+        const res = await request(app).get('/api/colors')
+        expect(res.headers['x-powered-by']).toBeUndefined()
+      })
+
+      it('kills mutants by verifying x-ratelimit-limit on POST', async () => {
+        const res = await request(app).post('/api/colors').send({ name: 'LimitTest', hex: '#123456' })
+        expect(res.headers['x-ratelimit-limit']).toBe('100')
+        expect(res.headers['x-ratelimit-remaining']).toBeDefined()
+      })
+
+      it('kills mutants in Swagger metadata', async () => {
+        const res = await request(app).get('/openapi.json')
+        expect(res.body.info.title).toBe('Colors API')
+        expect(res.body.servers).toHaveLength(2)
+        expect(res.body.servers[0].url).toBe('https://test-automation-best-practices.vercel.app')
+        expect(res.body.servers[0].description).toBe('Vercel Production Server')
+      })
+    })
+
     describe('Port Fallback', () => {
-      it('uses default PORT 5001 when process.env.PORT is missing', () => {
+      it('uses default PORT 5001 when process.env.PORT is missing', async () => {
         const originalPort = process.env.PORT
         delete process.env.PORT
         jest.resetModules()
         const { app: localApp } = require('./index')
+        const res = await request(localApp).get('/openapi.json')
+        expect(res.body.servers[1].url).toBe('http://localhost:5001')
         process.env.PORT = originalPort
       })
 
