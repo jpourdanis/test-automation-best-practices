@@ -191,7 +191,9 @@ api/
 └── index.js                     # Vercel serverless function wrapper
 e2e/
 ├── features/
-│   └── home.feature             # Gherkin BDD scenarios
+│   ├── home.feature             # Background color Gherkin scenarios
+│   ├── error-handling.feature   # API error resilience scenarios
+│   └── i18n.feature             # Language switching scenarios
 ├── pages/
 │   └── HomePage.ts              # Page Object Model
 ├── tests/                       # Playwright E2E test suites
@@ -389,10 +391,10 @@ npx playwright test e2e/tests/pom-refactored.spec.ts
 
 ### 2. Behavior-Driven Development (BDD) with Cucumber
 
-**Files:** [`e2e/features/home.feature`](/e2e/features/home.feature) · [`e2e/tests/bdd.spec.ts`](/e2e/tests/bdd.spec.ts)
+**Files:** [`e2e/features/home.feature`](/e2e/features/home.feature) · [`e2e/features/error-handling.feature`](/e2e/features/error-handling.feature) · [`e2e/features/i18n.feature`](/e2e/features/i18n.feature) · [`e2e/tests/bdd.spec.ts`](/e2e/tests/bdd.spec.ts)
 
 **What is it?**
-BDD closes the gap between business stakeholders and QA engineers by expressing tests in plain English using Gherkin syntax. We use `playwright-bdd` to seamlessly compile `.feature` files into native Playwright tests.
+BDD closes the gap between business stakeholders and QA engineers by expressing tests in plain English using Gherkin syntax. We use `playwright-bdd` to seamlessly compile `.feature` files into native Playwright tests. Three feature files cover distinct areas of the application: background color theming, API error resilience, and language switching (i18n).
 
 **The Problem**
 
@@ -406,23 +408,41 @@ Automated tests are usually written in code (TypeScript) that Product Managers, 
 
 **How to implement:**
 
-**Step 1:** Write a Gherkin feature file outlining the desired behavior:
+**Step 1:** Write Gherkin feature files outlining the desired behavior. Each file owns a distinct functional area:
 
 ```gherkin
-# e2e/features/home.feature
+# e2e/features/home.feature — theming
 Feature: Home Page Background Color
-
   Scenario Outline: Change background color
     Given I am on the home page
     When I click the "<color>" color button
     Then the background color should be "<rgb>"
-
     Examples:
       | color     | rgb                |
       | Turquoise | rgb(26, 188, 156)  |
+
+# e2e/features/error-handling.feature — resilience
+Feature: API Error Handling
+  Scenario: Show error message when the initial colors fetch fails
+    Given the API returns a server error for the colors list
+    And I am on the home page
+    Then I should see the error message "Failed to load colors"
+
+# e2e/features/i18n.feature — internationalisation
+Feature: Language Switching
+  Background:
+    Given I am on the home page
+  Scenario Outline: Switch language and verify translated UI labels
+    When I select the language "<code>"
+    Then the page title should be "<title>"
+    And the "Turquoise" button label should be "<turquoise>"
+    Examples:
+      | code | title                           | turquoise |
+      | es   | Aplicación de elección de color | Turquesa  |
+      | el   | Εφαρμογή επιλογής χρώματος      | Τιρκουάζ  |
 ```
 
-**Step 2:** Write the Step Definitions using Playwright and your Page Objects:
+**Step 2:** Write the Step Definitions using Playwright and your Page Objects. All step definitions live in a single file and are shared across all feature files:
 
 ```typescript
 // e2e/tests/bdd.spec.ts
@@ -436,7 +456,19 @@ Given('I am on the home page', async ({ page }) => {
   homePage = new HomePage(page)
   await homePage.goto()
 })
-// ... Map other steps
+
+// Error-handling steps — set up route mocks before navigation
+Given('the API returns a server error for the colors list', async ({ page }) => {
+  await page.route('**/api/colors', (route) => route.fulfill({ status: 500 }))
+})
+
+// i18n steps
+When('I select the language {string}', async ({}, code: string) => {
+  await homePage.page.selectOption('select', code)
+})
+Then('the {string} button label should be {string}', async ({}, _color: string, label: string) => {
+  await expect(homePage.page.getByRole('button', { name: label })).toBeVisible()
+})
 ```
 
 **How to verify:**
@@ -870,43 +902,87 @@ Functional Playwright tests only check if an element exists in the DOM. They wil
 **Why it matters:**
 
 - **Catching Silent UI Failures:** Standard functional tests (`expect(button).toBeVisible()`) will pass even if the button has accidentally been styled to have transparent text on a transparent background. Visual tests catch what the DOM hides.
-- **Multi-Device Confidence:** By running these visual checks across simulated viewports (Mobile, Tablet, Desktop), you guarantee responsive media queries haven't been broken during refactors.
+- **Multi-Device Confidence:** By running visual checks across five simulated viewports (Desktop XL, Desktop, Tablet, iPhone SE, iPhone Landscape), you guarantee responsive media queries haven't been broken during refactors.
+- **Two complementary snapshots per viewport:** A _default-state_ snapshot taken before any interaction (did the layout change?) and a _post-interaction_ snapshot taken after clicking a color button (does the layout hold after a state change?).
 
 **How to implement:**
 
-**Visual Regression:**
+The test defines viewport configurations as data and loops over them, giving each its own `test.describe` block so `test.use()` scopes correctly. The animated React logo is masked to prevent non-deterministic pixel diffs from its CSS spin animation:
+
+**Default-state Visual Regression (5 viewports):**
 
 ```typescript
-test.describe('Visual Regression', () => {
-  test('homepage should match snapshot', async ({ page }) => {
-    await page.goto('/')
-    await page.waitForSelector('header')
-    const screenshot = await page.screenshot({
-      fullPage: true,
-      mask: [page.locator('.App-logo')] // Mask animated elements!
+const snapshotViewports = [
+  { label: 'desktop', width: 1280, height: 720, snapshot: 'home.png' },
+  { label: 'desktop-xl', width: 1920, height: 1080, snapshot: 'home-desktop-xl.png' },
+  { label: 'tablet', width: 768, height: 1024, snapshot: 'home-tablet.png' },
+  { label: 'iphone-se', width: 375, height: 667, snapshot: 'home-iphone-se.png' },
+  { label: 'iphone-landscape', width: 667, height: 375, snapshot: 'home-iphone-landscape.png' }
+]
+
+for (const vp of snapshotViewports) {
+  test.describe(`Visual Regression – ${vp.label} (${vp.width}×${vp.height})`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } })
+
+    test('homepage should match snapshot', async ({ page }) => {
+      await page.goto('/')
+      await page.waitForSelector('header')
+      const screenshot = await page.screenshot({
+        fullPage: true,
+        mask: [page.locator('.App-logo')] // Mask animated elements!
+      })
+      expect(screenshot).toMatchSnapshot(vp.snapshot, { maxDiffPixelRatio: 0.05 })
     })
-    expect(screenshot).toMatchSnapshot('home.png')
   })
-})
+}
 ```
 
-**Responsive Design:**
+**Responsive Functional Tests + Post-interaction Snapshot (3 viewports):**
 
 ```typescript
-test.describe('Responsive Design Testing', () => {
-  test.use({ viewport: { width: 375, height: 667 } }) // iPhone SE
+const responsiveViewports = [
+  { label: 'tablet (768×1024)', width: 768, height: 1024, snapshot: 'home-tablet-responsive.png' },
+  { label: 'iPhone SE (375×667)', width: 375, height: 667, snapshot: 'home-mobile.png' },
+  { label: 'iPhone landscape (667×375)', width: 667, height: 375, snapshot: 'home-iphone-landscape-responsive.png' }
+]
 
-  test('should render correctly on mobile viewport', async ({ page }) => {
-    await page.goto('/')
-    await expect(page.locator('header')).toBeVisible()
+for (const vp of responsiveViewports) {
+  test.describe(`Responsive Design – ${vp.label}`, () => {
+    test.use({ viewport: { width: vp.width, height: vp.height } })
+
+    test('should display all core elements and handle button interaction', async ({ homePage, page }) => {
+      await expect(homePage.header).toBeVisible()
+      await expect(homePage.turquoiseBtn).toBeVisible()
+      // ... element visibility checks
+
+      const responsePromise = page.waitForResponse(
+        (resp) => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
+      )
+      await homePage.clickColorButton('Yellow')
+      await responsePromise
+      await expect(homePage.currentColorText).toContainText('#f1c40f')
+
+      // Post-interaction snapshot — catches layout regressions after a state change
+      const screenshot = await page.screenshot({
+        fullPage: true,
+        mask: [page.locator('.App-logo')]
+      })
+      expect(screenshot).toMatchSnapshot(vp.snapshot, { maxDiffPixelRatio: 0.05 })
+    })
   })
-})
+}
 ```
+
+> **Important:** Baseline snapshots must be generated inside Docker to avoid OS-specific rendering differences (fonts, sub-pixel anti-aliasing). Use `npm run test:e2e:docker:update` to create or refresh baselines; use `npm run test:e2e:docker` for comparison runs.
 
 **How to verify:**
 
 ```bash
-npx playwright test e2e/tests/visual.spec.ts
+# Generate / update baselines (Docker — consistent rendering)
+npm run test:e2e:docker:update
+
+# Compare against baselines
+npm run test:e2e:docker
 ```
 
 ### 11. Accessibility (a11y) Testing
@@ -1109,13 +1185,13 @@ Using in-memory databases (like SQLite) or mock servers for integration tests ca
 **Why it matters:**
 
 - **Real Database Behavior:** Catch issues that mocks miss, such as unique constraint violations, complex query behavior, or database-specific features (e.g., MongoDB's `directConnection`).
-- **Clean State for Every Run:** Testcontainers creates a fresh container for each test run and automatically cleans it up, ensuring zero side-effects between local development and CI.
+- **Clean State for Every Run:** `beforeEach` calls `seedDatabase()` which wipes and re-seeds the collection, ensuring every test starts from a predictable state with zero side-effects between tests.
 - **Environment Parity:** The exact same database version used in production is used in your tests, eliminating "it works on my machine" bugs.
 - **Improved DevOps Workflow:** Developers don't need to manually install or manage a local MongoDB instance; just running the test command handles everything.
 
 **How to implement:**
 
-We use the `@testcontainers/mongodb` module to orchestrate the database lifecycle:
+We use the `@testcontainers/mongodb` module to orchestrate the database lifecycle, with `beforeEach` seeding to guarantee isolation between tests:
 
 ```javascript
 const { MongoDBContainer } = require('@testcontainers/mongodb')
@@ -1130,12 +1206,31 @@ beforeAll(async () => {
   await mongoose.connect(uri)
 })
 
+beforeEach(async () => {
+  // 3. Reset to 3 seed colors before every test — guarantees isolation
+  await seedDatabase()
+})
+
 afterAll(async () => {
   await mongoose.disconnect()
-  // 3. Automatically stop and remove the container
+  // 4. Automatically stop and remove the container
   await mongodbContainer.stop()
 })
 ```
+
+The suite covers **40 tests across 9 describe blocks**, going well beyond basic CRUD to validate real database behaviour:
+
+| Describe block             | What it tests                                                                                       |
+| -------------------------- | --------------------------------------------------------------------------------------------------- |
+| `GET /api/colors`          | Full list, empty array, `_id`/`__v` not exposed                                                     |
+| `GET /api/colors/:name`    | All 3 seeds via `it.each`, case-sensitivity, 400 for invalid name, field exclusion                  |
+| `POST /api/colors`         | Creation + DB persistence, 409 duplicate, all validation errors, name-with-spaces, single-char name |
+| `PUT /api/colors/:name`    | Hex update, rename (old 404 / new 200), both fields, empty body 400, invalid hex/path, 404          |
+| `DELETE /api/colors/:name` | Deletion + DB verify, double-delete 404, invalid name 400                                           |
+| `seedDatabase`             | Idempotency, clears custom data on re-seed, always restores 3 defaults                              |
+| `Method Not Allowed`       | `PATCH` on both routes → 405 with correct `Allow` header                                            |
+| `Concurrent writes`        | 5 parallel POSTs same name → exactly one 201; parallel GETs all succeed                             |
+| `End-to-end CRUD workflow` | Create → Read → Update → verify persisted → Delete → verify gone                                    |
 
 **How to verify:**
 
