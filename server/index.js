@@ -51,12 +51,15 @@ const updateColorZodSchema = z
 app.use(cors()) // Enable CORS for all origins
 app.use(express.json()) // Parse incoming JSON request bodies
 
-// Middleware to catch JSON parsing errors and return a JSON response instead of HTML
+// Middleware to catch body-parser errors and return JSON instead of HTML
 app.use((err, req, res, next) => {
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Payload too large' })
+  }
   if (err instanceof SyntaxError && err.status === 400 && 'body' in err) {
     return res.status(400).json({ error: 'Invalid JSON', details: err.message })
   }
-  next()
+  next(err)
 })
 
 // ---------------------------------------------------------------------------
@@ -223,6 +226,38 @@ if (require.main === module) {
 // ===========================================================================
 // API Endpoints
 // ===========================================================================
+
+// ---------------------------------------------------------------------------
+// 405 Method Not Allowed Handler
+// ---------------------------------------------------------------------------
+
+/**
+ * Middleware to catch methods that are not explicitly defined on existing routes
+ * and return 405 Method Not Allowed instead of 404 Not Found.
+ * Placed BEFORE routes to allow for strict method validation.
+ */
+const allowedMethods = {
+  '/api/colors': ['GET', 'POST'],
+  '/api/colors/:name': ['GET', 'PUT', 'DELETE'],
+  '/openapi.json': ['GET'],
+  '/api-docs': ['GET']
+}
+
+app.all('/api/colors', (req, res, next) => {
+  if (!allowedMethods['/api/colors'].includes(req.method)) {
+    res.setHeader('Allow', allowedMethods['/api/colors'].join(', '))
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors` })
+  }
+  next()
+})
+
+app.all('/api/colors/:name', (req, res, next) => {
+  if (!allowedMethods['/api/colors/:name'].includes(req.method)) {
+    res.setHeader('Allow', allowedMethods['/api/colors/:name'].join(', '))
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors/:name` })
+  }
+  next()
+})
 
 // ---------------------------------------------------------------------------
 // GET /api/colors – List all colors
@@ -511,37 +546,6 @@ app.delete('/api/colors/:name', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete color' })
   }
-})
-
-// ---------------------------------------------------------------------------
-// 405 Method Not Allowed Handler
-// ---------------------------------------------------------------------------
-
-/**
- * Middleware to catch methods that are not explicitly defined on existing routes
- * and return 405 Method Not Allowed instead of 404 Not Found.
- */
-const allowedMethods = {
-  '/api/colors': ['GET', 'POST'],
-  '/api/colors/:name': ['GET', 'PUT', 'DELETE'],
-  '/openapi.json': ['GET'],
-  '/api-docs': ['GET']
-}
-
-app.all('/api/colors', (req, res, next) => {
-  if (!allowedMethods['/api/colors'].includes(req.method)) {
-    res.setHeader('Allow', allowedMethods['/api/colors'].join(', '))
-    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors` })
-  }
-  next()
-})
-
-app.all('/api/colors/:name', (req, res, next) => {
-  if (!allowedMethods['/api/colors/:name'].includes(req.method)) {
-    res.setHeader('Allow', allowedMethods['/api/colors/:name'].join(', '))
-    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors/:name` })
-  }
-  next()
 })
 
 // ---------------------------------------------------------------------------

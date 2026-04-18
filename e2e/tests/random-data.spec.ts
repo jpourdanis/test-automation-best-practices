@@ -17,7 +17,7 @@ test.describe('Random Data Testing with faker.js', () => {
 
   test.afterEach(async ({ request }) => {
     if (createdColorName) {
-      await request.delete(`/api/colors/${createdColorName}`)
+      await request.delete(`/api/colors/${createdColorName}`).catch(() => {})
       createdColorName = null
     }
   })

@@ -14,7 +14,7 @@ test.describe('Hybrid E2E Testing', () => {
 
   test.afterEach(async ({ request }) => {
     if (createdColorName) {
-      await request.delete(`/api/colors/${createdColorName}`)
+      await request.delete(`/api/colors/${createdColorName}`).catch(() => {})
       createdColorName = null
     }
   })
