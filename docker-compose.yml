@@ -5,6 +5,8 @@ services:
     build:
       context: .
       target: app
+      args:
+        - USE_BABEL_PLUGIN_ISTANBUL=1
       cache_from:
         - type=gha,scope=app
       cache_to:
@@ -15,22 +17,11 @@ services:
       api:
         condition: service_healthy
     environment:
-      - USE_BABEL_PLUGIN_ISTANBUL=1
-      - NODE_OPTIONS=--openssl-legacy-provider --dns-result-order=ipv4first
       - PROXY_API_URL=http://api:5001
     volumes:
-      - ./src:/app/src
-      - ./public:/app/public
-      - ./package.json:/app/package.json
       - ./.nyc_output:/app/.nyc_output
     healthcheck:
-      test:
-        [
-          "CMD",
-          "node",
-          "-e",
-          "const http = require('http'); http.get('http://127.0.0.1:3000/api/colors', (r) => { process.exit(r.statusCode === 200 ? 0 : 1); }).on('error', () => process.exit(1));"
-        ]
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/colors"]
       interval: 5s
       timeout: 5s
       start_period: 15s
