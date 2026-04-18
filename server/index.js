@@ -92,10 +92,24 @@ const swaggerOptions = {
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions)
 
-// Serve Swagger UI at /api-docs
+// Serve Swagger UI at /api-docs (with 405 handler)
+app.all('/api-docs', (req, res, next) => {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET')
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api-docs` })
+  }
+  next()
+})
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec))
 
-// Serve OpenAPI spec as JSON at /openapi.json
+// Serve OpenAPI spec as JSON at /openapi.json (with 405 handler)
+app.all('/openapi.json', (req, res, next) => {
+  if (req.method !== 'GET') {
+    res.setHeader('Allow', 'GET')
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /openapi.json` })
+  }
+  next()
+})
 app.get('/openapi.json', (req, res) => {
   res.setHeader('Content-Type', 'application/json')
   res.send(swaggerSpec)

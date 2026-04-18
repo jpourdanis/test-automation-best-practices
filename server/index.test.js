@@ -724,9 +724,11 @@ describe('Server Unit Tests', () => {
 
       it('Zod required_error messages are correct', async () => {
         const res1 = await request(app).post('/api/colors').send({ hex: '#123456' })
+        expect(res1.status).toBe(400)
         expect(res1.body.error).toBe('Invalid input: expected string, received undefined')
 
         const res2 = await request(app).post('/api/colors').send({ name: 'Name' })
+        expect(res2.status).toBe(400)
         expect(res2.body.error).toBe('Invalid input: expected string, received undefined')
       })
     })
@@ -740,11 +742,21 @@ describe('Server Unit Tests', () => {
         expect(res1.body.hex).toBe('#0000ff')
 
         // Only name
-        const res2 = await request(app)
-          .put('/api/colors/Red') // Note: previous test changed Red's hex, but name is still Red here because of beforeEach seed
-          .send({ name: 'FireRed' })
+        const res2 = await request(app).put('/api/colors/Red').send({ name: 'FireRed' })
         expect(res2.status).toBe(200)
         expect(res2.body.name).toBe('FireRed')
+      })
+
+      it('kills refine mutant by sending empty body', async () => {
+        const res = await request(app).put('/api/colors/Red').send({})
+        expect(res.status).toBe(400)
+        expect(res.body.error).toBe('At least one field to update must be provided')
+      })
+
+      it('kills hex regex mutant in PUT', async () => {
+        const res = await request(app).put('/api/colors/Red').send({ hex: '123456' })
+        expect(res.status).toBe(400)
+        expect(res.body.error).toBe('hex must be a valid 6-digit hex format')
       })
     })
 
@@ -758,6 +770,14 @@ describe('Server Unit Tests', () => {
         const res2 = await request(app).patch('/api/colors/Red')
         expect(res2.status).toBe(405)
         expect(res2.headers.allow).toBe('GET, PUT, DELETE')
+
+        const res3 = await request(app).post('/openapi.json')
+        expect(res3.status).toBe(405)
+        expect(res3.headers.allow).toBe('GET')
+
+        const res4 = await request(app).post('/api-docs')
+        expect(res4.status).toBe(405)
+        expect(res4.headers.allow).toBe('GET')
       })
     })
 
@@ -768,24 +788,37 @@ describe('Server Unit Tests', () => {
       })
     })
 
-    describe('Security & Infrastructure', () => {
-      it('kills mutants by verifying x-powered-by is removed', async () => {
-        const res = await request(app).get('/api/colors')
-        expect(res.headers['x-powered-by']).toBeUndefined()
-      })
-
-      it('kills mutants by verifying x-ratelimit-limit on POST', async () => {
-        const res = await request(app).post('/api/colors').send({ name: 'LimitTest', hex: '#123456' })
-        expect(res.headers['x-ratelimit-limit']).toBe('100')
-        expect(res.headers['x-ratelimit-remaining']).toBeDefined()
-      })
-
-      it('kills mutants in Swagger metadata', async () => {
+    describe('Swagger Metadata & OpenAPI', () => {
+      it('has exact info metadata', async () => {
         const res = await request(app).get('/openapi.json')
         expect(res.body.info.title).toBe('Colors API')
+        expect(res.body.info.version).toBe('1.0.0')
+        expect(res.body.info.description).toBe(
+          'A simple CRUD API for managing colors, backed by MongoDB. ' +
+            'This API is used by the Test Automation Best Practices demo application.'
+        )
+      })
+
+      it('has exact server metadata', async () => {
+        const res = await request(app).get('/openapi.json')
         expect(res.body.servers).toHaveLength(2)
         expect(res.body.servers[0].url).toBe('https://test-automation-best-practices.vercel.app')
         expect(res.body.servers[0].description).toBe('Vercel Production Server')
+        expect(res.body.servers[1].description).toBe('Local development server')
+      })
+
+      it('has exact application/json content-type', async () => {
+        const res = await request(app).get('/openapi.json')
+        expect(res.headers['content-type']).toBe('application/json; charset=utf-8')
+      })
+    })
+
+    describe('Mongoose Schema & Persistence', () => {
+      it('kills empty schema mutant by verifying field persistence', async () => {
+        const testColor = await Color.create({ name: 'PersistenceTest', hex: '#123456' })
+        const doc = await Color.findById(testColor._id).lean()
+        expect(doc).toHaveProperty('name', 'PersistenceTest')
+        expect(doc).toHaveProperty('hex', '#123456')
       })
     })
 
@@ -811,16 +844,19 @@ describe('Server Unit Tests', () => {
       })
     })
 
-    describe('Swagger Metadata', () => {
-      it('has correct title and version', async () => {
-        const res = await request(app).get('/openapi.json')
-        expect(res.body.info.title).toBe('Colors API')
-        expect(res.body.info.version).toBe('1.0.0')
+    describe('Rate Limiting & Security', () => {
+      it('kills mutants by verifying x-powered-by is removed', async () => {
+        const res = await request(app).get('/api/colors')
+        expect(res.headers['x-powered-by']).toBeUndefined()
       })
 
-      it('has correct production server URL', async () => {
-        const res = await request(app).get('/openapi.json')
-        expect(res.body.servers[0].url).toBe('https://test-automation-best-practices.vercel.app')
+      it('kills mutants by verifying x-ratelimit headers', async () => {
+        const res = await request(app).post('/api/colors').send({ name: 'LimitTest', hex: '#123456' })
+        expect(res.headers['x-ratelimit-limit']).toBe('100')
+        expect(res.headers['x-ratelimit-remaining']).toBeDefined()
+        expect(res.headers['x-ratelimit-reset']).toBeDefined()
+        // Ensure it is a number
+        expect(Number(res.headers['x-ratelimit-limit'])).toBe(100)
       })
     })
   })
