@@ -1,0 +1,2 @@
+[NETWORK ERROR] should create color via API and verify through UI: GET https://test-automation-best-practices-vilkyynga-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] should create color via API and verify through UI: HEAD https://test-automation-best-practices-vilkyynga-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
