@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 
 // ---------- color conversion helpers ----------
 export function hslToRgb(h: number, s: number, l: number): [number, number, number] {
@@ -194,6 +195,7 @@ export function ColorPicker({
   onConfirm,
   onCancel
 }: ColorPickerProps) {
+  const { t } = useTranslation()
   const [hue, setHue] = useState(210)
   const [sat, setSat] = useState(0.8)
   const [light, setLight] = useState(0.5)
@@ -245,7 +247,7 @@ export function ColorPicker({
       setLight(l)
       setHexError('')
     } else {
-      setHexError('Use format #RRGGBB')
+      setHexError(t('colorPicker.errors.hexFormat'))
     }
   }
 
@@ -259,15 +261,15 @@ export function ColorPicker({
   const submit = () => {
     const n = name.trim()
     if (!n) {
-      setNameError('Name is required')
+      setNameError(t('colorPicker.errors.nameRequired'))
       return
     }
     if (!STRICT.test(n)) {
-      setNameError('Letters, numbers, spaces, + only')
+      setNameError(t('colorPicker.errors.nameInvalid'))
       return
     }
     if (existingNames.some((e) => e.toLowerCase() === n.toLowerCase())) {
-      setNameError(`"${n}" already exists`)
+      setNameError(t('colorPicker.errors.nameDuplicate', { name: n }))
       return
     }
     if (hexError) return
@@ -284,11 +286,11 @@ export function ColorPicker({
         onClick={(e) => e.stopPropagation()}
         role='dialog'
         aria-modal='true'
-        aria-label='Add custom color'
+        aria-label={t('colorPicker.dialogAriaLabel')}
       >
         <div className='picker-head'>
-          <h2>Add a color</h2>
-          <button className='picker-x' onClick={onCancel} aria-label='Close'>
+          <h2>{t('colorPicker.title')}</h2>
+          <button className='picker-x' onClick={onCancel} aria-label={t('colorPicker.closeAriaLabel')}>
             ×
           </button>
         </div>
@@ -297,7 +299,7 @@ export function ColorPicker({
           <div className='picker-left' ref={leftRef}>
             <ColorWheel hue={hue} sat={sat} onChange={onWheelChange} size={wheelSize} />
             <div className='slider-row'>
-              <span className='slider-label'>Lightness</span>
+              <span className='slider-label'>{t('colorPicker.lightnessLabel')}</span>
               <input
                 type='range'
                 min='0'
@@ -306,7 +308,7 @@ export function ColorPicker({
                 onChange={(e) => setLight(Number(e.target.value) / 100)}
                 style={{ background: sliderBg }}
                 className='lightness-slider'
-                aria-label='Lightness'
+                aria-label={t('colorPicker.lightnessLabel')}
               />
             </div>
           </div>
@@ -317,11 +319,11 @@ export function ColorPicker({
             </div>
 
             <label className='field'>
-              <span>Name</span>
+              <span>{t('colorPicker.nameLabel')}</span>
               <input
                 type='text'
                 value={name}
-                placeholder='e.g. Ocean'
+                placeholder={t('colorPicker.namePlaceholder')}
                 onChange={(e) => {
                   setName(e.target.value)
                   setNameError('')
@@ -334,7 +336,7 @@ export function ColorPicker({
             </label>
 
             <label className='field'>
-              <span>Hex</span>
+              <span>{t('colorPicker.hexLabel')}</span>
               <input
                 type='text'
                 value={hexInput}
@@ -347,10 +349,10 @@ export function ColorPicker({
 
             <div className='picker-actions'>
               <button className='btn-ghost' onClick={onCancel} disabled={saving}>
-                Cancel
+                {t('colorPicker.cancel')}
               </button>
               <button className='btn-primary' onClick={submit} disabled={saving}>
-                {saving ? 'Saving…' : 'Add color'}
+                {saving ? t('colorPicker.saving') : t('colorPicker.addColor')}
               </button>
             </div>
 
