@@ -26,7 +26,7 @@ A comprehensive reference project demonstrating **test automation engineering be
     - [4. Data-Driven Testing](#4-data-driven-testing)
     - [5. Random Data Generation with faker.js](#5-random-data-generation-with-fakerjs)
   - [Part 2: Comprehensive Test Coverage](#part-2-comprehensive-test-coverage)
-    - [6. Unit Testing](#6-unit-testing)
+    - [6. Unit & Component Testing](#6-unit--component-testing)
     - [7. Hybrid E2E Testing](#7-hybrid-e2e-testing)
     - [8. Network Mocking & Interception](#8-network-mocking--interception)
     - [9. API Schema Validation with Zod](#9-api-schema-validation-with-zod)
@@ -201,6 +201,7 @@ e2e/
 │   ├── a11y.spec.ts             # Accessibility testing (with i18n support)
 │   ├── api.spec.ts              # API schema validation with Zod
 │   ├── bdd.spec.ts              # Step definitions for BDD tests
+│   ├── color-management.spec.ts # Add & delete color management flow (mocked)
 │   ├── coverage.spec.ts         # E2E tests with code coverage
 │   ├── cross-browser.spec.ts    # Cross-browser testing strategy
 │   ├── data-driven.spec.ts      # Data-driven testing
@@ -235,6 +236,11 @@ server/
 src/
 ├── locales/                     # i18n translation files (en, es, el)
 ├── App.tsx                      # Main React application entry point
+├── App.test.tsx                 # Unit & integration tests for App component
+├── ColorPicker.tsx              # Color picker modal with HSL color wheel & conversion helpers
+├── ColorPicker.test.tsx         # Component tests for ColorPicker and color utility functions
+├── ConfirmDialog.tsx            # Reusable confirmation dialog for destructive actions
+├── ConfirmDialog.test.tsx       # Component tests for ConfirmDialog (keyboard, ARIA, busy state)
 ├── index.tsx                    # React DOM bootstrapper
 └── setupProxy.js                # Local API proxy for development
 .github/
@@ -621,19 +627,19 @@ npx playwright test e2e/tests/random-data.spec.ts
 
 ## Part 2: Comprehensive Test Coverage
 
-### 6. Unit Testing
+### 6. Unit & Component Testing
 
-**Files:** [`src/App.test.tsx`](/src/App.test.tsx) · [`server/index.test.js`](/server/index.test.js)
+**Files:** [`src/App.test.tsx`](/src/App.test.tsx) · [`src/ColorPicker.test.tsx`](/src/ColorPicker.test.tsx) · [`src/ConfirmDialog.test.tsx`](/src/ConfirmDialog.test.tsx) · [`server/index.test.js`](/server/index.test.js)
 
 **What is it?**
-Unit testing involves testing the smallest testable parts of an application (functions, components, or classes) in complete isolation. Unlike E2E tests which boot up the entire system, unit tests focus on pure logic and UI component rendering without hitting a real database or network.
+Unit testing verifies the smallest testable parts of an application — pure functions, helper utilities, and individual components — in complete isolation from the network and database. **Component testing** zooms in on a single React component, rendering it in a lightweight JSDOM environment (via React Testing Library) and asserting on its rendered output, user interactions, ARIA attributes, and keyboard behaviour, without spinning up a browser or a real server.
 
 **The Problem**
 Relying solely on End-to-End browser tests creates a slow, top-heavy test suite. When a complex E2E test fails, it's often difficult to pinpoint exactly which function or line of code actually caused the error.
 
 **Why it matters:**
 
-- **Instant Feedback** — Unit tests run in milliseconds. Developers can run hundreds of tests in seconds, catching regressions the moment a line of code is changed.
+- **Instant Feedback** — Unit and component tests run in milliseconds. Developers can run hundreds of tests in seconds, catching regressions the moment a line of code is changed.
 - **Isolation & Debugging** — When a unit test fails, you know _exactly_ which function is broken. There's no ambiguity about whether the failure was caused by a flaky network or a database timeout.
 - **Foundation of Quality** — They form the base of the Test Automation Pyramid. High unit test coverage allows for a leaner, faster E2E layer by handling edge cases at the logic level rather than the UI level.
 
@@ -646,17 +652,57 @@ Relying solely on End-to-End browser tests creates a slow, top-heavy test suite.
 cd server && npm test
 ```
 
-**Frontend (React):** We use React Testing Library to verify component rendering, user interactions, and i18n support.
+**Frontend React components:** We use React Testing Library to render each component in JSDOM and assert on its visible output, interactions, and accessibility attributes.
+
+```typescript
+// src/ConfirmDialog.test.tsx — keyboard & ARIA coverage
+import { render, screen, fireEvent } from '@testing-library/react'
+import { ConfirmDialog } from './ConfirmDialog'
+
+test('Escape key calls onCancel when not busy', () => {
+  const onCancel = jest.fn()
+  render(<ConfirmDialog {...makeProps({ onCancel })} />)
+  fireEvent.keyDown(window, { key: 'Escape' })
+  expect(onCancel).toHaveBeenCalledTimes(1)
+})
+
+test('dialog has correct ARIA attributes', () => {
+  render(<ConfirmDialog {...makeProps()} />)
+  const dialog = screen.getByRole('alertdialog')
+  expect(dialog).toHaveAttribute('aria-modal', 'true')
+  expect(dialog).toHaveAttribute('aria-labelledby', 'confirm-title')
+})
+```
+
+**Color utility pure-function tests:** The `ColorPicker` module exports `hslToRgb`, `rgbToHex`, `hexToRgb`, `rgbToHsl`, and `readableOn` as named exports. Each is tested exhaustively across all HSL sectors and edge cases without mounting any component, giving fast, deterministic coverage of the conversion logic.
+
+```typescript
+// src/ColorPicker.test.tsx — pure-function coverage
+import { hslToRgb, rgbToHex, hexToRgb, rgbToHsl, readableOn } from './ColorPicker'
+
+describe('hslToRgb', () => {
+  test('hue=0 (red) → [255,0,0]', () => expect(hslToRgb(0, 1, 0.5)).toEqual([255, 0, 0]))
+  test('hue=120 (green) → [0,255,0]', () => expect(hslToRgb(120, 1, 0.5)).toEqual([0, 255, 0]))
+  test('hue=240 (blue) → [0,0,255]', () => expect(hslToRgb(240, 1, 0.5)).toEqual([0, 0, 255]))
+})
+
+describe('readableOn', () => {
+  test('dark text on a light background', () => expect(readableOn('#ffffff')).toBe('#111'))
+  test('light text on a dark background', () => expect(readableOn('#000000')).toBe('#fff'))
+})
+```
+
+**ColorPicker component tests** also cover the full modal surface: canvas rendering with a JSDOM mock, hex input validation, name validation (required / invalid chars / duplicate), server error display, the saving state disabling buttons, and backdrop / close-button dismissal.
 
 ```bash
-# Run frontend unit tests
+# Run frontend unit & component tests
 npm run test:unit
 ```
 
 **How to verify:**
 
 ```bash
-# Run all project unit tests
+# Run all project unit & component tests
 npm run test:unit && cd server && npm test
 ```
 
