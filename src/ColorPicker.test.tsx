@@ -28,125 +28,102 @@ function makeProps(overrides: Partial<Parameters<typeof ColorPicker>[0]> = {}) {
 // ── hslToRgb ─────────────────────────────────────────────────────────────────
 
 describe('hslToRgb', () => {
-  // sector 0: hp < 1 (hue 0–59)
-  test('hue=0 (red, sector 0)', () => {
+  // sector 0: hp in [0,1) — hue 0–59
+  test('hue=0 (red) → [255,0,0]', () => {
     expect(hslToRgb(0, 1, 0.5)).toEqual([255, 0, 0])
   })
-
-  test('hue=30 (orange, sector 0)', () => {
-    const [r, g, b] = hslToRgb(30, 1, 0.5)
+  test('hue=30 (orange) → [255,128,0]', () => {
+    expect(hslToRgb(30, 1, 0.5)).toEqual([255, 128, 0])
+  })
+  test('hue=59 stays in sector 0', () => {
+    const [r, , b] = hslToRgb(59, 1, 0.5)
     expect(r).toBe(255)
-    expect(g).toBeGreaterThan(0)
     expect(b).toBe(0)
   })
 
-  // sector 1: hp < 2 (hue 60–119)
-  test('hue=60 (yellow, sector 1)', () => {
+  // sector 1: hp in [1,2) — hue 60–119
+  test('hue=60 (yellow) → [255,255,0]', () => {
     expect(hslToRgb(60, 1, 0.5)).toEqual([255, 255, 0])
   })
-
-  test('hue=90 (chartreuse, sector 1)', () => {
-    const [r, g, b] = hslToRgb(90, 1, 0.5)
-    expect(g).toBe(255)
-    expect(r).toBeGreaterThan(0)
-    expect(b).toBe(0)
+  test('hue=90 (chartreuse) → [128,255,0]', () => {
+    expect(hslToRgb(90, 1, 0.5)).toEqual([128, 255, 0])
   })
 
-  // sector 2: hp < 3 (hue 120–179)
-  test('hue=120 (green, sector 2)', () => {
+  // sector 2: hp in [2,3) — hue 120–179
+  test('hue=120 (green) → [0,255,0]', () => {
     expect(hslToRgb(120, 1, 0.5)).toEqual([0, 255, 0])
   })
-
-  test('hue=150 (spring green, sector 2)', () => {
-    const [r, g, b] = hslToRgb(150, 1, 0.5)
-    expect(r).toBe(0)
-    expect(g).toBe(255)
-    expect(b).toBeGreaterThan(0)
+  test('hue=150 (spring green) → [0,255,128]', () => {
+    expect(hslToRgb(150, 1, 0.5)).toEqual([0, 255, 128])
   })
 
-  // sector 3: hp < 4 (hue 180–239)
-  test('hue=180 (cyan, sector 3)', () => {
+  // sector 3: hp in [3,4) — hue 180–239
+  test('hue=180 (cyan) → [0,255,255]', () => {
     expect(hslToRgb(180, 1, 0.5)).toEqual([0, 255, 255])
   })
-
-  test('hue=210 (azure, sector 3)', () => {
-    const [r, g, b] = hslToRgb(210, 1, 0.5)
-    expect(r).toBe(0)
-    expect(b).toBe(255)
-    expect(g).toBeGreaterThan(0)
+  test('hue=210 (azure) → [0,128,255]', () => {
+    expect(hslToRgb(210, 1, 0.5)).toEqual([0, 128, 255])
   })
 
-  // sector 4: hp < 5 (hue 240–299)
-  test('hue=240 (blue, sector 4)', () => {
+  // sector 4: hp in [4,5) — hue 240–299
+  test('hue=240 (blue) → [0,0,255]', () => {
     expect(hslToRgb(240, 1, 0.5)).toEqual([0, 0, 255])
   })
-
-  test('hue=270 (violet, sector 4)', () => {
-    const [r, g, b] = hslToRgb(270, 1, 0.5)
-    expect(b).toBe(255)
-    expect(r).toBeGreaterThan(0)
-    expect(g).toBe(0)
+  test('hue=270 (violet) → [128,0,255]', () => {
+    expect(hslToRgb(270, 1, 0.5)).toEqual([128, 0, 255])
   })
 
-  // sector 5: else (hue 300–359)
-  test('hue=300 (magenta, sector 5)', () => {
+  // sector 5: hp in [5,6) — hue 300–359
+  test('hue=300 (magenta) → [255,0,255]', () => {
     expect(hslToRgb(300, 1, 0.5)).toEqual([255, 0, 255])
   })
-
-  test('hue=330 (rose, sector 5)', () => {
-    const [r, g, b] = hslToRgb(330, 1, 0.5)
-    expect(r).toBe(255)
-    expect(g).toBe(0)
-    expect(b).toBeGreaterThan(0)
+  test('hue=330 (rose) → [255,0,128]', () => {
+    expect(hslToRgb(330, 1, 0.5)).toEqual([255, 0, 128])
   })
 
-  // edge cases
-  test('saturation=0 gives grey (achromatic)', () => {
-    const [r, g, b] = hslToRgb(120, 0, 0.5)
-    expect(r).toBe(g)
-    expect(g).toBe(b)
-    expect(r).toBeGreaterThan(0)
+  // boundary: exact sector transitions
+  test('hue just below 60 is in sector 0, not sector 1', () => {
+    const below = hslToRgb(59.9, 1, 0.5)
+    const sector0 = hslToRgb(30, 1, 0.5)
+    // both should have r=255, b=0 (sector 0 pattern)
+    expect(below[0]).toBe(255)
+    expect(below[2]).toBe(0)
+    expect(sector0[0]).toBe(255)
   })
 
+  // edge cases — exact
+  test('saturation=0 gives pure grey [128,128,128]', () => {
+    expect(hslToRgb(120, 0, 0.5)).toEqual([128, 128, 128])
+  })
   test('lightness=0 gives black', () => {
     expect(hslToRgb(120, 1, 0)).toEqual([0, 0, 0])
   })
-
   test('lightness=1 gives white', () => {
     expect(hslToRgb(120, 1, 1)).toEqual([255, 255, 255])
   })
-
-  test('hue=360 wraps to 0 (red)', () => {
+  test('hue=360 wraps to hue=0 → [255,0,0]', () => {
     expect(hslToRgb(360, 1, 0.5)).toEqual([255, 0, 0])
   })
-
-  test('hue negative wraps correctly', () => {
-    expect(hslToRgb(-120, 1, 0.5)).toEqual(hslToRgb(240, 1, 0.5))
+  test('negative hue wraps: hue=-120 = hue=240', () => {
+    expect(hslToRgb(-120, 1, 0.5)).toEqual([0, 0, 255])
   })
-
-  test('saturation clamped at 0', () => {
-    expect(hslToRgb(0, -0.5, 0.5)).toEqual(hslToRgb(0, 0, 0.5))
+  test('saturation clamped: s=-0.5 treated as s=0', () => {
+    expect(hslToRgb(0, -0.5, 0.5)).toEqual([128, 128, 128])
   })
-
-  test('saturation clamped at 1', () => {
-    expect(hslToRgb(0, 1.5, 0.5)).toEqual(hslToRgb(0, 1, 0.5))
+  test('saturation clamped: s=1.5 treated as s=1', () => {
+    expect(hslToRgb(0, 1.5, 0.5)).toEqual([255, 0, 0])
   })
-
-  test('lightness clamped at 0', () => {
+  test('lightness clamped: l=-0.5 gives black', () => {
     expect(hslToRgb(0, 1, -0.5)).toEqual([0, 0, 0])
   })
-
-  test('lightness clamped at 1', () => {
+  test('lightness clamped: l=1.5 gives white', () => {
     expect(hslToRgb(0, 1, 1.5)).toEqual([255, 255, 255])
   })
-
-  test('high lightness (l>0.5) produces a light tint', () => {
-    // hslToRgb(0, 1, 0.75) → #ff8080 (light red)
-    const [r, g, b] = hslToRgb(0, 1, 0.75)
-    expect(r).toBeGreaterThan(g)
-    expect(r).toBeGreaterThan(b)
-    expect(g).toBeGreaterThan(0) // m > 0 lifts all channels
-    expect(b).toBeGreaterThan(0)
+  test('high lightness l=0.75 → [255,128,128]', () => {
+    expect(hslToRgb(0, 1, 0.75)).toEqual([255, 128, 128])
+  })
+  test('low lightness l=0.25 → [128,0,0]', () => {
+    expect(hslToRgb(0, 1, 0.25)).toEqual([128, 0, 0])
   })
 })
 
@@ -189,95 +166,85 @@ describe('rgbToHex', () => {
 // ── rgbToHsl ─────────────────────────────────────────────────────────────────
 
 describe('rgbToHsl', () => {
-  test('pure red gives h=0, s=1, l=0.5', () => {
-    const [h, s, l] = rgbToHsl(255, 0, 0)
-    expect(h).toBeCloseTo(0, 1)
-    expect(s).toBeCloseTo(1, 1)
-    expect(l).toBeCloseTo(0.5, 1)
+  // achromatic: max === min → s=0, h=0
+  test('black [0,0,0] → h=0, s=0, l=0', () => {
+    expect(rgbToHsl(0, 0, 0)).toEqual([0, 0, 0])
   })
-
-  test('pure green gives h=120, s=1, l=0.5', () => {
-    const [h, s, l] = rgbToHsl(0, 255, 0)
-    expect(h).toBeCloseTo(120, 1)
-    expect(s).toBeCloseTo(1, 1)
-    expect(l).toBeCloseTo(0.5, 1)
+  test('white [255,255,255] → h=0, s=0, l=1', () => {
+    expect(rgbToHsl(255, 255, 255)).toEqual([0, 0, 1])
   })
-
-  test('pure blue gives h=240, s=1, l=0.5', () => {
-    const [h, s, l] = rgbToHsl(0, 0, 255)
-    expect(h).toBeCloseTo(240, 1)
-    expect(s).toBeCloseTo(1, 1)
-    expect(l).toBeCloseTo(0.5, 1)
-  })
-
-  test('white gives l=1, s=0', () => {
-    const [, s, l] = rgbToHsl(255, 255, 255)
-    expect(s).toBeCloseTo(0, 1)
-    expect(l).toBeCloseTo(1, 1)
-  })
-
-  test('black gives l=0, s=0', () => {
-    const [, s, l] = rgbToHsl(0, 0, 0)
-    expect(s).toBeCloseTo(0, 1)
-    expect(l).toBeCloseTo(0, 1)
-  })
-
-  test('grey gives s=0', () => {
+  test('mid-grey [128,128,128] → s=0', () => {
     const [, s] = rgbToHsl(128, 128, 128)
-    expect(s).toBeCloseTo(0, 1)
+    expect(s).toBe(0)
   })
 
-  // r is max, g < b branch (hue gets +6)
-  test('r max with g < b (e.g. #ff0040) gives hue > 300', () => {
+  // r is max, g >= b (no +6 offset)
+  test('pure red → h=0, s=1, l=0.5', () => {
+    const [h, s, l] = rgbToHsl(255, 0, 0)
+    expect(h).toBeCloseTo(0, 5)
+    expect(s).toBeCloseTo(1, 5)
+    expect(l).toBeCloseTo(0.5, 5)
+  })
+  test('r max, g>0, b=0 → h in (0,60)', () => {
+    const [h] = rgbToHsl(255, 128, 0)
+    expect(h).toBeCloseTo(30, 0)
+  })
+
+  // r is max, g < b (gets +6·60 = +360 offset before *60)
+  test('r max with g<b (#ff0040) → h near 345', () => {
     const [h] = rgbToHsl(255, 0, 64)
-    expect(h).toBeGreaterThan(300)
+    expect(h).toBeGreaterThan(340)
     expect(h).toBeLessThanOrEqual(360)
   })
 
-  // r is max, g >= b (no +6)
-  test('r max with g >= b (e.g. #ff4000) gives hue < 60', () => {
-    const [h] = rgbToHsl(255, 64, 0)
-    expect(h).toBeGreaterThanOrEqual(0)
-    expect(h).toBeLessThan(60)
+  // g is max
+  test('pure green → h=120, s=1, l=0.5', () => {
+    const [h, s, l] = rgbToHsl(0, 255, 0)
+    expect(h).toBeCloseTo(120, 5)
+    expect(s).toBeCloseTo(1, 5)
+    expect(l).toBeCloseTo(0.5, 5)
+  })
+  test('g max with b>r (#00ff80) → h near 150', () => {
+    const [h] = rgbToHsl(0, 255, 128)
+    expect(h).toBeCloseTo(150, 0)
   })
 
-  // g is max branch
-  test('g max (e.g. #40ff00) gives hue 60–180', () => {
-    const [h, s] = rgbToHsl(64, 255, 0)
-    expect(h).toBeGreaterThan(60)
-    expect(h).toBeLessThan(180)
-    expect(s).toBeGreaterThan(0)
+  // b is max
+  test('pure blue → h=240, s=1, l=0.5', () => {
+    const [h, s, l] = rgbToHsl(0, 0, 255)
+    expect(h).toBeCloseTo(240, 5)
+    expect(s).toBeCloseTo(1, 5)
+    expect(l).toBeCloseTo(0.5, 5)
   })
-
-  // b is max branch
-  test('b max (e.g. #0040ff) gives hue 180–300', () => {
-    const [h, s] = rgbToHsl(0, 64, 255)
+  test('b max (#0040ff) → h in (180,300)', () => {
+    const [h] = rgbToHsl(0, 64, 255)
     expect(h).toBeGreaterThan(180)
     expect(h).toBeLessThan(300)
-    expect(s).toBeGreaterThan(0)
   })
 
-  // l > 0.5 saturation formula branch
-  test('light color (l > 0.5) computes saturation correctly', () => {
-    // #ff8080 → l ≈ 0.75 (> 0.5)
-    const [, s, l] = rgbToHsl(255, 128, 128)
+  // l > 0.5 saturation: d / (2 - max - min)
+  test('light red (#ff8080): l>0.5, s computed via (2-max-min) branch', () => {
+    const [h, s, l] = rgbToHsl(255, 128, 128)
+    expect(h).toBeCloseTo(0, 0)
     expect(l).toBeGreaterThan(0.5)
-    expect(s).toBeGreaterThan(0)
+    expect(s).toBeCloseTo(1, 5)
   })
 
-  // l <= 0.5 saturation formula branch
-  test('dark color (l <= 0.5) computes saturation correctly', () => {
-    // #800000 → l = 0.25 (<= 0.5)
-    const [, s, l] = rgbToHsl(128, 0, 0)
-    expect(l).toBeLessThanOrEqual(0.5)
-    expect(s).toBeGreaterThan(0)
+  // l <= 0.5 saturation: d / (max + min)
+  test('dark red (#800000): l<0.5, s=1 (l<=0.5 saturation branch)', () => {
+    const [h, s, l] = rgbToHsl(128, 0, 0)
+    expect(h).toBeCloseTo(0, 0)
+    expect(l).toBeLessThan(0.5)
+    expect(l).toBeGreaterThan(0.2)
+    expect(s).toBeCloseTo(1, 5)
   })
 
-  test('round-trip: hslToRgb → rgbToHsl gives back original hue', () => {
+  // round-trip
+  test('round-trip hslToRgb→rgbToHsl preserves hue for all sectors', () => {
     for (const hue of [0, 60, 120, 180, 240, 300]) {
       const [r, g, b] = hslToRgb(hue, 1, 0.5)
       const [h2] = rgbToHsl(r, g, b)
-      expect(h2).toBeCloseTo(hue === 360 ? 0 : hue, 0)
+      expect(h2).toBeCloseTo(hue, 0)
     }
   })
 })
@@ -562,73 +529,217 @@ describe('ColorPicker', () => {
     })
   })
 
-  // ── wheel mouse drag ───────────────────────────────────────────────────────
+  // ── wheel mouse drag — exact value assertions kill arithmetic mutations ──────
 
-  test('mousedown on canvas calls onChange updating hue/sat', async () => {
+  // JSDOM: getBoundingClientRect() returns {left:0, top:0}
+  // wheelSize default=220, r=110
+  // mouseDown(220, 110): x=220-0-110=110, y=110-0-110=0, dist=110=r, angle=0 → hue=0, sat=1
+  // hslToRgb(0,1,0.5) = [255,0,0] → #ff0000
+  test('mousedown at right-center (hue=0) sets hex to #ff0000', async () => {
     const onConfirm = jest.fn()
     render(<ColorPicker {...makeProps({ onConfirm })} />)
     const canvas = document.querySelector('.wheel-canvas') as Element
 
-    // Click right of center → hue ≈ 0 (pointing right)
     fireEvent.mouseDown(canvas, { clientX: 220, clientY: 110 })
 
-    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'WheelColor' } })
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Red' } })
     fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
-    await waitFor(() => expect(onConfirm).toHaveBeenCalled())
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'Red', hex: '#ff0000' })
+    })
   })
 
-  test('mousemove on window while dragging updates color', async () => {
-    render(<ColorPicker {...makeProps()} />)
-    const canvas = document.querySelector('.wheel-canvas') as Element
-
-    // Start drag
-    fireEvent.mouseDown(canvas, { clientX: 110, clientY: 0 })
-    // Move while dragging
-    fireEvent.mouseMove(window, { clientX: 0, clientY: 110 })
-    // Up
-    fireEvent.mouseUp(window)
-    // Move after up should NOT update (dragging stopped)
-    fireEvent.mouseMove(window, { clientX: 200, clientY: 200 })
-    // No assertion needed beyond no error
-  })
-
-  test('mousemove without prior mousedown (not dragging) does nothing', () => {
-    render(<ColorPicker {...makeProps()} />)
-    // Fire mousemove without mousedown first
-    expect(() => {
-      fireEvent.mouseMove(window, { clientX: 100, clientY: 100 })
-    }).not.toThrow()
-  })
-
-  test('mousedown outside circle clamps dist to radius', async () => {
+  // mouseDown(0, 110): x=0-0-110=-110, y=110-0-110=0, dist=110=r, angle=180 → hue=180, sat=1
+  // hslToRgb(180,1,0.5) = [0,255,255] → #00ffff
+  test('mousedown at left-center (hue=180) sets hex to #00ffff', async () => {
     const onConfirm = jest.fn()
     render(<ColorPicker {...makeProps({ onConfirm })} />)
     const canvas = document.querySelector('.wheel-canvas') as Element
 
-    // Click far outside the wheel circle
-    fireEvent.mouseDown(canvas, { clientX: 1000, clientY: 1000 })
+    fireEvent.mouseDown(canvas, { clientX: 0, clientY: 110 })
 
-    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Edge' } })
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Cyan' } })
     fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
-    await waitFor(() => expect(onConfirm).toHaveBeenCalled())
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'Cyan', hex: '#00ffff' })
+    })
   })
 
-  test('touch start on canvas updates color', () => {
-    render(<ColorPicker {...makeProps()} />)
+  // mouseDown(110, 220): x=0, y=110, dist=110=r, angle=atan2(110,0)*180/π=90 → hue=90, sat=1
+  // hslToRgb(90,1,0.5): hp=1.5 → sector 1 [x,c,0], x=c=1*(1-|1.5%2-1|)=0.5, c=1
+  // wait: h=90 → hp=1.5, c=1, x=1*(1-0.5)=0.5 → [0.5,1,0] + m=0 → [128,255,0] → #80ff00
+  test('mousedown at bottom-center (hue=90) sets hex to #80ff00', async () => {
+    const onConfirm = jest.fn()
+    render(<ColorPicker {...makeProps({ onConfirm })} />)
     const canvas = document.querySelector('.wheel-canvas') as Element
-    expect(() => {
-      fireEvent.touchStart(canvas, { touches: [{ clientX: 150, clientY: 110 }] })
-    }).not.toThrow()
+
+    fireEvent.mouseDown(canvas, { clientX: 110, clientY: 220 })
+
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Lime' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'Lime', hex: '#80ff00' })
+    })
   })
 
-  test('touchmove on window while dragging updates color', () => {
+  // mouseDown at top: x=0, y=-110 → angle=atan2(-110,0)*180/π=-90, +360=270, sat=1
+  // hslToRgb(270,1,0.5) = [128,0,255] → #8000ff
+  test('mousedown at top-center (hue=270) sets hex to #8000ff', async () => {
+    const onConfirm = jest.fn()
+    render(<ColorPicker {...makeProps({ onConfirm })} />)
+    const canvas = document.querySelector('.wheel-canvas') as Element
+
+    fireEvent.mouseDown(canvas, { clientX: 110, clientY: 0 })
+
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Violet' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'Violet', hex: '#8000ff' })
+    })
+  })
+
+  // mousedown outside circle: dist clamped to r → sat=1
+  // mouseDown(1000, 110): x=890, y=0, dist=890>r=110 → dist=110=r, angle=0 → hue=0, sat=1 → #ff0000
+  test('mousedown outside circle clamps sat to 1', async () => {
+    const onConfirm = jest.fn()
+    render(<ColorPicker {...makeProps({ onConfirm })} />)
+    const canvas = document.querySelector('.wheel-canvas') as Element
+
+    fireEvent.mouseDown(canvas, { clientX: 1000, clientY: 110 })
+
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Clamped' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'Clamped', hex: '#ff0000' })
+    })
+  })
+
+  // mousemove while dragging DOES update color (tests dragging.current=true)
+  // mouseDown(110,110) → x=0, y=0, dist=0, angle=0, sat=0 → grey #808080
+  // mouseMove to (220,110) → x=110, y=0, dist=110=r, angle=0, sat=1 → #ff0000
+  test('mousemove while dragging updates hex (dragging.current=true kills mutation)', async () => {
+    const onConfirm = jest.fn()
+    render(<ColorPicker {...makeProps({ onConfirm })} />)
+    const canvas = document.querySelector('.wheel-canvas') as Element
+
+    fireEvent.mouseDown(canvas, { clientX: 110, clientY: 110 }) // center → sat=0 → grey
+    fireEvent.mouseMove(window, { clientX: 220, clientY: 110 }) // right → sat=1 → red
+
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Dragged' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'Dragged', hex: '#ff0000' })
+    })
+  })
+
+  test('mousemove after mouseup does NOT update color (dragging stopped)', async () => {
+    const onConfirm = jest.fn()
+    render(<ColorPicker {...makeProps({ onConfirm })} />)
+    const canvas = document.querySelector('.wheel-canvas') as Element
+
+    // Set hue=0 sat=1 by dragging to right
+    fireEvent.mouseDown(canvas, { clientX: 220, clientY: 110 })
+    fireEvent.mouseUp(window) // stop dragging
+    // Move to top (would give hue=270) — but should NOT update
+    fireEvent.mouseMove(window, { clientX: 110, clientY: 0 })
+
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Stopped' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+    await waitFor(() => {
+      // Should still be #ff0000 from original mousedown, NOT #8000ff from the mousemove
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'Stopped', hex: '#ff0000' })
+    })
+  })
+
+  test('mousemove without prior mousedown (not dragging) does not change color', async () => {
+    const onConfirm = jest.fn()
+    render(<ColorPicker {...makeProps({ onConfirm })} />)
+
+    // Fire mousemove without mousedown — dragging.current stays false
+    fireEvent.mouseMove(window, { clientX: 220, clientY: 110 })
+
+    // Color should still be the initial #1980e6
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'NoChange' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'NoChange', hex: '#1980e6' })
+    })
+  })
+
+  // ── wheel cursor position — kills arithmetic mutations in cx/cy ────────────
+
+  // After mouseDown at right edge: hue=0, sat=1
+  // r=110, rad=0, cx=110+cos(0)*1*110=220, cy=110+sin(0)*1*110=110
+  test('wheel cursor moves to (220,110) after right-edge click (hue=0, sat=1)', () => {
     render(<ColorPicker {...makeProps()} />)
     const canvas = document.querySelector('.wheel-canvas') as Element
-    fireEvent.touchStart(canvas, { touches: [{ clientX: 150, clientY: 110 }] })
-    expect(() => {
-      fireEvent.touchMove(window, { touches: [{ clientX: 160, clientY: 110 }] })
-      fireEvent.touchEnd(window)
-    }).not.toThrow()
+    fireEvent.mouseDown(canvas, { clientX: 220, clientY: 110 })
+
+    const cursor = document.querySelector('.wheel-cursor') as HTMLElement
+    expect(cursor.style.left).toBe('220px')
+    expect(cursor.style.top).toBe('110px')
+  })
+
+  // After mouseDown at center: hue=0, sat=0
+  // r=110, rad=0, cx=110+cos(0)*0*110=110, cy=110+sin(0)*0*110=110
+  test('wheel cursor is at (110,110) at center (sat=0)', () => {
+    render(<ColorPicker {...makeProps()} />)
+    const canvas = document.querySelector('.wheel-canvas') as Element
+    fireEvent.mouseDown(canvas, { clientX: 110, clientY: 110 }) // center
+
+    const cursor = document.querySelector('.wheel-cursor') as HTMLElement
+    expect(cursor.style.left).toBe('110px')
+    expect(cursor.style.top).toBe('110px')
+  })
+
+  // ── touch events ─────────────────────────────────────────────────────────
+
+  // touchStart at right edge → hue=0, sat=1 → #ff0000
+  test('touch start on canvas sets hex to #ff0000 at right edge', async () => {
+    const onConfirm = jest.fn()
+    render(<ColorPicker {...makeProps({ onConfirm })} />)
+    const canvas = document.querySelector('.wheel-canvas') as Element
+
+    fireEvent.touchStart(canvas, { touches: [{ clientX: 220, clientY: 110 }] })
+
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Touch' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'Touch', hex: '#ff0000' })
+    })
+  })
+
+  // touchMove while dragging updates color
+  test('touchmove while dragging updates hex', async () => {
+    const onConfirm = jest.fn()
+    render(<ColorPicker {...makeProps({ onConfirm })} />)
+    const canvas = document.querySelector('.wheel-canvas') as Element
+
+    fireEvent.touchStart(canvas, { touches: [{ clientX: 110, clientY: 110 }] }) // center → grey
+    fireEvent.touchMove(window, { touches: [{ clientX: 220, clientY: 110 }] }) // right → red
+
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'TouchMove' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'TouchMove', hex: '#ff0000' })
+    })
+  })
+
+  test('touchend stops dragging (touchmove after touchend is ignored)', async () => {
+    const onConfirm = jest.fn()
+    render(<ColorPicker {...makeProps({ onConfirm })} />)
+    const canvas = document.querySelector('.wheel-canvas') as Element
+
+    fireEvent.touchStart(canvas, { touches: [{ clientX: 220, clientY: 110 }] }) // right → red
+    fireEvent.touchEnd(window)
+    // Move to top after end — should NOT update
+    fireEvent.touchMove(window, { touches: [{ clientX: 110, clientY: 0 }] })
+
+    fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'TouchEnd' } })
+    fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+    await waitFor(() => {
+      expect(onConfirm).toHaveBeenCalledWith({ name: 'TouchEnd', hex: '#ff0000' })
+    })
   })
 
   // ── ResizeObserver fallback ────────────────────────────────────────────────

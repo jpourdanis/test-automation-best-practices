@@ -88,19 +88,19 @@ function ColorWheel({ hue, sat, onChange, size = 220 }: ColorWheelProps) {
     const ctx = c.getContext('2d')
     if (!ctx) return
     const dpr = window.devicePixelRatio || 1
-    c.width = size * dpr
-    c.height = size * dpr
+    const px = size * dpr
+    c.width = px
+    c.height = px
     c.style.width = size + 'px'
     c.style.height = size + 'px'
-    ctx.scale(dpr, dpr)
-    const r = size / 2
-    const img = ctx.createImageData(size, size)
-    for (let y = 0; y < size; y++) {
-      for (let x = 0; x < size; x++) {
+    const r = px / 2
+    const img = ctx.createImageData(px, px)
+    for (let y = 0; y < px; y++) {
+      for (let x = 0; x < px; x++) {
         const dx = x - r,
           dy = y - r
         const dist = Math.sqrt(dx * dx + dy * dy)
-        const i = (y * size + x) * 4
+        const i = (y * px + x) * 4
         if (dist > r) {
           img.data[i + 3] = 0
         } else {

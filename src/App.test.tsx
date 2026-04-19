@@ -426,7 +426,191 @@ describe('Frontend Unit Tests', () => {
       expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
     })
 
+    test('link color is light (#cfe8ff) on dark background', async () => {
+      mockFetch.mockResolvedValueOnce(mockList([{ name: 'Black', hex: '#000000' }]))
+      render(<App />)
+      await screen.findByRole('button', { name: 'Change background to Black' })
+      await waitFor(() => {
+        expect(screen.getByRole('link', { name: 'Learn React' })).toHaveStyle('color: #cfe8ff')
+      })
+    })
+
+    test('link color is dark (#003366) on light background', async () => {
+      mockFetch.mockResolvedValueOnce(mockList([{ name: 'White', hex: '#ffffff' }]))
+      render(<App />)
+      await screen.findByRole('button', { name: 'Change background to White' })
+      await waitFor(() => {
+        expect(screen.getByRole('link', { name: 'Learn React' })).toHaveStyle('color: #003366')
+      })
+    })
+
+    test('picker onCancel does nothing when saving=true', async () => {
+      const OCEAN = { name: 'Ocean', hex: '#0077be' }
+      mockFetch.mockResolvedValueOnce(mockList([]))
+      render(<App />)
+      await screen.findByRole('button', { name: '+ Add color' })
+
+      fireEvent.click(screen.getByRole('button', { name: '+ Add color' }))
+      fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Ocean' } })
+
+      // Start a save that never resolves
+      mockFetch.mockReturnValueOnce(new Promise(() => {}))
+      fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+
+      // While saving, cancel should NOT close the modal
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Saving\u2026' })).toBeDisabled())
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+      expect(screen.getByRole('dialog', { name: 'Add custom color' })).toBeInTheDocument()
+
+      // Suppress unhandled promise
+      mockFetch.mockResolvedValue({ ok: true, status: 201, json: async () => OCEAN })
+    })
+
+    test('confirm dialog cancel does nothing when deleting=true', async () => {
+      mockFetch.mockResolvedValueOnce(mockList())
+      render(<App />)
+      await screen.findByRole('button', { name: 'Remove color: Red' })
+
+      fireEvent.click(screen.getByRole('button', { name: 'Remove color: Red' }))
+      expect(screen.getByRole('alertdialog')).toBeInTheDocument()
+
+      // Start delete that never resolves
+      mockFetch.mockReturnValueOnce(new Promise(() => {}))
+      fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Deleting\u2026' })).toBeDisabled())
+
+      // Cancel while deleting should NOT close dialog
+      fireEvent.click(screen.getByRole('button', { name: 'Cancel' }))
+      expect(screen.getByRole('alertdialog')).toBeInTheDocument()
+    })
+
+    test('confirm button shows "Deleting…" label while delete is in-flight', async () => {
+      mockFetch.mockResolvedValueOnce(mockList())
+      render(<App />)
+      await screen.findByRole('button', { name: 'Remove color: Red' })
+
+      fireEvent.click(screen.getByRole('button', { name: 'Remove color: Red' }))
+
+      // Delete never resolves → stays in Deleting... state
+      mockFetch.mockReturnValueOnce(new Promise(() => {}))
+      fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Deleting\u2026' })).toBeDisabled()
+      })
+    })
+
+    test('existingNames passed to ColorPicker matches current color list', async () => {
+      mockFetch.mockResolvedValueOnce(mockList())
+      render(<App />)
+      await screen.findByRole('button', { name: '+ Add color' })
+
+      fireEvent.click(screen.getByRole('button', { name: '+ Add color' }))
+      // Try to submit a name that already exists in the list — should be blocked client-side
+      fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Turquoise' } })
+      fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+      expect(screen.getByText('"Turquoise" already exists')).toBeInTheDocument()
+    })
+
+    test('colors.length === 0 shows loading text', async () => {
+      mockFetch.mockResolvedValueOnce(mockList([]))
+      render(<App />)
+      await waitFor(() => expect(screen.getByText('Loading colors...')).toBeInTheDocument())
+      expect(screen.queryByRole('button', { name: /change background/i })).not.toBeInTheDocument()
+    })
+
+    test('colors.length > 0 does NOT show loading text', async () => {
+      mockFetch.mockResolvedValueOnce(mockList())
+      render(<App />)
+      await screen.findByRole('button', { name: 'Change background to Turquoise' })
+      expect(screen.queryByText('Loading colors...')).not.toBeInTheDocument()
+    })
+
     // ── handleAddColor ─────────────────────────────────────────────────────
+
+    test('add color sends POST with correct method, headers, and body', async () => {
+      mockFetch.mockResolvedValueOnce(mockList([]))
+      render(<App />)
+      await screen.findByRole('button', { name: '+ Add color' })
+
+      fireEvent.click(screen.getByRole('button', { name: '+ Add color' }))
+      fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Ocean' } })
+
+      mockFetch.mockResolvedValueOnce({ ok: true, status: 201, json: async () => ({ name: 'Ocean', hex: '#1980e6' }) })
+      mockFetch.mockResolvedValueOnce(mockList([]))
+      fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith('/api/colors', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: 'Ocean', hex: '#1980e6' })
+        })
+      })
+    })
+
+    test('delete sends DELETE request with correct method', async () => {
+      mockFetch.mockResolvedValueOnce(mockList())
+      render(<App />)
+      await screen.findByRole('button', { name: 'Remove color: Red' })
+
+      fireEvent.click(screen.getByRole('button', { name: 'Remove color: Red' }))
+      mockFetch.mockResolvedValueOnce(mockDeleted('Red'))
+      mockFetch.mockResolvedValueOnce(mockList([TURQUOISE, YELLOW]))
+      fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith('/api/colors/Red', { method: 'DELETE' })
+      })
+    })
+
+    test('add color 400 without data.error falls back to generic message', async () => {
+      mockFetch.mockResolvedValueOnce(mockList([]))
+      render(<App />)
+      await screen.findByRole('button', { name: '+ Add color' })
+
+      fireEvent.click(screen.getByRole('button', { name: '+ Add color' }))
+      fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Unique' } })
+
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 400, json: async () => ({}) })
+      fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+
+      await waitFor(() => {
+        expect(screen.getByRole('alert')).toHaveTextContent('Request failed (HTTP 400)')
+      })
+    })
+
+    test('saving is false again after a failed add (finally block)', async () => {
+      mockFetch.mockResolvedValueOnce(mockList([]))
+      render(<App />)
+      await screen.findByRole('button', { name: '+ Add color' })
+
+      fireEvent.click(screen.getByRole('button', { name: '+ Add color' }))
+      fireEvent.change(screen.getByPlaceholderText('e.g. Ocean'), { target: { value: 'Unique' } })
+
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 500, json: async () => ({}) })
+      fireEvent.click(screen.getByRole('button', { name: 'Add color' }))
+
+      // After the error, saving should return to false
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Add color' })).not.toBeDisabled()
+      })
+    })
+
+    test('deleting is false again after a failed delete (finally block)', async () => {
+      mockFetch.mockResolvedValueOnce(mockList())
+      render(<App />)
+      await screen.findByRole('button', { name: 'Remove color: Red' })
+
+      fireEvent.click(screen.getByRole('button', { name: 'Remove color: Red' }))
+      mockFetch.mockResolvedValueOnce(mockError(500, 'fail'))
+      fireEvent.click(screen.getByRole('button', { name: 'Delete' }))
+
+      await waitFor(() => {
+        expect(screen.getByRole('button', { name: 'Delete' })).not.toBeDisabled()
+      })
+    })
 
     test('add color success closes picker and shows new chip', async () => {
       const OCEAN = { name: 'Ocean', hex: '#0077be' }
