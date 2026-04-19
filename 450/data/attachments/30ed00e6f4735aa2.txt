@@ -1,8 +1,0 @@
-[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-g2gjyipje-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] handle initial fetch error: POST https://vercel.live/login/validate?hostname=test-automation-best-practices-g2gjyipje-jpourdanis-projects.vercel.app&deploymentId=dpl_4d6xc91caYB9J5tGE3ZooUxDNUsP - net::ERR_ABORTED
-[API ERROR] handle initial fetch error: 500 GET https://test-automation-best-practices-g2gjyipje-jpourdanis-projects.vercel.app/api/colors
-[CONSOLE ERROR] handle initial fetch error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
-[CONSOLE ERROR] handle initial fetch error: Failed to fetch colors: Error: HTTP error! status: 500
-    at https://test-automation-best-practices-g2gjyipje-jpourdanis-projects.vercel.app/static/js/main.7b3dc65a.js:2:267891
-[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-g2gjyipje-jpourdanis-projects.vercel.app/api/colors - net::ERR_ABORTED
-[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-g2gjyipje-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
