@@ -67,7 +67,7 @@ export function readableOn(hex: string): string {
     return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4)
   })
   const L = 0.2126 * r + 0.7152 * g + 0.0722 * b
-  return L > 0.55 ? '#111' : '#fff'
+  return L > 0.179 ? '#111' : '#fff'
 }
 
 // ---------- Color Wheel canvas ----------

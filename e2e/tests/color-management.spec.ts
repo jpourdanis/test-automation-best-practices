@@ -106,12 +106,18 @@ test.describe('Color Management — Add & Delete', () => {
     const OCEAN = { name: 'Ocean', hex: '#0077be' }
     const updatedList = [...INITIAL_COLORS, OCEAN]
 
+    let getCallCount = 0
     await page.route('**/api/colors', async (route: any) => {
       const method = route.request().method()
       if (method === 'POST') {
         await route.fulfill({ status: 201, contentType: 'application/json', body: JSON.stringify(OCEAN) })
       } else {
-        await route.fulfill({ status: 200, contentType: 'application/json', body: JSON.stringify(updatedList) })
+        getCallCount++
+        await route.fulfill({
+          status: 200,
+          contentType: 'application/json',
+          body: JSON.stringify(getCallCount === 1 ? INITIAL_COLORS : updatedList)
+        })
       }
     })
 

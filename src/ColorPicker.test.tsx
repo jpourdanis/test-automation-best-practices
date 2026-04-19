@@ -260,20 +260,20 @@ describe('readableOn', () => {
     expect(readableOn('#ffffff')).toBe('#111')
   })
 
-  test('returns #111 for light-grey just above the 0.55 luminance threshold', () => {
+  test('returns #111 for light-grey (L≈0.60, above 0.179 threshold)', () => {
     expect(readableOn('#c8c8c8')).toBe('#111')
   })
 
-  test('returns #fff for mid-grey just below the 0.55 luminance threshold', () => {
-    expect(readableOn('#a0a0a0')).toBe('#fff')
+  test('returns #111 for mid-grey (L≈0.35, black gives better contrast)', () => {
+    expect(readableOn('#a0a0a0')).toBe('#111')
   })
 
   test('returns #111 for a pale/pastel colour (high luminance)', () => {
     expect(readableOn('#f0e68c')).toBe('#111') // khaki
   })
 
-  test('returns #fff for turquoise (L≈0.39 < 0.55 threshold)', () => {
-    expect(readableOn('#1abc9c')).toBe('#fff')
+  test('returns #111 for turquoise (L≈0.39, black gives better contrast)', () => {
+    expect(readableOn('#1abc9c')).toBe('#111')
   })
 
   test('returns #fff for a very dark blue', () => {

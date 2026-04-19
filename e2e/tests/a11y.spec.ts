@@ -108,9 +108,13 @@ test.describe('i18n Accessibility Tests', () => {
       // Verify page layout using dynamic, translation-aware accessibility locators!
       // This is the clean, resilient way over falling back to CSS selectors.
       await expect(page.getByRole('heading', { name: lang.i18n.title })).toBeVisible()
-      await expect(page.getByRole('button', { name: lang.i18n.colors.turquoise })).toBeVisible()
-      await expect(page.getByRole('button', { name: lang.i18n.colors.red })).toBeVisible()
-      await expect(page.getByRole('button', { name: lang.i18n.colors.yellow })).toBeVisible()
+      await expect(
+        page.getByRole('button', { name: `${lang.i18n.changeColor} ${lang.i18n.colors.turquoise}` })
+      ).toBeVisible()
+      await expect(page.getByRole('button', { name: `${lang.i18n.changeColor} ${lang.i18n.colors.red}` })).toBeVisible()
+      await expect(
+        page.getByRole('button', { name: `${lang.i18n.changeColor} ${lang.i18n.colors.yellow}` })
+      ).toBeVisible()
 
       // Run Axe to check for accessibility violations in the translated state
       const accessibilityScanResults = await new AxeBuilder({ page }).analyze()

@@ -26,7 +26,7 @@ test.describe('Random Data Testing with faker.js', () => {
     // Generate a uniquely prefixed name to avoid any potential DB collisions
     // e2e_random_<word>
     const randomColorName = faker.string.alphanumeric(15)
-    const randomHex = faker.color.rgb()
+    const randomHex = faker.color.rgb({ format: 'hex' })
 
     const newColor = { name: randomColorName, hex: randomHex }
     createdColorName = newColor.name
@@ -40,10 +40,9 @@ test.describe('Random Data Testing with faker.js', () => {
     // 2. Act - Navigate to the UI which will now fetch the new state
     await homePage.goto()
 
-    // Since this random string isn't in our english translation file (en.json),
-    // i18next falls back to the key "colors.<randomColorName>".
-    // We use .toLowerCase() to match the App.tsx implementation: {t(`colors.${c.name.toLowerCase()}`)}
-    const customBtn = page.getByRole('button', { name: `colors.${newColor.name.toLowerCase()}` })
+    // Since this random string isn't in en.json, labelFor() falls back to the raw
+    // color name. The chip-main aria-label is `Change background to <name>`.
+    const customBtn = page.getByRole('button', { name: `Change background to ${newColor.name}`, exact: true })
 
     // We use Playwright's waitForResponse to avoid static waits natively,
     // ensuring fast and deterministic execution.
