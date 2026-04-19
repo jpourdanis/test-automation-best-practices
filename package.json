@@ -131,9 +131,20 @@
       "npx prettier --write"
     ]
   },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.{ts,tsx}",
+      "!src/index.tsx",
+      "!src/setupTests.ts",
+      "!src/react-app-env.d.ts"
+    ]
+  },
   "nyc": {
     "exclude": [
-      "src/setupProxy.js"
+      "src/setupProxy.js",
+      "src/index.tsx",
+      "src/setupTests.ts",
+      "src/react-app-env.d.ts"
     ]
   }
 }
