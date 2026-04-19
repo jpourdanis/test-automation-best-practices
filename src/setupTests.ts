@@ -6,15 +6,15 @@ import '@testing-library/jest-dom'
 
 // ResizeObserver is not implemented in JSDOM — provide a no-op class
 class ResizeObserverStub {
-  observe(_el: Element): void {
+  observe (_el: Element): void {
     /* noop */
   }
 
-  unobserve(_el: Element): void {
+  unobserve (_el: Element): void {
     /* noop */
   }
 
-  disconnect(): void {
+  disconnect (): void {
     /* noop */
   }
 }
