@@ -1,1 +1,0 @@
-[API ERROR] should load the application and verify core functionality across browsers: 304 GET http://localhost:3000/api/colors
