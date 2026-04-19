@@ -9,5 +9,13 @@
     "yellow": "Yellow"
   },
   "languageSelector": "Select Language",
-  "changeColor": "Change background to"
+  "changeColor": "Change background to",
+  "add": "+ Add color",
+  "loading": "Loading colors...",
+  "remove": "Remove color",
+  "confirmTitle": "Delete color?",
+  "confirmBody": "Are you sure you want to delete <b>{{name}}</b>? This cannot be undone.",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "deleting": "Deleting\u2026"
 }

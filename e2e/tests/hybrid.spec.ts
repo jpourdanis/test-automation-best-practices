@@ -33,10 +33,9 @@ test.describe('Hybrid E2E Testing', () => {
     // 2. Act - Navigate to the UI which will now fetch the new state
     await homePage.goto()
 
-    // Since the dynamically-created color name isn't in our english translation
-    // file (en.json), i18next falls back to the key "colors.<name>".
-    const fallbackKey = `colors.${newColor.name.toLowerCase()}`
-    const customBtn = page.getByRole('button', { name: fallbackKey })
+    // Since the dynamically-created color name isn't in en.json, labelFor()
+    // returns the raw color name directly (t returns '' for unknown keys).
+    const customBtn = page.getByRole('button', { name: `Change background to ${newColor.name}`, exact: true })
 
     // We use Playwright's waitForResponse to avoid static waits natively,
     // ensuring fast and deterministic execution.

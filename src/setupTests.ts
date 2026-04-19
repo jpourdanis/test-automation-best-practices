@@ -4,6 +4,20 @@
 // learn more: https://github.com/testing-library/jest-dom
 import '@testing-library/jest-dom'
 
+// ResizeObserver is not implemented in JSDOM — provide a no-op class
+class ResizeObserverStub {
+  observe(_el: Element) {
+    /* noop */
+  }
+  unobserve(_el: Element) {
+    /* noop */
+  }
+  disconnect() {
+    /* noop */
+  }
+}
+globalThis.ResizeObserver = ResizeObserverStub as unknown as typeof ResizeObserver
+
 // Mock matchMedia if needed (common in some React components)
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
