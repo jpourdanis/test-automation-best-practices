@@ -1,6 +1,24 @@
 import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { readableOn, hexToRgb, hslToRgb, rgbToHex, rgbToHsl, ColorPicker } from './ColorPicker'
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string, options?: Record<string, string>) => {
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const en = require('./locales/en.json')
+      const parts = key.split('.')
+      let value: unknown = en
+      for (const part of parts) {
+        value = (value as Record<string, unknown>)?.[part]
+      }
+      if (typeof value === 'string' && options) {
+        return value.replace(/\{\{(\w+)\}\}/g, (_: string, k: string) => options[k] ?? `{{${k}}}`)
+      }
+      return typeof value === 'string' ? value : key
+    }
+  })
+}))
+
 // ── Canvas mock (JSDOM doesn't implement it) ─────────────────────────────────
 HTMLCanvasElement.prototype.getContext = jest.fn(
   () =>

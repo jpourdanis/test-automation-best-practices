@@ -19,14 +19,32 @@ const en: any = {
   confirmTitle: 'Delete color?',
   cancel: 'Cancel',
   delete: 'Delete',
-  deleting: 'Deleting\u2026'
+  deleting: 'Deleting\u2026',
+  colorPicker: {
+    title: 'Add a color',
+    dialogAriaLabel: 'Add custom color',
+    closeAriaLabel: 'Close',
+    lightnessLabel: 'Lightness',
+    nameLabel: 'Name',
+    namePlaceholder: 'e.g. Ocean',
+    hexLabel: 'Hex',
+    cancel: 'Cancel',
+    addColor: 'Add color',
+    saving: 'Saving\u2026',
+    errors: {
+      nameRequired: 'Name is required',
+      nameInvalid: 'Letters, numbers, spaces, + only',
+      nameDuplicate: '"{{name}}" already exists',
+      hexFormat: 'Use format #RRGGBB'
+    }
+  }
 }
 
 const mockChangeLanguage = jest.fn()
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, options?: { defaultValue?: string }) => {
+    t: (key: string, options?: Record<string, string>) => {
       const keys = key.split('.')
       let result: any = en
       for (const k of keys) {
@@ -35,6 +53,9 @@ jest.mock('react-i18next', () => ({
         } else {
           return options?.defaultValue !== undefined ? options.defaultValue : key
         }
+      }
+      if (typeof result === 'string' && options) {
+        return result.replace(/\{\{(\w+)\}\}/g, (_: string, k: string) => options[k] ?? `{{${k}}}`)
       }
       return typeof result === 'string' ? result : key
     },
