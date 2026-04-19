@@ -117,5 +117,5 @@ Then('the page title should be {string}', async ({}, title: string) => {
  * the second argument is the translated label to look up in the DOM.
  */
 Then('the {string} button label should be {string}', async ({}, _color: string, label: string) => {
-  await expect(homePage.page.getByRole('button', { name: label })).toBeVisible()
+  await expect(homePage.page.locator('button.chip-main', { hasText: label })).toBeVisible()
 })

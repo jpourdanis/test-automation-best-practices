@@ -39,7 +39,7 @@ export class HomePage {
   }
 
   async clickColorButton(colorName: string) {
-    await this.page.getByRole('button', { name: `Change background to ${colorName}`, exact: true }).click()
+    await this.page.locator('button.chip-main', { hasText: colorName }).click()
   }
 
   async clickDeleteChip(colorName: string) {
