@@ -1,3 +1,0 @@
-[NETWORK INFO] changing color to Yellow should reflect in UI and DOM: 200 GET http://localhost:3000/api/colors
-[NETWORK INFO] changing color to Yellow should reflect in UI and DOM: 200 GET http://localhost:3000/api/colors
-[NETWORK INFO] changing color to Yellow should reflect in UI and DOM: 200 GET http://localhost:3000/api/colors/Yellow

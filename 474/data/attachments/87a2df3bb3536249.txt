@@ -1,0 +1,2 @@
+[NETWORK ERROR] shows a chip for each color with a swatch, name, and delete button: GET https://test-automation-best-practices-8fl15bdz0-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] shows a chip for each color with a swatch, name, and delete button: HEAD https://test-automation-best-practices-8fl15bdz0-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
