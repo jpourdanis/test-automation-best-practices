@@ -71,12 +71,28 @@ export function readableOn(hex: string): string {
   return L > 0.179 ? '#111' : '#fff'
 }
 
+export function paintWheelPixel(img: ImageData, i: number, dx: number, dy: number, dist: number, r: number): void {
+  if (dist > r) {
+    img.data[i + 3] = 0
+    return
+  }
+  let angle = (Math.atan2(dy, dx) * 180) / Math.PI
+  if (angle < 0) angle += 360
+  const s = Math.min(1, dist / r)
+  const [rr, gg, bb] = hslToRgb(angle, s, 0.5)
+  img.data[i] = rr
+  img.data[i + 1] = gg
+  img.data[i + 2] = bb
+  const a = dist > r - 1 ? r - dist : 1
+  img.data[i + 3] = Math.max(0, Math.min(255, a * 255))
+}
+
 // ---------- Color Wheel canvas ----------
 interface ColorWheelProps {
-  hue: number
-  sat: number
-  onChange: (hue: number, sat: number) => void
-  size?: number
+  readonly hue: number
+  readonly sat: number
+  readonly onChange: (hue: number, sat: number) => void
+  readonly size?: number
 }
 
 function ColorWheel({ hue, sat, onChange, size = 220 }: ColorWheelProps) {
@@ -88,7 +104,7 @@ function ColorWheel({ hue, sat, onChange, size = 220 }: ColorWheelProps) {
     if (!c) return
     const ctx = c.getContext('2d')
     if (!ctx) return
-    const dpr = window.devicePixelRatio || 1
+    const dpr = globalThis.devicePixelRatio || 1
     const px = size * dpr
     c.width = px
     c.height = px
@@ -100,21 +116,9 @@ function ColorWheel({ hue, sat, onChange, size = 220 }: ColorWheelProps) {
       for (let x = 0; x < px; x++) {
         const dx = x - r,
           dy = y - r
-        const dist = Math.sqrt(dx * dx + dy * dy)
+        const dist = Math.hypot(dx, dy)
         const i = (y * px + x) * 4
-        if (dist > r) {
-          img.data[i + 3] = 0
-        } else {
-          let angle = (Math.atan2(dy, dx) * 180) / Math.PI
-          if (angle < 0) angle += 360
-          const s = Math.min(1, dist / r)
-          const [rr, gg, bb] = hslToRgb(angle, s, 0.5)
-          img.data[i] = rr
-          img.data[i + 1] = gg
-          img.data[i + 2] = bb
-          const a = dist > r - 1 ? r - dist : 1
-          img.data[i + 3] = Math.max(0, Math.min(255, a * 255))
-        }
+        paintWheelPixel(img, i, dx, dy, dist, r)
       }
     }
     ctx.putImageData(img, 0, 0)
@@ -128,7 +132,7 @@ function ColorWheel({ hue, sat, onChange, size = 220 }: ColorWheelProps) {
       const r = size / 2
       const x = clientX - rect.left - r
       const y = clientY - rect.top - r
-      let dist = Math.sqrt(x * x + y * y)
+      let dist = Math.hypot(x, y)
       if (dist > r) dist = r
       let angle = (Math.atan2(y, x) * 180) / Math.PI
       if (angle < 0) angle += 360
@@ -152,15 +156,15 @@ function ColorWheel({ hue, sat, onChange, size = 220 }: ColorWheelProps) {
     const onUp = () => {
       dragging.current = false
     }
-    window.addEventListener('mousemove', onMove)
-    window.addEventListener('mouseup', onUp)
-    window.addEventListener('touchmove', onMove, { passive: false })
-    window.addEventListener('touchend', onUp)
+    globalThis.addEventListener('mousemove', onMove)
+    globalThis.addEventListener('mouseup', onUp)
+    globalThis.addEventListener('touchmove', onMove, { passive: false })
+    globalThis.addEventListener('touchend', onUp)
     return () => {
-      window.removeEventListener('mousemove', onMove)
-      window.removeEventListener('mouseup', onUp)
-      window.removeEventListener('touchmove', onMove)
-      window.removeEventListener('touchend', onUp)
+      globalThis.removeEventListener('mousemove', onMove)
+      globalThis.removeEventListener('mouseup', onUp)
+      globalThis.removeEventListener('touchmove', onMove)
+      globalThis.removeEventListener('touchend', onUp)
     }
   }, [handlePoint])
 
@@ -179,12 +183,12 @@ function ColorWheel({ hue, sat, onChange, size = 220 }: ColorWheelProps) {
 
 // ---------- ColorPicker modal ----------
 export interface ColorPickerProps {
-  existingNames: string[]
-  saving: boolean
-  serverError: string | null
-  onClearError: () => void
-  onConfirm: (color: { name: string; hex: string }) => void
-  onCancel: () => void
+  readonly existingNames: string[]
+  readonly saving: boolean
+  readonly serverError: string | null
+  readonly onClearError: () => void
+  readonly onConfirm: (color: { readonly name: string; readonly hex: string }) => void
+  readonly onCancel: () => void
 }
 
 export function ColorPicker({
@@ -214,13 +218,13 @@ export function ColorPicker({
       setWheelSize(Math.max(160, Math.min(260, Math.floor(w))))
     }
     compute()
-    if (typeof ResizeObserver !== 'undefined') {
+    if (typeof ResizeObserver === 'undefined') {
+      globalThis.addEventListener('resize', compute)
+      return () => globalThis.removeEventListener('resize', compute)
+    } else {
       const ro = new ResizeObserver(compute)
       ro.observe(el)
       return () => ro.disconnect()
-    } else {
-      window.addEventListener('resize', compute)
-      return () => window.removeEventListener('resize', compute)
     }
   }, [])
 
@@ -280,10 +284,16 @@ export function ColorPicker({
   const sliderBg = `linear-gradient(to right, #000 0%, rgb(${gradRgbMid.join(',')}) 50%, #fff 100%)`
 
   return (
-    <div className='picker-backdrop' onClick={onCancel}>
+    <div
+      className='picker-backdrop'
+      role='presentation'
+      onClick={onCancel}
+      onKeyDown={(e) => e.key === 'Escape' && onCancel()}
+    >
       <div
         className='picker-card'
         onClick={(e) => e.stopPropagation()}
+        onKeyDown={(e) => e.stopPropagation()}
         role='dialog'
         aria-modal='true'
         aria-label={t('colorPicker.dialogAriaLabel')}

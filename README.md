@@ -9,7 +9,7 @@
 [![Passed Tests](https://img.shields.io/badge/dynamic/json?color=success&label=Passed&query=%24.statistic.passed&url=https%3A%2F%2Fjpourdanis.github.io%2Ftest-automation-best-practices%2Fwidgets%2Fsummary.json)](https://jpourdanis.github.io/test-automation-best-practices/)
 [![Failed Tests](https://img.shields.io/badge/dynamic/json?color=critical&label=Failed&query=%24.statistic.failed&url=https%3A%2F%2Fjpourdanis.github.io%2Ftest-automation-best-practices%2Fwidgets%2Fsummary.json)](https://jpourdanis.github.io/test-automation-best-practices/)
 
-![Demo Animation](demo.webp)
+![Demo Animation](demo.gif)
 
 A comprehensive reference project demonstrating **test automation engineering best practices** using [Playwright](https://playwright.dev), [Allure Reports](https://allurereport.org/), [k6](https://k6.io/), [Schemathesis](https://schemathesis.readthedocs.io/en/stable/) and [MegaLinter](https://megalinter.io/). This repository goes beyond simple end-to-end tests to showcase the patterns, architectures, and strategies that make a test suite **robust, maintainable, and scalable**.
 

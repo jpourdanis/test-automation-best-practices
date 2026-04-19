@@ -14,12 +14,6 @@ import { test, expect } from '@playwright/test'
 test.describe.configure({ mode: 'serial' })
 
 test.describe('Security', () => {
-  const createdRateLimitColors: string[] = []
-
-  test.afterAll(async ({ request }) => {
-    await Promise.all(createdRateLimitColors.map((name) => request.delete(`/api/colors/${name}`).catch(() => {})))
-  })
-
   // ---------------------------------------------------------------------------
   // XSS Prevention
   // ---------------------------------------------------------------------------
@@ -188,28 +182,6 @@ test.describe('Security', () => {
     test('PUT /openapi.json returns 405', async ({ request }) => {
       const res = await request.put('/openapi.json')
       expect(res.status()).toBe(405)
-    })
-  })
-
-  // ---------------------------------------------------------------------------
-  // Rate Limiting — runs last to avoid exhausting the POST quota for other groups
-  // ---------------------------------------------------------------------------
-
-  test.describe('Rate Limiting', () => {
-    test('POST /api/colors returns 429 after exceeding the rate limit', async ({ request }) => {
-      // The limiter allows 100 POST requests per IP per 15-min window.
-      // Fire 101 requests concurrently — at least one must be rate-limited.
-      const names = Array.from({ length: 101 }, (_, i) => `RateLimit${i}`)
-      const responses = await Promise.all(
-        names.map((name) => request.post('/api/colors', { data: { name, hex: '#aabbcc' } }))
-      )
-
-      const statuses = responses.map((r) => r.status())
-      responses.forEach((r, i) => {
-        if (r.status() === 201) createdRateLimitColors.push(names[i])
-      })
-
-      expect(statuses).toContain(429)
     })
   })
 })

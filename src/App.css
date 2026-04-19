@@ -147,7 +147,7 @@
 }
 
 .color-chip > .chip-x:hover {
-  background-color: #e74c3c;
+  background-color: #c0392b;
   color: #fff;
 }
 
@@ -553,13 +553,13 @@
 }
 
 .btn-primary {
-  background: #3498db;
+  background: #1d6fa5;
   color: #fff;
   box-shadow: 0 1px 2px rgb(0 0 0 / 12%);
 }
 
 .btn-primary:hover {
-  background: #2d84c1;
+  background: #155f8b;
 }
 
 .btn-primary:active {
@@ -574,7 +574,7 @@
   border-radius: 8px;
   cursor: pointer;
   border: 1px solid transparent;
-  background: #e74c3c;
+  background: #c0392b;
   color: #fff;
   box-shadow: 0 1px 2px rgb(0 0 0 / 12%);
   transition:
@@ -590,7 +590,7 @@
 }
 
 .btn-danger:hover {
-  background: #c0392b;
+  background: #a93226;
 }
 
 .btn-danger:active {
