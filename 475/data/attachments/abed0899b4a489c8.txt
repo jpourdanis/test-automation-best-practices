@@ -1,0 +1,2 @@
+[NETWORK ERROR] successfully adds a new color and shows its chip: GET https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] successfully adds a new color and shows its chip: HEAD https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED

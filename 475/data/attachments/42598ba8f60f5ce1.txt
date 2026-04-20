@@ -1,0 +1,2 @@
+[NETWORK ERROR] should maintain accessibility in el language and verify resilient locators: GET https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] should maintain accessibility in el language and verify resilient locators: HEAD https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED

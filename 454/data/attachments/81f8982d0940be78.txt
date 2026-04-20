@@ -1,1 +1,0 @@
-[NETWORK ERROR] should maintain accessibility after state change (color update): HEAD https://test-automation-best-practices-kn4suqtxz-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
