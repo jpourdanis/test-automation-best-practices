@@ -1,1 +1,0 @@
-[NETWORK ERROR] should show loading state when API returns empty colors: GET https://test-automation-best-practices-vilkyynga-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
