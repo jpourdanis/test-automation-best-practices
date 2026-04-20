@@ -201,8 +201,6 @@ jobs:
     name: Security Tests (Frontend & Backend)
     needs: [backend-unit-tests, frontend-unit-tests]
     runs-on: ubuntu-latest
-    env:
-      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
     steps:
       - name: Checkout Code
         uses: actions/checkout@v6
@@ -231,13 +229,6 @@ jobs:
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-fs.xml"
-
-      - name: Snyk Infrastructure as Code (IaC) Scan
-        uses: snyk/actions/node@v1.0.0
-        continue-on-error: true
-        with:
-          command: iac test
-          args: --org=${{ secrets.SNYK_ORG }} docker-compose.yml
 
       - name: Upload Trivy FS Allure Results
         if: always() # Ensure this runs even if Trivy fails the build
@@ -279,15 +270,6 @@ jobs:
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-frontend.xml"
 
-      - name: Run Snyk Container scan on frontend image
-        uses: snyk/actions/docker@v1.0.0
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: "test-automation-best-practices-app:latest"
-          args: --org=${{ secrets.SNYK_ORG }} --file=Dockerfile
-
       - name: Upload Trivy Frontend Allure Results
         if: always()
         uses: actions/upload-artifact@v7
@@ -328,15 +310,6 @@ jobs:
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-api.xml"
           ignorefile: ".trivyignore"
-
-      - name: Run Snyk Container scan on API image
-        uses: snyk/actions/docker@v1.0.0
-        continue-on-error: true
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-        with:
-          image: "test-automation-best-practices-api:latest"
-          args: --org=${{ secrets.SNYK_ORG }} --file=server/Dockerfile
 
       - name: Upload Trivy API Allure Results
         if: always()

@@ -84,7 +84,6 @@ npm run mutation:frontend      # Stryker mutation testing (70% break threshold)
 ```bash
 npm run security:audit         # npm audit
 npm run security:scan:code     # Trivy code scan
-npm run snyk:test              # Snyk dependency scan
 ```
 
 ## Architecture
@@ -130,7 +129,7 @@ Four services: `mongo` → `api` → `web` → `playwright`. The `playwright` se
 
 ### CI/CD (`.github/workflows/`)
 
-GitHub Actions pipeline with: MegaLinter, SonarCloud, Snyk, Trivy, Allure report publishing, and all test suites.
+GitHub Actions pipeline with: MegaLinter, SonarCloud, Trivy, Allure report publishing, and all test suites.
 
 ## Key Configuration Files
 
@@ -150,4 +149,3 @@ Stored in `.env.local` (not committed). Required variables:
 
 - `MONGODB_URI` — MongoDB Atlas connection string
 - `SONAR_TOKEN` — SonarCloud token
-- `SNYK_TOKEN` — Snyk API token
