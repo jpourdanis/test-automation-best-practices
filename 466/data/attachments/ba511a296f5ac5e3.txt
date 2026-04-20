@@ -1,1 +1,0 @@
-[NETWORK INFO] should display colors that do not exist in the database: 200 GET http://localhost:3000/api/colors
