@@ -1,0 +1,2 @@
+[NETWORK ERROR] verify language switcher changes document language: GET https://test-automation-best-practices-nm7hoittj-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] verify language switcher changes document language: HEAD https://test-automation-best-practices-nm7hoittj-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
