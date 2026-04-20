@@ -29,7 +29,7 @@ export function rgbToHex(r: number, g: number, b: number): string {
 
 export function hexToRgb(hex: string): [number, number, number] | null {
   const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : null
+  return m ? [Number.parseInt(m[1], 16), Number.parseInt(m[2], 16), Number.parseInt(m[3], 16)] : null
 }
 
 export function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
@@ -286,18 +286,10 @@ export function ColorPicker({
   return (
     <div
       className='picker-backdrop'
-      role='presentation'
-      onClick={onCancel}
+      onClick={(e) => e.target === e.currentTarget && onCancel()}
       onKeyDown={(e) => e.key === 'Escape' && onCancel()}
     >
-      <div
-        className='picker-card'
-        onClick={(e) => e.stopPropagation()}
-        onKeyDown={(e) => e.stopPropagation()}
-        role='dialog'
-        aria-modal='true'
-        aria-label={t('colorPicker.dialogAriaLabel')}
-      >
+      <dialog className='picker-card' aria-label={t('colorPicker.dialogAriaLabel')} open>
         <div className='picker-head'>
           <h2>{t('colorPicker.title')}</h2>
           <button className='picker-x' onClick={onCancel} aria-label={t('colorPicker.closeAriaLabel')}>
@@ -376,7 +368,7 @@ export function ColorPicker({
             )}
           </div>
         </div>
-      </div>
+      </dialog>
     </div>
   )
 }
