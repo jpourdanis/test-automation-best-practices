@@ -1,0 +1,2 @@
+[NETWORK ERROR] chip-x click opens confirm dialog with color name: GET https://test-automation-best-practices-pg7gytdiu-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] chip-x click opens confirm dialog with color name: HEAD https://test-automation-best-practices-pg7gytdiu-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
