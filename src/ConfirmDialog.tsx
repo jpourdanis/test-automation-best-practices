@@ -20,25 +20,24 @@ export function ConfirmDialog({
   busy,
   onConfirm,
   onCancel
-}: ConfirmDialogProps) {
+}: Readonly<ConfirmDialogProps>) {
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && !busy) onCancel()
       if (e.key === 'Enter' && !busy) onConfirm()
     }
-    window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    globalThis.addEventListener('keydown', onKey)
+    return () => globalThis.removeEventListener('keydown', onKey)
   }, [busy, onConfirm, onCancel])
 
   return (
-    <div className='picker-backdrop' onClick={() => !busy && onCancel()}>
-      <div
-        className='confirm-card'
-        role='alertdialog'
-        aria-modal='true'
-        aria-labelledby='confirm-title'
-        onClick={(e) => e.stopPropagation()}
-      >
+    <button
+      className='picker-backdrop'
+      aria-label='Close dialog'
+      onClick={(e) => e.target === e.currentTarget && !busy && onCancel()}
+      disabled={busy}
+    >
+      <div className='confirm-card' role='alertdialog' aria-modal='true' aria-labelledby='confirm-title' tabIndex={-1}>
         <div className='confirm-icon' style={{ background: swatch }} aria-hidden='true' />
         <h2 id='confirm-title'>{title}</h2>
         <p className='confirm-body'>{body}</p>
@@ -51,6 +50,6 @@ export function ConfirmDialog({
           </button>
         </div>
       </div>
-    </div>
+    </button>
   )
 }
