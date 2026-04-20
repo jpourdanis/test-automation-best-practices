@@ -1,0 +1,6 @@
+[NETWORK INFO] successfully adds a new color and shows its chip: 200 GET https://test-automation-best-practices-ri26jp1z4-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] successfully adds a new color and shows its chip: 204 GET https://test-automation-best-practices-ri26jp1z4-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] successfully adds a new color and shows its chip: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-ri26jp1z4-jpourdanis-projects.vercel.app&deploymentId=dpl_4QNzLYPuJ3Av2QEfvVi4RSCyAsxw
+[NETWORK INFO] successfully adds a new color and shows its chip: 204 HEAD https://test-automation-best-practices-ri26jp1z4-jpourdanis-projects.vercel.app/
+[NETWORK INFO] successfully adds a new color and shows its chip: 201 POST https://test-automation-best-practices-ri26jp1z4-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] successfully adds a new color and shows its chip: 200 GET https://test-automation-best-practices-ri26jp1z4-jpourdanis-projects.vercel.app/api/colors
