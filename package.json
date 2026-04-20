@@ -140,6 +140,12 @@
     ]
   },
   "nyc": {
+    "extension": [
+      ".js",
+      ".jsx",
+      ".ts",
+      ".tsx"
+    ],
     "exclude": [
       "src/setupProxy.js",
       "src/index.tsx",
