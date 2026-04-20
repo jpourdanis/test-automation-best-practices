@@ -39,12 +39,6 @@ test.describe('UI Error Handling Coverage', () => {
     // Abort the specific color fetch
     await page.route('**/api/colors/Turquoise', (route) => route.abort('failed'))
 
-    // Start capture console errors
-    const errors: string[] = []
-    page.on('console', (msg) => {
-      if (msg.type() === 'error') errors.push(msg.text())
-    })
-
     // We start the request listener before the action
     const requestPromise = page.waitForRequest('**/api/colors/Turquoise')
 
@@ -54,8 +48,8 @@ test.describe('UI Error Handling Coverage', () => {
     // Await the request to ensure it happened
     await requestPromise
 
-    // Wait for the async catch block to execute and log the error
-    await expect.poll(() => errors).toContainEqual(expect.stringContaining('Failed to fetch hex for Turquoise'))
+    // The app surfaces the error in an alert div instead of console.error
+    await expect(page.getByRole('alert')).toContainText('Failed to load color: Turquoise')
   })
 
   /**

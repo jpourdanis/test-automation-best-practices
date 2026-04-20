@@ -63,7 +63,7 @@ test.describe('Network Mocking & Interception', () => {
     await homePage.goto()
 
     // The button for our mocked color should be visible
-    const customBtn = page.getByRole('button', { name: 'colors.magenta' })
+    const customBtn = page.getByRole('button', { name: 'Change background to Magenta', exact: true })
     await expect(customBtn).toBeVisible()
 
     // Click the mocked color button
@@ -107,7 +107,10 @@ test.describe('Network Mocking & Interception', () => {
     await expect(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)')
 
     // Attempt to click the 'Red' button, which will trigger the 404
-    const redBtn = page.getByRole('button', { name: enTranslations.colors.red })
+    const redBtn = page.getByRole('button', {
+      name: `${enTranslations.changeColor} ${enTranslations.colors.red}`,
+      exact: true
+    })
     await redBtn.click()
 
     // The background color should not have changed, since the fetch failed

@@ -9,5 +9,31 @@
     "yellow": "Amarillo"
   },
   "languageSelector": "Seleccionar Idioma",
-  "changeColor": "Cambiar el fondo a"
+  "changeColor": "Cambiar el fondo a",
+  "add": "+ Añadir color",
+  "loading": "Cargando colores...",
+  "remove": "Eliminar color",
+  "confirmTitle": "¿Eliminar color?",
+  "confirmBody": "¿Seguro que quieres eliminar <b>{{name}}</b>? Esta acción no se puede deshacer.",
+  "cancel": "Cancelar",
+  "delete": "Eliminar",
+  "deleting": "Eliminando\u2026",
+  "colorPicker": {
+    "title": "Añadir un color",
+    "dialogAriaLabel": "Añadir color personalizado",
+    "closeAriaLabel": "Cerrar",
+    "lightnessLabel": "Luminosidad",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "p. ej. Océano",
+    "hexLabel": "Hex",
+    "cancel": "Cancelar",
+    "addColor": "Añadir color",
+    "saving": "Guardando\u2026",
+    "errors": {
+      "nameRequired": "El nombre es obligatorio",
+      "nameInvalid": "Solo letras, números, espacios y +",
+      "nameDuplicate": "\"{{name}}\" ya existe",
+      "hexFormat": "Usa el formato #RRGGBB"
+    }
+  }
 }

@@ -95,6 +95,7 @@ for (const vp of responsiveViewports) {
       await responsePromise
 
       await expect(homePage.currentColorText).toContainText('#f1c40f')
+      await expect(homePage.header).toHaveCSS('background-color', 'rgb(241, 196, 15)')
 
       const screenshot = await page.screenshot({
         fullPage: true,

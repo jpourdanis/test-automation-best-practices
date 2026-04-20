@@ -9,5 +9,31 @@
     "yellow": "Κίτρινο"
   },
   "languageSelector": "Επιλογή Γλώσσας",
-  "changeColor": "Αλλαγή φόντου σε"
+  "changeColor": "Αλλαγή φόντου σε",
+  "add": "+ Προσθήκη χρώματος",
+  "loading": "Φόρτωση χρωμάτων...",
+  "remove": "Διαγραφή χρώματος",
+  "confirmTitle": "Διαγραφή χρώματος;",
+  "confirmBody": "Θέλετε σίγουρα να διαγράψετε το <b>{{name}}</b>; Η ενέργεια δεν αναιρείται.",
+  "cancel": "Άκυρο",
+  "delete": "Διαγραφή",
+  "deleting": "Διαγραφή\u2026",
+  "colorPicker": {
+    "title": "Προσθήκη χρώματος",
+    "dialogAriaLabel": "Προσθήκη προσαρμοσμένου χρώματος",
+    "closeAriaLabel": "Κλείσιμο",
+    "lightnessLabel": "Φωτεινότητα",
+    "nameLabel": "Όνομα",
+    "namePlaceholder": "π.χ. Ωκεανός",
+    "hexLabel": "Hex",
+    "cancel": "Άκυρο",
+    "addColor": "Προσθήκη χρώματος",
+    "saving": "Αποθήκευση\u2026",
+    "errors": {
+      "nameRequired": "Το όνομα είναι υποχρεωτικό",
+      "nameInvalid": "Μόνο γράμματα, αριθμοί, κενά και +",
+      "nameDuplicate": "«{{name}}» υπάρχει ήδη",
+      "hexFormat": "Χρησιμοποιήστε μορφή #RRGGBB"
+    }
+  }
 }
