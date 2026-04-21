@@ -66,7 +66,7 @@ jobs:
           npx nyc report --temp-dir=coverage/merged --reporter=lcov --report-dir=coverage
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarcloud-github-action@master
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -223,7 +223,6 @@ jobs:
           scan-type: "fs"
           ignore-unfixed: true
           severity: "CRITICAL,HIGH"
-          trivy-version: "0.69.3"
           # Fail the pipeline and output as JUnit for Allure
           exit-code: "1"
           format: "template"
@@ -265,7 +264,6 @@ jobs:
           image-ref: "test-automation-best-practices-app:latest"
           ignore-unfixed: true
           severity: "CRITICAL,HIGH"
-          trivy-version: "0.69.3"
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-frontend.xml"
@@ -304,12 +302,11 @@ jobs:
           scan-type: "image"
           image-ref: "test-automation-best-practices-api:latest"
           severity: "CRITICAL,HIGH"
-          trivy-version: "0.69.3"
           exit-code: "1"
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-api.xml"
-          ignorefile: ".trivyignore"
+          trivyignores: ".trivyignore"
 
       - name: Upload Trivy API Allure Results
         if: always()
