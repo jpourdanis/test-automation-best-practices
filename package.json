@@ -7,7 +7,6 @@
     "postcss": "^8.4.31",
     "serialize-javascript": "^7.0.5",
     "@tootallnate/once": "^3.0.1",
-    "path-to-regexp": "^0.1.13",
     "picomatch": "^2.3.2",
     "lint-staged": {
       "picomatch": "^4.0.4"
@@ -55,6 +54,7 @@
     "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80",
     "test:e2e:docker": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts",
     "test:e2e:docker:update": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts --update-snapshots",
+    "test:visual:percy": "PERCY_TOKEN=$PERCY_TOKEN npx percy exec -- npx playwright test --project='Percy Visual' e2e/tests/visual.spec.ts",
     "test:api": "npx playwright test e2e/tests/api.spec.ts",
     "test:perf:api:smoke": "TEST_TYPE=smoke k6 run performance/api-performance.spec.ts",
     "test:perf:api:load": "TEST_TYPE=load k6 run performance/api-performance.spec.ts",
@@ -91,6 +91,8 @@
     "@axe-core/playwright": "^4.11.1",
     "@cucumber/cucumber": "^12.7.0",
     "@faker-js/faker": "^10.3.0",
+    "@percy/cli": "^1.29.0",
+    "@percy/playwright": "^1.1.0",
     "@stryker-mutator/core": "^9.6.0",
     "@stryker-mutator/jest-runner": "^9.6.0",
     "@testing-library/dom": "^10.0.0",

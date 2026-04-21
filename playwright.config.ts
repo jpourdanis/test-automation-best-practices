@@ -7,10 +7,14 @@ const testDir = defineBddConfig({
 })
 
 const isBrowserStack = process.env.BROWSERSTACK === 'true'
+const isPercyEnabled = process.env.PERCY_TOKEN && !isBrowserStack
 
 // Tests that don't make sense on BrowserStack: visual diffs are environment-specific
 // and BDD tests are covered by the Chrome project already
 const BS_IGNORE = [/.*visual\.spec\.ts$/, /.*\.feature\.spec.*$/]
+
+// For Percy on production: run visual tests against the production URL
+const PERCY_PROJECTS = isPercyEnabled ? ['Percy Visual'] : []
 
 const config: PlaywrightTestConfig = {
   // If a test fails then passes on a retry, Allure marks it as flaky automatically.
@@ -108,6 +112,18 @@ const config: PlaywrightTestConfig = {
                   ...devices['Desktop Chrome']
                 },
                 testMatch: /.*cross-browser\.spec\.ts/
+              }
+            ]
+          : []),
+        // Percy project for visual regression testing in production
+        ...(isPercyEnabled
+          ? [
+              {
+                name: 'Percy Visual',
+                use: {
+                  ...devices['Desktop Chrome']
+                },
+                testMatch: /.*visual\.spec\.ts/
               }
             ]
           : [])

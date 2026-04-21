@@ -35,3 +35,39 @@ jobs:
           name: allure-results-browserstack
           path: allure-results/
           retention-days: 7
+
+  # ==========================================
+  # Visual Regression with Percy (Optional)
+  # ==========================================
+  visual-regression-percy:
+    name: Visual Regression (Percy - BrowserStack)
+    needs: [e2e-browserstack]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-node-env
+
+      - name: Install Playwright browsers
+        if: env.PERCY_TOKEN != ''
+        run: npx playwright install --with-deps
+
+      - name: Install Playwright OS dependencies
+        if: env.PERCY_TOKEN != ''
+        run: npx playwright install-deps
+
+      - name: Run Percy Visual Regression Tests Against BrowserStack Production
+        if: env.PERCY_TOKEN != ''
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+          BASE_URL: https://test-automation-best-practices.vercel.app/
+        run: npm run test:visual:percy
+
+      - name: Upload Percy Allure Results
+        if: always() && env.PERCY_TOKEN != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-percy-browserstack
+          path: allure-results/
+          retention-days: 7

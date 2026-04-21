@@ -1327,19 +1327,26 @@ on:
 
 ---
 
-#### 21. Cross-Cloud Browser Testing with BrowserStack
+#### 21. Production Testing with BrowserStack and Visual Regression Production Testing with Percy
 
-**Files:** [`playwright.config.ts`](/playwright.config.ts) · [`browserstack.yml`](/browserstack.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+**Files:** [`playwright.config.ts`](/playwright.config.ts) · [`browserstack.yml`](/browserstack.yml) · [`.percy.yml`](.percy.yml) · [`e2e/tests/visual.spec.ts`](/e2e/tests/visual.spec.ts) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
-**The problem:** Docker-based E2E tests run on a single browser engine on a Linux VM. They cannot catch Safari-specific layout bugs, Android rendering differences, or the real-world performance characteristics of a mobile network.
+**The problem:** Docker-based E2E tests run on a single browser engine on a Linux VM. They cannot catch Safari-specific layout bugs, Android rendering differences, or the real-world performance characteristics of a mobile network. Additionally, functional tests don't validate visual correctness — unintended layout shifts and color changes slip through.
 
-**The solution:** Set `BROWSERSTACK=true` to switch Playwright from local Docker projects to five BrowserStack cloud targets — three desktop browsers and two real mobile devices — all running against the live Vercel deployment. The BrowserStack SDK (`browserstack-node-sdk`) intercepts Playwright's browser launch and proxies each session to BrowserStack's infrastructure without changing a single test file.
+**The solution:** A two-pronged production validation strategy:
+
+1. **BrowserStack for Functional E2E Testing** — Set `BROWSERSTACK=true` to switch Playwright from local Docker projects to five BrowserStack cloud targets (three desktop browsers + two real mobile devices) running against the live Vercel deployment.
+2. **Percy for Visual Regression Testing** — Capture pixel-perfect snapshots at multiple viewports against production, with cloud-based comparison and team approval workflows.
 
 **Why it matters:**
 
-- Safari/WebKit on a real macOS host renders fonts, CSS custom properties, and scrolling differently from `playwright-webkit` on Linux
-- Real mobile devices exercise actual touch events and viewport meta behaviour that emulation approximates
-- Running against the live Vercel URL catches CDN configuration, edge-function routing, and environment-variable mismatches that Docker tests miss entirely
+- **Cross-browser confidence** — Safari/WebKit renders fonts, CSS custom properties, and scrolling differently from Linux. Real mobile devices exercise touch events and viewport meta behaviour that emulation approximates.
+- **Production URL validation** — Running against live Vercel catches CDN configuration, edge-function routing, and environment-variable mismatches that Docker tests miss.
+- **Visual regression detection** — Unintended layout shifts and styling changes that pass all functional tests are caught by pixel-perfect comparison.
+- **Team collaboration** — Non-technical team members review and approve visual changes in Percy UI before merge.
+- **Single source of truth** — Both tests run the same test code against production; only environment variables differ.
+
+### BrowserStack E2E Testing
 
 ```typescript
 // playwright.config.ts — projects switch automatically when BROWSERSTACK=true
@@ -1387,17 +1394,92 @@ e2e-browserstack:
       run: npx browserstack-node-sdk playwright test e2e/tests/
 ```
 
-> [!NOTE]
-> Visual regression and BDD tests are excluded from the BrowserStack run. Visual snapshots are environment-specific (Docker baseline vs. cloud renderer would always differ); BDD scenarios are already covered by the Chrome project on every push.
+### Percy Visual Regression Testing
+
+```yaml
+# .percy.yml — viewport and browser configuration
+version: 2
+allowed-hosts:
+  - localhost
+  - test-automation-best-practices.vercel.app
+
+browsers:
+  - name: chrome
+    widths:
+      - 1280 # Desktop
+      - 1920 # Desktop XL
+      - 768 # Tablet
+      - 375 # Mobile
+```
+
+```typescript
+// e2e/tests/visual.spec.ts — Percy snapshots for production
+import { percySnapshot } from '@percy/playwright'
+
+test.describe('Percy Visual Regression – Production', () => {
+  test.skip(!process.env.PERCY_TOKEN, 'Skipping Percy tests — PERCY_TOKEN not set.')
+
+  const percyViewports = [
+    { label: 'desktop', width: 1280, height: 720 },
+    { label: 'desktop-xl', width: 1920, height: 1080 },
+    { label: 'tablet', width: 768, height: 1024 },
+    { label: 'mobile', width: 375, height: 667 }
+  ]
+
+  for (const vp of percyViewports) {
+    test.describe(`Percy – ${vp.label} (${vp.width}×${vp.height})`, () => {
+      test.use({ viewport: { width: vp.width, height: vp.height } })
+
+      test('homepage initial state', async ({ page }) => {
+        await page.goto('/')
+        await page.waitForLoadState('networkidle')
+        await percySnapshot(page, `Homepage – ${vp.label}`, { widths: [vp.width] })
+      })
+
+      test('homepage after color change', async ({ page, homePage }) => {
+        await homePage.goto()
+        const responsePromise = page.waitForResponse(
+          (resp) => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
+        )
+        await homePage.clickColorButton('Yellow')
+        await responsePromise
+        await page.waitForLoadState('networkidle')
+        await percySnapshot(page, `Homepage with Yellow – ${vp.label}`, { widths: [vp.width] })
+      })
+    })
+  }
+})
+```
+
+### Usage
 
 ```bash
-# Run locally against production on BrowserStack
+# Run BrowserStack E2E tests locally
 BROWSERSTACK=true \
 BROWSERSTACK_USERNAME=your_user \
 BROWSERSTACK_ACCESS_KEY=your_key \
 BASE_URL=https://test-automation-best-practices.vercel.app/ \
 npx browserstack-node-sdk playwright test e2e/tests/
+
+# Run Percy visual regression tests locally
+PERCY_TOKEN=your_percy_token \
+BASE_URL=https://test-automation-best-practices.vercel.app/ \
+npm run test:visual:percy
+
+# Or in CI/CD (both run automatically with respective triggers):
+# - BrowserStack: Manual trigger or weekly schedule
+# - Percy: Every PR and push (if PERCY_TOKEN is set)
 ```
+
+> [!NOTE]
+> **Production Testing Strategy:**
+>
+> - **BrowserStack Functional Tests** — Validate user interactions and API contracts across real browsers and devices (Chrome, Firefox, Safari on desktop; Chrome, Safari on mobile)
+> - **Percy Visual Tests** — Detect pixel-perfect visual regressions at multiple viewports (1280, 1920, 768, 375 widths) with team approval workflow
+> - **Independent Workflows** — Both run against the same production URL but separately:
+>   - Percy runs on every PR/push (continuous visual monitoring)
+>   - BrowserStack runs on manual trigger or weekly schedule (comprehensive cross-browser validation)
+> - **Same Test Code** — Both use the identical Playwright test suite; only environment variables (`BROWSERSTACK`, `PERCY_TOKEN`) and reporters differ
 
 ---
 
