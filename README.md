@@ -17,7 +17,7 @@ _30 battle-tested patterns — from unit testing to security scanning — in a s
 
 ![Demo Animation](demo.gif)
 
-[Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/) · [Live Demo](https://test-automation-best-practices.vercel.app) · [Report a Bug](https://github.com/jpourdanis/test-automation-best-practices/issues)
+[Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/) · [BrowserStack Report](https://automate.browserstack.com/projects/Test+Automation+Best+Practices/builds?public_token=027e5c92333749330207f91c1bd42554cf88072b34d6193e683806c6c4a88e50) · [Percy Report](https://percy.io/16ad031b/web/test-automation-best-practices-1ace4188/) · [Live Demo](https://test-automation-best-practices.vercel.app) · [Report a Bug](https://github.com/jpourdanis/test-automation-best-practices/issues)
 
 </div>
 
