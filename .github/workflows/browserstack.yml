@@ -22,8 +22,20 @@ jobs:
       - name: Install BrowserStack SDK
         run: npm install -D browserstack-node-sdk
 
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+
       - name: Install Playwright Browsers & OS Dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
+
+      - name: Install Playwright OS Dependencies (Force)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps
 
       - name: Run E2E tests on BrowserStack
         env:
@@ -52,9 +64,21 @@ jobs:
 
       - uses: ./.github/actions/setup-node-env
 
-      - name: Install Playwright Browsers & OS Dependencies
+      - name: Cache Playwright browsers
         if: env.PERCY_TOKEN != ''
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright Browsers & OS Dependencies
+        if: env.PERCY_TOKEN != '' && steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps
+
+      - name: Install Playwright OS Dependencies (Force)
+        if: env.PERCY_TOKEN != '' && steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps
 
       - name: Run Percy Visual Regression Tests Against BrowserStack Production
         if: env.PERCY_TOKEN != ''
