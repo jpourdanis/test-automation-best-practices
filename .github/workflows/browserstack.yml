@@ -26,7 +26,7 @@ jobs:
         env:
           BROWSERSTACK: "true"
           BASE_URL: https://test-automation-best-practices.vercel.app/
-        run: npx browserstack-node-sdk playwright test e2e/tests/
+        run: npm run test:browserstack
 
       - name: Upload BrowserStack Allure Results
         if: always()
