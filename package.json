@@ -92,7 +92,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
     "@cucumber/cucumber": "^12.7.0",
-    "@faker-js/faker": "^10.3.0",
+    "@faker-js/faker": "^10.4.0",
     "@percy/cli": "^1.29.0",
     "@percy/playwright": "^1.1.0",
     "@stryker-mutator/core": "^9.6.0",
