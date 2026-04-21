@@ -9,6 +9,7 @@ permissions:
 env:
   BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
   BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+  PRODUCTION_URL: ${{ vars.PRODUCTION_URL || 'https://test-automation-best-practices.vercel.app' }}
 
 jobs:
   e2e-browserstack:
@@ -39,7 +40,7 @@ jobs:
       - name: Run E2E tests on BrowserStack
         env:
           BROWSERSTACK: "true"
-          BASE_URL: https://test-automation-best-practices.vercel.app/
+          BASE_URL: ${{ env.PRODUCTION_URL }}
         run: npm run test:browserstack
 
       - name: Upload BrowserStack Allure Results
@@ -83,7 +84,7 @@ jobs:
       - name: Run Percy Visual Regression Tests Against BrowserStack Production
         if: env.PERCY_TOKEN != ''
         env:
-          BASE_URL: https://test-automation-best-practices.vercel.app/
+          BASE_URL: ${{ env.PRODUCTION_URL }}
         run: npm run test:visual:percy
 
       - name: Upload Percy Allure Results
@@ -112,7 +113,7 @@ jobs:
       - name: Run API Production Load Test
         env:
           TEST_TYPE: production-load
-          API_URL: https://test-automation-best-practices.vercel.app
+          API_URL: ${{ env.PRODUCTION_URL }}
         run: |
           mkdir -p allure-results
           npm run test:perf:api:load:prod
@@ -148,7 +149,7 @@ jobs:
         env:
           K6_BROWSER_ENABLED: "true"
           TEST_TYPE: production-load-ui
-          BASE_URL: https://test-automation-best-practices.vercel.app
+          BASE_URL: ${{ env.PRODUCTION_URL }}
         run: |
           mkdir -p allure-results
           dbus-run-session -- npm run test:perf:ui:load:prod
