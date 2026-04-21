@@ -1,0 +1,2 @@
+[NETWORK ERROR] handle color response missing hex property: GET https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] handle color response missing hex property: HEAD https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED

@@ -1,0 +1,4 @@
+[NETWORK INFO] shows server-error message on 500 inside the picker: 200 GET https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] shows server-error message on 500 inside the picker: 204 GET https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] shows server-error message on 500 inside the picker: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app&deploymentId=dpl_D4ebb9FEoSMLasbVEFkT3vrK5Eh3
+[NETWORK INFO] shows server-error message on 500 inside the picker: 204 HEAD https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/
