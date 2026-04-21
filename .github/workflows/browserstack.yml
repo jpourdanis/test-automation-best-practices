@@ -1,0 +1,37 @@
+name: BrowserStack E2E (Production Testing)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+  BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+
+jobs:
+  e2e-browserstack:
+    name: E2E Tests (BrowserStack - Production)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-node-env
+
+      - name: Install BrowserStack SDK
+        run: npm install -D browserstack-node-sdk
+
+      - name: Run E2E tests on BrowserStack
+        env:
+          BROWSERSTACK: "true"
+          BASE_URL: https://test-automation-best-practices.vercel.app/
+        run: npx browserstack-node-sdk playwright test e2e/tests/
+
+      - name: Upload BrowserStack Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-browserstack
+          path: allure-results/
+          retention-days: 7
