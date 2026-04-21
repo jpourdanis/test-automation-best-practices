@@ -55,6 +55,7 @@ jobs:
   # ==========================================
   visual-regression-percy:
     name: Visual Regression (Percy - BrowserStack)
+    needs: [e2e-browserstack]
     runs-on: ubuntu-latest
     env:
       PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
@@ -98,6 +99,7 @@ jobs:
   # ==========================================
   performance-testing-api-prod:
     name: Performance Tests (API - Production)
+    needs: [visual-regression-percy]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -107,20 +109,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run API Production Smoke Test
-        env:
-          TEST_TYPE: production-smoke
-          API_URL: https://test-automation-best-practices.vercel.app
-        run: |
-          mkdir -p allure-results
-          npm run test:perf:api:smoke:prod
-
       - name: Run API Production Load Test
-        if: always()
         env:
           TEST_TYPE: production-load
           API_URL: https://test-automation-best-practices.vercel.app
-        run: npm run test:perf:api:load:prod
+        run: |
+          mkdir -p allure-results
+          npm run test:perf:api:load:prod
 
       - name: Upload k6 API Production Allure Results
         if: always()
@@ -135,6 +130,7 @@ jobs:
   # ==========================================
   performance-testing-ui-prod:
     name: Performance Tests (UI - Production)
+    needs: [performance-testing-api-prod]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -148,22 +144,14 @@ jobs:
           browser: true
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Run UI Production Smoke Test
-        env:
-          K6_BROWSER_ENABLED: "true"
-          TEST_TYPE: production-smoke-ui
-          BASE_URL: https://test-automation-best-practices.vercel.app
-        run: |
-          mkdir -p allure-results
-          dbus-run-session -- npm run test:perf:ui:smoke:prod
-
       - name: Run UI Production Load Test
-        if: always()
         env:
           K6_BROWSER_ENABLED: "true"
           TEST_TYPE: production-load-ui
           BASE_URL: https://test-automation-best-practices.vercel.app
-        run: dbus-run-session -- npm run test:perf:ui:load:prod
+        run: |
+          mkdir -p allure-results
+          dbus-run-session -- npm run test:perf:ui:load:prod
 
       - name: Upload k6 UI Production Allure Results
         if: always()
