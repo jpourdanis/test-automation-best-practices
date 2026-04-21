@@ -1,34 +1,9 @@
 version: 2
-static:
-  # Serve static files from build/ for visual testing
-  cleanUrls: true
-  # Ignore patterns
-  ignore:
-    - "**/*.map"
-    - "**/node_modules/**"
-
-# Percy configuration for visual regression testing
+snapshot:
+  widths: [375, 768, 1280, 1920]
+  min-height: 1024
 discovery:
-  # Network idle wait before capturing
-  networkIdleTimeout: 750
-
-# Allowed hosts for Percy to capture
-allowed-hosts:
-  - localhost
-  - test-automation-best-practices.vercel.app
-
-# Browser configuration
-browsers:
-  - name: chrome
-    widths:
-      - 1280 # Desktop
-      - 1920 # Desktop XL
-      - 768 # Tablet
-      - 375 # Mobile
-
-# Snapshots configuration
-snapshots:
-  # Minimum pixels different before marking as changed
-  minHeight: 1024
-  # Wait for network idle before capturing
-  waitForTimeout: 5000
+  network-idle-timeout: 750
+  allowed-hosts:
+    - localhost
+    - test-automation-best-practices.vercel.app

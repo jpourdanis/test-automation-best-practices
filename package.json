@@ -55,7 +55,7 @@
     "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80",
     "test:e2e:docker": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts",
     "test:e2e:docker:update": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts --update-snapshots",
-    "test:visual:percy": "PERCY_TOKEN=$PERCY_TOKEN npx percy exec -- npx playwright test --project='Percy Visual' e2e/tests/visual.spec.ts",
+    "test:visual:percy": "PERCY_TOKEN=$PERCY_TOKEN npx percy exec -- npx playwright test --project=percy e2e/tests/visual.spec.ts",
     "test:api": "npx playwright test e2e/tests/api.spec.ts",
     "test:perf:api:smoke": "TEST_TYPE=smoke k6 run performance/api-performance.spec.ts",
     "test:perf:api:load": "TEST_TYPE=load k6 run performance/api-performance.spec.ts",

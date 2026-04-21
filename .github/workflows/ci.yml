@@ -942,7 +942,7 @@ jobs:
   visual-regression-percy:
     name: Visual Regression (Percy - Production)
     needs: [frontend-unit-tests]
-    if: github.event_name == 'pull_request' || github.event_name == 'push'
+    if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6

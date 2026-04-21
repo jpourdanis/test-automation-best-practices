@@ -7,7 +7,7 @@ const testDir = defineBddConfig({
 })
 
 const isBrowserStack = process.env.BROWSERSTACK === 'true'
-const isPercyEnabled = process.env.PERCY_TOKEN && !isBrowserStack
+const isPercyEnabled = !!process.env.PERCY_TOKEN
 
 // Tests that don't make sense on BrowserStack: visual diffs are environment-specific
 // and BDD tests are covered by the Chrome project already
@@ -119,7 +119,7 @@ const config: PlaywrightTestConfig = {
         ...(isPercyEnabled
           ? [
               {
-                name: 'Percy Visual',
+                name: 'percy',
                 use: {
                   ...devices['Desktop Chrome']
                 },
