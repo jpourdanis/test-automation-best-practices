@@ -1,4 +1,0 @@
-[NETWORK ERROR] shows 409 duplicate error from server inside the picker: GET https://test-automation-best-practices-nm7hoittj-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] shows 409 duplicate error from server inside the picker: HEAD https://test-automation-best-practices-nm7hoittj-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
-[API ERROR] shows 409 duplicate error from server inside the picker: 409 POST https://test-automation-best-practices-nm7hoittj-jpourdanis-projects.vercel.app/api/colors
-[CONSOLE ERROR] shows 409 duplicate error from server inside the picker: Failed to load resource: the server responded with a status of 409 (Conflict)
