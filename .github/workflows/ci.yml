@@ -868,9 +868,21 @@ jobs:
 
       - uses: ./.github/actions/setup-node-env
 
-      - name: Install Playwright browsers
+      - name: Cache Playwright browsers
         if: env.VERCEL_TOKEN != ''
-        run: npx playwright install --with-deps
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: env.VERCEL_TOKEN != '' && steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
+
+      - name: Install Playwright OS dependencies
+        if: env.VERCEL_TOKEN != ''
+        run: npx playwright install-deps
 
       - name: Deploy to Vercel (Preview)
         id: vercel-deploy
@@ -894,6 +906,107 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: allure-results-production-tests
+          path: allure-results/
+          retention-days: 1
+
+  # ==========================================
+  # 2e. E2E TESTING ON BROWSERSTACK (Production)
+  # ==========================================
+  e2e-browserstack:
+    name: E2E Tests (BrowserStack - Production)
+    needs: [e2e-sharded]
+    # Runs on manual dispatch (when opted in) or on the weekly schedule.
+    # Never runs on push/PR — those use the Docker-based sharded suite instead.
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-node-env
+
+      # Install the BrowserStack SDK which wraps the Playwright test runner
+      # and proxies browser sessions to BrowserStack's cloud infrastructure.
+      - name: Install BrowserStack SDK
+        run: npm install -D browserstack-node-sdk
+
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright Browsers & OS Dependencies
+        if: steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install --with-deps
+
+      - name: Install Playwright OS Dependencies (Force)
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
+        run: npx playwright install-deps
+
+      # Run all E2E tests (except visual and BDD) across the 5 browser/device
+      # combinations defined in playwright.config.ts (bs-* projects) and
+      # browserstack.yml. BASE_URL points to the live Vercel deployment.
+      - name: Run E2E tests on BrowserStack
+        env:
+          BROWSERSTACK: "true"
+          BASE_URL: https://test-automation-best-practices.vercel.app/
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+        run: npx browserstack-node-sdk playwright test e2e/tests/
+
+      - name: Upload BrowserStack Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-browserstack
+          path: allure-results/
+          retention-days: 1
+
+  # ==========================================
+  # 2f. VISUAL REGRESSION TESTING (Percy - Production)
+  # ==========================================
+  visual-regression-percy:
+    name: Visual Regression (Percy - Production)
+    needs: [e2e-sharded]
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    env:
+      PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-node-env
+
+      - name: Cache Playwright browsers
+        if: env.PERCY_TOKEN != ''
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: env.PERCY_TOKEN != '' && steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
+
+      - name: Install Playwright OS dependencies
+        if: env.PERCY_TOKEN != ''
+        run: npx playwright install-deps
+
+      - name: Run Percy Visual Regression Tests
+        if: env.PERCY_TOKEN != ''
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
+          BASE_URL: https://test-automation-best-practices.vercel.app/
+        run: npm run test:visual:percy
+
+      - name: Upload Allure Results Percy
+        if: always() && env.PERCY_TOKEN != ''
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-percy
           path: allure-results/
           retention-days: 1
 

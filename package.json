@@ -7,7 +7,6 @@
     "postcss": "^8.4.31",
     "serialize-javascript": "^7.0.5",
     "@tootallnate/once": "^3.0.1",
-    "path-to-regexp": "^0.1.13",
     "picomatch": "^2.3.2",
     "lint-staged": {
       "picomatch": "^4.0.4"
@@ -21,7 +20,8 @@
     "ws": "^8.17.1",
     "lodash": "^4.18.1",
     "lodash-es": "^4.18.1",
-    "node-forge": "^1.3.0"
+    "node-forge": "^1.3.0",
+    "js-yaml": "^4.1.1"
   },
   "dependencies": {
     "@playwright/test": "^1.59.1",
@@ -55,6 +55,7 @@
     "coverage:check": "nyc check-coverage --lines 80 --functions 80 --branches 80",
     "test:e2e:docker": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts",
     "test:e2e:docker:update": "docker-compose run --build --rm playwright e2e/tests/visual.spec.ts --update-snapshots",
+    "test:visual:percy": "PERCY_TOKEN=$PERCY_TOKEN npx percy exec -- npx playwright test --project=percy e2e/tests/visual.spec.ts",
     "test:api": "npx playwright test e2e/tests/api.spec.ts",
     "test:perf:api:smoke": "TEST_TYPE=smoke k6 run performance/api-performance.spec.ts",
     "test:perf:api:load": "TEST_TYPE=load k6 run performance/api-performance.spec.ts",
@@ -70,7 +71,8 @@
     "security:scan:code": "docker run --rm -v $(pwd):/app aquasec/trivy:0.69.3 fs /app",
     "security:scan:container:app": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3 image test-automation-best-practices-app:latest",
     "security:scan:container:api": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/.trivyignore:/.trivyignore aquasec/trivy:0.69.3 image --ignorefile /.trivyignore test-automation-best-practices-api:latest",
-    "security:scan": "npm run security:audit && npm run security:scan:code"
+    "security:scan": "npm run security:audit && npm run security:scan:code",
+    "test:browserstack": "cross-env BROWSERSTACK=true browserstack-node-sdk playwright test"
   },
   "eslintConfig": {
     "extends": "react-app"
@@ -91,6 +93,8 @@
     "@axe-core/playwright": "^4.11.1",
     "@cucumber/cucumber": "^12.7.0",
     "@faker-js/faker": "^10.3.0",
+    "@percy/cli": "^1.29.0",
+    "@percy/playwright": "^1.1.0",
     "@stryker-mutator/core": "^9.6.0",
     "@stryker-mutator/jest-runner": "^9.6.0",
     "@testing-library/dom": "^10.0.0",
@@ -101,6 +105,7 @@
     "@types/k6": "^1.7.0",
     "@types/node": "^22.13.10",
     "allure-playwright": "^3.6.0",
+    "browserstack-node-sdk": "^1.52.0",
     "http-proxy-middleware": "^3.0.5",
     "husky": "^9.1.7",
     "jest-junit": "^16.0.0",

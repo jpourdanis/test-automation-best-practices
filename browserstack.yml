@@ -1,0 +1,45 @@
+# BrowserStack SDK configuration
+# userName and accessKey are intentionally omitted here.
+# The SDK reads them automatically from the BROWSERSTACK_USERNAME and
+# BROWSERSTACK_ACCESS_KEY environment variables (set as GitHub secrets).
+
+# ── Project metadata ──────────────────────────────────────────────────────────
+projectName: Test Automation Best Practices
+buildName: Production E2E (BrowserStack)
+buildIdentifier: "#${BUILD_NUMBER}"
+
+# ── Desktop browsers ──────────────────────────────────────────────────────────
+browsers:
+  - browser: chrome
+    os: Windows
+    osVersion: 11
+    browserVersion: latest
+
+  - browser: firefox
+    os: Windows
+    osVersion: 11
+    browserVersion: latest
+
+  - browser: playwright-webkit
+    os: OS X
+    osVersion: Ventura
+    browserVersion: latest
+
+# ── Real mobile devices ───────────────────────────────────────────────────────
+devices:
+  - deviceName: Samsung Galaxy S23
+    osVersion: 13.0
+    browserName: chrome
+
+  - deviceName: iPhone 15
+    osVersion: 17
+    browserName: safari
+
+# ── Parallelism ───────────────────────────────────────────────────────────────
+parallelsPerPlatform: 2
+
+# ── Debugging ─────────────────────────────────────────────────────────────────
+debug: false
+networkLogs: true
+consoleLogs: warn
+video: true

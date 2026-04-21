@@ -64,6 +64,10 @@ test.describe('Accessibility Tests', () => {
    * guarantee premium compliance.
    */
   test('should meet the accessibility threshold using Google Lighthouse', async ({ homePage, page }) => {
+    test.skip(
+      process.env.BROWSERSTACK === 'true',
+      'Lighthouse audits are non-deterministic on BrowserStack cloud browsers'
+    )
     // Wait for the main elements to render
     await expect(homePage.header).toBeVisible()
 

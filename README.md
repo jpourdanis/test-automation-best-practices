@@ -4,7 +4,7 @@
 
 **The definitive reference for production-grade test automation engineering.**
 
-_29 battle-tested patterns — from unit testing to security scanning — in a single, runnable full-stack project._
+_30 battle-tested patterns — from unit testing to security scanning — in a single, runnable full-stack project._
 
 [![CI](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/jpourdanis/test-automation-best-practices/badge.svg?branch=main)](https://coveralls.io/github/jpourdanis/test-automation-best-practices?branch=main)
@@ -17,7 +17,7 @@ _29 battle-tested patterns — from unit testing to security scanning — in a s
 
 ![Demo Animation](demo.gif)
 
-[Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/) · [Live Demo](https://test-automation-best-practices.vercel.app) · [Report a Bug](https://github.com/jpourdanis/test-automation-best-practices/issues)
+[Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/) · [BrowserStack Report](https://automate.browserstack.com/projects/Test+Automation+Best+Practices/builds?public_token=027e5c92333749330207f91c1bd42554cf88072b34d6193e683806c6c4a88e50) · [Percy Report](https://percy.io/16ad031b/web/test-automation-best-practices-1ace4188/) · [Live Demo](https://test-automation-best-practices.vercel.app) · [Report a Bug](https://github.com/jpourdanis/test-automation-best-practices/issues)
 
 </div>
 
@@ -1327,7 +1327,163 @@ on:
 
 ---
 
-#### 21. Automated Container Health Testing
+#### 21. Production Testing with BrowserStack and Visual Regression Production Testing with Percy
+
+**Files:** [`playwright.config.ts`](/playwright.config.ts) · [`browserstack.yml`](/browserstack.yml) · [`.percy.yml`](.percy.yml) · [`e2e/tests/visual.spec.ts`](/e2e/tests/visual.spec.ts) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+
+**The problem:** Docker-based E2E tests run on a single browser engine on a Linux VM. They cannot catch Safari-specific layout bugs, Android rendering differences, or the real-world performance characteristics of a mobile network. Additionally, functional tests don't validate visual correctness — unintended layout shifts and color changes slip through.
+
+**The solution:** A two-pronged production validation strategy:
+
+1. **BrowserStack for Functional E2E Testing** — Set `BROWSERSTACK=true` to switch Playwright from local Docker projects to five BrowserStack cloud targets (three desktop browsers + two real mobile devices) running against the live Vercel deployment.
+2. **Percy for Visual Regression Testing** — Capture pixel-perfect snapshots at multiple viewports against production, with cloud-based comparison and team approval workflows.
+
+**Why it matters:**
+
+- **Cross-browser confidence** — Safari/WebKit renders fonts, CSS custom properties, and scrolling differently from Linux. Real mobile devices exercise touch events and viewport meta behaviour that emulation approximates.
+- **Production URL validation** — Running against live Vercel catches CDN configuration, edge-function routing, and environment-variable mismatches that Docker tests miss.
+- **Visual regression detection** — Unintended layout shifts and styling changes that pass all functional tests are caught by pixel-perfect comparison.
+- **Team collaboration** — Non-technical team members review and approve visual changes in Percy UI before merge.
+- **Single source of truth** — Both tests run the same test code against production; only environment variables differ.
+
+### BrowserStack E2E Testing
+
+```typescript
+// playwright.config.ts — projects switch automatically when BROWSERSTACK=true
+const isBrowserStack = process.env.BROWSERSTACK === 'true'
+
+projects: isBrowserStack
+  ? [
+      { name: 'bs-chrome-win11', use: { ...devices['Desktop Chrome'] }, testIgnore: BS_IGNORE },
+      { name: 'bs-firefox-win11', use: { ...devices['Desktop Firefox'] }, testIgnore: BS_IGNORE },
+      { name: 'bs-safari-ventura', use: { ...devices['Desktop Safari'] }, testIgnore: BS_IGNORE },
+      { name: 'bs-pixel-7', use: { ...devices['Pixel 7'] }, testIgnore: BS_IGNORE },
+      { name: 'bs-iphone-15', use: { ...devices['iPhone 15'] }, testIgnore: BS_IGNORE }
+    ]
+  : [
+      /* local Chrome / BDD / cross-browser projects */
+    ]
+```
+
+```yaml
+# browserstack.yml — authentication, build metadata, and parallelism
+userName: ${BROWSERSTACK_USERNAME}
+accessKey: ${BROWSERSTACK_ACCESS_KEY}
+projectName: Test Automation Best Practices
+buildName: Production E2E (BrowserStack)
+parallelsPerPlatform: 2
+networkLogs: true
+video: true
+```
+
+```yaml
+# .github/workflows/ci.yml — manual trigger or weekly schedule
+e2e-browserstack:
+  name: E2E Tests (BrowserStack - Production)
+  if: |
+    (github.event_name == 'workflow_dispatch' && github.event.inputs.run_browserstack == 'true') ||
+    github.event_name == 'schedule'
+  steps:
+    - run: npm install -D browserstack-node-sdk
+    - name: Run E2E tests on BrowserStack
+      env:
+        BROWSERSTACK: 'true'
+        BASE_URL: https://test-automation-best-practices.vercel.app/
+        BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+        BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      run: npx browserstack-node-sdk playwright test e2e/tests/
+```
+
+### Percy Visual Regression Testing
+
+```yaml
+# .percy.yml — viewport and browser configuration
+version: 2
+allowed-hosts:
+  - localhost
+  - test-automation-best-practices.vercel.app
+
+browsers:
+  - name: chrome
+    widths:
+      - 1280 # Desktop
+      - 1920 # Desktop XL
+      - 768 # Tablet
+      - 375 # Mobile
+```
+
+```typescript
+// e2e/tests/visual.spec.ts — Percy snapshots for production
+import { percySnapshot } from '@percy/playwright'
+
+test.describe('Percy Visual Regression – Production', () => {
+  test.skip(!process.env.PERCY_TOKEN, 'Skipping Percy tests — PERCY_TOKEN not set.')
+
+  const percyViewports = [
+    { label: 'desktop', width: 1280, height: 720 },
+    { label: 'desktop-xl', width: 1920, height: 1080 },
+    { label: 'tablet', width: 768, height: 1024 },
+    { label: 'mobile', width: 375, height: 667 }
+  ]
+
+  for (const vp of percyViewports) {
+    test.describe(`Percy – ${vp.label} (${vp.width}×${vp.height})`, () => {
+      test.use({ viewport: { width: vp.width, height: vp.height } })
+
+      test('homepage initial state', async ({ page }) => {
+        await page.goto('/')
+        await page.waitForLoadState('networkidle')
+        await percySnapshot(page, `Homepage – ${vp.label}`, { widths: [vp.width] })
+      })
+
+      test('homepage after color change', async ({ page, homePage }) => {
+        await homePage.goto()
+        const responsePromise = page.waitForResponse(
+          (resp) => resp.url().includes('/api/colors/Yellow') && resp.status() === 200
+        )
+        await homePage.clickColorButton('Yellow')
+        await responsePromise
+        await page.waitForLoadState('networkidle')
+        await percySnapshot(page, `Homepage with Yellow – ${vp.label}`, { widths: [vp.width] })
+      })
+    })
+  }
+})
+```
+
+### Usage
+
+```bash
+# Run BrowserStack E2E tests locally
+BROWSERSTACK=true \
+BROWSERSTACK_USERNAME=your_user \
+BROWSERSTACK_ACCESS_KEY=your_key \
+BASE_URL=https://test-automation-best-practices.vercel.app/ \
+npx browserstack-node-sdk playwright test e2e/tests/
+
+# Run Percy visual regression tests locally
+PERCY_TOKEN=your_percy_token \
+BASE_URL=https://test-automation-best-practices.vercel.app/ \
+npm run test:visual:percy
+
+# Or in CI/CD (both run automatically with respective triggers):
+# - BrowserStack: Manual trigger or weekly schedule
+# - Percy: Every PR and push (if PERCY_TOKEN is set)
+```
+
+> [!NOTE]
+> **Production Testing Strategy:**
+>
+> - **BrowserStack Functional Tests** — Validate user interactions and API contracts across real browsers and devices (Chrome, Firefox, Safari on desktop; Chrome, Safari on mobile)
+> - **Percy Visual Tests** — Detect pixel-perfect visual regressions at multiple viewports (1280, 1920, 768, 375 widths) with team approval workflow
+> - **Independent Workflows** — Both run against the same production URL but separately:
+>   - Percy runs on every PR/push (continuous visual monitoring)
+>   - BrowserStack runs on manual trigger or weekly schedule (comprehensive cross-browser validation)
+> - **Same Test Code** — Both use the identical Playwright test suite; only environment variables (`BROWSERSTACK`, `PERCY_TOKEN`) and reporters differ
+
+---
+
+#### 22. Automated Container Health Testing
 
 **The problem:** Bash `sleep` loops and `curl` retry scripts are brittle and don't understand container lifecycle. Tests start before services are ready.
 
@@ -1365,7 +1521,7 @@ docker ps --format "{{.Names}}: {{.Status}}"
 
 ---
 
-#### 22. Static Code Analysis with MegaLinter & SonarCloud
+#### 23. Static Code Analysis with MegaLinter & SonarCloud
 
 **The problem:** Inconsistent formatting, leaked secrets, and dead code accumulate silently. Manual code review can't catch everything at scale.
 
@@ -1377,7 +1533,7 @@ npx --yes mega-linter-runner@latest   # Local MegaLinter run
 
 ---
 
-#### 23. E2E Code Coverage
+#### 24. E2E Code Coverage
 
 **Files:** [`e2e/baseFixtures.ts`](/e2e/baseFixtures.ts) · [`e2e/tests/coverage.spec.ts`](/e2e/tests/coverage.spec.ts)
 
@@ -1469,7 +1625,7 @@ npm run coverage:check    # Enforce 80% gate
 
 ---
 
-#### 24. Quality Gates & Coverage Limits
+#### 25. Quality Gates & Coverage Limits
 
 **The problem:** Without automated enforcement, coverage slowly erodes as new features ship without tests. Technical debt compounds silently.
 
@@ -1487,7 +1643,7 @@ npm run coverage:check    # Enforce 80% gate
 
 ---
 
-#### 25. Allure Reports with Historical Data & Flaky Test Detection
+#### 26. Allure Reports with Historical Data & Flaky Test Detection
 
 **Link:** [Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/)
 
@@ -1553,7 +1709,7 @@ npx allure serve allure-results
 
 ---
 
-#### 26. Mutation Testing with Stryker Mutator
+#### 27. Mutation Testing with Stryker Mutator
 
 **Files:** [`server/index.js`](/server/index.js) · [`server/index.test.js`](/server/index.test.js) · [`server/stryker.config.json`](/server/stryker.config.json)
 
@@ -1596,7 +1752,7 @@ cd server && npm run mutation
 
 ---
 
-#### 27. Automated Dependency Updates
+#### 28. Automated Dependency Updates
 
 **File:** [`.github/workflows/dependabot.yml`](/.github/workflows/dependabot.yml)
 
@@ -1622,7 +1778,7 @@ updates:
 
 ---
 
-#### 28. Security Scanning with Trivy
+#### 29. Security Scanning with Trivy
 
 **The problem:** Third-party packages and base Docker images carry known CVEs. Security is discovered at the end of the cycle when it's expensive to fix.
 
@@ -1647,7 +1803,7 @@ npm run security:scan:container:api   # Trivy container scan (backend)
 
 ---
 
-#### 29. Security E2E Testing with Playwright
+#### 30. Security E2E Testing with Playwright
 
 **File:** [`e2e/tests/security.spec.ts`](/e2e/tests/security.spec.ts)
 
