@@ -2,8 +2,6 @@ name: BrowserStack E2E (Production Testing)
 
 on:
   workflow_dispatch:
-  pull_request:
-    branches: [main]
 
 permissions:
   contents: read
@@ -23,6 +21,9 @@ jobs:
 
       - name: Install BrowserStack SDK
         run: npm install -D browserstack-node-sdk
+
+      - name: Install Playwright Browsers & OS Dependencies
+        run: npx playwright install --with-deps
 
       - name: Run E2E tests on BrowserStack
         env:
@@ -51,13 +52,9 @@ jobs:
 
       - uses: ./.github/actions/setup-node-env
 
-      - name: Install Playwright browsers
+      - name: Install Playwright Browsers & OS Dependencies
         if: env.PERCY_TOKEN != ''
         run: npx playwright install --with-deps
-
-      - name: Install Playwright OS dependencies
-        if: env.PERCY_TOKEN != ''
-        run: npx playwright install-deps
 
       - name: Run Percy Visual Regression Tests Against BrowserStack Production
         if: env.PERCY_TOKEN != ''
