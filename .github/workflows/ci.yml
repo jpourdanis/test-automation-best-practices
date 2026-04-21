@@ -902,6 +902,7 @@ jobs:
   # ==========================================
   e2e-browserstack:
     name: E2E Tests (BrowserStack - Production)
+    needs: [e2e-sharded]
     # Runs on manual dispatch (when opted in) or on the weekly schedule.
     # Never runs on push/PR — those use the Docker-based sharded suite instead.
     if: github.event_name == 'schedule'
@@ -941,7 +942,7 @@ jobs:
   # ==========================================
   visual-regression-percy:
     name: Visual Regression (Percy - Production)
-    needs: [frontend-unit-tests]
+    needs: [e2e-sharded]
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
