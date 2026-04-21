@@ -836,6 +836,99 @@ jobs:
           retention-days: 1
 
   # ==========================================
+  # 2c-3. PERFORMANCE TESTING (k6 API - Production)
+  # ==========================================
+  performance-testing-api-prod:
+    name: Performance Tests (API - Production)
+    needs: [e2e-sharded]
+    # Runs only on the weekly schedule to avoid hammering production on every push/PR
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # Installs k6 performance testing tool
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Smoke: 1 VU × 1 iteration — validates production API is healthy
+      - name: Run API Production Smoke Test
+        env:
+          TEST_TYPE: production-smoke
+          API_URL: https://test-automation-best-practices.vercel.app
+        run: |
+          mkdir -p allure-results
+          npm run test:perf:api:smoke:prod
+
+      # Load: 2 VUs, 30 s ramp-up / 90 s hold / 30 s ramp-down.
+      # sleepMin=12 s keeps total POSTs well under the 100/15 min rate limit.
+      - name: Run API Production Load Test
+        if: always()
+        env:
+          TEST_TYPE: production-load
+          API_URL: https://test-automation-best-practices.vercel.app
+        run: npm run test:perf:api:load:prod
+
+      - name: Upload k6 API Production Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-performance-api-prod
+          path: allure-results/
+          retention-days: 1
+
+  # ==========================================
+  # 2c-4. PERFORMANCE TESTING (k6 UI - Production)
+  # ==========================================
+  performance-testing-ui-prod:
+    name: Performance Tests (UI - Production)
+    needs: [e2e-sharded]
+    # Runs only on the weekly schedule
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install DBus for Headless Browser
+        run: sudo apt-get update && sudo apt-get install -y dbus dbus-x11
+
+      # Installs k6 with browser support
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+        with:
+          browser: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Smoke: 1 VU × 1 iteration — validates production UI renders and colors work
+      - name: Run UI Production Smoke Test
+        env:
+          K6_BROWSER_ENABLED: "true"
+          TEST_TYPE: production-smoke
+          BASE_URL: https://test-automation-best-practices.vercel.app
+        run: |
+          mkdir -p allure-results
+          dbus-run-session -- npm run test:perf:ui:smoke:prod
+
+      # Load: gentle 2-VU ramp — exercises color selection and language toggle under light load
+      - name: Run UI Production Load Test
+        if: always()
+        env:
+          K6_BROWSER_ENABLED: "true"
+          TEST_TYPE: production-load
+          BASE_URL: https://test-automation-best-practices.vercel.app
+        run: dbus-run-session -- npm run test:perf:ui:load:prod
+
+      - name: Upload k6 UI Production Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-performance-ui-prod
+          path: allure-results/
+          retention-days: 1
+
+  # ==========================================
   # 2d. E2E TESTING (Production / Ephemeral)
   # ==========================================
   e2e-production-tests:
@@ -1026,6 +1119,8 @@ jobs:
         e2e-sharded,
         performance-testing-api,
         performance-testing-frontend,
+        performance-testing-api-prod,
+        performance-testing-ui-prod,
         mutation-testing,
         mutation-testing-frontend,
         backend-unit-tests,

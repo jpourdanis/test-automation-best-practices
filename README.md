@@ -1467,8 +1467,7 @@ BASE_URL=https://test-automation-best-practices.vercel.app/ \
 npm run test:visual:percy
 
 # Or in CI/CD (both run automatically with respective triggers):
-# - BrowserStack: Manual trigger or weekly schedule
-# - Percy: Every PR and push (if PERCY_TOKEN is set)
+# - BrowserStack & Percy: Manual trigger or weekly schedule
 ```
 
 > [!NOTE]
@@ -1477,8 +1476,7 @@ npm run test:visual:percy
 > - **BrowserStack Functional Tests** — Validate user interactions and API contracts across real browsers and devices (Chrome, Firefox, Safari on desktop; Chrome, Safari on mobile)
 > - **Percy Visual Tests** — Detect pixel-perfect visual regressions at multiple viewports (1280, 1920, 768, 375 widths) with team approval workflow
 > - **Independent Workflows** — Both run against the same production URL but separately:
->   - Percy runs on every PR/push (continuous visual monitoring)
->   - BrowserStack runs on manual trigger or weekly schedule (comprehensive cross-browser validation)
+>   - Both Percy and BrowserStack run on manual trigger or weekly schedule
 > - **Same Test Code** — Both use the identical Playwright test suite; only environment variables (`BROWSERSTACK`, `PERCY_TOKEN`) and reporters differ
 
 ---
