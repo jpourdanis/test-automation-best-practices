@@ -868,9 +868,21 @@ jobs:
 
       - uses: ./.github/actions/setup-node-env
 
-      - name: Install Playwright browsers
+      - name: Cache Playwright browsers
         if: env.VERCEL_TOKEN != ''
-        run: npx playwright install --with-deps
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: env.VERCEL_TOKEN != '' && steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
+
+      - name: Install Playwright OS dependencies
+        if: env.VERCEL_TOKEN != ''
+        run: npx playwright install-deps
 
       - name: Deploy to Vercel (Preview)
         id: vercel-deploy
@@ -967,9 +979,21 @@ jobs:
 
       - uses: ./.github/actions/setup-node-env
 
-      - name: Install Playwright Browsers & OS Dependencies
+      - name: Cache Playwright browsers
         if: env.PERCY_TOKEN != ''
-        run: npx playwright install --with-deps
+        id: playwright-cache
+        uses: actions/cache@v5
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ hashFiles('package-lock.json') }}
+
+      - name: Install Playwright browsers
+        if: env.PERCY_TOKEN != '' && steps.playwright-cache.outputs.cache-hit != 'true'
+        run: npx playwright install
+
+      - name: Install Playwright OS dependencies
+        if: env.PERCY_TOKEN != ''
+        run: npx playwright install-deps
 
       - name: Run Percy Visual Regression Tests
         if: env.PERCY_TOKEN != ''
