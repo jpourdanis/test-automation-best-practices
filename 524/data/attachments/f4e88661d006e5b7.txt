@@ -1,0 +1,10 @@
+[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 204 GET https://test-automation-best-practices-ouj125msl-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-ouj125msl-jpourdanis-projects.vercel.app&deploymentId=dpl_HU6T9bD9Xf3HxUUVSMf8F3fyqNeD
+[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 204 HEAD https://test-automation-best-practices-ouj125msl-jpourdanis-projects.vercel.app/
+[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 200 GET https://test-automation-best-practices-ouj125msl-jpourdanis-projects.vercel.app/api/colors
+
+
+-------- playwright lighthouse audit reports --------
+
+
+accessibility record is 100 and desired threshold was 90

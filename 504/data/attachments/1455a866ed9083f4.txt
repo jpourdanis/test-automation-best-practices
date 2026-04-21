@@ -1,6 +1,0 @@
-[NETWORK INFO] successful delete removes the chip: 200 GET https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] successful delete removes the chip: 204 GET https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] successful delete removes the chip: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app&deploymentId=dpl_D4ebb9FEoSMLasbVEFkT3vrK5Eh3
-[NETWORK INFO] successful delete removes the chip: 204 HEAD https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/
-[NETWORK INFO] successful delete removes the chip: 200 DELETE https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/api/colors/Red
-[NETWORK INFO] successful delete removes the chip: 200 GET https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/api/colors

@@ -1,4 +1,0 @@
-[NETWORK INFO] should handle missing image gracefully by showing alt text: 200 GET https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] should handle missing image gracefully by showing alt text: 204 GET https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] should handle missing image gracefully by showing alt text: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app&deploymentId=dpl_D4ebb9FEoSMLasbVEFkT3vrK5Eh3
-[NETWORK INFO] should handle missing image gracefully by showing alt text: 204 HEAD https://test-automation-best-practices-mypmilt2y-jpourdanis-projects.vercel.app/
