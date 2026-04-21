@@ -1,4 +1,0 @@
-[NETWORK INFO] clicking "+ Add color" opens the picker modal: 200 GET https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] clicking "+ Add color" opens the picker modal: 204 GET https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] clicking "+ Add color" opens the picker modal: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app&deploymentId=dpl_Ad96bDsJuQ6zJqjBLMkMYHuDmwdT
-[NETWORK INFO] clicking "+ Add color" opens the picker modal: 204 HEAD https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/

@@ -1,4 +1,0 @@
-[NETWORK INFO] handle initial fetch error: 200 GET https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] handle initial fetch error: 204 GET https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] handle initial fetch error: 204 GET https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] handle initial fetch error: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app&deploymentId=dpl_Ad96bDsJuQ6zJqjBLMkMYHuDmwdT

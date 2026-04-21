@@ -1,2 +1,0 @@
-[NETWORK ERROR] cancel in confirm dialog closes it without deleting: GET https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] cancel in confirm dialog closes it without deleting: HEAD https://test-automation-best-practices-oab94de5k-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
