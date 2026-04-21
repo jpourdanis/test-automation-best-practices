@@ -1,4 +1,0 @@
-[NETWORK INFO] shows client-side validation error for invalid name chars: 200 GET https://test-automation-best-practices-pg7gytdiu-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] shows client-side validation error for invalid name chars: 204 GET https://test-automation-best-practices-pg7gytdiu-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] shows client-side validation error for invalid name chars: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-pg7gytdiu-jpourdanis-projects.vercel.app&deploymentId=dpl_BFasocbSoDyXPVjfoBh2raKxqSVy
-[NETWORK INFO] shows client-side validation error for invalid name chars: 204 HEAD https://test-automation-best-practices-pg7gytdiu-jpourdanis-projects.vercel.app/
