@@ -1,0 +1,4 @@
+[NETWORK INFO] close (×) button closes the picker: 200 GET https://test-automation-best-practices-d7dhlq2a7-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] close (×) button closes the picker: 204 GET https://test-automation-best-practices-d7dhlq2a7-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] close (×) button closes the picker: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-d7dhlq2a7-jpourdanis-projects.vercel.app&deploymentId=dpl_CuSQi7Z897e3KsJas6U9kmhj5Pow
+[NETWORK INFO] close (×) button closes the picker: 204 HEAD https://test-automation-best-practices-d7dhlq2a7-jpourdanis-projects.vercel.app/
