@@ -25,6 +25,17 @@
     "sleepMax": 15,
     "thresholds": {
       "http_req_duration": ["p(95)<3000"],
+      "successful_actions_rate": ["rate==1.0"]
+    }
+  },
+  "production-smoke-ui": {
+    "executor": "per-vu-iterations",
+    "vus": 1,
+    "iterations": 1,
+    "maxDuration": "60s",
+    "sleepMin": 10,
+    "sleepMax": 15,
+    "thresholds": {
       "browser_http_req_duration": ["p(95)<3000"],
       "successful_actions_rate": ["rate==1.0"]
     }
@@ -39,9 +50,21 @@
     "sleepMax": 18,
     "thresholds": {
       "http_req_duration": ["p(95)<3000"],
-      "browser_http_req_duration": ["p(95)<3000"],
       "successful_actions_rate": ["rate>0.9"],
       "rate_limited_requests": ["count<5"]
+    }
+  },
+  "production-load-ui": {
+    "stages": [
+      { "duration": "30s", "target": 2 },
+      { "duration": "90s", "target": 2 },
+      { "duration": "30s", "target": 0 }
+    ],
+    "sleepMin": 12,
+    "sleepMax": 18,
+    "thresholds": {
+      "browser_http_req_duration": ["p(95)<3000"],
+      "successful_actions_rate": ["rate>0.9"]
     }
   }
 }

@@ -19,13 +19,13 @@ const configs = JSON.parse(open('./configs/test-config.json'))
 const testType = __ENV.TEST_TYPE
 const testConfig = getConfig(configs, testType)
 
-// Support both per-vu-iterations (smoke) and ramping-vus (load) executor shapes
+// Support both per-vu-iterations (smoke) and ramping-vus (load) executor shapes.
+// maxDuration is a scenario-level option and is NOT valid at the global options level in k6.
 export const options =
   testConfig.executor === 'per-vu-iterations'
     ? {
         vus: testConfig.vus,
         iterations: testConfig.iterations,
-        maxDuration: testConfig.maxDuration,
         thresholds: testConfig.thresholds
       }
     : {
