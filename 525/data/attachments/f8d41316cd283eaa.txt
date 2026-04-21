@@ -1,0 +1,2 @@
+[NETWORK ERROR] successful delete removes the chip: GET https://test-automation-best-practices-h0roygt91-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] successful delete removes the chip: HEAD https://test-automation-best-practices-h0roygt91-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
