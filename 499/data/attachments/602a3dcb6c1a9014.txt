@@ -1,0 +1,2 @@
+[NETWORK ERROR] should load the application and verify core functionality across browsers: GET https://test-automation-best-practices-3i37caskb-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] should load the application and verify core functionality across browsers: HEAD https://test-automation-best-practices-3i37caskb-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED

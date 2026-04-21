@@ -1,0 +1,2 @@
+[NETWORK ERROR] clicking a chip makes it active: GET https://test-automation-best-practices-3i37caskb-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] clicking a chip makes it active: HEAD https://test-automation-best-practices-3i37caskb-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
