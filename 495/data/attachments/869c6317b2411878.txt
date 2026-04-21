@@ -1,3 +1,0 @@
-[NETWORK INFO] should handle fetch colors network failure gracefully: 204 GET https://test-automation-best-practices-gs2p00wgl-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] should handle fetch colors network failure gracefully: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-gs2p00wgl-jpourdanis-projects.vercel.app&deploymentId=dpl_H6LZximGtCTMdcFWDghZnMZhAiDZ
-[NETWORK INFO] should handle fetch colors network failure gracefully: 204 HEAD https://test-automation-best-practices-gs2p00wgl-jpourdanis-projects.vercel.app/
