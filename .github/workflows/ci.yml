@@ -6,6 +6,13 @@ on:
     branches: [main, gh-pages]
   schedule:
     - cron: "0 0 * * 0"
+  workflow_dispatch:
+    inputs:
+      run_browserstack:
+        description: "Run E2E tests on BrowserStack against production"
+        required: false
+        default: true
+        type: boolean
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -894,6 +901,47 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: allure-results-production-tests
+          path: allure-results/
+          retention-days: 1
+
+  # ==========================================
+  # 2e. E2E TESTING ON BROWSERSTACK (Production)
+  # ==========================================
+  e2e-browserstack:
+    name: E2E Tests (BrowserStack - Production)
+    # Runs on manual dispatch (when opted in) or on the weekly schedule.
+    # Never runs on push/PR — those use the Docker-based sharded suite instead.
+    if: |
+      (github.event_name == 'workflow_dispatch' && github.event.inputs.run_browserstack == 'true') ||
+      github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: ./.github/actions/setup-node-env
+
+      # Install the BrowserStack SDK which wraps the Playwright test runner
+      # and proxies browser sessions to BrowserStack's cloud infrastructure.
+      - name: Install BrowserStack SDK
+        run: npm install -D browserstack-node-sdk
+
+      # Run all E2E tests (except visual and BDD) across the 5 browser/device
+      # combinations defined in playwright.config.ts (bs-* projects) and
+      # browserstack.yml. BASE_URL points to the live Vercel deployment.
+      - name: Run E2E tests on BrowserStack
+        env:
+          BROWSERSTACK: "true"
+          BASE_URL: https://test-automation-best-practices.vercel.app/
+          BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+          BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+          GITHUB_RUN_NUMBER: ${{ github.run_number }}
+        run: npx browserstack-node-sdk playwright test e2e/tests/
+
+      - name: Upload BrowserStack Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-browserstack
           path: allure-results/
           retention-days: 1
 

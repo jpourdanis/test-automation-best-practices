@@ -6,9 +6,15 @@ const testDir = defineBddConfig({
   steps: 'e2e/tests/bdd.spec.ts'
 })
 
+const isBrowserStack = process.env.BROWSERSTACK === 'true'
+
+// Tests that don't make sense on BrowserStack: visual diffs are environment-specific
+// and BDD tests are covered by the Chrome project already
+const BS_IGNORE = [/.*visual\.spec\.ts$/, /.*\.feature\.spec.*$/]
+
 const config: PlaywrightTestConfig = {
   // If a test fails then passes on a retry, Allure marks it as flaky automatically.
-  retries: process.env.CI ? 2 : 0,
+  retries: process.env.CI || isBrowserStack ? 2 : 0,
 
   // Global setup for one-time initialization
   globalSetup: require.resolve('./e2e/global-setup'),
@@ -19,62 +25,93 @@ const config: PlaywrightTestConfig = {
   snapshotDir: 'e2e/snapshots',
   // Template used for snapshot paths
   snapshotPathTemplate: 'e2e/snapshots/{arg}{ext}',
-  // When running in CI/Docker we expect the app to be started externally
-  webServer: process.env.CI
-    ? undefined
-    : {
-        command: 'docker-compose up',
-        port: 3000,
-        timeout: 120000, // 2 minutes timeout for server to start
-        reuseExistingServer: true
-      },
-  projects: [
-    {
-      name: 'Chrome',
-      use: {
-        ...devices['Desktop Chrome'],
-        launchOptions: {
-          args: [
-            `--remote-debugging-port=${9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)}`
-          ]
+  // When running in CI/Docker or against BrowserStack we expect the app to be started externally
+  webServer:
+    process.env.CI || isBrowserStack
+      ? undefined
+      : {
+          command: 'docker-compose up',
+          port: 3000,
+          timeout: 120000, // 2 minutes timeout for server to start
+          reuseExistingServer: true
+        },
+  projects: isBrowserStack
+    ? [
+        // ── Desktop browsers ────────────────────────────────────────────────
+        {
+          name: 'bs-chrome-win11',
+          use: { ...devices['Desktop Chrome'] },
+          testIgnore: BS_IGNORE
+        },
+        {
+          name: 'bs-firefox-win11',
+          use: { ...devices['Desktop Firefox'] },
+          testIgnore: BS_IGNORE
+        },
+        {
+          name: 'bs-safari-ventura',
+          use: { ...devices['Desktop Safari'] },
+          testIgnore: BS_IGNORE
+        },
+        // ── Mobile devices ──────────────────────────────────────────────────
+        {
+          name: 'bs-pixel-7',
+          use: { ...devices['Pixel 7'] },
+          testIgnore: BS_IGNORE
+        },
+        {
+          name: 'bs-iphone-15',
+          use: { ...devices['iPhone 15'] },
+          testIgnore: BS_IGNORE
         }
-      },
-      // Exclude BDD tests from the default Chrome run to avoid duplicate runs
-      testIgnore: /.*\.feature\.spec.*$/
-    },
-    {
-      name: 'BDD',
-      testDir,
-      use: {
-        ...devices['Desktop Chrome']
-      }
-    },
-    ...(process.env.CROSS_BROWSER === 'true'
-      ? [
-          {
-            name: 'Firefox',
-            use: {
-              ...devices['Desktop Firefox']
-            },
-            testMatch: /.*cross-browser\.spec\.ts/
+      ]
+    : [
+        {
+          name: 'Chrome',
+          use: {
+            ...devices['Desktop Chrome'],
+            launchOptions: {
+              args: [
+                `--remote-debugging-port=${9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)}`
+              ]
+            }
           },
-          {
-            name: 'WebKit',
-            use: {
-              ...devices['Desktop Safari']
-            },
-            testMatch: /.*cross-browser\.spec\.ts/
-          },
-          {
-            name: 'Chrome',
-            use: {
-              ...devices['Desktop Chrome']
-            },
-            testMatch: /.*cross-browser\.spec\.ts/
+          // Exclude BDD tests from the default Chrome run to avoid duplicate runs
+          testIgnore: /.*\.feature\.spec.*$/
+        },
+        {
+          name: 'BDD',
+          testDir,
+          use: {
+            ...devices['Desktop Chrome']
           }
-        ]
-      : [])
-  ],
+        },
+        ...(process.env.CROSS_BROWSER === 'true'
+          ? [
+              {
+                name: 'Firefox',
+                use: {
+                  ...devices['Desktop Firefox']
+                },
+                testMatch: /.*cross-browser\.spec\.ts/
+              },
+              {
+                name: 'WebKit',
+                use: {
+                  ...devices['Desktop Safari']
+                },
+                testMatch: /.*cross-browser\.spec\.ts/
+              },
+              {
+                name: 'Chrome',
+                use: {
+                  ...devices['Desktop Chrome']
+                },
+                testMatch: /.*cross-browser\.spec\.ts/
+              }
+            ]
+          : [])
+      ],
   use: {
     headless: true,
     viewport: { width: 1280, height: 720 },
@@ -85,38 +122,39 @@ const config: PlaywrightTestConfig = {
   },
 
   //Configured the allure-playwright reporter to handle specific flaky categories
-  reporter: process.env.CI
-    ? [
-        [
-          'allure-playwright',
-          {
-            detail: true,
-            suiteTitle: false,
-            // Automatically mark known random errors as flaky without needing a retry pass
-            categories: [
-              {
-                name: 'Flaky Network Issues',
-                messageRegex: '.*timeout.*|.*ECONNRESET.*|.*fetch failed.*',
-                matchedStatuses: ['failed', 'broken'],
-                flaky: true
-              }
-            ],
-            links: {
-              issue: {
-                urlTemplate: 'https://your-company.atlassian.net/browse/%s',
-                nameTemplate: 'Jira: %s'
+  reporter:
+    process.env.CI || isBrowserStack
+      ? [
+          [
+            'allure-playwright',
+            {
+              detail: true,
+              suiteTitle: false,
+              // Automatically mark known random errors as flaky without needing a retry pass
+              categories: [
+                {
+                  name: 'Flaky Network Issues',
+                  messageRegex: '.*timeout.*|.*ECONNRESET.*|.*fetch failed.*',
+                  matchedStatuses: ['failed', 'broken'],
+                  flaky: true
+                }
+              ],
+              links: {
+                issue: {
+                  urlTemplate: 'https://your-company.atlassian.net/browse/%s',
+                  nameTemplate: 'Jira: %s'
+                }
               }
             }
-          }
-        ],
-        ['list'],
-        ['html', { open: 'never' }]
-      ]
-    : [
-        ['html', { open: 'never' }],
-        ['allure-playwright'], // Kept default for local runs, but you can copy the object above if you want categories locally too
-        ['list']
-      ]
+          ],
+          ['list'],
+          ['html', { open: 'never' }]
+        ]
+      : [
+          ['html', { open: 'never' }],
+          ['allure-playwright'], // Kept default for local runs, but you can copy the object above if you want categories locally too
+          ['list']
+        ]
 }
 
 export default config

@@ -4,7 +4,7 @@
 
 **The definitive reference for production-grade test automation engineering.**
 
-_29 battle-tested patterns — from unit testing to security scanning — in a single, runnable full-stack project._
+_30 battle-tested patterns — from unit testing to security scanning — in a single, runnable full-stack project._
 
 [![CI](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/jpourdanis/test-automation-best-practices/badge.svg?branch=main)](https://coveralls.io/github/jpourdanis/test-automation-best-practices?branch=main)
@@ -1327,7 +1327,81 @@ on:
 
 ---
 
-#### 21. Automated Container Health Testing
+#### 21. Cross-Cloud Browser Testing with BrowserStack
+
+**Files:** [`playwright.config.ts`](/playwright.config.ts) · [`browserstack.yml`](/browserstack.yml) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
+
+**The problem:** Docker-based E2E tests run on a single browser engine on a Linux VM. They cannot catch Safari-specific layout bugs, Android rendering differences, or the real-world performance characteristics of a mobile network.
+
+**The solution:** Set `BROWSERSTACK=true` to switch Playwright from local Docker projects to five BrowserStack cloud targets — three desktop browsers and two real mobile devices — all running against the live Vercel deployment. The BrowserStack SDK (`browserstack-node-sdk`) intercepts Playwright's browser launch and proxies each session to BrowserStack's infrastructure without changing a single test file.
+
+**Why it matters:**
+
+- Safari/WebKit on a real macOS host renders fonts, CSS custom properties, and scrolling differently from `playwright-webkit` on Linux
+- Real mobile devices exercise actual touch events and viewport meta behaviour that emulation approximates
+- Running against the live Vercel URL catches CDN configuration, edge-function routing, and environment-variable mismatches that Docker tests miss entirely
+
+```typescript
+// playwright.config.ts — projects switch automatically when BROWSERSTACK=true
+const isBrowserStack = process.env.BROWSERSTACK === 'true'
+
+projects: isBrowserStack
+  ? [
+      { name: 'bs-chrome-win11', use: { ...devices['Desktop Chrome'] }, testIgnore: BS_IGNORE },
+      { name: 'bs-firefox-win11', use: { ...devices['Desktop Firefox'] }, testIgnore: BS_IGNORE },
+      { name: 'bs-safari-ventura', use: { ...devices['Desktop Safari'] }, testIgnore: BS_IGNORE },
+      { name: 'bs-pixel-7', use: { ...devices['Pixel 7'] }, testIgnore: BS_IGNORE },
+      { name: 'bs-iphone-15', use: { ...devices['iPhone 15'] }, testIgnore: BS_IGNORE }
+    ]
+  : [
+      /* local Chrome / BDD / cross-browser projects */
+    ]
+```
+
+```yaml
+# browserstack.yml — authentication, build metadata, and parallelism
+userName: ${BROWSERSTACK_USERNAME}
+accessKey: ${BROWSERSTACK_ACCESS_KEY}
+projectName: Test Automation Best Practices
+buildName: Production E2E (BrowserStack)
+parallelsPerPlatform: 2
+networkLogs: true
+video: true
+```
+
+```yaml
+# .github/workflows/ci.yml — manual trigger or weekly schedule
+e2e-browserstack:
+  name: E2E Tests (BrowserStack - Production)
+  if: |
+    (github.event_name == 'workflow_dispatch' && github.event.inputs.run_browserstack == 'true') ||
+    github.event_name == 'schedule'
+  steps:
+    - run: npm install -D browserstack-node-sdk
+    - name: Run E2E tests on BrowserStack
+      env:
+        BROWSERSTACK: 'true'
+        BASE_URL: https://test-automation-best-practices.vercel.app/
+        BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
+        BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+      run: npx browserstack-node-sdk playwright test e2e/tests/
+```
+
+> [!NOTE]
+> Visual regression and BDD tests are excluded from the BrowserStack run. Visual snapshots are environment-specific (Docker baseline vs. cloud renderer would always differ); BDD scenarios are already covered by the Chrome project on every push.
+
+```bash
+# Run locally against production on BrowserStack
+BROWSERSTACK=true \
+BROWSERSTACK_USERNAME=your_user \
+BROWSERSTACK_ACCESS_KEY=your_key \
+BASE_URL=https://test-automation-best-practices.vercel.app/ \
+npx browserstack-node-sdk playwright test e2e/tests/
+```
+
+---
+
+#### 22. Automated Container Health Testing
 
 **The problem:** Bash `sleep` loops and `curl` retry scripts are brittle and don't understand container lifecycle. Tests start before services are ready.
 
@@ -1365,7 +1439,7 @@ docker ps --format "{{.Names}}: {{.Status}}"
 
 ---
 
-#### 22. Static Code Analysis with MegaLinter & SonarCloud
+#### 23. Static Code Analysis with MegaLinter & SonarCloud
 
 **The problem:** Inconsistent formatting, leaked secrets, and dead code accumulate silently. Manual code review can't catch everything at scale.
 
@@ -1377,7 +1451,7 @@ npx --yes mega-linter-runner@latest   # Local MegaLinter run
 
 ---
 
-#### 23. E2E Code Coverage
+#### 24. E2E Code Coverage
 
 **Files:** [`e2e/baseFixtures.ts`](/e2e/baseFixtures.ts) · [`e2e/tests/coverage.spec.ts`](/e2e/tests/coverage.spec.ts)
 
@@ -1469,7 +1543,7 @@ npm run coverage:check    # Enforce 80% gate
 
 ---
 
-#### 24. Quality Gates & Coverage Limits
+#### 25. Quality Gates & Coverage Limits
 
 **The problem:** Without automated enforcement, coverage slowly erodes as new features ship without tests. Technical debt compounds silently.
 
@@ -1487,7 +1561,7 @@ npm run coverage:check    # Enforce 80% gate
 
 ---
 
-#### 25. Allure Reports with Historical Data & Flaky Test Detection
+#### 26. Allure Reports with Historical Data & Flaky Test Detection
 
 **Link:** [Live Allure Report](https://jpourdanis.github.io/test-automation-best-practices/)
 
@@ -1553,7 +1627,7 @@ npx allure serve allure-results
 
 ---
 
-#### 26. Mutation Testing with Stryker Mutator
+#### 27. Mutation Testing with Stryker Mutator
 
 **Files:** [`server/index.js`](/server/index.js) · [`server/index.test.js`](/server/index.test.js) · [`server/stryker.config.json`](/server/stryker.config.json)
 
@@ -1596,7 +1670,7 @@ cd server && npm run mutation
 
 ---
 
-#### 27. Automated Dependency Updates
+#### 28. Automated Dependency Updates
 
 **File:** [`.github/workflows/dependabot.yml`](/.github/workflows/dependabot.yml)
 
@@ -1622,7 +1696,7 @@ updates:
 
 ---
 
-#### 28. Security Scanning with Trivy
+#### 29. Security Scanning with Trivy
 
 **The problem:** Third-party packages and base Docker images carry known CVEs. Security is discovered at the end of the cycle when it's expensive to fix.
 
@@ -1647,7 +1721,7 @@ npm run security:scan:container:api   # Trivy container scan (backend)
 
 ---
 
-#### 29. Security E2E Testing with Playwright
+#### 30. Security E2E Testing with Playwright
 
 **File:** [`e2e/tests/security.spec.ts`](/e2e/tests/security.spec.ts)
 
