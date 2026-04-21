@@ -7,7 +7,7 @@ import { getConfig } from './utils/utils.ts'
 import { generateAllureReport } from './utils/allure-reporter.js'
 
 // Resolve API URL from env (production) or fall back to local
-const API_URL = __ENV.API_URL ? __ENV.API_URL.replace(/\/$/, '') : 'http://127.0.0.1:5001'
+const API_URL = __ENV.API_URL ?? 'http://127.0.0.1:5001'
 
 const successfulActionsRate = new Rate('successful_actions_rate')
 const successfulActionsCount = new Counter('successful_actions_count')

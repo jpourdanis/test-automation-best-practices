@@ -8,11 +8,11 @@ import { getConfig } from './utils/utils.ts'
 import { generateAllureReport } from './utils/allure-reporter.js'
 
 // Resolve URLs from env (production runs) or fall back to local defaults
-const BASE_URL = __ENV.BASE_URL ? __ENV.BASE_URL.replace(/\/$/, '') : 'http://127.0.0.1:3000'
+const BASE_URL = __ENV.BASE_URL ?? 'http://127.0.0.1:3000'
 // For the setup health-check the API lives on the same host in production (nginx proxy)
 // and on a separate port locally.
-const fallbackApiUrl = __ENV.BASE_URL ? __ENV.BASE_URL.replace(/\/$/, '') : 'http://127.0.0.1:5001'
-const API_URL = __ENV.API_URL ? __ENV.API_URL.replace(/\/$/, '') : fallbackApiUrl
+const fallbackApiUrl = __ENV.BASE_URL ?? 'http://127.0.0.1:5001'
+const API_URL = __ENV.API_URL ?? fallbackApiUrl
 
 const testType = __ENV.TEST_TYPE
 const successfulActionsRate = new Rate('successful_actions_rate')
@@ -148,7 +148,7 @@ export default async function performanceTest() {
       const langButton = page
         .locator('[data-testid="language-selector"], select, [aria-label*="lang"], [aria-label*="Language"]')
         .first()
-      const langButtonExists = await langButton.isVisible().catch((e) => {
+      const langButtonExists = await langButton.isVisible().catch((e: unknown) => {
         console.log(`[UI] Language selector not found or not visible: ${e}`)
         return false
       })

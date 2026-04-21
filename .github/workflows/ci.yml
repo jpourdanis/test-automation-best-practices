@@ -20,6 +20,7 @@ env:
   COMPOSE_DOCKER_CLI_BUILD: 1
   NYC_OUTPUT_DIR: .nyc_output
   K6_LOG_LEVEL: debug
+  # Set vars.PRODUCTION_URL without a trailing slash; k6 scripts strip trailing slashes on their end.
   PRODUCTION_URL: ${{ vars.PRODUCTION_URL || 'https://test-automation-best-practices.vercel.app' }}
 
 jobs:
