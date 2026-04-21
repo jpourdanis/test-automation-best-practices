@@ -960,26 +960,16 @@ jobs:
     needs: [e2e-sharded]
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
+    env:
+      PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
     steps:
       - uses: actions/checkout@v6
 
       - uses: ./.github/actions/setup-node-env
 
-      - name: Cache Playwright browsers
-        if: env.PERCY_TOKEN != ''
-        id: playwright-cache
-        uses: actions/cache@v5
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ hashFiles('package-lock.json') }}
-
       - name: Install Playwright Browsers & OS Dependencies
-        if: env.PERCY_TOKEN != '' && steps.playwright-cache.outputs.cache-hit != 'true'
+        if: env.PERCY_TOKEN != ''
         run: npx playwright install --with-deps
-
-      - name: Install Playwright OS Dependencies (Force)
-        if: env.PERCY_TOKEN != '' && steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps
 
       - name: Run Percy Visual Regression Tests
         if: env.PERCY_TOKEN != ''
