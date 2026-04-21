@@ -95,7 +95,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.1",
-    "@cucumber/cucumber": "^12.7.0",
+    "@cucumber/cucumber": "^12.8.1",
     "@faker-js/faker": "^10.4.0",
     "@percy/cli": "^1.29.0",
     "@percy/playwright": "^1.1.0",
