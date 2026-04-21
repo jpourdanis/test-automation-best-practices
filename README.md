@@ -1829,4 +1829,6 @@ All PRs run through the full CI pipeline. The quality gates (80% coverage, 70% m
 
 Built with [Playwright](https://playwright.dev) · [k6](https://k6.io/) · [Allure](https://allurereport.org/) · [Stryker](https://stryker-mutator.io/) · [Testcontainers](https://testcontainers.com/)
 
+This project is tested with BrowserStack ❤️
+
 </div>
