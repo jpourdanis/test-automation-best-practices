@@ -11,11 +11,8 @@ import { generateAllureReport } from './utils/allure-reporter.js'
 const BASE_URL = __ENV.BASE_URL ? __ENV.BASE_URL.replace(/\/$/, '') : 'http://127.0.0.1:3000'
 // For the setup health-check the API lives on the same host in production (nginx proxy)
 // and on a separate port locally.
-const API_URL = __ENV.API_URL
-  ? __ENV.API_URL.replace(/\/$/, '')
-  : __ENV.BASE_URL
-    ? __ENV.BASE_URL.replace(/\/$/, '')
-    : 'http://127.0.0.1:5001'
+const fallbackApiUrl = __ENV.BASE_URL ? __ENV.BASE_URL.replace(/\/$/, '') : 'http://127.0.0.1:5001'
+const API_URL = __ENV.API_URL ? __ENV.API_URL.replace(/\/$/, '') : fallbackApiUrl
 
 const testType = __ENV.TEST_TYPE
 const successfulActionsRate = new Rate('successful_actions_rate')
