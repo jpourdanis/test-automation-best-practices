@@ -20,6 +20,8 @@ env:
   COMPOSE_DOCKER_CLI_BUILD: 1
   NYC_OUTPUT_DIR: .nyc_output
   K6_LOG_LEVEL: debug
+  # Set vars.PRODUCTION_URL without a trailing slash; k6 scripts strip trailing slashes on their end.
+  PRODUCTION_URL: ${{ vars.PRODUCTION_URL || 'https://test-automation-best-practices.vercel.app' }}
 
 jobs:
   # ==========================================
@@ -836,9 +838,85 @@ jobs:
           retention-days: 1
 
   # ==========================================
-  # 2d. E2E TESTING (Production / Ephemeral)
+  # 2c-3. PERFORMANCE TESTING (k6 API - Production)
   # ==========================================
-  e2e-production-tests:
+  performance-testing-api-prod:
+    name: Performance Tests (API - Production)
+    needs: [visual-regression-percy]
+    # Runs only on the weekly schedule to avoid hammering production on every push/PR
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      # Installs k6 performance testing tool
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Load: 1 min ramp-up → 3 min hold at 3 VUs → 1 min ramp-down.
+      # sleepMin=12 s keeps total POSTs well under the 100/15 min rate limit.
+      - name: Run API Production Load Test
+        env:
+          TEST_TYPE: production-load
+          API_URL: ${{ env.PRODUCTION_URL }}
+        run: |
+          mkdir -p allure-results
+          npm run test:perf:api:load:prod
+
+      - name: Upload k6 API Production Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-performance-api-prod
+          path: allure-results/
+          retention-days: 1
+
+  # ==========================================
+  # 2c-4. PERFORMANCE TESTING (k6 UI - Production)
+  # ==========================================
+  performance-testing-ui-prod:
+    name: Performance Tests (UI - Production)
+    needs: [performance-testing-api-prod]
+    # Runs only on the weekly schedule
+    if: github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install DBus for Headless Browser
+        run: sudo apt-get update && sudo apt-get install -y dbus dbus-x11
+
+      # Installs k6 with browser support
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+        with:
+          browser: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # Load: 1 min ramp-up → 3 min hold at 3 VUs → 1 min ramp-down.
+      - name: Run UI Production Load Test
+        env:
+          K6_BROWSER_ENABLED: "true"
+          TEST_TYPE: production-load-ui
+          BASE_URL: ${{ env.PRODUCTION_URL }}
+        run: |
+          mkdir -p allure-results
+          dbus-run-session -- npm run test:perf:ui:load:prod
+
+      - name: Upload k6 UI Production Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-performance-ui-prod
+          path: allure-results/
+          retention-days: 1
+
+  # ==========================================
+  # 2d. E2E TESTING (Ephemeral)
+  # ==========================================
+  e2e-ephemeral:
     name: E2E Tests Against Ephemeral Environment
     env:
       VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
@@ -912,7 +990,7 @@ jobs:
   # ==========================================
   # 2e. E2E TESTING ON BROWSERSTACK (Production)
   # ==========================================
-  e2e-browserstack:
+  e2e-production:
     name: E2E Tests (BrowserStack - Production)
     needs: [e2e-sharded]
     # Runs on manual dispatch (when opted in) or on the weekly schedule.
@@ -950,7 +1028,7 @@ jobs:
       - name: Run E2E tests on BrowserStack
         env:
           BROWSERSTACK: "true"
-          BASE_URL: https://test-automation-best-practices.vercel.app/
+          BASE_URL: ${{ env.PRODUCTION_URL }}
           BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
           BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
           GITHUB_RUN_NUMBER: ${{ github.run_number }}
@@ -969,7 +1047,7 @@ jobs:
   # ==========================================
   visual-regression-percy:
     name: Visual Regression (Percy - Production)
-    needs: [e2e-sharded]
+    needs: [e2e-production]
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     env:
@@ -999,7 +1077,7 @@ jobs:
         if: env.PERCY_TOKEN != ''
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
-          BASE_URL: https://test-automation-best-practices.vercel.app/
+          BASE_URL: ${{ env.PRODUCTION_URL }}
         run: npm run test:visual:percy
 
       - name: Upload Allure Results Percy
@@ -1026,12 +1104,14 @@ jobs:
         e2e-sharded,
         performance-testing-api,
         performance-testing-frontend,
+        performance-testing-api-prod,
+        performance-testing-ui-prod,
         mutation-testing,
         mutation-testing-frontend,
         backend-unit-tests,
         backend-integration-tests,
         frontend-unit-tests,
-        e2e-production-tests
+        e2e-ephemeral
       ]
     if: always()
     runs-on: ubuntu-latest
