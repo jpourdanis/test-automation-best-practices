@@ -56,7 +56,8 @@ for (const vp of snapshotViewports) {
      * the stored baseline. The animated React logo is masked to prevent
      * non-deterministic pixel diffs from its CSS spin animation.
      */
-    test('homepage should match snapshot', async ({ page }) => {
+    test('homepage should match snapshot', async ({ page }, testInfo) => {
+      test.skip(testInfo.project.name === 'percy', 'Skipping local snapshots during Percy run')
       await page.goto('/')
       await page.waitForSelector('header')
 
@@ -88,7 +89,8 @@ for (const vp of responsiveViewports) {
      * A post-interaction snapshot is captured to catch any layout regressions
      * that only appear after a state change (e.g., color update reflow).
      */
-    test('should display all core elements and handle button interaction', async ({ homePage, page }) => {
+    test('should display all core elements and handle button interaction', async ({ homePage, page }, testInfo) => {
+      test.skip(testInfo.project.name === 'percy', 'Skipping local snapshots during Percy run')
       await expect(homePage.header).toBeVisible()
       await expect(homePage.currentColorText).toBeVisible()
       await expect(homePage.turquoiseBtn).toBeVisible()
