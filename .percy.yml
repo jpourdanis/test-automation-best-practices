@@ -4,6 +4,3 @@ snapshot:
   min-height: 1024
 discovery:
   network-idle-timeout: 750
-allowed-hosts:
-  - localhost
-  - test-automation-best-practices.vercel.app
