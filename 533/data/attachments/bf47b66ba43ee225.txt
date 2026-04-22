@@ -1,0 +1,4 @@
+[NETWORK INFO] shows client-side "Name is required" when submitting empty name: 200 GET https://test-automation-best-practices-62q77t868-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] shows client-side "Name is required" when submitting empty name: 204 GET https://test-automation-best-practices-62q77t868-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] shows client-side "Name is required" when submitting empty name: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-62q77t868-jpourdanis-projects.vercel.app&deploymentId=dpl_KywwKpK8c3jLx8o8MXSnFNhrEXz2
+[NETWORK INFO] shows client-side "Name is required" when submitting empty name: 204 HEAD https://test-automation-best-practices-62q77t868-jpourdanis-projects.vercel.app/
