@@ -2,6 +2,10 @@
   "name": "test-automation-best-practices",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "mobile",
+    "server"
+  ],
   "overrides": {
     "nth-check": "^2.1.1",
     "postcss": "^8.4.31",
@@ -42,8 +46,8 @@
   },
   "scripts": {
     "prepare": "husky",
-    "lint": "eslint --ext .ts,.tsx,.js,.jsx src e2e performance && npx prettier --check .",
-    "lint:fix": "eslint --fix --ext .ts,.tsx,.js,.jsx src e2e performance && npx prettier --write .",
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx src e2e performance mobile && npx prettier --check .",
+    "lint:fix": "eslint --fix --ext .ts,.tsx,.js,.jsx src e2e performance mobile && npx prettier --write .",
     "format": "npx prettier --write .",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
@@ -75,7 +79,18 @@
     "test:browserstack": "cross-env BROWSERSTACK=true browserstack-node-sdk playwright test"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "overrides": [
+      {
+        "files": [
+          "mobile/**/*.ts",
+          "mobile/**/*.tsx"
+        ],
+        "parserOptions": {
+          "project": "./mobile/tsconfig.json"
+        }
+      }
+    ]
   },
   "browserslist": {
     "production": [

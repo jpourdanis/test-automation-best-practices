@@ -14,7 +14,12 @@ export interface Color {
 
 async function handleResponse<T>(res: Response): Promise<T> {
   const data = await res.json().catch(() => ({}))
-  if (!res.ok) throw { status: res.status, data }
+  if (!res.ok) {
+    const error: any = new Error(`API Error: ${res.status}`)
+    error.status = res.status
+    error.data = data
+    throw error
+  }
   return data as T
 }
 

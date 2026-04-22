@@ -1,5 +1,5 @@
 import { test, expect } from '../baseFixtures'
-import { percySnapshot } from '@percy/playwright'
+import percySnapshot from '@percy/playwright'
 
 /**
  * Test Suite: Visual Regression & Responsive Design Testing
