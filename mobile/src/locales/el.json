@@ -22,6 +22,8 @@
     "title": "Προσθήκη χρώματος",
     "dialogAriaLabel": "Προσθήκη προσαρμοσμένου χρώματος",
     "closeAriaLabel": "Κλείσιμο",
+    "hueLabel": "Απόχρωση",
+    "saturationLabel": "Κορεσμός",
     "lightnessLabel": "Φωτεινότητα",
     "nameLabel": "Όνομα",
     "namePlaceholder": "π.χ. Ωκεανός",

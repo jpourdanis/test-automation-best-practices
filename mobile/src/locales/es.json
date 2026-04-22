@@ -22,6 +22,8 @@
     "title": "Añadir un color",
     "dialogAriaLabel": "Añadir color personalizado",
     "closeAriaLabel": "Cerrar",
+    "hueLabel": "Tono",
+    "saturationLabel": "Saturación",
     "lightnessLabel": "Luminosidad",
     "nameLabel": "Nombre",
     "namePlaceholder": "p. ej. Océano",

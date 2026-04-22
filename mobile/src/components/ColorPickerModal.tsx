@@ -73,11 +73,11 @@ export function ColorPickerModal({
   const handleConfirm = () => {
     const trimmed = name.trim()
     if (!trimmed) {
-      setNameError('Name is required.')
+      setNameError(t('colorPicker.errors.nameRequired'))
       return
     }
     if (existingNames.some((n) => n.toLowerCase() === trimmed.toLowerCase())) {
-      setNameError(`"${trimmed}" already exists.`)
+      setNameError(t('colorPicker.errors.nameDuplicate', { name: trimmed }))
       return
     }
     onConfirm({ name: trimmed, hex })
@@ -94,7 +94,7 @@ export function ColorPickerModal({
             </View>
 
             {/* Hue slider */}
-            <Text style={styles.label}>Hue</Text>
+            <Text style={styles.label}>{t('colorPicker.hueLabel')}</Text>
             <LinearGradient colors={hueStops} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.track}>
               <Slider
                 style={styles.slider}
@@ -110,7 +110,7 @@ export function ColorPickerModal({
             </LinearGradient>
 
             {/* Saturation slider */}
-            <Text style={styles.label}>Saturation</Text>
+            <Text style={styles.label}>{t('colorPicker.saturationLabel')}</Text>
             <LinearGradient colors={satStops} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.track}>
               <Slider
                 style={styles.slider}
@@ -126,7 +126,7 @@ export function ColorPickerModal({
             </LinearGradient>
 
             {/* Lightness slider */}
-            <Text style={styles.label}>Lightness</Text>
+            <Text style={styles.label}>{t('colorPicker.lightnessLabel')}</Text>
             <LinearGradient colors={litStops} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.track}>
               <Slider
                 style={styles.slider}
@@ -142,10 +142,10 @@ export function ColorPickerModal({
             </LinearGradient>
 
             {/* Name input */}
-            <Text style={styles.label}>{t('name') ?? 'Name'}</Text>
+            <Text style={styles.label}>{t('colorPicker.nameLabel')}</Text>
             <TextInput
               style={[styles.input, nameError ? styles.inputError : null]}
-              placeholder='e.g. Ocean Blue'
+              placeholder={t('colorPicker.namePlaceholder')}
               placeholderTextColor='#aaa'
               value={name}
               onChangeText={(v) => {
@@ -171,7 +171,7 @@ export function ColorPickerModal({
                 disabled={saving}
               >
                 <Text style={[styles.btnSaveText, { color: previewText }]}>
-                  {saving ? (t('saving') ?? 'Saving…') : (t('save') ?? 'Save')}
+                  {saving ? t('colorPicker.saving') : t('colorPicker.addColor')}
                 </Text>
               </TouchableOpacity>
             </View>
