@@ -1,0 +1,1 @@
+[NETWORK INFO] shows a chip for each color with a swatch, name, and delete button: 200 GET http://localhost:3000/api/colors

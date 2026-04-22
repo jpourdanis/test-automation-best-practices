@@ -1,0 +1,1 @@
+[NETWORK INFO] cancel in confirm dialog closes it without deleting: 200 GET http://localhost:3000/api/colors
