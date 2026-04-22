@@ -1,0 +1,39 @@
+{
+  "title": "Color Chooser App",
+  "instructions": "Edit <1>src/App.js</1> and save to reload.",
+  "learnReact": "Learn React",
+  "currentColor": "Current color:",
+  "colors": {
+    "turquoise": "Turquoise",
+    "red": "Red",
+    "yellow": "Yellow"
+  },
+  "languageSelector": "Select Language",
+  "changeColor": "Change background to",
+  "add": "+ Add color",
+  "loading": "Loading colors...",
+  "remove": "Remove color",
+  "confirmTitle": "Delete color?",
+  "confirmBody": "Are you sure you want to delete <b>{{name}}</b>? This cannot be undone.",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "deleting": "Deleting\u2026",
+  "colorPicker": {
+    "title": "Add a color",
+    "dialogAriaLabel": "Add custom color",
+    "closeAriaLabel": "Close",
+    "lightnessLabel": "Lightness",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. Ocean",
+    "hexLabel": "Hex",
+    "cancel": "Cancel",
+    "addColor": "Add color",
+    "saving": "Saving\u2026",
+    "errors": {
+      "nameRequired": "Name is required",
+      "nameInvalid": "Letters, numbers, spaces, + only",
+      "nameDuplicate": "\"{{name}}\" already exists",
+      "hexFormat": "Use format #RRGGBB"
+    }
+  }
+}

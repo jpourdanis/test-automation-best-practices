@@ -1,5 +1,6 @@
 /node_modules/
 /server/node_modules/
+/mobile/node_modules/
 /.features-gen/
 /build/
 /dist/
