@@ -1,0 +1,5 @@
+[NETWORK INFO] clicking a chip makes it active: 200 GET https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] clicking a chip makes it active: 204 GET https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] clicking a chip makes it active: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app&deploymentId=dpl_AEQs1XcqbKWdA17zRM39bQYNyKUN
+[NETWORK INFO] clicking a chip makes it active: 200 GET https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/api/colors/Red
+[NETWORK INFO] clicking a chip makes it active: 204 HEAD https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/

@@ -1,0 +1,7 @@
+[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] handle initial fetch error: HEAD https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
+[API ERROR] handle initial fetch error: 500 GET https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/api/colors
+[CONSOLE ERROR] handle initial fetch error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/api/colors - net::ERR_ABORTED
+[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] handle initial fetch error: HEAD https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
