@@ -45,7 +45,7 @@
     "typescript": "^6.0.2"
   },
   "scripts": {
-    "prepare": "husky",
+    "prepare": "node -e \"if (!process.env.CI) require('child_process').execFileSync('husky', [], {stdio: 'inherit'})\"",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src e2e performance mobile && npx prettier --check .",
     "lint:fix": "eslint --fix --ext .ts,.tsx,.js,.jsx src e2e performance mobile && npx prettier --write .",
     "format": "npx prettier --write .",
