@@ -1,12 +1,18 @@
 {
-  "load": {
-    "stages": [{ "duration": "5s", "target": 5 }],
-    "thresholds": {
-      "http_req_duration": ["p(95)<500"],
-      "successful_actions_rate": ["rate>0.9"]
-    }
+  "_docs": {
+    "purpose": "k6 test configuration for all performance scenarios (local and production).",
+    "how_it_works": "Each top-level key maps to a TEST_TYPE env value. The spec files call getConfig(configs, TEST_TYPE) at start-up and read executor, stages/vus/iterations, sleepMin/sleepMax, and thresholds from the returned object.",
+    "executor_shapes": {
+      "per-vu-iterations": "Used by local 'smoke'. Runs exactly vus × iterations function calls then stops. Fast sanity check.",
+      "ramping-vus (default)": "Used by all other configs. Driven by the 'stages' array — each stage linearly ramps the VU count to 'target' over 'duration'. This is k6's default executor when no executor field is present."
+    },
+    "sleep_fields": "sleepMin / sleepMax (seconds) bound the random inter-iteration pause injected by each spec. Production configs use longer sleeps to stay within the POST /api/colors rate limit (100 requests per 15-minute window per IP). Local configs omit these fields and fall back to a 1–3 s range.",
+    "threshold_split": "API configs only reference http_req_duration; UI configs only reference browser_http_req_duration. k6 exits with code 104 if a threshold references a metric that was never recorded, so the two metric families must never be mixed across test types.",
+    "rate_limit_math": "POST /api/colors: 100 req / 15 min per IP. production-load runs 3 VUs × ~20 iterations each over 5 min = ~60 POSTs total — well within the window."
   },
+
   "smoke": {
+    "_description": "LOCAL — Quick sanity check. Runs exactly once (1 VU, 1 iteration) in under 30 s. Confirms the local stack is up and the full CRUD flow returns the expected status codes. 100 % success rate required.",
     "executor": "per-vu-iterations",
     "vus": 1,
     "iterations": 1,
@@ -14,6 +20,68 @@
     "thresholds": {
       "http_req_duration": ["p(95)<500"],
       "successful_actions_rate": ["rate==1.0"]
+    }
+  },
+
+  "load": {
+    "_description": "LOCAL — Short burst load test. Ramps to 5 VUs over 5 s and holds there until the stage ends. Used to exercise the local stack under light concurrency. ≥90 % success rate required.",
+    "stages": [{ "duration": "5s", "target": 5 }],
+    "thresholds": {
+      "http_req_duration": ["p(95)<500"],
+      "successful_actions_rate": ["rate>0.9"]
+    }
+  },
+
+  "production-smoke": {
+    "_description": "PRODUCTION API — 5-minute smoke run against the live Vercel deployment. Holds 1 virtual user for the full window. Each iteration exercises the read-only Catalog Browsing group (GET /api/colors) plus the full Color Management CRUD cycle (POST → GET → PUT → DELETE). A 10–15 s sleep between iterations keeps throughput at ~24 POSTs over 5 min, comfortably within the 100/15 min rate limit. p95 latency threshold is relaxed to 3 s to account for real network round-trips. 100 % success rate required.",
+    "stages": [{ "duration": "5m", "target": 1 }],
+    "sleepMin": 10,
+    "sleepMax": 15,
+    "thresholds": {
+      "http_req_duration": ["p(95)<3000"],
+      "successful_actions_rate": ["rate==1.0"]
+    }
+  },
+
+  "production-smoke-ui": {
+    "_description": "PRODUCTION UI — 5-minute smoke run using the k6 browser module against the live Vercel deployment. Holds 1 virtual user for the full window. Each iteration loads the page, verifies header visibility, clicks a random color button and asserts the hex update, and attempts the language-toggle scenario. The 10–15 s think time between iterations simulates a realistic user reading pace. Only browser_http_req_duration is measured (http_req_duration is not emitted by the browser executor). 100 % success rate required.",
+    "stages": [{ "duration": "5m", "target": 1 }],
+    "sleepMin": 10,
+    "sleepMax": 15,
+    "thresholds": {
+      "browser_http_req_duration": ["p(95)<3000"],
+      "successful_actions_rate": ["rate==1.0"]
+    }
+  },
+
+  "production-load": {
+    "_description": "PRODUCTION API — 5-minute load test (1 min ramp-up → 3 min hold at 3 VUs → 1 min ramp-down). Exercises the Catalog Browsing and Color Management groups under light concurrency on the live Vercel deployment. A 12–18 s sleep between iterations caps combined throughput at ~60 POSTs over 5 min (3 VUs × ~20 iterations each), staying within the 100/15 min rate limit. The rate_limited_requests counter tracks any 429 responses and is capped at 5 — if the limiter fires more than that the test fails. ≥90 % success rate and p95 < 3 s required.",
+    "stages": [
+      { "duration": "1m", "target": 3 },
+      { "duration": "3m", "target": 3 },
+      { "duration": "1m", "target": 0 }
+    ],
+    "sleepMin": 12,
+    "sleepMax": 18,
+    "thresholds": {
+      "http_req_duration": ["p(95)<3000"],
+      "successful_actions_rate": ["rate>0.9"],
+      "rate_limited_requests": ["count<5"]
+    }
+  },
+
+  "production-load-ui": {
+    "_description": "PRODUCTION UI — 5-minute load test (1 min ramp-up → 3 min hold at 3 VUs → 1 min ramp-down) using the k6 browser module against the live Vercel deployment. Each virtual user runs the full UI scenario: page load, color selection with hex assertion, and language toggle. The 12–18 s think time between page interactions mirrors a realistic user session. Browser navigation times dominate, so there is no API rate-limit concern. ≥90 % success rate and p95 < 3 s required.",
+    "stages": [
+      { "duration": "1m", "target": 3 },
+      { "duration": "3m", "target": 3 },
+      { "duration": "1m", "target": 0 }
+    ],
+    "sleepMin": 12,
+    "sleepMax": 18,
+    "thresholds": {
+      "browser_http_req_duration": ["p(95)<3000"],
+      "successful_actions_rate": ["rate>0.9"]
     }
   }
 }

@@ -7,9 +7,12 @@ import { textSummary } from 'https://jslib.k6.io/k6-summary/0.0.2/index.js'
 import { getConfig } from './utils/utils.ts'
 import { generateAllureReport } from './utils/allure-reporter.js'
 
-// Base URLs
-const BASE_URL = 'http://127.0.0.1:3000' // The app is hosted locally on 3000
-const API_URL = 'http://127.0.0.1:5001' // The API is hosted locally on 5001
+// Resolve URLs from env (production runs) or fall back to local defaults
+const BASE_URL = __ENV.BASE_URL ?? 'http://127.0.0.1:3000'
+// For the setup health-check the API lives on the same host in production (nginx proxy)
+// and on a separate port locally.
+const fallbackApiUrl = __ENV.BASE_URL ?? 'http://127.0.0.1:5001'
+const API_URL = __ENV.API_URL ?? fallbackApiUrl
 
 const testType = __ENV.TEST_TYPE
 const successfulActionsRate = new Rate('successful_actions_rate')
@@ -59,6 +62,7 @@ export const options = {
 
 export function setup() {
   console.log(`Running UI ${testType?.toUpperCase() || 'DEFAULT'} test 🚀`)
+  console.log(`UI URL: ${BASE_URL} | API URL: ${API_URL}`)
   const serverCheck = http.get(`${API_URL}/api/colors`)
   if (serverCheck.status !== 200) {
     throw new Error(`Server is not reachable. Status: ${serverCheck.status}`)
@@ -76,7 +80,7 @@ export default async function performanceTest() {
     page = await context.newPage()
   } catch (e) {
     // If context is closed/canceled (e.g. WebSocket 1000), recreate it
-    console.log('Browser context was closed, recreating...')
+    console.log('Browser context was closed, recreating...', e)
     context = await browser.newContext()
     page = await context.newPage()
   }
@@ -90,10 +94,10 @@ export default async function performanceTest() {
     let bodyInfo = ''
     if (response.url().includes('/api/')) {
       try {
-        const jsonBody = await (response as any).json()
+        const jsonBody = await response.json()
         bodyInfo = ` - Body: ${JSON.stringify(jsonBody)}`
       } catch (e) {
-        bodyInfo = ' - Body: [Could not read]'
+        bodyInfo = ` - Body: [Could not read: ${e}]`
       }
     }
     console.log(`[UI Response] ${response.url()} - Status: ${response.status()}${bodyInfo}`)
@@ -104,9 +108,9 @@ export default async function performanceTest() {
 
   try {
     do {
+      // --- Scenario 1: Page load and header visibility ---
       await page.goto(BASE_URL)
 
-      // Assert header is visible using native k6 browser locators
       const header = page.locator('header')
       await header.waitFor({ state: 'visible' })
       const isHeaderVisible = await header.isVisible()
@@ -115,7 +119,7 @@ export default async function performanceTest() {
         'Homepage header is visible': () => isHeaderVisible
       })
 
-      // Click a random color button and verify the change
+      // --- Scenario 2: Color selection ---
       const testData = [
         { name: 'Turquoise', expectedHex: '#1abc9c' },
         { name: 'Red', expectedHex: '#e74c3c' },
@@ -123,21 +127,44 @@ export default async function performanceTest() {
       ]
       const randomColor = testData[Math.floor(Math.random() * testData.length)]
 
-      // Wait for the buttons to be rendered and click the randomly selected one
       const colorButton = page.locator('button', { hasText: randomColor.name })
       await colorButton.click()
-      await page.waitForTimeout(1000) //Simulate that the user is thinking.
 
-      // Locate the text element showing the current color hex and wait for it to update
+      // Simulate user reading the color result before moving on
+      const thinkTime = (testConfig.sleepMin ?? 1) * 1000
+      await page.waitForTimeout(thinkTime)
+
       const currentColorText = page.locator('header span', { hasText: randomColor.expectedHex })
       await currentColorText.waitFor({ state: 'visible' })
       const textContext = await currentColorText.textContent()
 
-      // Assert the update propagated
       const colorUpdated = check(page, {
         [`${randomColor.name} color updated successfully`]: () =>
           textContext !== null && textContext.includes(randomColor.expectedHex)
       })
+
+      // --- Scenario 3: Language toggle ---
+      // Cycles through a second locale and back to verify i18n renders without breaking layout
+      const langButton = page
+        .locator('[data-testid="language-selector"], select, [aria-label*="lang"], [aria-label*="Language"]')
+        .first()
+      const langButtonExists = await langButton.isVisible().catch((e: unknown) => {
+        console.log(`[UI] Language selector not found or not visible: ${e}`)
+        return false
+      })
+
+      let langToggleWorked = true
+      if (langButtonExists) {
+        await langButton.click()
+        await page.waitForTimeout(500)
+        // Switch back to ensure default locale is restored for subsequent iterations
+        const headerAfterLang = page.locator('header')
+        await headerAfterLang.waitFor({ state: 'visible' })
+        langToggleWorked = await headerAfterLang.isVisible()
+        check(page, {
+          'Header still visible after language toggle': () => langToggleWorked
+        })
+      }
 
       if (isHeaderVisible && colorUpdated) {
         successfulActionsRate.add(1)

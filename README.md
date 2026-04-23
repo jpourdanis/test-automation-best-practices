@@ -29,14 +29,15 @@ Most tutorials show you how to write _a_ test. This repository shows you how to 
 
 Every pattern here solves a real problem that teams hit in production:
 
-| Pattern            | The problem it solves                                               |
-| ------------------ | ------------------------------------------------------------------- |
-| Page Object Model  | Selector changes in one place, not 50 files                         |
-| Hybrid E2E         | Slow, flaky UI setup replaced with sub-millisecond API calls        |
-| E2E Code Coverage  | 500 UI tests with 40% coverage means blind spots you can't see      |
-| Mutation Testing   | 100% line coverage that still misses bugs — coverage ≠ confidence   |
-| Testcontainers     | Mock databases lie; real containers don't                           |
-| Security E2E Tests | Scanners find known CVEs; these tests verify your own defences fire |
+| Pattern            | The problem it solves                                                                            |
+| ------------------ | ------------------------------------------------------------------------------------------------ |
+| Page Object Model  | Selector changes in one place, not 50 files                                                      |
+| Hybrid E2E         | Slow, flaky UI setup replaced with sub-millisecond API calls                                     |
+| E2E Code Coverage  | 500 UI tests with 40% coverage means blind spots you can't see                                   |
+| Mutation Testing   | 100% line coverage that still misses bugs — coverage ≠ confidence                                |
+| Testcontainers     | Mock databases lie; real containers don't                                                        |
+| Security E2E Tests | Scanners find known CVEs; these tests verify your own defences fire                              |
+| Production Testing | Docker tests pass but CDN routing, real devices, and live rate limits only surface in production |
 
 ---
 
@@ -1327,7 +1328,7 @@ on:
 
 ---
 
-#### 21. Production Testing with BrowserStack and Visual Regression Production Testing with Percy
+#### 21. Production Testing
 
 **Files:** [`playwright.config.ts`](/playwright.config.ts) · [`browserstack.yml`](/browserstack.yml) · [`.percy.yml`](.percy.yml) · [`e2e/tests/visual.spec.ts`](/e2e/tests/visual.spec.ts) · [`.github/workflows/ci.yml`](/.github/workflows/ci.yml)
 
@@ -1451,6 +1452,94 @@ test.describe('Percy Visual Regression – Production', () => {
 })
 ```
 
+### Production Performance Testing with k6
+
+The `browserstack.yml` workflow chains two additional jobs after Percy to load-test the live production environment: `performance-testing-api-prod` and `performance-testing-ui-prod`. Both run only on the manual trigger and the weekly schedule, using `TEST_TYPE: production-load` / `production-load-ui` — configurations tuned to stay within the 100 POST/15-min rate limit.
+
+**Why run performance tests against production:**
+
+- **Real infrastructure** — CDN edge latency, serverless cold starts, and connection-pool behaviour only surface against a live deployment; a Docker container on a CI runner hides them all
+- **Rate-limit validation** — the test suite deliberately handles `429` responses and backs off, proving the limiter fires at the correct threshold under real load
+- **End-to-end latency baseline** — p95 thresholds enforced in CI catch regressions before they affect users
+
+**API performance test** — full CRUD lifecycle per VU (Create → Read → Update → Delete), with automatic backoff on `429`:
+
+```typescript
+// performance/api-performance.spec.ts
+const API_URL = __ENV.API_URL ? __ENV.API_URL.replace(/\/$/, '') : 'http://127.0.0.1:5001'
+
+export function setup() {
+  const serverCheck = http.get(`${API_URL}/api/colors`)
+  if (serverCheck.status !== 200) throw new Error(`Server is not reachable. Status: ${serverCheck.status}`)
+}
+
+export default function apiPerformanceTest() {
+  group('Color Management', function () {
+    const createResponse = http.post(`${API_URL}/api/colors`, colorPayload, requestParams)
+
+    if (createResponse.status === 429) {
+      rateLimitedRequests.add(1)
+      sleep(testConfig.sleepMin || 10) // back off — stay within 100 req/15 min
+      return
+    }
+
+    if (check(createResponse, { 'Color creation status is 201': (r) => r.status === 201 })) {
+      http.get(`${API_URL}/api/colors/${newColorName}`)      // Read
+      http.put(`${API_URL}/api/colors/${newColorName}`, ...) // Update
+      http.del(`${API_URL}/api/colors/${newColorName}`)      // Delete
+    }
+  })
+
+  sleep(sleepMin + Math.random() * (sleepMax - sleepMin)) // paced to respect rate limit
+}
+```
+
+**UI performance test** — browser-driven Chromium scenario (page load → color selection → language toggle), with health-check before the run:
+
+```typescript
+// performance/ui-performance.spec.ts
+const BASE_URL = __ENV.BASE_URL ? __ENV.BASE_URL.replace(/\/$/, '') : 'http://127.0.0.1:3000'
+
+export function setup() {
+  const serverCheck = http.get(`${API_URL}/api/colors`)
+  if (serverCheck.status !== 200) throw new Error(`Server is not reachable. Status: ${serverCheck.status}`)
+}
+
+export default async function performanceTest() {
+  page = await context.newPage()
+
+  await page.goto(BASE_URL)
+  check(page, { 'Homepage header is visible': () => header.isVisible() })
+
+  await colorButton.click() // random color selection
+  await langButton.click() // i18n toggle
+  check(page, { 'Color updated successfully': () => textContent.includes(expectedHex) })
+}
+```
+
+**CI jobs in `browserstack.yml`** — sequenced after Percy so the full production validation chain is `e2e-production → visual-regression-percy → performance-testing-api-prod → performance-testing-ui-prod`:
+
+```yaml
+performance-testing-api-prod:
+  needs: [visual-regression-percy]
+  steps:
+    - name: Run API Production Load Test
+      env:
+        TEST_TYPE: production-load
+        API_URL: ${{ env.PRODUCTION_URL }}
+      run: npm run test:perf:api:load:prod
+
+performance-testing-ui-prod:
+  needs: [performance-testing-api-prod]
+  steps:
+    - name: Run UI Production Load Test
+      env:
+        K6_BROWSER_ENABLED: 'true'
+        TEST_TYPE: production-load-ui
+        BASE_URL: ${{ env.PRODUCTION_URL }}
+      run: dbus-run-session -- npm run test:perf:ui:load:prod
+```
+
 ### Usage
 
 ```bash
@@ -1466,9 +1555,12 @@ PERCY_TOKEN=your_percy_token \
 BASE_URL=https://test-automation-best-practices.vercel.app/ \
 npm run test:visual:percy
 
-# Or in CI/CD (both run automatically with respective triggers):
-# - BrowserStack: Manual trigger or weekly schedule
-# - Percy: Every PR and push (if PERCY_TOKEN is set)
+# Run production performance tests locally
+TEST_TYPE=production-load API_URL=https://test-automation-best-practices.vercel.app npm run test:perf:api:load:prod
+TEST_TYPE=production-load-ui BASE_URL=https://test-automation-best-practices.vercel.app npm run test:perf:ui:load:prod
+
+# Or in CI/CD (all run automatically with respective triggers):
+# - BrowserStack, Percy & Performance: Manual trigger or weekly schedule
 ```
 
 > [!NOTE]
@@ -1476,10 +1568,9 @@ npm run test:visual:percy
 >
 > - **BrowserStack Functional Tests** — Validate user interactions and API contracts across real browsers and devices (Chrome, Firefox, Safari on desktop; Chrome, Safari on mobile)
 > - **Percy Visual Tests** — Detect pixel-perfect visual regressions at multiple viewports (1280, 1920, 768, 375 widths) with team approval workflow
-> - **Independent Workflows** — Both run against the same production URL but separately:
->   - Percy runs on every PR/push (continuous visual monitoring)
->   - BrowserStack runs on manual trigger or weekly schedule (comprehensive cross-browser validation)
-> - **Same Test Code** — Both use the identical Playwright test suite; only environment variables (`BROWSERSTACK`, `PERCY_TOKEN`) and reporters differ
+> - **k6 Performance Tests** — Load-test the live API (full CRUD lifecycle) and UI (browser-driven Chromium) against production thresholds; automatic `429` backoff validates rate-limiting behaviour
+> - **Sequenced pipeline** — `e2e-production → percy → perf-api → perf-ui`; each stage builds confidence before the next heavier test type runs
+> - **Same Test Code** — All suites target the same `PRODUCTION_URL`; only `TEST_TYPE`, `BROWSERSTACK`, and `PERCY_TOKEN` differ between local and CI runs
 
 ---
 

@@ -9,6 +9,7 @@ permissions:
 env:
   BROWSERSTACK_USERNAME: ${{ secrets.BROWSERSTACK_USERNAME }}
   BROWSERSTACK_ACCESS_KEY: ${{ secrets.BROWSERSTACK_ACCESS_KEY }}
+  PRODUCTION_URL: ${{ vars.PRODUCTION_URL || 'https://test-automation-best-practices.vercel.app' }}
 
 jobs:
   e2e-browserstack:
@@ -39,7 +40,7 @@ jobs:
       - name: Run E2E tests on BrowserStack
         env:
           BROWSERSTACK: "true"
-          BASE_URL: https://test-automation-best-practices.vercel.app/
+          BASE_URL: ${{ env.PRODUCTION_URL }}
         run: npm run test:browserstack
 
       - name: Upload BrowserStack Allure Results
@@ -55,6 +56,7 @@ jobs:
   # ==========================================
   visual-regression-percy:
     name: Visual Regression (Percy - BrowserStack)
+    needs: [e2e-browserstack]
     runs-on: ubuntu-latest
     env:
       PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
@@ -82,7 +84,7 @@ jobs:
       - name: Run Percy Visual Regression Tests Against BrowserStack Production
         if: env.PERCY_TOKEN != ''
         env:
-          BASE_URL: https://test-automation-best-practices.vercel.app/
+          BASE_URL: ${{ env.PRODUCTION_URL }}
         run: npm run test:visual:percy
 
       - name: Upload Percy Allure Results
@@ -90,5 +92,72 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: allure-results-percy-browserstack
+          path: allure-results/
+          retention-days: 7
+
+  # ==========================================
+  # Performance Testing (API - Production)
+  # ==========================================
+  performance-testing-api-prod:
+    name: Performance Tests (API - Production)
+    needs: [visual-regression-percy]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run API Production Load Test
+        env:
+          TEST_TYPE: production-load
+          API_URL: ${{ env.PRODUCTION_URL }}
+        run: |
+          mkdir -p allure-results
+          npm run test:perf:api:load:prod
+
+      - name: Upload k6 API Production Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-performance-api-prod
+          path: allure-results/
+          retention-days: 7
+
+  # ==========================================
+  # Performance Testing (UI - Production)
+  # ==========================================
+  performance-testing-ui-prod:
+    name: Performance Tests (UI - Production)
+    needs: [performance-testing-api-prod]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Install DBus for Headless Browser
+        run: sudo apt-get update && sudo apt-get install -y dbus dbus-x11
+
+      - name: Setup k6
+        uses: grafana/setup-k6-action@v1
+        with:
+          browser: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run UI Production Load Test
+        env:
+          K6_BROWSER_ENABLED: "true"
+          TEST_TYPE: production-load-ui
+          BASE_URL: ${{ env.PRODUCTION_URL }}
+        run: |
+          mkdir -p allure-results
+          dbus-run-session -- npm run test:perf:ui:load:prod
+
+      - name: Upload k6 UI Production Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-performance-ui-prod
           path: allure-results/
           retention-days: 7
