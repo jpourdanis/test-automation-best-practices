@@ -1,2 +1,0 @@
-[NETWORK ERROR] Cancel button closes the picker: GET https://test-automation-best-practices-onbo6wzua-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] Cancel button closes the picker: HEAD https://test-automation-best-practices-onbo6wzua-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED

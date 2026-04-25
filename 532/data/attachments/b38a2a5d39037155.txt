@@ -1,2 +1,0 @@
-[NETWORK ERROR] should not have any automatically detectable accessibility issues: GET https://test-automation-best-practices-onbo6wzua-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] should not have any automatically detectable accessibility issues: HEAD https://test-automation-best-practices-onbo6wzua-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
