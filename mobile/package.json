@@ -14,8 +14,9 @@
     "build:ios": "eas build --platform ios --profile simulator --non-interactive",
     "build:android": "eas build --platform android --profile preview --non-interactive",
     "build:all": "eas build --platform all --profile preview --non-interactive",
-    "appium:install-drivers": "APPIUM_HOME=./.appium appium driver install xcuitest",
-    "test:ios": "APPIUM_HOME=./.appium wdio run e2e/wdio.ios.conf.ts",
+    "appium:install-drivers": "appium driver install xcuitest",
+    "appium:install-drivers:android": "appium driver install uiautomator2",
+    "test:ios": "wdio run e2e/wdio.ios.conf.ts",
     "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-mobile-unit-tests.xml jest --coverage"
   },
   "dependencies": {
