@@ -89,11 +89,48 @@ jobs:
       - name: List available iPhone simulators
         run: xcrun simctl list devices available | grep -E "iPhone [0-9]"
 
+      # Boot the simulator early so WDA compilation doesn't eat into the
+      # session creation timeout window. bootstatus -b blocks until ready.
+      - name: Boot iOS Simulator
+        run: |
+          UDID=$(xcrun simctl list devices available | grep -E "iPhone 16 \(" | head -1 | grep -Eo '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}')
+          echo "Booting simulator: $UDID"
+          xcrun simctl boot "$UDID" 2>/dev/null || echo "Already booted"
+          xcrun simctl bootstatus "$UDID" -b
+
+      # Cache the compiled WDA binary so it only builds from source on the
+      # first run or after the xcuitest driver version changes.
+      - name: Cache WDA derived data
+        uses: actions/cache@v4
+        with:
+          path: mobile/e2e/.wda-derived-data
+          key: wda-${{ runner.os }}-ios18.5-${{ hashFiles('mobile/package.json') }}
+
       # Install the XCUITest driver into a project-local APPIUM_HOME so the
       # version is pinned to the repo and isolated from any global Appium install.
       - name: Install Appium XCUITest driver
         working-directory: mobile
+        env:
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: npm run appium:install-drivers
+
+      - name: Start Appium Server
+        working-directory: mobile
+        env:
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+        run: |
+          npx appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
+          echo "APPIUM_PID=$!" >> $GITHUB_ENV
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:4723/status > /dev/null; then
+              echo "Appium is ready"
+              exit 0
+            fi
+            echo "Waiting for Appium... attempt $i/30"
+            sleep 1
+          done
+          echo "::error::Appium failed to start within 30 seconds"
+          exit 1
 
       - name: Run iOS E2E tests
         working-directory: mobile
@@ -104,12 +141,28 @@ jobs:
           IOS_VERSION: "18.5"
         run: npx wdio run e2e/wdio.ios.conf.ts
 
+      - name: Stop Appium Server
+        if: always()
+        run: |
+          if [ -n "$APPIUM_PID" ]; then
+            kill "$APPIUM_PID" || true
+          fi
+
       - name: Upload Appium server log
         if: always()
         uses: actions/upload-artifact@v7
         with:
           name: mobile-ios-appium-log
           path: mobile/e2e/appium.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload failure videos
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-ios-failure-videos
+          path: mobile/e2e/videos/
           retention-days: 7
           if-no-files-found: ignore
 

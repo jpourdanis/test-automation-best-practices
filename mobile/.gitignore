@@ -49,6 +49,10 @@ e2e/artifacts/*.app
 e2e/artifacts/*.apk
 e2e/artifacts/*.ipa
 
-# WDIO / Appium logs
+# WDA compiled binary cache (managed by CI cache, not git)
+e2e/.wda-derived-data/
+
+# WDIO / Appium logs and failure videos
 e2e/appium.log
 e2e/wdio-*.log
+e2e/videos/
