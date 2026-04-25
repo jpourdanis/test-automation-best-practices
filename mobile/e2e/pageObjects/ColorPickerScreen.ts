@@ -1,62 +1,80 @@
 import type { ChainablePromiseElement } from 'webdriverio'
 
+/**
+ * Returns the correct Appium selector for a React Native `testID` prop.
+ *
+ * On iOS, React Native maps `testID` → `accessibilityIdentifier`, which
+ * Appium exposes via the `~` (accessibility ID) strategy.
+ *
+ * On Android, React Native maps `testID` → `resource-id`
+ * (e.g. `com.example.app:id/my-test-id`), NOT `content-desc`. The `~`
+ * strategy targets `content-desc` on Android, so we must use the
+ * UiSelector resource-id strategy instead.
+ */
+function $el(testId: string): ChainablePromiseElement {
+  if (driver.isAndroid) {
+    return $(`android=new UiSelector().resourceIdMatches(".*:id/${testId}")`)
+  }
+  return $(`~${testId}`)
+}
+
 class ColorPickerScreen {
   get title(): ChainablePromiseElement {
-    return $('~app-title')
+    return $el('app-title')
   }
 
   get currentColor(): ChainablePromiseElement {
-    return $('~current-color')
+    return $el('current-color')
   }
 
   get addButton(): ChainablePromiseElement {
-    return $('~add-color-btn')
+    return $el('add-color-btn')
   }
 
   get errorMessage(): ChainablePromiseElement {
-    return $('~error-message')
+    return $el('error-message')
   }
 
   // Color picker modal
   get colorNameInput(): ChainablePromiseElement {
-    return $('~color-name-input')
+    return $el('color-name-input')
   }
 
   get pickerSaveBtn(): ChainablePromiseElement {
-    return $('~picker-save-btn')
+    return $el('picker-save-btn')
   }
 
   get pickerCancelBtn(): ChainablePromiseElement {
-    return $('~picker-cancel-btn')
+    return $el('picker-cancel-btn')
   }
 
   get pickerError(): ChainablePromiseElement {
-    return $('~picker-error')
+    return $el('picker-error')
   }
 
   get colorPreview(): ChainablePromiseElement {
-    return $('~color-preview')
+    return $el('color-preview')
   }
 
   // Confirm dialog
   get confirmDeleteBtn(): ChainablePromiseElement {
-    return $('~confirm-delete-btn')
+    return $el('confirm-delete-btn')
   }
 
   get confirmCancelBtn(): ChainablePromiseElement {
-    return $('~confirm-cancel-btn')
+    return $el('confirm-cancel-btn')
   }
 
   langButton(code: string): ChainablePromiseElement {
-    return $(`~lang-btn-${code}`)
+    return $el(`lang-btn-${code}`)
   }
 
   colorChip(name: string): ChainablePromiseElement {
-    return $(`~chip-select-${name}`)
+    return $el(`chip-select-${name}`)
   }
 
   deleteChipButton(name: string): ChainablePromiseElement {
-    return $(`~chip-delete-${name}`)
+    return $el(`chip-delete-${name}`)
   }
 
   async waitForLoad(): Promise<void> {

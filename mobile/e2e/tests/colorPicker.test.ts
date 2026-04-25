@@ -33,7 +33,7 @@ describe('Color Picker App', () => {
     await colorPickerScreen.pickerCancelBtn.click()
   })
 
-  it.skip('adds a new color and shows it as a chip', async () => {
+  it('adds a new color and shows it as a chip', async () => {
     const name = `Test${Date.now()}`
     await colorPickerScreen.addButton.click()
     await colorPickerScreen.colorNameInput.waitForDisplayed({ timeout: 10000 })
@@ -56,8 +56,12 @@ describe('Color Picker App', () => {
   it('switches the UI language', async () => {
     await colorPickerScreen.langButton('es').click()
     await driver.pause(800)
-    const selected = await colorPickerScreen.langButton('es').getAttribute('value')
-    expect(selected).toMatch(/^(1|true)$/) // XCUITest: "1", UiAutomator2: "true"
+
+    // Cross-platform check for selected state
+    const attr = driver.isAndroid ? 'selected' : 'value'
+    const selected = await colorPickerScreen.langButton('es').getAttribute(attr)
+    expect(selected ?? '').toMatch(/^(1|true)$/)
+
     await colorPickerScreen.langButton('en').click()
   })
 })
