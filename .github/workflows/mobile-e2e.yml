@@ -1,0 +1,121 @@
+name: Mobile E2E (iOS)
+
+on:
+  push:
+    branches: [react_native]
+    paths: ["mobile/**"]
+  pull_request:
+    branches: [main, react_native]
+    paths: ["mobile/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ==========================================
+  # iOS E2E TESTS (Appium + iOS Simulator)
+  # ==========================================
+  ios-e2e:
+    name: iOS E2E Tests (Appium + Simulator)
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # Fetches the artifact URL of the most recent successful iOS simulator
+      # build from EAS and downloads it. The .app is extracted from the tarball
+      # and its absolute path is written to $GITHUB_ENV for later steps.
+      - name: Download latest EAS iOS simulator build
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          mkdir -p e2e/artifacts
+
+          BUILD_URL=$(eas build:list \
+            --platform ios \
+            --profile simulator \
+            --status finished \
+            --limit 1 \
+            --json \
+            --non-interactive \
+            | jq -r '.[0].artifacts.buildUrl')
+
+          if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
+            echo "::error::No finished simulator build found on EAS. Trigger one with: npm run build:ios"
+            exit 1
+          fi
+
+          echo "Downloading artifact: $BUILD_URL"
+          curl -L "$BUILD_URL" -o e2e/artifacts/ios-simulator.tar.gz
+          cd e2e/artifacts && tar -xzf ios-simulator.tar.gz
+
+          APP=$(ls -d *.app 2>/dev/null | head -1)
+          if [ -z "$APP" ]; then
+            echo "::error::No .app found after extracting the EAS artifact."
+            exit 1
+          fi
+
+          echo "APP_PATH=${{ github.workspace }}/mobile/e2e/artifacts/$APP" >> $GITHUB_ENV
+          echo "Found app: $APP"
+
+      # Point xcode-select at the full Xcode app so simctl and
+      # the XCUITest driver have access to the simulator runtime.
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: List available iPhone simulators
+        run: xcrun simctl list devices available | grep -E "iPhone [0-9]"
+
+      # Install the XCUITest driver into a project-local APPIUM_HOME so the
+      # version is pinned to the repo and isolated from any global Appium install.
+      - name: Install Appium XCUITest driver
+        working-directory: mobile
+        run: npm run appium:install-drivers
+
+      - name: Run iOS E2E tests
+        working-directory: mobile
+        env:
+          APP_PATH: ${{ env.APP_PATH }}
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+          IOS_DEVICE: "iPhone 16"
+          IOS_VERSION: "18"
+        run: npx wdio run e2e/wdio.ios.conf.ts
+
+      - name: Upload Appium server log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-ios-appium-log
+          path: mobile/e2e/appium.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload WDIO results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-ios-wdio-results
+          path: |
+            mobile/e2e/wdio-*.log
+            mobile/e2e/.results/
+          retention-days: 7
+          if-no-files-found: ignore

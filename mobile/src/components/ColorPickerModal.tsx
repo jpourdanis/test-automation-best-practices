@@ -89,7 +89,7 @@ export function ColorPickerModal({
         <View style={styles.sheet}>
           <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
             {/* Preview swatch */}
-            <View style={[styles.preview, { backgroundColor: hex }]}>
+            <View testID='color-preview' style={[styles.preview, { backgroundColor: hex }]}>
               <Text style={[styles.previewHex, { color: previewText }]}>{hex.toUpperCase()}</Text>
             </View>
 
@@ -97,6 +97,7 @@ export function ColorPickerModal({
             <Text style={styles.label}>{t('colorPicker.hueLabel')}</Text>
             <LinearGradient colors={hueStops} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.track}>
               <Slider
+                testID='slider-hue'
                 style={styles.slider}
                 minimumValue={0}
                 maximumValue={360}
@@ -113,6 +114,7 @@ export function ColorPickerModal({
             <Text style={styles.label}>{t('colorPicker.saturationLabel')}</Text>
             <LinearGradient colors={satStops} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.track}>
               <Slider
+                testID='slider-saturation'
                 style={styles.slider}
                 minimumValue={0}
                 maximumValue={1}
@@ -129,6 +131,7 @@ export function ColorPickerModal({
             <Text style={styles.label}>{t('colorPicker.lightnessLabel')}</Text>
             <LinearGradient colors={litStops} start={{ x: 0, y: 0 }} end={{ x: 1, y: 0 }} style={styles.track}>
               <Slider
+                testID='slider-lightness'
                 style={styles.slider}
                 minimumValue={0}
                 maximumValue={1}
@@ -144,6 +147,7 @@ export function ColorPickerModal({
             {/* Name input */}
             <Text style={styles.label}>{t('colorPicker.nameLabel')}</Text>
             <TextInput
+              testID='color-name-input'
               style={[styles.input, nameError ? styles.inputError : null]}
               placeholder={t('colorPicker.namePlaceholder')}
               placeholderTextColor='#aaa'
@@ -158,14 +162,24 @@ export function ColorPickerModal({
             />
 
             {/* Validation / server errors */}
-            {(nameError || serverError) && <Text style={styles.errorText}>{nameError ?? serverError}</Text>}
+            {(nameError || serverError) && (
+              <Text testID='picker-error' style={styles.errorText}>
+                {nameError ?? serverError}
+              </Text>
+            )}
 
             {/* Buttons */}
             <View style={styles.btnRow}>
-              <TouchableOpacity style={[styles.btn, styles.btnCancel]} onPress={onCancel} disabled={saving}>
+              <TouchableOpacity
+                testID='picker-cancel-btn'
+                style={[styles.btn, styles.btnCancel]}
+                onPress={onCancel}
+                disabled={saving}
+              >
                 <Text style={styles.btnCancelText}>{t('cancel')}</Text>
               </TouchableOpacity>
               <TouchableOpacity
+                testID='picker-save-btn'
                 style={[styles.btn, styles.btnSave, { backgroundColor: hex }]}
                 onPress={handleConfirm}
                 disabled={saving}

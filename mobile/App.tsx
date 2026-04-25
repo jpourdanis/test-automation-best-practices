@@ -142,6 +142,7 @@ export default function App() {
               return (
                 <TouchableOpacity
                   key={lang.code}
+                  testID={`lang-btn-${lang.code}`}
                   onPress={() => i18n.changeLanguage(lang.code)}
                   accessibilityRole='button'
                   accessibilityState={{ selected: isActive }}
@@ -161,17 +162,23 @@ export default function App() {
           </View>
 
           {/* Title */}
-          <Text style={[styles.title, { color: textColor }]}>{t('title')}</Text>
+          <Text testID='app-title' style={[styles.title, { color: textColor }]}>
+            {t('title')}
+          </Text>
 
           {/* Error */}
           {error && (
-            <View style={styles.errorBox} accessibilityRole='alert'>
+            <View testID='error-message' style={styles.errorBox} accessibilityRole='alert'>
               <Text style={styles.errorText}>{error}</Text>
             </View>
           )}
 
           {/* Current color */}
-          <Text style={[styles.currentColor, { color: textColor }]} accessibilityLiveRegion='polite'>
+          <Text
+            testID='current-color'
+            style={[styles.currentColor, { color: textColor }]}
+            accessibilityLiveRegion='polite'
+          >
             {t('currentColor')} {backgroundColor.toUpperCase()}
           </Text>
 
@@ -191,8 +198,13 @@ export default function App() {
             {colors.length > 0 && (
               <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.chipsRow}>
                 {colors.map((c) => (
-                  <View key={c.name} style={[styles.chip, activeName === c.name && styles.chipActive]}>
+                  <View
+                    key={c.name}
+                    testID={`chip-${c.name}`}
+                    style={[styles.chip, activeName === c.name && styles.chipActive]}
+                  >
                     <TouchableOpacity
+                      testID={`chip-select-${c.name}`}
                       style={styles.chipMain}
                       onPress={() => handleColorPress(c.name)}
                       accessibilityLabel={`${t('changeColor')} ${labelFor(c)}`}
@@ -202,6 +214,7 @@ export default function App() {
                       <Text style={[styles.chipLabel, { color: textColor }]}>{labelFor(c)}</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
+                      testID={`chip-delete-${c.name}`}
                       style={styles.chipX}
                       onPress={() => setConfirmTarget(c)}
                       accessibilityLabel={`${t('remove')}: ${labelFor(c)}`}
@@ -219,6 +232,7 @@ export default function App() {
             {/* Add button — always visible below the chips row */}
             {!loading && (
               <TouchableOpacity
+                testID='add-color-btn'
                 style={[styles.btnAdd, { borderColor: `${textColor}60` }]}
                 onPress={() => {
                   setPickerError(null)

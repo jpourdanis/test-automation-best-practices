@@ -40,6 +40,7 @@ export function ConfirmDialog({
           </Text>
           <View style={styles.actions}>
             <TouchableOpacity
+              testID='confirm-cancel-btn'
               style={[styles.btn, styles.btnGhost]}
               onPress={onCancel}
               disabled={busy}
@@ -48,6 +49,7 @@ export function ConfirmDialog({
               <Text style={styles.btnGhostText}>{cancelLabel}</Text>
             </TouchableOpacity>
             <TouchableOpacity
+              testID='confirm-delete-btn'
               style={[styles.btn, styles.btnDanger, busy && styles.btnDisabled]}
               onPress={onConfirm}
               disabled={busy}

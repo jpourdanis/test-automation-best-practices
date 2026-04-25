@@ -39,3 +39,16 @@ yarn-error.*
 # generated native folders
 /ios
 /android
+
+# Appium local driver installation
+.appium/
+
+# E2E test artifacts (downloaded build binaries)
+e2e/artifacts/*.tar.gz
+e2e/artifacts/*.app
+e2e/artifacts/*.apk
+e2e/artifacts/*.ipa
+
+# WDIO / Appium logs
+e2e/appium.log
+e2e/wdio-*.log
