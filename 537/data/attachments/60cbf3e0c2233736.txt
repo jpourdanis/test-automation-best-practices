@@ -1,3 +1,0 @@
-[NETWORK INFO] should handle color click network failure gracefully: 204 GET https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] should handle color click network failure gracefully: 200 GET https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] should handle color click network failure gracefully: 204 HEAD https://test-automation-best-practices-5q40x4ccp-jpourdanis-projects.vercel.app/
