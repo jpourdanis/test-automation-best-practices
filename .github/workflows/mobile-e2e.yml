@@ -209,7 +209,7 @@ jobs:
           name: mobile-ios-wdio-results
           path: |
             mobile/e2e/wdio-*.log
-            mobile/e2e/.results/
+            mobile/e2e/allure-results/
           retention-days: 7
           if-no-files-found: ignore
 
@@ -418,6 +418,6 @@ jobs:
           name: mobile-android-wdio-results
           path: |
             mobile/e2e/wdio-*.log
-            mobile/e2e/.results/
+            mobile/e2e/allure-results/
           retention-days: 7
           if-no-files-found: ignore

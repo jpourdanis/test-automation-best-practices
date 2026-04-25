@@ -46,6 +46,7 @@
     "@testing-library/react-native": "^13.0.1",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.1.0",
+    "@wdio/allure-reporter": "^9.27.0",
     "@wdio/appium-service": "^9.0.0",
     "@wdio/cli": "^9.0.0",
     "@wdio/globals": "^9.0.0",

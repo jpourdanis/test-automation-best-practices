@@ -35,7 +35,17 @@ export const config: WebdriverIO.Config = {
   services: [],
 
   framework: 'mocha',
-  reporters: ['spec'],
+  reporters: [
+    'spec',
+    [
+      'allure',
+      {
+        outputDir: path.resolve(__dirname, 'allure-results'),
+        disableWebdriverStepsReporting: true,
+        disableWebdriverScreenshotsReporting: false
+      }
+    ]
+  ],
   mochaOpts: {
     ui: 'bdd',
     timeout: 90000
