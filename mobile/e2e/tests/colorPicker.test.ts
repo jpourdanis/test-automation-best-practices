@@ -39,8 +39,13 @@ describe('Color Picker App', () => {
     await colorPickerScreen.colorNameInput.waitForDisplayed({ timeout: 10000 })
     await colorPickerScreen.colorNameInput.setValue(name)
     await colorPickerScreen.pickerSaveBtn.click()
-    await colorPickerScreen.colorChip(name).waitForDisplayed({ timeout: 15000 })
-    await expect(colorPickerScreen.colorChip(name)).toBeDisplayed()
+    // Modal closes only after both API calls (POST + GET) complete — wait for it
+    // to disappear before looking for the chip, avoiding a race condition.
+    await colorPickerScreen.colorNameInput.waitForDisplayed({ timeout: 30000, reverse: true })
+    const chip = colorPickerScreen.colorChip(name)
+    await chip.waitForExist({ timeout: 10000 })
+    await chip.scrollIntoView()
+    await expect(chip).toBeDisplayed()
 
     // cleanup — delete the color we just added
     await colorPickerScreen.deleteChipButton(name).click()
