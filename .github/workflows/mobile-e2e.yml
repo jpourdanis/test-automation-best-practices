@@ -1,9 +1,6 @@
 name: Mobile E2E (iOS)
 
 on:
-  push:
-    branches: [react_native]
-    paths: ["mobile/**"]
   pull_request:
     branches: [main, react_native]
     paths: ["mobile/**"]
