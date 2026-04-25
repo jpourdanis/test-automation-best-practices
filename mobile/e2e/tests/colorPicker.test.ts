@@ -44,7 +44,7 @@ describe('Color Picker App', () => {
     await colorPickerScreen.colorNameInput.waitForDisplayed({ timeout: 30000, reverse: true })
     const chip = colorPickerScreen.colorChip(name)
     await chip.waitForExist({ timeout: 10000 })
-    await chip.scrollIntoView()
+    await chip.scrollIntoView({ direction: 'left' })
     await expect(chip).toBeDisplayed()
 
     // cleanup — delete the color we just added

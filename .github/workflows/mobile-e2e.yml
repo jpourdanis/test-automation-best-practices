@@ -86,6 +86,9 @@ jobs:
       - name: Select Xcode
         run: sudo xcode-select -s /Applications/Xcode.app
 
+      - name: Install ffmpeg
+        run: brew install ffmpeg
+
       - name: List available iPhone simulators
         run: xcrun simctl list devices available | grep -E "iPhone [0-9]"
 
