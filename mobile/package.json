@@ -17,6 +17,7 @@
     "appium:install-drivers": "appium driver install xcuitest",
     "appium:install-drivers:android": "appium driver install uiautomator2",
     "test:ios": "wdio run e2e/wdio.ios.conf.ts",
+    "test:android": "wdio run e2e/wdio.android.conf.ts",
     "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-mobile-unit-tests.xml jest --coverage"
   },
   "dependencies": {
