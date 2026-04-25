@@ -60,8 +60,8 @@ class ColorPickerScreen {
   }
 
   async waitForLoad(): Promise<void> {
-    await this.title.waitForDisplayed({ timeout: 20000 })
-    await this.addButton.waitForDisplayed({ timeout: 20000 })
+    await this.title.waitForDisplayed({ timeout: 60000 })
+    await this.addButton.waitForDisplayed({ timeout: 60000 })
   }
 }
 

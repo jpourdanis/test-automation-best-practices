@@ -57,7 +57,7 @@ describe('Color Picker App', () => {
     await colorPickerScreen.langButton('es').click()
     await driver.pause(800)
     const selected = await colorPickerScreen.langButton('es').getAttribute('value')
-    expect(selected).toBe('1') // XCUITest reports selected state as "1"
+    expect(selected).toMatch(/^(1|true)$/) // XCUITest: "1", UiAutomator2: "true"
     await colorPickerScreen.langButton('en').click()
   })
 })
