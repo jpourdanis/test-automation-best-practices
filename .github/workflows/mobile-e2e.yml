@@ -72,7 +72,7 @@ jobs:
           curl -L "$BUILD_URL" -o e2e/artifacts/ios-simulator.tar.gz
           cd e2e/artifacts && tar -xzf ios-simulator.tar.gz
 
-          APP=$(ls -d ./*.app 2>/dev/null | head -1)
+          APP=$(ls -d ./*.app 2>/dev/null | head -1 | sed 's|^\./||')
           if [ -z "$APP" ]; then
             echo "::error::No .app found after extracting the EAS artifact."
             exit 1

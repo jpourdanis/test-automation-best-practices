@@ -1,11 +1,10 @@
 import path from 'node:path'
-import type { Options } from '@wdio/types'
 
 const APP = process.env.APP_PATH ?? path.resolve(__dirname, 'artifacts/ColorPicker.app')
 const DEVICE = process.env.IOS_DEVICE ?? 'iPhone 16'
 const IOS_VERSION = process.env.IOS_VERSION ?? '18.5'
 
-export const config: Options.Testrunner = {
+export const config: WebdriverIO.Config = {
   runner: 'local',
   tsConfigPath: path.resolve(__dirname, '../tsconfig.e2e.json'),
 
@@ -20,8 +19,8 @@ export const config: Options.Testrunner = {
       'appium:platformVersion': IOS_VERSION,
       'appium:app': APP,
       'appium:newCommandTimeout': 240,
-      'appium:wdaLaunchTimeout': 120000,
-      'appium:wdaConnectionTimeout': 120000,
+      'appium:wdaLaunchTimeout': 300000,
+      'appium:wdaConnectionTimeout': 300000,
       'appium:noReset': false
     }
   ],
@@ -47,6 +46,6 @@ export const config: Options.Testrunner = {
 
   logLevel: 'warn',
   waitforTimeout: 15000,
-  connectionRetryTimeout: 120000,
+  connectionRetryTimeout: 360000,
   connectionRetryCount: 3
 }
