@@ -176,3 +176,199 @@ jobs:
             mobile/e2e/.results/
           retention-days: 7
           if-no-files-found: ignore
+
+  # ==========================================
+  # Android E2E TESTS (Appium + Emulator)
+  # ==========================================
+  android-e2e:
+    name: Android E2E Tests (Appium + Emulator)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # Fetches the artifact URL of the most recent successful Android emulator
+      # build from EAS and downloads it. The .apk path is written to $GITHUB_ENV
+      # for later steps.
+      - name: Download latest EAS Android emulator build
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          mkdir -p e2e/artifacts
+
+          BUILD_URL=$(eas build:list \
+            --platform android \
+            --profile simulator \
+            --status finished \
+            --limit 1 \
+            --json \
+            --non-interactive \
+            | jq -r '.[0].artifacts.buildUrl')
+
+          if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
+            echo "::error::No finished Android emulator build found on EAS. Trigger one with: npm run build:android"
+            exit 1
+          fi
+
+          echo "Downloading artifact: $BUILD_URL"
+          curl -L "$BUILD_URL" -o e2e/artifacts/android.apk
+
+          echo "APK_PATH=${{ github.workspace }}/mobile/e2e/artifacts/android.apk" >> $GITHUB_ENV
+          echo "Downloaded APK"
+
+      # Enable KVM so the emulator gets hardware acceleration and boots in a
+      # reasonable amount of time on the Linux runner.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install ffmpeg
+        run: sudo apt-get install -y ffmpeg
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: List available Android emulator images
+        run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --list | grep "system-images;android-35"
+
+      # Cache the AVD snapshot so the emulator only rebuilds on the first run
+      # or when the package.json changes (driver version bump).
+      - name: Cache Android AVD
+        uses: actions/cache@v4
+        with:
+          path: ~/.android/avd
+          key: avd-api35-${{ runner.os }}-${{ hashFiles('mobile/package.json') }}
+
+      # Create the AVD if it does not already exist (cache miss). --force is
+      # safe because the AVD definition is stateless without a snapshot.
+      - name: Create Android AVD
+        run: |
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+            "system-images;android-35;google_apis;x86_64" \
+            --sdk_root=$ANDROID_HOME
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd \
+            --name "Pixel_6_API_35" \
+            --package "system-images;android-35;google_apis;x86_64" \
+            --device "pixel_6" \
+            --force
+
+      # Boot the emulator early so it is ready before Appium starts a session.
+      # We poll sys.boot_completed via adb rather than relying on a fixed sleep.
+      - name: Boot Android Emulator
+        run: |
+          $ANDROID_HOME/emulator/emulator \
+            -avd Pixel_6_API_35 \
+            -no-window \
+            -no-audio \
+            -no-boot-anim \
+            -gpu swiftshader_indirect \
+            -memory 2048 &
+          echo "EMULATOR_PID=$!" >> $GITHUB_ENV
+          $ANDROID_HOME/platform-tools/adb wait-for-device
+          for i in {1..60}; do
+            BOOT=$($ANDROID_HOME/platform-tools/adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            if [ "$BOOT" = "1" ]; then
+              echo "Emulator is ready"
+              break
+            fi
+            echo "Waiting for emulator boot... attempt $i/60"
+            sleep 5
+          done
+          if [ "$BOOT" != "1" ]; then
+            echo "::error::Android emulator failed to boot within 5 minutes"
+            exit 1
+          fi
+
+      # Install the UiAutomator2 driver into a project-local APPIUM_HOME so the
+      # version is pinned to the repo and isolated from any global Appium install.
+      - name: Install Appium UiAutomator2 driver
+        working-directory: mobile
+        env:
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+        run: npm run appium:install-drivers:android
+
+      - name: Start Appium Server
+        working-directory: mobile
+        env:
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+        run: |
+          npx appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
+          echo "APPIUM_PID=$!" >> $GITHUB_ENV
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:4723/status > /dev/null; then
+              echo "Appium is ready"
+              exit 0
+            fi
+            echo "Waiting for Appium... attempt $i/30"
+            sleep 1
+          done
+          echo "::error::Appium failed to start within 30 seconds"
+          exit 1
+
+      - name: Run Android E2E tests
+        working-directory: mobile
+        env:
+          APK_PATH: ${{ env.APK_PATH }}
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+          ANDROID_DEVICE: "Pixel_6_API_35"
+          ANDROID_VERSION: "35"
+        run: npx wdio run e2e/wdio.android.conf.ts
+
+      - name: Stop Appium Server
+        if: always()
+        run: |
+          if [ -n "$APPIUM_PID" ]; then
+            kill "$APPIUM_PID" || true
+          fi
+
+      - name: Upload Appium server log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-android-appium-log
+          path: mobile/e2e/appium.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload failure videos
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-android-failure-videos
+          path: mobile/e2e/videos/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload WDIO results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-android-wdio-results
+          path: |
+            mobile/e2e/wdio-*.log
+            mobile/e2e/.results/
+          retention-days: 7
+          if-no-files-found: ignore
