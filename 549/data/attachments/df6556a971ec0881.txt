@@ -1,0 +1,2 @@
+[NETWORK ERROR] deleting the active color switches background to the first remaining: GET https://test-automation-best-practices-b3lm1fpzf-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
+[NETWORK ERROR] deleting the active color switches background to the first remaining: HEAD https://test-automation-best-practices-b3lm1fpzf-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED

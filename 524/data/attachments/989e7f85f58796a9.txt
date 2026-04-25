@@ -1,4 +1,0 @@
-[NETWORK ERROR] should handle color click network failure gracefully: GET https://test-automation-best-practices-ouj125msl-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] should handle color click network failure gracefully: GET https://test-automation-best-practices-ouj125msl-jpourdanis-projects.vercel.app/api/colors/Turquoise - net::ERR_FAILED
-[CONSOLE ERROR] should handle color click network failure gracefully: Failed to load resource: net::ERR_FAILED
-[NETWORK ERROR] should handle color click network failure gracefully: HEAD https://test-automation-best-practices-ouj125msl-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
