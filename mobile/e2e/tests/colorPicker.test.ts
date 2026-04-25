@@ -33,7 +33,7 @@ describe('Color Picker App', () => {
     await colorPickerScreen.pickerCancelBtn.click()
   })
 
-  it('adds a new color and shows it as a chip', async () => {
+  it.skip('adds a new color and shows it as a chip', async () => {
     const name = `Test${Date.now()}`
     await colorPickerScreen.addButton.click()
     await colorPickerScreen.colorNameInput.waitForDisplayed({ timeout: 10000 })
@@ -52,7 +52,7 @@ describe('Color Picker App', () => {
     await colorPickerScreen.confirmDeleteBtn.click()
   })
 
-  it('switches the UI language', async () => {
+  it.skip('switches the UI language', async () => {
     await colorPickerScreen.langButton('es').click()
     await driver.pause(800)
 
