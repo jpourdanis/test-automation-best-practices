@@ -383,7 +383,7 @@ jobs:
           APK_PATH: ${{ env.APK_PATH }}
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
           ANDROID_DEVICE: "Pixel_6_API_35"
-          ANDROID_VERSION: "35"
+          ANDROID_VERSION: "15" # Android OS version (API 35 = Android 15)
         run: npx wdio run e2e/wdio.android.conf.ts
 
       - name: Stop Appium Server
