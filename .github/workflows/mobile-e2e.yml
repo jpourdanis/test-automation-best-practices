@@ -72,7 +72,7 @@ jobs:
           curl -L "$BUILD_URL" -o e2e/artifacts/ios-simulator.tar.gz
           cd e2e/artifacts && tar -xzf ios-simulator.tar.gz
 
-          APP=$(ls -d *.app 2>/dev/null | head -1)
+          APP=$(ls -d ./*.app 2>/dev/null | head -1)
           if [ -z "$APP" ]; then
             echo "::error::No .app found after extracting the EAS artifact."
             exit 1
@@ -101,7 +101,7 @@ jobs:
           APP_PATH: ${{ env.APP_PATH }}
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
           IOS_DEVICE: "iPhone 16"
-          IOS_VERSION: "18"
+          IOS_VERSION: "18.5"
         run: npx wdio run e2e/wdio.ios.conf.ts
 
       - name: Upload Appium server log

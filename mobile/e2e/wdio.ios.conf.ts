@@ -3,7 +3,7 @@ import type { Options } from '@wdio/types'
 
 const APP = process.env.APP_PATH ?? path.resolve(__dirname, 'artifacts/ColorPicker.app')
 const DEVICE = process.env.IOS_DEVICE ?? 'iPhone 16'
-const IOS_VERSION = process.env.IOS_VERSION ?? '18'
+const IOS_VERSION = process.env.IOS_VERSION ?? '18.5'
 
 export const config: Options.Testrunner = {
   runner: 'local',
