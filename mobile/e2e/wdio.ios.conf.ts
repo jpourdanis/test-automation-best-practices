@@ -30,7 +30,7 @@ export const config: Options.Testrunner = {
     [
       'appium',
       {
-        command: path.resolve(__dirname, '../../node_modules/.bin/appium'),
+        command: path.resolve(__dirname, '../node_modules/.bin/appium'),
         logFileName: 'appium.log',
         outputDir: __dirname,
         args: { relaxedSecurity: true }

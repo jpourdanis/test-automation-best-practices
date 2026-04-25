@@ -37,6 +37,10 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+
       - name: Install EAS CLI
         run: npm install -g eas-cli
 
