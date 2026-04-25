@@ -1,5 +1,0 @@
-[NETWORK INFO] handle color response missing hex property: 204 GET https://test-automation-best-practices-ok7ca1grl-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] handle color response missing hex property: 200 GET https://test-automation-best-practices-ok7ca1grl-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] handle color response missing hex property: 200 GET https://test-automation-best-practices-ok7ca1grl-jpourdanis-projects.vercel.app/api/colors/Yellow
-[NETWORK INFO] handle color response missing hex property: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-ok7ca1grl-jpourdanis-projects.vercel.app&deploymentId=dpl_BaLWc31yyz9NNA68XrEaLADondab
-[NETWORK INFO] handle color response missing hex property: 204 HEAD https://test-automation-best-practices-ok7ca1grl-jpourdanis-projects.vercel.app/
