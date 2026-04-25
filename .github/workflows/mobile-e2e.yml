@@ -1,4 +1,4 @@
-name: Mobile E2E (iOS)
+name: Mobile E2E Tests
 
 on:
   pull_request:
@@ -216,7 +216,7 @@ jobs:
 
           BUILD_URL=$(eas build:list \
             --platform android \
-            --profile simulator \
+            --profile preview \
             --status finished \
             --limit 1 \
             --json \
