@@ -1,2 +1,0 @@
-[NETWORK ERROR] first color chip is active on load (aria-pressed=true): GET https://test-automation-best-practices-d46nwab5q-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] first color chip is active on load (aria-pressed=true): HEAD https://test-automation-best-practices-d46nwab5q-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED

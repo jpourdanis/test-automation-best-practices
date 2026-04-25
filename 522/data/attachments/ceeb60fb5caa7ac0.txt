@@ -1,2 +1,0 @@
-[NETWORK ERROR] clicking "+ Add color" opens the picker modal: GET https://test-automation-best-practices-d46nwab5q-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] clicking "+ Add color" opens the picker modal: HEAD https://test-automation-best-practices-d46nwab5q-jpourdanis-projects.vercel.app/ - net::ERR_ABORTED
