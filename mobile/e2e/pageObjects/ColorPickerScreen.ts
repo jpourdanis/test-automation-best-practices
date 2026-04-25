@@ -13,7 +13,9 @@ import type { ChainablePromiseElement } from 'webdriverio'
  */
 function $el(testId: string): ChainablePromiseElement {
   if (driver.isAndroid) {
-    return $(`android=new UiSelector().resourceIdMatches(".*:id/${testId}")`)
+    // Target the resource-id which is where React Native maps testID on Android.
+    // Use a wildcard prefix to handle potential package name prefixes.
+    return $(`android=new UiSelector().resourceIdMatches(".*${testId}")`)
   }
   return $(`~${testId}`)
 }
