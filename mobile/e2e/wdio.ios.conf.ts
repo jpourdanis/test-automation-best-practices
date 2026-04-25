@@ -28,6 +28,10 @@ export const config: WebdriverIO.Config = {
     }
   ],
 
+  hostname: '127.0.0.1',
+  port: 4723,
+  path: '/',
+
   services: [],
 
   framework: 'mocha',
