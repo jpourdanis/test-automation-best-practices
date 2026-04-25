@@ -142,6 +142,7 @@ export default function ColorPickerInner({
                     autoCapitalize='none'
                     autoCorrect={false}
                     spellCheck={false}
+                    testID='hex-input'
                     accessibilityLabel={t('colorPicker.hexLabel')}
                   />
                 </View>
