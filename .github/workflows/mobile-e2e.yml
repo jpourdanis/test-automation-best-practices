@@ -15,10 +15,46 @@ permissions:
 
 jobs:
   # ==========================================
+  # UNIT TESTS (Mobile)
+  # ==========================================
+  mobile-unit-tests:
+    name: Unit Tests (Mobile)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+
+      - name: Run Mobile Unit Tests
+        run: npm run test:unit
+        working-directory: mobile
+
+      - name: Upload Mobile Unit Test Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-mobile-unit-testing
+          path: mobile/allure-results/
+          retention-days: 1
+
+  # ==========================================
   # iOS E2E TESTS (Appium + iOS Simulator)
   # ==========================================
   ios-e2e:
     name: iOS E2E Tests (Appium + Simulator)
+    needs: [mobile-unit-tests]
     runs-on: macos-15
 
     steps:
@@ -182,6 +218,7 @@ jobs:
   # ==========================================
   android-e2e:
     name: Android E2E Tests (Appium + Emulator)
+    needs: [mobile-unit-tests]
     runs-on: ubuntu-latest
 
     steps:
@@ -256,28 +293,40 @@ jobs:
 
       # Cache the AVD snapshot so the emulator only rebuilds on the first run
       # or when the package.json changes (driver version bump).
+      # ANDROID_AVD_HOME is pinned to a workspace-relative path so that
+      # avdmanager, the emulator, and the cache action all agree on the
+      # location of the .ini / .avd directory pair.
       - name: Cache Android AVD
+        id: avd-cache
         uses: actions/cache@v4
+        env:
+          ANDROID_AVD_HOME: ${{ github.workspace }}/.android/avd
         with:
-          path: ~/.android/avd
+          path: ${{ github.workspace }}/.android/avd
           key: avd-api35-${{ runner.os }}-${{ hashFiles('mobile/package.json') }}
 
-      # Create the AVD if it does not already exist (cache miss). --force is
-      # safe because the AVD definition is stateless without a snapshot.
+      # Create the AVD only on a cache miss. --force is safe because the
+      # AVD definition is stateless without a snapshot.
       - name: Create Android AVD
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        env:
+          ANDROID_AVD_HOME: ${{ github.workspace }}/.android/avd
         run: |
+          mkdir -p "$ANDROID_AVD_HOME"
           echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
             "system-images;android-35;google_apis;x86_64" \
             --sdk_root=$ANDROID_HOME
           echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd \
             --name "Pixel_6_API_35" \
             --package "system-images;android-35;google_apis;x86_64" \
-            --device "pixel_6" \
-            --force
+            --device "pixel_6"
 
       # Boot the emulator early so it is ready before Appium starts a session.
       # We poll sys.boot_completed via adb rather than relying on a fixed sleep.
+      # ANDROID_AVD_HOME must match the path used in the create/cache steps.
       - name: Boot Android Emulator
+        env:
+          ANDROID_AVD_HOME: ${{ github.workspace }}/.android/avd
         run: |
           $ANDROID_HOME/emulator/emulator \
             -avd Pixel_6_API_35 \

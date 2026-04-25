@@ -56,3 +56,7 @@ e2e/.wda-derived-data/
 e2e/appium.log
 e2e/wdio-*.log
 e2e/videos/
+
+# Testing reports
+/coverage/
+/allure-results/

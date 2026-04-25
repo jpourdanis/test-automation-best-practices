@@ -26,7 +26,13 @@ export function ConfirmDialog({
   onCancel
 }: Props) {
   return (
-    <Modal visible={visible} transparent animationType='fade' onRequestClose={() => !busy && onCancel()}>
+    <Modal
+      testID='confirm-modal'
+      visible={visible}
+      transparent
+      animationType='fade'
+      onRequestClose={() => !busy && onCancel()}
+    >
       <View style={styles.backdrop}>
         <View style={styles.card} accessibilityRole='alert' accessibilityViewIsModal>
           <View style={[styles.swatch, { backgroundColor: swatch }]} />
