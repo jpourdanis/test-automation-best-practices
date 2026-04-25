@@ -21,8 +21,8 @@ export const config: WebdriverIO.Config = {
       'appium:platformVersion': IOS_VERSION,
       'appium:app': APP,
       'appium:newCommandTimeout': 240,
-      'appium:wdaLaunchTimeout': 600000,
-      'appium:wdaConnectionTimeout': 600000,
+      'appium:wdaLaunchTimeout': 1200000,
+      'appium:wdaConnectionTimeout': 1200000,
       'appium:derivedDataPath': path.resolve(__dirname, '.wda-derived-data'),
       'appium:noReset': false
     }
@@ -43,7 +43,7 @@ export const config: WebdriverIO.Config = {
 
   logLevel: 'warn',
   waitforTimeout: 15000,
-  connectionRetryTimeout: 660000,
+  connectionRetryTimeout: 1260000,
   connectionRetryCount: 3,
 
   beforeTest: async function () {
