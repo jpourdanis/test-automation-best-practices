@@ -1,0 +1,463 @@
+name: Mobile E2E Tests
+
+on:
+  pull_request:
+    branches: [main, react_native]
+    paths: ["mobile/**"]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  # ==========================================
+  # STATIC ANALYSIS (Mobile)
+  # ==========================================
+  mobile-static-analysis:
+    name: Static Analysis (Mobile)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+
+      - name: Run ESLint (Mobile)
+        run: npx eslint mobile/src --ext .ts,.tsx
+
+  # ==========================================
+  # UNIT TESTS (Mobile)
+  # ==========================================
+  mobile-unit-tests:
+    name: Unit Tests (Mobile)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+
+      - name: Run Mobile Unit Tests
+        run: npm run test:unit
+        working-directory: mobile
+
+      - name: SonarCloud Scan
+        uses: SonarSource/sonarqube-scan-action@v5.0.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.projectKey=jpourdanis_test-automation-best-practices
+            -Dsonar.organization=jpourdanis
+            -Dsonar.sources=mobile/src
+            -Dsonar.tests=mobile/src
+            -Dsonar.test.inclusions=mobile/src/**/*.test.tsx,mobile/src/**/*.test.ts
+            -Dsonar.javascript.lcov.reportPaths=mobile/coverage/lcov.info
+
+      - name: Upload Mobile Unit Test Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-mobile-unit-testing
+          path: mobile/allure-results/
+          retention-days: 1
+
+  # ==========================================
+  # iOS E2E TESTS (Appium + iOS Simulator)
+  # ==========================================
+  ios-e2e:
+    name: iOS E2E Tests (Appium + Simulator)
+    needs: [mobile-unit-tests, mobile-static-analysis]
+    runs-on: macos-15
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # Fetches the artifact URL of the most recent successful iOS simulator
+      # build from EAS and downloads it. The .app is extracted from the tarball
+      # and its absolute path is written to $GITHUB_ENV for later steps.
+      - name: Download latest EAS iOS simulator build
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          mkdir -p e2e/artifacts
+
+          BUILD_URL=$(eas build:list \
+            --platform ios \
+            --profile simulator \
+            --status finished \
+            --limit 1 \
+            --json \
+            --non-interactive \
+            | jq -r '.[0].artifacts.buildUrl')
+
+          if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
+            echo "::error::No finished simulator build found on EAS. Trigger one with: npm run build:ios"
+            exit 1
+          fi
+
+          echo "Downloading artifact: $BUILD_URL"
+          curl -L "$BUILD_URL" -o e2e/artifacts/ios-simulator.tar.gz
+          cd e2e/artifacts && tar -xzf ios-simulator.tar.gz
+
+          APP=$(ls -d ./*.app 2>/dev/null | head -1 | sed 's|^\./||')
+          if [ -z "$APP" ]; then
+            echo "::error::No .app found after extracting the EAS artifact."
+            exit 1
+          fi
+
+          echo "APP_PATH=${{ github.workspace }}/mobile/e2e/artifacts/$APP" >> $GITHUB_ENV
+          echo "Found app: $APP"
+
+      # Point xcode-select at the full Xcode app so simctl and
+      # the XCUITest driver have access to the simulator runtime.
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Install ffmpeg
+        run: brew install ffmpeg
+
+      - name: List available iPhone simulators
+        run: xcrun simctl list devices available | grep -E "iPhone [0-9]"
+
+      # Boot the simulator early so WDA compilation doesn't eat into the
+      # session creation timeout window. bootstatus -b blocks until ready.
+      - name: Boot iOS Simulator
+        run: |
+          UDID=$(xcrun simctl list devices available | grep -E "iPhone 16 \(" | head -1 | grep -Eo '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}')
+          echo "Booting simulator: $UDID"
+          xcrun simctl boot "$UDID" 2>/dev/null || echo "Already booted"
+          xcrun simctl bootstatus "$UDID" -b
+
+      # Cache the compiled WDA binary so it only builds from source on the
+      # first run or after the xcuitest driver version changes.
+      - name: Cache WDA derived data
+        uses: actions/cache@v4
+        with:
+          path: mobile/e2e/.wda-derived-data
+          key: wda-${{ runner.os }}-ios18.5-${{ hashFiles('mobile/package.json') }}
+
+      # Install the XCUITest driver into a project-local APPIUM_HOME so the
+      # version is pinned to the repo and isolated from any global Appium install.
+      - name: Install Appium XCUITest driver
+        working-directory: mobile
+        env:
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+        run: npm run appium:install-drivers
+
+      - name: Start Appium Server
+        working-directory: mobile
+        env:
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+        run: |
+          npx appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
+          echo "APPIUM_PID=$!" >> $GITHUB_ENV
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:4723/status > /dev/null; then
+              echo "Appium is ready"
+              exit 0
+            fi
+            echo "Waiting for Appium... attempt $i/30"
+            sleep 1
+          done
+          echo "::error::Appium failed to start within 30 seconds"
+          exit 1
+
+      - name: Run iOS E2E tests
+        working-directory: mobile
+        env:
+          APP_PATH: ${{ env.APP_PATH }}
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+          IOS_DEVICE: "iPhone 16"
+          IOS_VERSION: "18.5"
+        run: npx wdio run e2e/wdio.ios.conf.ts
+
+      - name: Stop Appium Server
+        if: always()
+        run: |
+          if [ -n "$APPIUM_PID" ]; then
+            kill "$APPIUM_PID" || true
+          fi
+
+      - name: Upload Appium server log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-ios-appium-log
+          path: mobile/e2e/appium.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload failure videos
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-ios-failure-videos
+          path: mobile/e2e/videos/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload WDIO results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-ios-wdio-results
+          path: |
+            mobile/e2e/wdio-*.log
+            mobile/e2e/allure-results/
+          retention-days: 7
+          if-no-files-found: ignore
+
+  # ==========================================
+  # Android E2E TESTS (Appium + Emulator)
+  # ==========================================
+  android-e2e:
+    name: Android E2E Tests (Appium + Emulator)
+    needs: [mobile-unit-tests, mobile-static-analysis]
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm install
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli
+
+      # Fetches the artifact URL of the most recent successful Android emulator
+      # build from EAS and downloads it. The .apk path is written to $GITHUB_ENV
+      # for later steps.
+      - name: Download latest EAS Android emulator build
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          mkdir -p e2e/artifacts
+
+          BUILD_URL=$(eas build:list \
+            --platform android \
+            --profile preview \
+            --status finished \
+            --limit 1 \
+            --json \
+            --non-interactive \
+            | jq -r '.[0].artifacts.buildUrl')
+
+          if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
+            echo "::error::No finished Android emulator build found on EAS. Trigger one with: npm run build:android"
+            exit 1
+          fi
+
+          echo "Downloading artifact: $BUILD_URL"
+          curl -L "$BUILD_URL" -o e2e/artifacts/android.apk
+
+          echo "APK_PATH=${{ github.workspace }}/mobile/e2e/artifacts/android.apk" >> $GITHUB_ENV
+          echo "Downloaded APK"
+
+      # Enable KVM so the emulator gets hardware acceleration and boots in a
+      # reasonable amount of time on the Linux runner.
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Install ffmpeg
+        run: sudo apt-get install -y ffmpeg
+
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: List available Android emulator images
+        run: $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager --list | grep "system-images;android-35"
+
+      # Cache the AVD snapshot so the emulator only rebuilds on the first run
+      # or when the package.json changes (driver version bump).
+      # ANDROID_AVD_HOME is pinned to a workspace-relative path so that
+      # avdmanager, the emulator, and the cache action all agree on the
+      # location of the .ini / .avd directory pair.
+      - name: Cache Android AVD
+        id: avd-cache
+        uses: actions/cache@v4
+        env:
+          ANDROID_AVD_HOME: ${{ github.workspace }}/.android/avd
+        with:
+          path: ${{ github.workspace }}/.android/avd
+          key: avd-api35-${{ runner.os }}-${{ hashFiles('mobile/package.json') }}
+
+      # Create the AVD only on a cache miss. --force is safe because the
+      # AVD definition is stateless without a snapshot.
+      - name: Create Android AVD
+        if: steps.avd-cache.outputs.cache-hit != 'true'
+        env:
+          ANDROID_AVD_HOME: ${{ github.workspace }}/.android/avd
+        run: |
+          mkdir -p "$ANDROID_AVD_HOME"
+          echo "y" | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager \
+            "system-images;android-35;google_apis;x86_64" \
+            --sdk_root=$ANDROID_HOME
+          echo "no" | $ANDROID_HOME/cmdline-tools/latest/bin/avdmanager create avd \
+            --name "Pixel_6_API_35" \
+            --package "system-images;android-35;google_apis;x86_64" \
+            --device "pixel_6"
+
+      # Boot the emulator early so it is ready before Appium starts a session.
+      # We poll sys.boot_completed via adb rather than relying on a fixed sleep.
+      # ANDROID_AVD_HOME must match the path used in the create/cache steps.
+      - name: Boot Android Emulator
+        env:
+          ANDROID_AVD_HOME: ${{ github.workspace }}/.android/avd
+        run: |
+          $ANDROID_HOME/emulator/emulator \
+            -avd Pixel_6_API_35 \
+            -no-window \
+            -no-audio \
+            -no-boot-anim \
+            -gpu swiftshader_indirect \
+            -memory 2048 &
+          echo "EMULATOR_PID=$!" >> $GITHUB_ENV
+          $ANDROID_HOME/platform-tools/adb wait-for-device
+          for i in {1..60}; do
+            BOOT=$($ANDROID_HOME/platform-tools/adb shell getprop sys.boot_completed 2>/dev/null | tr -d '\r')
+            if [ "$BOOT" = "1" ]; then
+              echo "Emulator is ready"
+              break
+            fi
+            echo "Waiting for emulator boot... attempt $i/60"
+            sleep 5
+          done
+          if [ "$BOOT" != "1" ]; then
+            echo "::error::Android emulator failed to boot within 5 minutes"
+            exit 1
+          fi
+
+      # Install the UiAutomator2 driver into a project-local APPIUM_HOME so the
+      # version is pinned to the repo and isolated from any global Appium install.
+      - name: Install Appium UiAutomator2 driver
+        working-directory: mobile
+        env:
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+        run: npm run appium:install-drivers:android
+
+      - name: Start Appium Server
+        working-directory: mobile
+        env:
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+        run: |
+          npx appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
+          echo "APPIUM_PID=$!" >> $GITHUB_ENV
+          for i in {1..30}; do
+            if curl -s http://127.0.0.1:4723/status > /dev/null; then
+              echo "Appium is ready"
+              exit 0
+            fi
+            echo "Waiting for Appium... attempt $i/30"
+            sleep 1
+          done
+          echo "::error::Appium failed to start within 30 seconds"
+          exit 1
+
+      - name: Run Android E2E tests
+        working-directory: mobile
+        env:
+          APK_PATH: ${{ env.APK_PATH }}
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+          ANDROID_DEVICE: "Pixel_6_API_35"
+          ANDROID_VERSION: "15" # Android OS version (API 35 = Android 15)
+        run: npx wdio run e2e/wdio.android.conf.ts
+
+      - name: Stop Appium Server
+        if: always()
+        run: |
+          if [ -n "$APPIUM_PID" ]; then
+            kill "$APPIUM_PID" || true
+          fi
+
+      - name: Upload Appium server log
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-android-appium-log
+          path: mobile/e2e/appium.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload failure videos
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-android-failure-videos
+          path: mobile/e2e/videos/
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload WDIO results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-android-wdio-results
+          path: |
+            mobile/e2e/wdio-*.log
+            mobile/e2e/allure-results/
+          retention-days: 7
+          if-no-files-found: ignore

@@ -1,0 +1,62 @@
+# Learn more https://docs.github.com/en/get-started/getting-started-with-git/ignoring-files
+
+# dependencies
+node_modules/
+
+# Expo
+.expo/
+dist/
+web-build/
+expo-env.d.ts
+
+# Native
+.kotlin/
+*.orig.*
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Metro
+.metro-health-check*
+
+# debug
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# macOS
+.DS_Store
+*.pem
+
+# local env files
+.env*.local
+
+# typescript
+*.tsbuildinfo
+
+# generated native folders
+/ios
+/android
+
+# Appium local driver installation
+.appium/
+
+# E2E test artifacts (downloaded build binaries)
+e2e/artifacts/*.tar.gz
+e2e/artifacts/*.app
+e2e/artifacts/*.apk
+e2e/artifacts/*.ipa
+
+# WDA compiled binary cache (managed by CI cache, not git)
+e2e/.wda-derived-data/
+
+# WDIO / Appium logs and failure videos
+e2e/appium.log
+e2e/wdio-*.log
+e2e/videos/
+
+# Testing reports
+/coverage/
+/allure-results/

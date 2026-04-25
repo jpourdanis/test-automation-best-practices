@@ -1,5 +1,6 @@
 /node_modules/
 /server/node_modules/
+/mobile/node_modules/
 /.features-gen/
 /build/
 /dist/
@@ -23,3 +24,5 @@ server/.env
 .env*.local
 /coverage
 /server/coverage
+/mobile/e2e/allure-results/
+/mobile/allure-results/
