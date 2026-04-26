@@ -1,0 +1,39 @@
+2026-04-26 00:37:08 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-04-26 00:37:08 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:37:08 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:37:08 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:37:08 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-04-26 00:37:08 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-cdf631a715926ce68ee8
+2026-04-26 00:37:08 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'b54c97fb-ac4d-4e30-8d36-39e4a6e969e8',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'b54c97fb-ac4d-4e30-8d36-39e4a6e969e8',
+  test_result: 'pending',
+  automate_session_name: 'Input Validation - malformed JSON body returns 400',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-cdf631a715926ce68ee8',
+  test_name: 'malformed JSON body returns 400',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts:112',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        headers: {\n' +
+    "          'Content-Type': 'application/json'\n" +
+    '        },\n' +
+    "        data: '{invalid json'\n" +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(400);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:37:08.568Z',
+  test_scope: 'Input Validation - malformed JSON body returns 400',
+  test_scopes: [ 'Security', 'Input Validation' ],
+  test_rerun_name: ' bs-pixel-7 tests/security.spec.ts Security Input Validation malformed JSON body returns 400'
+}
+2026-04-26 00:37:08 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:37:08 - info: [GrpcClient] TestSessionEvent request successful

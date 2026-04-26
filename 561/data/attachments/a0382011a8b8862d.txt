@@ -1,0 +1,60 @@
+2026-04-26 00:33:45 - info: [BrowserstackCLI] Starting as child process with session ID: 5fa5fb96-c6ca-40ab-bf92-43af5d0cd5a8
+2026-04-26 00:33:45 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-04-26 00:33:45 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=12004:0, state=AutomationFrameworkState.CREATE
+2026-04-26 00:33:45 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=8c50a86583c7af792a4ed9a4a50ac0c9e6ec5409d1df41b042f0097e4dcdce16 target=12004:0
+2026-04-26 00:33:45 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:33:45 - info: [GrpcClient] Sending DriverInit
+2026-04-26 00:33:45 - info: [GrpcClient] DriverInit request successful
+2026-04-26 00:33:45 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:33:45 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:33:45 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:33:45 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:33:45 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should maintain accessibility after state change (color update): 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should maintain accessibility after state change (color update): 200 GET https://test-automation-best-practices.vercel.app/api/colors/Yellow
+2026-04-26 00:33:53 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-04-26 00:33:54 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-04-26 00:33:54 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:33:54 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:33:54 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:33:54 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-04-26 00:33:54 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-24440882514295571dec
+2026-04-26 00:33:54 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'd69070e6-6e5f-478b-abd1-577275646eb4',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'd69070e6-6e5f-478b-abd1-577275646eb4',
+  test_result: 'pending',
+  automate_session_name: 'Accessibility Tests - should maintain accessibility after state change (color update)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_id: 'b7be152566087f10fae4-24440882514295571dec',
+  test_name: 'should maintain accessibility after state change (color update)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts:44',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Change color to verify contrast and other rules still pass\n' +
+    "    await homePage.clickColorButton('Yellow');\n" +
+    '\n' +
+    '    // Wait for the color change to apply (indicated by the text changing)\n' +
+    "    await (0, _baseFixtures.expect)(homePage.currentColorText).toContainText('#f1c40f');\n" +
+    '    const accessibilityScanResults = await new _playwright.default({\n' +
+    '      page\n' +
+    '    }).analyze();\n' +
+    '\n' +
+    '    // We specifically check contrast rules after a background color change\n' +
+    "    const contrastViolations = accessibilityScanResults.violations.filter(v => v.id === 'color-contrast');\n" +
+    '    (0, _baseFixtures.expect)(contrastViolations).toEqual([]);\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:33:45.321Z',
+  test_scope: 'Accessibility Tests - should maintain accessibility after state change (color update)',
+  test_scopes: [ 'Accessibility Tests' ],
+  test_rerun_name: ' bs-safari-ventura tests/a11y.spec.ts Accessibility Tests should maintain accessibility after state change (color update)'
+}
+2026-04-26 00:33:54 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:33:54 - info: [GrpcClient] TestSessionEvent request successful

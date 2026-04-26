@@ -1,0 +1,32 @@
+2026-04-26 00:31:51 - info: [Accessibility] afterTestHook state: accessibilityPlatform=undefined, bstackA11yShouldScan=true
+2026-04-26 00:31:51 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:31:51 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-dec09a858b69383d1c6a
+2026-04-26 00:31:51 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'a66e32ab-b02d-4744-a509-06456907bd8b',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'a66e32ab-b02d-4744-a509-06456907bd8b',
+  test_result: 'pending',
+  automate_session_name: 'DELETE /api/colors/:name - should return 404 for non-existent color deletion',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-dec09a858b69383d1c6a',
+  test_name: 'should return 404 for non-existent color deletion',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts:224',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const response = await request.delete(`/api/colors/DoesNotExist`);\n' +
+    '      (0, _test.expect)(response.status()).toBe(404);\n' +
+    '      const data = await response.json();\n' +
+    "      (0, _test.expect)(data.error).toBe('Color not found');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:31:51.234Z',
+  test_scope: 'DELETE /api/colors/:name - should return 404 for non-existent color deletion',
+  test_scopes: [ 'Backend API Integration', 'DELETE /api/colors/:name' ],
+  test_rerun_name: ' bs-chrome-win11 tests/api.spec.ts Backend API Integration DELETE /api/colors/:name should return 404 for non-existent color deletion'
+}
+2026-04-26 00:31:51 - info: [GrpcClient] Sending TestSessionEvent

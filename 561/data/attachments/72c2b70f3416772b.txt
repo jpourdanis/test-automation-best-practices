@@ -1,0 +1,50 @@
+2026-04-26 00:34:42 - info: [BrowserstackCLI] Starting as child process with session ID: 5fa5fb96-c6ca-40ab-bf92-43af5d0cd5a8
+2026-04-26 00:34:42 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-04-26 00:34:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=13887:0, state=AutomationFrameworkState.CREATE
+2026-04-26 00:34:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=c20c7f6e8b3c9a1cf0b15908478b374af78a822e92d2f5c5c520c550eb8c70ee target=13887:0
+2026-04-26 00:34:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:42 - info: [GrpcClient] Sending DriverInit
+2026-04-26 00:34:42 - info: [GrpcClient] DriverInit request successful
+2026-04-26 00:34:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:42 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:34:42 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:34:42 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] Cancel button closes the picker: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-04-26 00:34:50 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-04-26 00:34:52 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-04-26 00:34:52 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:52 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:34:52 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:34:52 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-04-26 00:34:52 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-9f878409b502c17e4197
+2026-04-26 00:34:52 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '6ff66ae5-078b-46c4-8399-0d8801a0f224',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '6ff66ae5-078b-46c4-8399-0d8801a0f224',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - Cancel button closes the picker',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-9f878409b502c17e4197',
+  test_name: 'Cancel button closes the picker',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts:81',
+  test_code: 'async ({\n' +
+    '    homePage\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    '    await homePage.pickerCancelBtn.click();\n' +
+    '    await (0, _baseFixtures.expect)(homePage.pickerCard).not.toBeVisible();\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:34:42.438Z',
+  test_scope: 'Color Management — Add & Delete - Cancel button closes the picker',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-safari-ventura tests/color-management.spec.ts Color Management — Add & Delete Cancel button closes the picker'
+}
+2026-04-26 00:34:52 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:34:52 - info: [GrpcClient] TestSessionEvent request successful

@@ -1,0 +1,57 @@
+2026-04-26 00:38:04 - info: [BrowserstackCLI] Starting as child process with session ID: 5fa5fb96-c6ca-40ab-bf92-43af5d0cd5a8
+2026-04-26 00:38:04 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-04-26 00:38:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=20077:0, state=AutomationFrameworkState.CREATE
+2026-04-26 00:38:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=330f75118989f5d3b7c94d6a1e21c889ad5808f77b5a273dbba32dbd8124130a target=20077:0
+2026-04-26 00:38:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:38:04 - info: [GrpcClient] Sending DriverInit
+2026-04-26 00:38:04 - info: [GrpcClient] DriverInit request successful
+2026-04-26 00:38:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:38:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:38:04 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:38:04 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:38:04 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] clicking the backdrop closes the picker: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-04-26 00:38:09 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-04-26 00:38:10 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-04-26 00:38:10 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:38:10 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:38:10 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:38:10 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-04-26 00:38:10 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-8225ee96bb4f25e7fee0
+2026-04-26 00:38:10 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'e9be2bab-b895-461e-b0ef-4c3fb89af20f',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'e9be2bab-b895-461e-b0ef-4c3fb89af20f',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - clicking the backdrop closes the picker',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-8225ee96bb4f25e7fee0',
+  test_name: 'clicking the backdrop closes the picker',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts:95',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    '    // Click in the backdrop area (outside the card) using the backdrop element directly\n' +
+    "    await page.locator('.picker-backdrop').click({\n" +
+    '      position: {\n' +
+    '        x: 5,\n' +
+    '        y: 5\n' +
+    '      }\n' +
+    '    });\n' +
+    '    await (0, _baseFixtures.expect)(homePage.pickerCard).not.toBeVisible();\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:38:04.026Z',
+  test_scope: 'Color Management — Add & Delete - clicking the backdrop closes the picker',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-iphone-15 tests/color-management.spec.ts Color Management — Add & Delete clicking the backdrop closes the picker'
+}
+2026-04-26 00:38:10 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:38:10 - info: [GrpcClient] TestSessionEvent request successful

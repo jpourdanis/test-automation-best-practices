@@ -1,0 +1,78 @@
+2026-04-26 00:38:55 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:38:56 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:38:56 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:38:56 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:38:56 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should display colors that do not exist in the database: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should display colors that do not exist in the database: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Magenta
+2026-04-26 00:38:57 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-04-26 00:38:57 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-04-26 00:38:57 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:38:57 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:38:57 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:38:57 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-04-26 00:38:57 - info: [PlaywrightDriverModule] testId: 3519c5209bc58d4ab510-f4411eaee0c475a7d8fc
+2026-04-26 00:38:57 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'a0c2e32f-b005-42f2-ae9e-36c2b56eaef3',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'a0c2e32f-b005-42f2-ae9e-36c2b56eaef3',
+  test_result: 'pending',
+  automate_session_name: 'Network Mocking & Interception - should display colors that do not exist in the database',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/network-mocking.spec.ts',
+  test_id: '3519c5209bc58d4ab510-f4411eaee0c475a7d8fc',
+  test_name: 'should display colors that do not exist in the database',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/network-mocking.spec.ts:44',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Intercept the initial colors fetch and provide custom mock data\n' +
+    "    await page.route('**/api/colors', async route => {\n" +
+    '      await route.fulfill({\n' +
+    '        status: 200,\n' +
+    "        contentType: 'application/json',\n" +
+    '        body: JSON.stringify([{\n' +
+    "          name: 'Magenta',\n" +
+    "          hex: '#ff00ff'\n" +
+    '        }])\n' +
+    '      });\n' +
+    '    });\n' +
+    '\n' +
+    '    // Intercept the specific color fetch\n' +
+    "    await page.route('**/api/colors/Magenta', async route => {\n" +
+    '      await route.fulfill({\n' +
+    '        status: 200,\n' +
+    "        contentType: 'application/json',\n" +
+    '        body: JSON.stringify({\n' +
+    "          name: 'Magenta',\n" +
+    "          hex: '#ff00ff'\n" +
+    '        })\n' +
+    '      });\n' +
+    '    });\n' +
+    '    await homePage.goto();\n' +
+    '\n' +
+    '    // The button for our mocked color should be visible\n' +
+    "    const customBtn = page.getByRole('button', {\n" +
+    "      name: 'Change background to Magenta',\n" +
+    '      exact: true\n' +
+    '    });\n' +
+    '    await (0, _baseFixtures.expect)(customBtn).toBeVisible();\n' +
+    '\n' +
+    '    // Click the mocked color button\n' +
+    '    await customBtn.click();\n' +
+    '\n' +
+    '    // Verify the background color changes to our mocked hex value\n' +
+    "    await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', 'rgb(255, 0, 255)');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:38:55.888Z',
+  test_scope: 'Network Mocking & Interception - should display colors that do not exist in the database',
+  test_scopes: [ 'Network Mocking & Interception' ],
+  test_rerun_name: ' bs-iphone-15 tests/network-mocking.spec.ts Network Mocking & Interception should display colors that do not exist in the database'
+}
+2026-04-26 00:38:57 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:38:57 - info: [GrpcClient] TestSessionEvent request successful

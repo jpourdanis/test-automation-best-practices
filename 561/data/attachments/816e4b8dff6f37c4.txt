@@ -1,0 +1,46 @@
+2026-04-26 00:34:27 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:34:28 - info: [Accessibility] afterTestHook state: accessibilityPlatform=undefined, bstackA11yShouldScan=true
+2026-04-26 00:34:28 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:28 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-7d9b1143db472122ccf3
+2026-04-26 00:34:28 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '4eaae6d5-863b-4c95-b8fc-85c87a51209e',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '4eaae6d5-863b-4c95-b8fc-85c87a51209e',
+  test_result: 'pending',
+  automate_session_name: 'Backend API Integration - GET /api/colors/Red should return the correct hex code',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-7d9b1143db472122ccf3',
+  test_name: 'GET /api/colors/Red should return the correct hex code',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts:40',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const response = await request.get(`/api/colors/${color.name}`);\n' +
+    '\n' +
+    '      // Verify HTTP status code\n' +
+    '      (0, _test.expect)(response.status()).toBe(200);\n' +
+    '\n' +
+    '      // Verify content type\n' +
+    "      (0, _test.expect)(response.headers()['content-type']).toContain('application/json');\n" +
+    '\n' +
+    '      // Parse the JSON payload\n' +
+    '      const data = await response.json();\n' +
+    '\n' +
+    '      // Verify exact object schema using Zod\n' +
+    '      ColorSchema.parse(data);\n' +
+    '      (0, _test.expect)(data).toEqual(_test.expect.objectContaining({\n' +
+    '        name: color.name,\n' +
+    '        hex: color.hex\n' +
+    '      }));\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:34:27.984Z',
+  test_scope: 'Backend API Integration - GET /api/colors/Red should return the correct hex code',
+  test_scopes: [ 'Backend API Integration' ],
+  test_rerun_name: ' bs-safari-ventura tests/api.spec.ts Backend API Integration GET /api/colors/Red should return the correct hex code'
+}
+2026-04-26 00:34:28 - info: [GrpcClient] Sending TestSessionEvent

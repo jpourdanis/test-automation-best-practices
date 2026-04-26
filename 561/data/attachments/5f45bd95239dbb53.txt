@@ -1,0 +1,44 @@
+2026-04-26 00:35:00 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:35:01 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:35:01 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:35:01 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:35:01 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] shows client-side validation error for invalid name chars: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-04-26 00:35:10 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-04-26 00:35:11 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-04-26 00:35:11 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:35:11 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:35:11 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:35:11 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-04-26 00:35:11 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-7f7f6d81d55473e83bef
+2026-04-26 00:35:11 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '6894ea01-66a5-4eda-bc98-b65bed256182',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '6894ea01-66a5-4eda-bc98-b65bed256182',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - shows client-side validation error for invalid name chars',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-7f7f6d81d55473e83bef',
+  test_name: 'shows client-side validation error for invalid name chars',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts:144',
+  test_code: 'async ({\n' +
+    '    homePage\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    "    await homePage.pickerNameInput.fill('!!!invalid');\n" +
+    '    await homePage.pickerSubmitBtn.click();\n' +
+    "    await (0, _baseFixtures.expect)(homePage.pickerCard.getByText('Letters, numbers, spaces, + only')).toBeVisible();\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:35:00.617Z',
+  test_scope: 'Color Management — Add & Delete - shows client-side validation error for invalid name chars',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-safari-ventura tests/color-management.spec.ts Color Management — Add & Delete shows client-side validation error for invalid name chars'
+}
+2026-04-26 00:35:11 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:35:11 - info: [GrpcClient] TestSessionEvent request successful

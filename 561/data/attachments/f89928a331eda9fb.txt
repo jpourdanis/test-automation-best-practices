@@ -1,0 +1,55 @@
+2026-04-26 00:34:32 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:32 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:32 - info: [GrpcClient] Sending DriverInit
+2026-04-26 00:34:32 - info: [GrpcClient] DriverInit request successful
+2026-04-26 00:34:32 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:32 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:32 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:34:32 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:34:32 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] shows a chip for each color with a swatch, name, and delete button: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-04-26 00:34:33 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-04-26 00:34:33 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-04-26 00:34:33 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:33 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:34:33 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:34:33 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-04-26 00:34:33 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-e2d53aa774e0c258d986
+2026-04-26 00:34:33 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'cf209270-7531-49c3-b280-092cd187412b',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'cf209270-7531-49c3-b280-092cd187412b',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - shows a chip for each color with a swatch, name, and delete button',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-e2d53aa774e0c258d986',
+  test_name: 'shows a chip for each color with a swatch, name, and delete button',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts:36',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    '    for (const color of INITIAL_COLORS) {\n' +
+    "      await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    '        name: `Change background to ${color.name}`,\n' +
+    '        exact: true\n' +
+    '      })).toBeVisible();\n' +
+    "      await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    '        name: `Remove color: ${color.name}`,\n' +
+    '        exact: true\n' +
+    '      })).toBeVisible();\n' +
+    '    }\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:34:32.304Z',
+  test_scope: 'Color Management — Add & Delete - shows a chip for each color with a swatch, name, and delete button',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-safari-ventura tests/color-management.spec.ts Color Management — Add & Delete shows a chip for each color with a swatch, name, and delete button'
+}
+2026-04-26 00:34:33 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:34:33 - info: [GrpcClient] TestSessionEvent request successful

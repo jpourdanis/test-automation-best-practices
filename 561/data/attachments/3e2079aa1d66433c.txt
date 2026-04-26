@@ -1,0 +1,79 @@
+2026-04-26 00:35:55 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:35:55 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:35:55 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:35:55 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:35:55 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should gracefully handle a color not found in the database: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-04-26 00:35:56 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-04-26 00:35:56 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-04-26 00:35:56 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:35:56 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:35:56 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:35:56 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-04-26 00:35:56 - info: [PlaywrightDriverModule] testId: 3519c5209bc58d4ab510-725f13d40305a07b3750
+2026-04-26 00:35:56 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '83bef1ff-ab8a-4de2-8dfa-84deb63ca194',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '83bef1ff-ab8a-4de2-8dfa-84deb63ca194',
+  test_result: 'pending',
+  automate_session_name: 'Network Mocking & Interception - should gracefully handle a color not found in the database',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/network-mocking.spec.ts',
+  test_id: '3519c5209bc58d4ab510-725f13d40305a07b3750',
+  test_name: 'should gracefully handle a color not found in the database',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/network-mocking.spec.ts:82',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Verify that the UI handles a 404 gracefully without changing the background\n' +
+    "    await page.route('**/api/colors', async route => {\n" +
+    '      await route.fulfill({\n' +
+    '        status: 200,\n' +
+    "        contentType: 'application/json',\n" +
+    '        body: JSON.stringify([{\n' +
+    "          name: 'Turquoise',\n" +
+    "          hex: '#1abc9c'\n" +
+    '        }, {\n' +
+    "          name: 'Red',\n" +
+    "          hex: '#e74c3c'\n" +
+    '        }])\n' +
+    '      });\n' +
+    '    });\n' +
+    '\n' +
+    "    // Intercept the request for 'Red' and simulate a 404 Not Found response\n" +
+    "    await page.route('**/api/colors/Red', async route => {\n" +
+    '      await route.fulfill({\n' +
+    '        status: 404,\n' +
+    "        contentType: 'application/json',\n" +
+    '        body: JSON.stringify({\n' +
+    "          error: 'Color not found'\n" +
+    '        })\n' +
+    '      });\n' +
+    '    });\n' +
+    '    await homePage.goto();\n' +
+    '\n' +
+    '    // The background should initially be the first color (Turquoise: #1abc9c / rgb(26, 188, 156))\n' +
+    "    await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)');\n" +
+    '\n' +
+    "    // Attempt to click the 'Red' button, which will trigger the 404\n" +
+    "    const redBtn = page.getByRole('button', {\n" +
+    '      name: `${_en.default.changeColor} ${_en.default.colors.red}`,\n' +
+    '      exact: true\n' +
+    '    });\n' +
+    '    await redBtn.click();\n' +
+    '\n' +
+    '    // The background color should not have changed, since the fetch failed\n' +
+    "    await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:35:55.335Z',
+  test_scope: 'Network Mocking & Interception - should gracefully handle a color not found in the database',
+  test_scopes: [ 'Network Mocking & Interception' ],
+  test_rerun_name: ' bs-safari-ventura tests/network-mocking.spec.ts Network Mocking & Interception should gracefully handle a color not found in the database'
+}
+2026-04-26 00:35:56 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:35:56 - info: [GrpcClient] TestSessionEvent request successful

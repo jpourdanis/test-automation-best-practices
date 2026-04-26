@@ -1,0 +1,46 @@
+2026-04-26 00:34:33 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:33 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:33 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:34:33 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:34:33 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] first color chip is active on load (aria-pressed=true): 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-04-26 00:34:34 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-04-26 00:34:34 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-04-26 00:34:34 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:34:34 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:34:34 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:34:34 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-04-26 00:34:34 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-652c9bfbcf89ecb41e44
+2026-04-26 00:34:34 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '510190bc-4aee-4d42-b0e8-c658e7b5e19f',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '510190bc-4aee-4d42-b0e8-c658e7b5e19f',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - first color chip is active on load (aria-pressed=true)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-652c9bfbcf89ecb41e44',
+  test_name: 'first color chip is active on load (aria-pressed=true)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts:45',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    "    const firstBtn = page.getByRole('button', {\n" +
+    "      name: 'Change background to Turquoise',\n" +
+    '      exact: true\n' +
+    '    });\n' +
+    "    await (0, _baseFixtures.expect)(firstBtn).toHaveAttribute('aria-pressed', 'true');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:34:33.497Z',
+  test_scope: 'Color Management — Add & Delete - first color chip is active on load (aria-pressed=true)',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-safari-ventura tests/color-management.spec.ts Color Management — Add & Delete first color chip is active on load (aria-pressed=true)'
+}
+2026-04-26 00:34:34 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:34:34 - info: [GrpcClient] TestSessionEvent request successful

@@ -1,0 +1,42 @@
+2026-04-26 00:36:03 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-04-26 00:36:03 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-04-26 00:36:03 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:36:03 - info: [GrpcClient] TestSessionEvent request successful
+2026-04-26 00:36:03 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-04-26 00:36:03 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-2b36483c8b4ccc7e0ef2
+2026-04-26 00:36:03 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'b9b83612-25ca-4961-bb3e-b1254430ec47',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'b9b83612-25ca-4961-bb3e-b1254430ec47',
+  test_result: 'pending',
+  automate_session_name: 'Injection Prevention - NoSQL injection object in name is rejected (400)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-2b36483c8b4ccc7e0ef2',
+  test_name: 'NoSQL injection object in name is rejected (400)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts:62',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      // Zod rejects non-string types before they reach MongoDB\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        data: {\n' +
+    '          name: {\n' +
+    "            $gt: ''\n" +
+    '          },\n' +
+    "          hex: '#ffffff'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(400);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-04-26T00:36:03.422Z',
+  test_scope: 'Injection Prevention - NoSQL injection object in name is rejected (400)',
+  test_scopes: [ 'Security', 'Injection Prevention' ],
+  test_rerun_name: ' bs-safari-ventura tests/security.spec.ts Security Injection Prevention NoSQL injection object in name is rejected (400)'
+}
+2026-04-26 00:36:03 - info: [GrpcClient] Sending TestSessionEvent
+2026-04-26 00:36:03 - info: [GrpcClient] TestSessionEvent request successful
