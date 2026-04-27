@@ -14,7 +14,6 @@
   },
   "scripts": {
     "build": "tsup",
-    "prepare": "tsup",
     "generate:client": "node scripts/generate-api.js"
   },
   "peerDependencies": {
