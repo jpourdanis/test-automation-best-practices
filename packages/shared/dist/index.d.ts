@@ -1,4 +1,5 @@
 import { z } from 'zod'
+export { Translations, elTranslations, enTranslations, esTranslations } from './locales/index.js'
 
 declare const STRICT_NAME_REGEX: RegExp
 declare const STRICT_NAME_MSG =

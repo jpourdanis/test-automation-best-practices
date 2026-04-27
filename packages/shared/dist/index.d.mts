@@ -1,4 +1,5 @@
 import { z } from 'zod';
+export { Translations, elTranslations, enTranslations, esTranslations } from './locales/index.mjs';
 
 declare const STRICT_NAME_REGEX: RegExp;
 declare const STRICT_NAME_MSG = "name must contain alphanumeric characters and spaces only, and at least one alphanumeric character";

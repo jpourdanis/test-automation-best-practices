@@ -1,9 +1,7 @@
 import { test, expect } from '../baseFixtures'
 import AxeBuilder from '@axe-core/playwright'
 import { playAudit } from 'playwright-lighthouse'
-import enTranslations from '../../src/locales/en.json'
-import esTranslations from '../../src/locales/es.json'
-import elTranslations from '../../src/locales/el.json'
+import { enTranslations, esTranslations, elTranslations } from '@color-app/shared'
 
 /**
  * Test Suite: Accessibility Tests

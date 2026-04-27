@@ -1,8 +1,9 @@
-var __defProp = Object.defineProperty;
-var __export = (target, all) => {
-  for (var name in all)
-    __defProp(target, name, { get: all[name], enumerable: true });
-};
+import {
+  __export,
+  el_default,
+  en_default,
+  es_default
+} from "./chunk-TVQCNOGZ.mjs";
 
 // ../../node_modules/zod/v4/classic/external.js
 var external_exports = {};
@@ -4231,9 +4232,9 @@ __export(locales_exports, {
   cs: () => cs_default,
   da: () => da_default,
   de: () => de_default,
-  en: () => en_default,
+  en: () => en_default2,
   eo: () => eo_default,
-  es: () => es_default,
+  es: () => es_default2,
   fa: () => fa_default,
   fi: () => fi_default,
   fr: () => fr_default,
@@ -5314,7 +5315,7 @@ var error9 = () => {
     }
   };
 };
-function en_default() {
+function en_default2() {
   return {
     localeError: error9()
   };
@@ -5557,7 +5558,7 @@ var error11 = () => {
     }
   };
 };
-function es_default() {
+function es_default2() {
   return {
     localeError: error11()
   };
@@ -13770,7 +13771,7 @@ function date4(params) {
 }
 
 // ../../node_modules/zod/v4/classic/external.js
-config(en_default());
+config(en_default2());
 
 // src/schemas/color.ts
 var STRICT_NAME_REGEX = /^[a-zA-Z0-9]([a-zA-Z0-9 +]*[a-zA-Z0-9])?$/;
@@ -13827,5 +13828,8 @@ export {
   STRICT_NAME_REGEX,
   UpdateColorSchema,
   apiClient,
-  createApiClient
+  createApiClient,
+  el_default as elTranslations,
+  en_default as enTranslations,
+  es_default as esTranslations
 };
