@@ -31,3 +31,13 @@ runs:
         else
           npm ci
         fi
+
+    - name: Build shared package
+      shell: bash
+      env:
+        WORKING_DIR: ${{ inputs.working-directory }}
+      run: |
+        if [ "$WORKING_DIR" != "." ]; then
+          npm ci --legacy-peer-deps
+          npm run build -w @color-app/shared
+        fi
