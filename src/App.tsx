@@ -4,6 +4,7 @@ import './App.css'
 import { useTranslation, Trans } from 'react-i18next'
 import { ColorPicker, readableOn } from './ColorPicker'
 import { ConfirmDialog } from './ConfirmDialog'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 
 interface Color {
   name: string
@@ -134,6 +135,7 @@ const App = () => {
 
   return (
     <div className='App'>
+      <SpeedInsights />
       <main>
         <header className='App-header' style={{ backgroundColor, color: textColor }}>
           <div className='language-selector'>
