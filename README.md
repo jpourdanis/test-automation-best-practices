@@ -4,7 +4,7 @@
 
 **The definitive reference for production-grade test automation engineering.**
 
-_30 battle-tested patterns — from unit testing to security scanning — in a single, runnable full-stack project._
+_29 battle-tested patterns — from unit testing to security scanning — in a single, runnable full-stack project._
 
 [![CI](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml)
 [![Coverage Status](https://coveralls.io/repos/github/jpourdanis/test-automation-best-practices/badge.svg?branch=main)](https://coveralls.io/github/jpourdanis/test-automation-best-practices?branch=main)
@@ -1574,11 +1574,13 @@ TEST_TYPE=production-load-ui BASE_URL=https://test-automation-best-practices.ver
 
 ---
 
-#### 22. Automated Container Health Testing
+#### 22. Automated Container Health & Security Scanning with Trivy
 
-**The problem:** Bash `sleep` loops and `curl` retry scripts are brittle and don't understand container lifecycle. Tests start before services are ready.
+**The problem:** Two failure modes — brittle `sleep` loops that don't understand container lifecycle cause tests to start before services are ready; third-party packages and base Docker images carry known CVEs discovered late in the cycle when fixes are expensive.
 
-**The solution:** Native Docker healthchecks + the `--wait` flag in CI. Docker handles readiness detection; the pipeline blocks until every service reports healthy.
+**The solution:** Native Docker healthchecks + the `--wait` flag in CI guarantee every service is healthy before tests run. Two-layer security scanning — `npm audit` for Node.js dependencies, Trivy for deep filesystem and container image analysis — catches vulnerabilities before they ship.
+
+**Container health checks**
 
 ```yaml
 # docker-compose.yml
@@ -1604,6 +1606,25 @@ healthcheck:
 ```bash
 docker ps --format "{{.Names}}: {{.Status}}"
 # test-automation-app: Up 2 minutes (healthy)
+```
+
+**Security scanning**
+
+> [!CAUTION]
+> **Trivy Supply Chain Incident (March 2026)**
+> Malicious actors compromised Aqua Security's build pipeline and injected credential-stealing code into Trivy versions `0.69.4`–`0.69.6` and repointed GitHub Action release tags. This project **strict-pins** the Action to an immutable commit SHA and hard-pins the Docker image version.
+>
+> ```yaml
+> uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
+> with:
+>   trivy-version: '0.69.3'
+> ```
+
+```bash
+npm run security:audit                # npm audit
+npm run security:scan:code            # Trivy filesystem scan
+npm run security:scan:container:app   # Trivy container scan (frontend)
+npm run security:scan:container:api   # Trivy container scan (backend)
 ```
 
 ---
@@ -1869,32 +1890,7 @@ updates:
 
 ---
 
-#### 29. Security Scanning with Trivy
-
-**The problem:** Third-party packages and base Docker images carry known CVEs. Security is discovered at the end of the cycle when it's expensive to fix.
-
-**The solution:** Two-layer scanning — `npm audit` for Node.js dependencies, Trivy for deep filesystem and container image analysis.
-
-> [!CAUTION]
-> **Trivy Supply Chain Incident (March 2026)**
-> Malicious actors compromised Aqua Security's build pipeline and injected credential-stealing code into Trivy versions `0.69.4`–`0.69.6` and repointed GitHub Action release tags. This project **strict-pins** the Action to an immutable commit SHA and hard-pins the Docker image version.
->
-> ```yaml
-> uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
-> with:
->   trivy-version: '0.69.3'
-> ```
-
-```bash
-npm run security:audit                # npm audit
-npm run security:scan:code            # Trivy filesystem scan
-npm run security:scan:container:app   # Trivy container scan (frontend)
-npm run security:scan:container:api   # Trivy container scan (backend)
-```
-
----
-
-#### 30. Security E2E Testing with Playwright
+#### 29. Security E2E Testing with Playwright
 
 **File:** [`e2e/tests/security.spec.ts`](/e2e/tests/security.spec.ts)
 
