@@ -143,7 +143,11 @@
       "!src/index.tsx",
       "!src/setupTests.ts",
       "!src/react-app-env.d.ts"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^@vercel/analytics/react$": "<rootDir>/src/__mocks__/@vercel/analytics/react.ts",
+      "^@vercel/speed-insights/react$": "<rootDir>/src/__mocks__/@vercel/speed-insights/react.ts"
+    }
   },
   "nyc": {
     "extension": [
