@@ -1,0 +1,5 @@
+[main]
+exclude = [
+  "http://localhost",
+  "https://localhost",
+]
