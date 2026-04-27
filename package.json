@@ -27,6 +27,7 @@
     "@playwright/test": "^1.59.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.0.0",
+    "@vercel/analytics": "^2.0.1",
     "babel-plugin-istanbul": "^8.0.0",
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
