@@ -3,6 +3,7 @@ import logo from './logo.svg'
 import './App.css'
 import { useTranslation, Trans } from 'react-i18next'
 import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import { ColorPicker, readableOn } from './ColorPicker'
 import { ConfirmDialog } from './ConfirmDialog'
 
@@ -247,6 +248,7 @@ const App = () => {
       )}
 
       <Analytics />
+      <SpeedInsights />
     </div>
   )
 }
