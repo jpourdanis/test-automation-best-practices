@@ -16,7 +16,7 @@
     "build": "tsup",
     "generate:client": "node scripts/generate-api.js"
   },
-  "peerDependencies": {
+  "dependencies": {
     "zod": "^4.0.0"
   },
   "devDependencies": {
