@@ -2,11 +2,13 @@ FROM node:22-alpine3.23
 
 RUN apk upgrade --no-cache
 
-WORKDIR /app/server
-
-# Copy shared package so npm ci can resolve @color-app/shared via ../packages/shared
+# Copy shared package, build its dist, then strip dev deps
 COPY packages/shared /app/packages/shared
+WORKDIR /app/packages/shared
+RUN --mount=type=cache,target=/root/.npm \
+    npm install && npm run build && npm prune --omit=dev
 
+WORKDIR /app/server
 COPY server/package*.json ./
 RUN --mount=type=cache,target=/root/.npm \
     npm ci --omit=dev

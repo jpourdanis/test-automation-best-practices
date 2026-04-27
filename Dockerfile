@@ -11,8 +11,9 @@ RUN --mount=type=cache,target=/root/.npm \
 # Copy project files
 COPY . .
 
-# Ensure test output directories are writable by the non-root Playwright user
-RUN mkdir -p /app/test-results /app/playwright-report /app/allure-results /app/traces \
+# Build shared package so consumers can resolve @color-app/shared dist, and ensure test output directories are writable
+RUN npm run build -w @color-app/shared \
+    && mkdir -p /app/test-results /app/playwright-report /app/allure-results /app/traces \
     && chmod -R a+rwx /app/test-results /app/playwright-report /app/allure-results /app/traces
 
 # ---- Build stage: builds the production app ----
