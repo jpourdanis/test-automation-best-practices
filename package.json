@@ -27,6 +27,8 @@
     "@playwright/test": "^1.59.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.0.0",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/speed-insights": "^2.0.0",
     "babel-plugin-istanbul": "^8.0.0",
     "cross-env": "^7.0.3",
     "customize-cra": "^1.0.0",
@@ -141,7 +143,11 @@
       "!src/index.tsx",
       "!src/setupTests.ts",
       "!src/react-app-env.d.ts"
-    ]
+    ],
+    "moduleNameMapper": {
+      "^@vercel/analytics/react$": "<rootDir>/src/__mocks__/@vercel/analytics/react.ts",
+      "^@vercel/speed-insights/react$": "<rootDir>/src/__mocks__/@vercel/speed-insights/react.ts"
+    }
   },
   "nyc": {
     "extension": [
