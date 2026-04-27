@@ -30,7 +30,8 @@ services:
   api:
     image: test-automation-best-practices-api:latest
     build:
-      context: ./server
+      context: .
+      dockerfile: server/Dockerfile
       cache_from:
         - type=gha,scope=api
       cache_to:

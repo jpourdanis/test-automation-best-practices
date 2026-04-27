@@ -3,6 +3,7 @@ node_modules
 .gitignore
 build
 dist
+!packages/shared/dist
 coverage
 .nyc_output
 test-results
