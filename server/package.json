@@ -4,17 +4,19 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js --config jest.config.js index.test.js",
+    "test": "NODE_OPTIONS=--experimental-vm-modules node_modules/.bin/jest --config jest.config.js index.test.js",
     "test:int": "TESTCONTAINERS_RYUK_DISABLED=true jest index.int.test.js",
     "test:watch": "npm test -- --watch",
     "mutation": "stryker run",
-    "coverage": "npm test -- --coverage"
+    "coverage": "npm test -- --coverage",
+    "generate:openapi": "node scripts/generate-openapi.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "Test Automation Best Practices demo API",
   "dependencies": {
+    "@color-app/shared": "*",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",

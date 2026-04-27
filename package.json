@@ -2,6 +2,9 @@
   "name": "test-automation-best-practices",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "overrides": {
     "nth-check": "^2.1.1",
     "postcss": "^8.4.31",
@@ -12,7 +15,7 @@
       "picomatch": "^4.0.4"
     },
     "qs": "^6.14.1",
-    "rollup": "^2.79.2",
+    "rollup": "^4.0.0",
     "semver": "^7.5.3",
     "tough-cookie": "^4.1.3",
     "yaml": "^2.2.2",
@@ -24,6 +27,7 @@
     "js-yaml": "^4.1.1"
   },
   "dependencies": {
+    "@color-app/shared": "*",
     "@playwright/test": "^1.59.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.0.0",
@@ -42,6 +46,9 @@
   },
   "scripts": {
     "prepare": "husky",
+    "build:shared": "npm run build -w packages/shared",
+    "generate:openapi": "npm run generate:openapi --prefix server",
+    "generate:client": "npm run generate:openapi --prefix server && npm run generate:client -w packages/shared",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src e2e performance && npx prettier --check .",
     "lint:fix": "eslint --fix --ext .ts,.tsx,.js,.jsx src e2e performance && npx prettier --write .",
     "format": "npx prettier --write .",
