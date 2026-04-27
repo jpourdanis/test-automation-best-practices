@@ -1,1 +1,1 @@
-export const Analytics = () => null
+export const Analytics = (): null => null

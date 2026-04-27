@@ -1,1 +1,1 @@
-export const SpeedInsights = () => null
+export const SpeedInsights = (): null => null
