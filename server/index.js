@@ -248,6 +248,7 @@ app.all('/api/colors/:name', (req, res, next) => {
  *           application/json:
  *             schema:
  *               type: array
+ *               maxItems: 100
  *               items:
  *                 $ref: '#/components/schemas/Color'
  *       500:
