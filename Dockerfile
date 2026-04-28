@@ -28,9 +28,12 @@ RUN apk add --no-cache curl
 COPY --from=build /app/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD curl -f http://localhost:3000/ || exit 1
 CMD ["nginx", "-g", "daemon off;"]
 
 # ---- Playwright stage: used to run tests ----
 FROM base AS playwright
+HEALTHCHECK NONE
 USER pwuser
 ENTRYPOINT ["npx", "playwright", "test"]

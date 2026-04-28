@@ -37,7 +37,9 @@ runs:
       env:
         WORKING_DIR: ${{ inputs.working-directory }}
       run: |
-        if [ "$WORKING_DIR" != "." ]; then
+        if [ "$WORKING_DIR" == "." ]; then
+          npm run build -w @color-app/shared
+        else
           npm ci --legacy-peer-deps
           npm run build -w @color-app/shared
         fi
