@@ -102,7 +102,7 @@
     "@percy/cli": "^1.29.0",
     "@percy/playwright": "^1.1.0",
     "@stryker-mutator/core": "^9.6.0",
-    "@stryker-mutator/jest-runner": "^9.6.0",
+    "@stryker-mutator/jest-runner": "^9.6.1",
     "@testing-library/dom": "^10.0.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.2.0",
