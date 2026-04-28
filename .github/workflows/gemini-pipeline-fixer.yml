@@ -24,7 +24,7 @@ jobs:
         uses: ./.github/actions/setup-node-env
 
       - name: Install Gemini CLI
-        run: npm install -g @google/gemini-cli
+        run: npm install --ignore-scripts -g @google/gemini-cli
 
       - name: Fetch Failed Pipeline Logs
         env:

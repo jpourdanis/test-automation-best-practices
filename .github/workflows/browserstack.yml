@@ -21,7 +21,7 @@ jobs:
       - uses: ./.github/actions/setup-node-env
 
       - name: Install BrowserStack SDK
-        run: npm install -D browserstack-node-sdk
+        run: npm install --ignore-scripts -D browserstack-node-sdk
 
       - name: Cache Playwright browsers
         id: playwright-cache

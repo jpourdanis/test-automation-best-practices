@@ -27,9 +27,9 @@ runs:
         WORKING_DIR: ${{ inputs.working-directory }}
       run: |
         if [ "$WORKING_DIR" == "." ]; then
-          npm ci --legacy-peer-deps
+          npm ci --ignore-scripts --legacy-peer-deps
         else
-          npm ci
+          npm ci --ignore-scripts
         fi
 
     - name: Build shared package
@@ -40,6 +40,6 @@ runs:
         if [ "$WORKING_DIR" == "." ]; then
           npm run build -w @color-app/shared
         else
-          npm ci --legacy-peer-deps
+          npm ci --ignore-scripts --legacy-peer-deps
           npm run build -w @color-app/shared
         fi

@@ -1005,7 +1005,7 @@ jobs:
       # Install the BrowserStack SDK which wraps the Playwright test runner
       # and proxies browser sessions to BrowserStack's cloud infrastructure.
       - name: Install BrowserStack SDK
-        run: npm install -D browserstack-node-sdk
+        run: npm install --ignore-scripts -D browserstack-node-sdk
 
       - name: Cache Playwright browsers
         id: playwright-cache

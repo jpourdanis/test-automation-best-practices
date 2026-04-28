@@ -6,7 +6,7 @@ ENV CI=true
 # Install dependencies using npm (this repo uses npm)
 COPY package.json package-lock.json* ./
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --legacy-peer-deps
+    npm ci --ignore-scripts --legacy-peer-deps
 
 # Copy project files
 COPY . .
