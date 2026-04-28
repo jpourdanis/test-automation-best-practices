@@ -299,21 +299,18 @@ export interface components {
       /** @description Error message */
       error?: string
     }
-    UpdateColor:
-      | {
-          /**
-           * @description New name for the color
-           * @example Turquoise
-           */
-          name?: string
-          /**
-           * @description New hex code for the color
-           * @example #1abc9c
-           */
-          hex?: string
-        }
-      | unknown
-      | unknown
+    UpdateColor: {
+      /**
+       * @description New name for the color
+       * @example Turquoise
+       */
+      name?: string
+      /**
+       * @description New hex code for the color
+       * @example #1abc9c
+       */
+      hex?: string
+    }
   }
   responses: never
   parameters: never

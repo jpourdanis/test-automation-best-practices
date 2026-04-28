@@ -14,7 +14,7 @@ const createColorLimiter = rateLimit({
   max: 100 // limit each IP to 100 create-color requests per windowMs
 })
 
-// Validation schemas imported from @my-app/shared (single source of truth).
+// Validation schemas imported from @color-app/shared (single source of truth).
 // CreateColorSchema validates POST bodies; UpdateColorSchema validates PUT bodies.
 // STRICT_NAME_REGEX / STRICT_NAME_MSG are also used for path-param validation below.
 
@@ -126,9 +126,6 @@ app.get('/openapi.json', (req, res) => {
  *     UpdateColor:
  *       type: object
  *       additionalProperties: false
- *       anyOf:
- *         - required: [name]
- *         - required: [hex]
  *       properties:
  *         name:
  *           type: string

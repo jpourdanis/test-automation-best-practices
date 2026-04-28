@@ -30,8 +30,7 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/Color"
-                  },
-                  "maxItems": 1000
+                  }
                 }
               }
             }
@@ -276,14 +275,6 @@
       "UpdateColor": {
         "type": "object",
         "additionalProperties": false,
-        "anyOf": [
-          {
-            "required": ["name"]
-          },
-          {
-            "required": ["hex"]
-          }
-        ],
         "properties": {
           "name": {
             "type": "string",
