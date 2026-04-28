@@ -126,6 +126,7 @@ app.get('/openapi.json', (req, res) => {
  *     UpdateColor:
  *       type: object
  *       additionalProperties: false
+ *       minProperties: 1
  *       properties:
  *         name:
  *           type: string
