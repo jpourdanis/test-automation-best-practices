@@ -2,11 +2,13 @@ FROM node:22-alpine3.23
 
 RUN apk upgrade --no-cache
 
-# Copy shared package, build its dist, then strip dev deps
-COPY packages/shared /app/packages/shared
-WORKDIR /app/packages/shared
+# Copy workspace root manifests so npm ci can resolve shared package deps from lockfile
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY packages/shared ./packages/shared
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --ignore-scripts --legacy-peer-deps && npm run build && npm prune --omit=dev --legacy-peer-deps
+    npm ci --ignore-scripts --legacy-peer-deps --workspace=packages/shared && \
+    npm run build --workspace=packages/shared
 
 WORKDIR /app/server
 COPY server/package*.json ./
