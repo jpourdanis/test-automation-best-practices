@@ -1,0 +1,105 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/pom-refactored.spec.ts >> POM Refactored: Background color tests >> verify Red ( #e74c3c ) is applied as the background color
+- Location: e2e/tests/pom-refactored.spec.ts:29:9
+
+# Error details
+
+```
+Error: expect(locator).toContainText(expected) failed
+
+Locator: getByText('Current color:')
+Expected substring: "e74c3c"
+Received string:    "Current color: #ff0016"
+Timeout: 5000ms
+
+Call log:
+  - Expect "toContainText" with timeout 5000ms
+  - waiting for getByText('Current color:')
+    3 × locator resolved to <span aria-live="polite" class="current-color">Current color: #1de2c9</span>
+      - unexpected value "Current color: #1de2c9"
+    6 × locator resolved to <span aria-live="polite" class="current-color">Current color: #ff0016</span>
+      - unexpected value "Current color: #ff0016"
+
+```
+
+# Page snapshot
+
+```yaml
+- main [ref=e4]:
+  - generic [ref=e5]:
+    - combobox "Select Language" [ref=e7] [cursor=pointer]:
+      - option "English" [selected]
+      - option "Español"
+      - option "Ελληνικά"
+    - img "logo"
+    - heading "Color Chooser App" [level=1] [ref=e8]
+    - paragraph [ref=e9]:
+      - text: Edit
+      - code [ref=e10]: src/App.js
+      - text: and save to reload.
+    - link "Learn React" [ref=e11] [cursor=pointer]:
+      - /url: https://reactjs.org
+    - generic [ref=e12]: "Current color: #ff0016"
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - button "Change background to Turquoise" [ref=e15] [cursor=pointer]: Turquoise
+        - 'button "Remove color: Turquoise" [ref=e17] [cursor=pointer]': ×
+      - generic [ref=e18]:
+        - button "Change background to Yellow" [ref=e19] [cursor=pointer]: Yellow
+        - 'button "Remove color: Yellow" [ref=e21] [cursor=pointer]': ×
+      - generic [ref=e22]:
+        - button "Change background to Red" [active] [pressed] [ref=e23] [cursor=pointer]: Red
+        - 'button "Remove color: Red" [ref=e25] [cursor=pointer]': ×
+      - button "+ Add color" [ref=e26] [cursor=pointer]
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from '../baseFixtures'
+  2  | import { convertHexToRGB, extractHexColor } from '../helper'
+  3  | 
+  4  | const colors = [
+  5  |   { name: 'Turquoise', hex: '1abc9c' },
+  6  |   { name: 'Red', hex: 'e74c3c' },
+  7  |   { name: 'Yellow', hex: 'f1c40f' }
+  8  | ]
+  9  | 
+  10 | /**
+  11 |  * Test Suite: POM Refactored
+  12 |  *
+  13 |  * This suite demonstrates the Page Object Model (POM) pattern. Instead of using
+  14 |  * raw locators (e.g., page.locator), the tests use methods from `HomePage.ts`,
+  15 |  * which abstracts the page structure and improves test maintainability.
+  16 |  */
+  17 | test.describe('POM Refactored: Background color tests', () => {
+  18 |   test.beforeEach(async ({ homePage }) => {
+  19 |     await homePage.goto()
+  20 |   })
+  21 | 
+  22 |   for (const color of colors) {
+  23 |     /**
+  24 |      * Test: Verify applied background color via POM
+  25 |      *
+  26 |      * Uses the methods and elements defined in the HomePage POM class to
+  27 |      * change the color and verify the new hexadecimal and RGB values.
+  28 |      */
+  29 |     test(`verify ${color.name} ( #${color.hex} ) is applied as the background color`, async ({ homePage }) => {
+  30 |       await homePage.clickColorButton(color.name)
+> 31 |       await expect(homePage.currentColorText).toContainText(color.hex)
+     |                                               ^ Error: expect(locator).toContainText(expected) failed
+  32 | 
+  33 |       const rgb = convertHexToRGB(`#${color.hex}`)
+  34 |       await expect(homePage.header).toHaveCSS('background-color', `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`)
+  35 |     })
+  36 |   }
+  37 | })
+  38 | 
+```
