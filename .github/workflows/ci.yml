@@ -593,6 +593,16 @@ jobs:
           schema: http://127.0.0.1:5001/openapi.json
           checks: all
           args: --suppress-health-check=filter_too_much --report-junit-path=allure-results/schemathesis-junit.xml
+          wait-for-schema: 2
+          version: latest
+          coverage: true
+          coverage-report: true
+          coverage-report-path: schema-coverage.html
+          coverage-artifact-name: schema-coverage-report
+          coverage-pr-comment: true
+          coverage-step-summary: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # Uploads the Schemathesis execution results for inclusion in the final Allure report
       - name: Upload Schemathesis Allure Results
@@ -1005,7 +1015,7 @@ jobs:
       # Install the BrowserStack SDK which wraps the Playwright test runner
       # and proxies browser sessions to BrowserStack's cloud infrastructure.
       - name: Install BrowserStack SDK
-        run: npm install -D browserstack-node-sdk
+        run: npm install --ignore-scripts -D browserstack-node-sdk
 
       - name: Cache Playwright browsers
         id: playwright-cache

@@ -5,7 +5,7 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, string>) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const en = require('./locales/en.json')
+      const en = require('@color-app/shared').enTranslations
       const parts = key.split('.')
       let value: unknown = en
       for (const part of parts) {

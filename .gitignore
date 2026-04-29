@@ -3,6 +3,7 @@
 /.features-gen/
 /build/
 /dist/
+/packages/shared/dist/
 /coverage/
 /.nyc_output/
 /test-results/

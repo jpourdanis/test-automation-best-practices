@@ -1,4 +1,4 @@
-import * as crypto from 'crypto'
+import * as crypto from 'node:crypto'
 /**
  * Converts a hexadecimal color string to RGB values
  * @param hex - The hexadecimal color string (with or without '#' prefix)

@@ -1,5 +1,5 @@
 import { test, expect } from '../baseFixtures'
-import enTranslations from '../../src/locales/en.json'
+import { enTranslations } from '@color-app/shared'
 
 /**
  * Test Suite: Network Mocking & Interception

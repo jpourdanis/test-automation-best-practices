@@ -2,6 +2,9 @@
   "name": "test-automation-best-practices",
   "version": "1.0.0",
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "overrides": {
     "nth-check": "^2.1.1",
     "postcss": "^8.4.31",
@@ -12,7 +15,7 @@
       "picomatch": "^4.0.4"
     },
     "qs": "^6.14.1",
-    "rollup": "^2.79.2",
+    "rollup": "^4.0.0",
     "semver": "^7.5.3",
     "tough-cookie": "^4.1.3",
     "yaml": "^2.2.2",
@@ -24,6 +27,7 @@
     "js-yaml": "^4.1.1"
   },
   "dependencies": {
+    "@color-app/shared": "*",
     "@playwright/test": "^1.59.1",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.0.0",
@@ -44,6 +48,9 @@
   },
   "scripts": {
     "prepare": "husky",
+    "build:shared": "npm run build -w packages/shared",
+    "generate:openapi": "npm run generate:openapi --prefix server",
+    "generate:client": "npm run generate:openapi --prefix server && npm run generate:client -w packages/shared",
     "lint": "eslint --ext .ts,.tsx,.js,.jsx src e2e performance && npx prettier --check .",
     "lint:fix": "eslint --fix --ext .ts,.tsx,.js,.jsx src e2e performance && npx prettier --write .",
     "format": "npx prettier --write .",
@@ -68,7 +75,9 @@
     "test:perf:ui:smoke:prod": "K6_BROWSER_ENABLED=true TEST_TYPE=production-smoke-ui k6 run performance/ui-performance.spec.ts",
     "test:perf:ui:load:prod": "K6_BROWSER_ENABLED=true TEST_TYPE=production-load-ui k6 run performance/ui-performance.spec.ts",
     "test:perf": "npm run test:perf:ui:smoke",
-    "test:api:schemathesis": "docker run --rm schemathesis/schemathesis run http://host.docker.internal:5001/openapi.json",
+    "test:api:schemathesis": "docker run --rm schemathesis/schemathesis run --checks all --suppress-health-check filter_too_much --phases examples,coverage,fuzzing http://host.docker.internal:5001/openapi.json",
+    "prebuild": "npm run build -w @color-app/shared",
+    "pretest:unit": "npm run build -w @color-app/shared",
     "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-frontend-unit-tests.xml react-scripts test --watchAll=false --reporters=default --reporters=jest-junit --coverage",
     "sonar:scan": "sonar-scanner",
     "mutation:frontend": "stryker run",
