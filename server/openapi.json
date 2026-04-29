@@ -28,7 +28,6 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "maxItems": 100,
                   "items": {
                     "$ref": "#/components/schemas/Color"
                   }
@@ -78,6 +77,9 @@
           },
           "409": {
             "description": "A color with that name already exists"
+          },
+          "429": {
+            "description": "Too many requests"
           },
           "500": {
             "description": "Server error"
@@ -276,7 +278,14 @@
       "UpdateColor": {
         "type": "object",
         "additionalProperties": false,
-        "minProperties": 1,
+        "anyOf": [
+          {
+            "required": ["name"]
+          },
+          {
+            "required": ["hex"]
+          }
+        ],
         "properties": {
           "name": {
             "type": "string",

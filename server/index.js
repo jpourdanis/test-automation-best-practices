@@ -11,7 +11,7 @@ const app = express()
 app.disable('x-powered-by')
 const createColorLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 create-color requests per windowMs
+  max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10)
 })
 
 // Validation schemas imported from @color-app/shared (single source of truth).
@@ -126,7 +126,9 @@ app.get('/openapi.json', (req, res) => {
  *     UpdateColor:
  *       type: object
  *       additionalProperties: false
- *       minProperties: 1
+ *       anyOf:
+ *         - required: [name]
+ *         - required: [hex]
  *       properties:
  *         name:
  *           type: string
@@ -248,7 +250,6 @@ app.all('/api/colors/:name', (req, res, next) => {
  *           application/json:
  *             schema:
  *               type: array
- *               maxItems: 100
  *               items:
  *                 $ref: '#/components/schemas/Color'
  *       500:
@@ -352,6 +353,8 @@ app.get('/api/colors/:name', async (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       409:
  *         description: A color with that name already exists
+ *       429:
+ *         description: Too many requests
  *       500:
  *         description: Server error
  */
