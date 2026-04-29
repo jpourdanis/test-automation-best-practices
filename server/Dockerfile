@@ -6,7 +6,7 @@ RUN apk upgrade --no-cache
 COPY packages/shared /app/packages/shared
 WORKDIR /app/packages/shared
 RUN --mount=type=cache,target=/root/.npm \
-    npm install --ignore-scripts --legacy-peer-deps && npm run build && npm prune --omit=dev --legacy-peer-deps
+    npm ci --ignore-scripts --legacy-peer-deps && npm run build && npm prune --omit=dev --legacy-peer-deps
 
 WORKDIR /app/server
 COPY server/package*.json ./
