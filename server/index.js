@@ -4,46 +4,19 @@ const mongoose = require('mongoose')
 const cors = require('cors')
 const swaggerJsdoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
-const { z } = require('zod')
 const rateLimit = require('express-rate-limit')
+const { CreateColorSchema, UpdateColorSchema, STRICT_NAME_REGEX, STRICT_NAME_MSG } = require('@color-app/shared')
 
 const app = express()
 app.disable('x-powered-by')
 const createColorLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 create-color requests per windowMs
+  max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10)
 })
 
-// ---------------------------------------------------------------------------
-// Validation Schemas
-// ---------------------------------------------------------------------------
-
-// Strict regex: allows spaces, but REQUIRES at least one letter or number
-const STRICT_NAME_REGEX = /^[a-zA-Z0-9]([a-zA-Z0-9 +]*[a-zA-Z0-9])?$/
-const STRICT_NAME_MSG =
-  'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
-
-const colorZodSchema = z
-  .object({
-    name: z.string({ required_error: 'name is required' }).regex(STRICT_NAME_REGEX, STRICT_NAME_MSG),
-    hex: z
-      .string({ required_error: 'hex is required' })
-      .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format (e.g., #1abc9c)')
-  })
-  .strict()
-
-const updateColorZodSchema = z
-  .object({
-    name: z.string().regex(STRICT_NAME_REGEX, STRICT_NAME_MSG).optional(),
-    hex: z
-      .string()
-      .regex(/^#[0-9A-Fa-f]{6}$/, 'hex must be a valid 6-digit hex format')
-      .optional()
-  })
-  .strict()
-  .refine((data) => data.name !== undefined || data.hex !== undefined, {
-    message: 'At least one field to update must be provided'
-  })
+// Validation schemas imported from @color-app/shared (single source of truth).
+// CreateColorSchema validates POST bodies; UpdateColorSchema validates PUT bodies.
+// STRICT_NAME_REGEX / STRICT_NAME_MSG are also used for path-param validation below.
 
 // ---------------------------------------------------------------------------
 // Middleware
@@ -380,12 +353,14 @@ app.get('/api/colors/:name', async (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       409:
  *         description: A color with that name already exists
+ *       429:
+ *         description: Too many requests
  *       500:
  *         description: Server error
  */
 app.post('/api/colors', createColorLimiter, async (req, res) => {
   try {
-    const parseResult = colorZodSchema.safeParse(req.body)
+    const parseResult = CreateColorSchema.safeParse(req.body)
     if (!parseResult.success) {
       return res.status(400).json({ error: parseResult.error.issues[0].message })
     }
@@ -461,7 +436,7 @@ app.put('/api/colors/:name', async (req, res) => {
     if (!STRICT_NAME_REGEX.test(currentName)) {
       return res.status(400).json({ error: STRICT_NAME_MSG })
     }
-    const parseResult = updateColorZodSchema.safeParse(req.body)
+    const parseResult = UpdateColorSchema.safeParse(req.body)
     if (!parseResult.success) {
       return res.status(400).json({ error: parseResult.error.issues[0].message })
     }
@@ -562,4 +537,4 @@ if (require.main === module) {
 }
 // Stryker restore all
 
-module.exports = { app, seedDatabase, Color, mongoose, MONGO_URI }
+module.exports = { app, seedDatabase, Color, mongoose, MONGO_URI, swaggerSpec }

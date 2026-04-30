@@ -1,0 +1,309 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Colors API",
+    "version": "1.0.0",
+    "description": "A simple CRUD API for managing colors, backed by MongoDB. This API is used by the Test Automation Best Practices demo application."
+  },
+  "servers": [
+    {
+      "url": "https://test-automation-best-practices.vercel.app",
+      "description": "Vercel Production Server"
+    },
+    {
+      "url": "http://localhost:5001",
+      "description": "Local development server"
+    }
+  ],
+  "paths": {
+    "/api/colors": {
+      "get": {
+        "summary": "Retrieve all colors",
+        "description": "Returns the full list of colors stored in the database.",
+        "tags": ["Colors"],
+        "responses": {
+          "200": {
+            "description": "A list of colors",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "maxItems": 100,
+                  "items": {
+                    "$ref": "#/components/schemas/Color"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "post": {
+        "summary": "Create a new color",
+        "description": "Adds a new color to the database. Both `name` and `hex` are required. Returns 409 if a color with the same name already exists.\n",
+        "tags": ["Colors"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Color"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Color created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Color"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data (e.g., empty name, invalid hex format)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "A color with that name already exists"
+          },
+          "429": {
+            "description": "Too many requests"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    },
+    "/api/colors/{name}": {
+      "get": {
+        "summary": "Retrieve a single color by name",
+        "description": "Looks up a color by its name (case-sensitive).",
+        "tags": ["Colors"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20+]*[a-zA-Z0-9])?$"
+            },
+            "description": "The color name to look up",
+            "example": "Red"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The matching color",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Color"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid color name format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Color not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "put": {
+        "summary": "Update an existing color",
+        "description": "Updates the hex value (and optionally the name) of an existing color. The color is identified by its current name in the URL path.\n",
+        "tags": ["Colors"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20+]*[a-zA-Z0-9])?$"
+            },
+            "description": "Current name of the color to update",
+            "example": "Turquoise"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateColor"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Color updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Color"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input data (e.g., empty name, invalid hex format)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Color not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      },
+      "delete": {
+        "summary": "Delete a color by name",
+        "description": "Permanently removes the color with the given name from the database.",
+        "tags": ["Colors"],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "name",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20+]*[a-zA-Z0-9])?$"
+            },
+            "description": "Name of the color to delete",
+            "example": "Yellow"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Color deleted successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Color \"Yellow\" deleted successfully"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid color name format",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Color not found"
+          },
+          "500": {
+            "description": "Server error"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Color": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "hex"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20+]*[a-zA-Z0-9])?$",
+            "description": "Human-readable color name",
+            "example": "Turquoise"
+          },
+          "hex": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$",
+            "description": "Hex color code including the leading",
+            "example": "#1abc9c"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "string",
+            "description": "Error message"
+          }
+        }
+      },
+      "UpdateColor": {
+        "type": "object",
+        "additionalProperties": false,
+        "anyOf": [
+          {
+            "required": ["name"]
+          },
+          {
+            "required": ["hex"]
+          }
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20+]*[a-zA-Z0-9])?$",
+            "description": "New name for the color",
+            "example": "Turquoise"
+          },
+          "hex": {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$",
+            "description": "New hex code for the color",
+            "example": "#1abc9c"
+          }
+        }
+      }
+    }
+  },
+  "tags": []
+}

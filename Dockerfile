@@ -6,13 +6,14 @@ ENV CI=true
 # Install dependencies using npm (this repo uses npm)
 COPY package.json package-lock.json* ./
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --legacy-peer-deps
+    npm ci --ignore-scripts --legacy-peer-deps
 
 # Copy project files
 COPY . .
 
-# Ensure test output directories are writable by the non-root Playwright user
-RUN mkdir -p /app/test-results /app/playwright-report /app/allure-results /app/traces \
+# Build shared package so consumers can resolve @color-app/shared dist, and ensure test output directories are writable
+RUN npm run build -w @color-app/shared \
+    && mkdir -p /app/test-results /app/playwright-report /app/allure-results /app/traces \
     && chmod -R a+rwx /app/test-results /app/playwright-report /app/allure-results /app/traces
 
 # ---- Build stage: builds the production app ----
@@ -27,9 +28,12 @@ RUN apk add --no-cache curl
 COPY --from=build /app/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
+  CMD curl -f http://localhost:3000/ || exit 1
 CMD ["nginx", "-g", "daemon off;"]
 
 # ---- Playwright stage: used to run tests ----
 FROM base AS playwright
+HEALTHCHECK NONE
 USER pwuser
 ENTRYPOINT ["npx", "playwright", "test"]

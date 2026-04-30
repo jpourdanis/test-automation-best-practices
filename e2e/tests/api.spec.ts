@@ -1,11 +1,6 @@
 import { test, expect } from '@playwright/test'
 import { faker } from '@faker-js/faker'
-import { z } from 'zod'
-
-const ColorSchema = z.object({
-  name: z.string(),
-  hex: z.string().regex(/^#[0-9A-Fa-f]{6}$/)
-})
+import { ColorSchema } from '@color-app/shared'
 /**
  * Test Suite: Backend API Integration
  *

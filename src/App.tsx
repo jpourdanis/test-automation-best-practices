@@ -2,13 +2,11 @@ import React from 'react'
 import logo from './logo.svg'
 import './App.css'
 import { useTranslation, Trans } from 'react-i18next'
+import { Analytics } from '@vercel/analytics/react'
+import { SpeedInsights } from '@vercel/speed-insights/react'
 import { ColorPicker, readableOn } from './ColorPicker'
 import { ConfirmDialog } from './ConfirmDialog'
-
-interface Color {
-  name: string
-  hex: string
-}
+import { type Color, apiClient } from '@color-app/shared'
 
 const App = () => {
   const { t, i18n } = useTranslation()
@@ -26,7 +24,8 @@ const App = () => {
   const [deleting, setDeleting] = React.useState(false)
 
   React.useEffect(() => {
-    fetch('/api/colors')
+    apiClient
+      .getColors()
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
         return res.json()
@@ -50,7 +49,7 @@ const App = () => {
   const handleColorClick = async (colorName: string) => {
     setError(null)
     try {
-      const res = await fetch(`/api/colors/${encodeURIComponent(colorName)}`, { cache: 'no-store' })
+      const res = await apiClient.getColor(colorName)
       if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`)
       const data = await res.json()
       if (data && data.hex) {
@@ -66,11 +65,7 @@ const App = () => {
     setSaving(true)
     setPickerError(null)
     try {
-      const res = await fetch('/api/colors', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, hex })
-      })
+      const res = await apiClient.createColor({ name, hex })
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
         let msg = data.error || `Request failed (HTTP ${res.status})`
@@ -80,7 +75,7 @@ const App = () => {
         setPickerError(msg)
         return
       }
-      const listRes = await fetch('/api/colors')
+      const listRes = await apiClient.getColors()
       const list: Color[] = await listRes.json()
       setColors(list)
       setBackgroundColor(data.hex)
@@ -99,13 +94,13 @@ const App = () => {
     setDeleting(true)
     setError(null)
     try {
-      const res = await fetch(`/api/colors/${encodeURIComponent(target.name)}`, { method: 'DELETE' })
+      const res = await apiClient.deleteColor(target.name)
       const data = await res.json().catch(() => ({}))
       if (!res.ok) {
         setError(data.error || `Failed to delete "${target.name}"`)
         return
       }
-      const listRes = await fetch('/api/colors')
+      const listRes = await apiClient.getColors()
       const list: Color[] = await listRes.json()
       setColors(list)
       if (activeName === target.name) {
@@ -244,6 +239,9 @@ const App = () => {
           }}
         />
       )}
+
+      <Analytics />
+      <SpeedInsights />
     </div>
   )
 }
