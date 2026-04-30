@@ -24,25 +24,8 @@ runs:
 
     - name: Install dependencies
       shell: bash
-      working-directory: ${{ inputs.working-directory }}
-      env:
-        WORKING_DIR: ${{ inputs.working-directory }}
-      run: |
-        if [ "$WORKING_DIR" == "." ]; then
-          npm ci --ignore-scripts --legacy-peer-deps
-        else
-          npm ci --ignore-scripts
-        fi
+      run: npm ci --ignore-scripts --legacy-peer-deps
 
     - name: Build shared package
       shell: bash
-      working-directory: .
-      env:
-        WORKING_DIR: ${{ inputs.working-directory }}
-      run: |
-        if [ "$WORKING_DIR" == "." ]; then
-          npm run build -w @color-app/shared
-        else
-          npm ci --ignore-scripts -w @color-app/shared --include-workspace-root
-          npm run build -w @color-app/shared
-        fi
+      run: npm run build -w @color-app/shared
