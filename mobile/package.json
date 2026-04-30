@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "build:shared": "npm run build --prefix ../packages/shared",
-    "eas-build-post-install": "npm run build -w packages/shared",
+    "eas-build-pre-install": "cd ../packages/shared && npm install --ignore-scripts && npx tsup",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -23,7 +23,7 @@
     "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-mobile-unit-tests.xml jest --coverage"
   },
   "dependencies": {
-    "@color-app/shared": "*",
+    "@color-app/shared": "file:../packages/shared",
     "@react-native-community/slider": "5.0.1",
     "@react-native-picker/picker": "2.11.1",
     "expo": "~54.0.33",

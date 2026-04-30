@@ -5,26 +5,22 @@
   },
   "build": {
     "development": {
-      "workspaceRoot": "..",
       "developmentClient": true,
       "distribution": "internal"
     },
     "simulator": {
-      "workspaceRoot": "..",
       "distribution": "internal",
       "ios": {
         "simulator": true
       }
     },
     "preview": {
-      "workspaceRoot": "..",
       "distribution": "internal",
       "android": {
         "buildType": "apk"
       }
     },
     "production": {
-      "workspaceRoot": "..",
       "autoIncrement": true
     }
   },
