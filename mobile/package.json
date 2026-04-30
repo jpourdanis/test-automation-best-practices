@@ -21,6 +21,7 @@
     "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-mobile-unit-tests.xml jest --coverage"
   },
   "dependencies": {
+    "@color-app/shared": "*",
     "@react-native-community/slider": "5.0.1",
     "@react-native-picker/picker": "2.11.1",
     "expo": "~54.0.33",
