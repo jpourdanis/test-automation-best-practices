@@ -4,6 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "build:shared": "npm run build --prefix ../packages/shared",
+    "eas-build-post-install": "npm run build -w packages/shared",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
