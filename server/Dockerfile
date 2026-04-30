@@ -13,7 +13,7 @@ RUN --mount=type=cache,target=/root/.npm \
 WORKDIR /app/server
 COPY server/package*.json ./
 RUN --mount=type=cache,target=/root/.npm \
-    npm ci --ignore-scripts --omit=dev
+    npm ci --ignore-scripts --omit=dev --legacy-peer-deps
 
 COPY server/ ./
 
