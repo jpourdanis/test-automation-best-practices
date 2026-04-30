@@ -37,6 +37,9 @@ jobs:
         working-directory: mobile
         run: npm install
 
+      - name: Build shared package
+        run: npm run build -w packages/shared
+
       - name: Run ESLint (Mobile)
         run: npx eslint mobile/src --ext .ts,.tsx
 
@@ -62,6 +65,9 @@ jobs:
       - name: Install mobile dependencies
         working-directory: mobile
         run: npm install
+
+      - name: Build shared package
+        run: npm run build -w packages/shared
 
       - name: Run Mobile Unit Tests
         run: npm run test:unit
@@ -113,6 +119,9 @@ jobs:
       - name: Install mobile dependencies
         working-directory: mobile
         run: npm install
+
+      - name: Build shared package
+        run: npm run build -w packages/shared
 
       - name: Install EAS CLI
         run: npm install -g eas-cli
@@ -277,6 +286,9 @@ jobs:
       - name: Install mobile dependencies
         working-directory: mobile
         run: npm install
+
+      - name: Build shared package
+        run: npm run build -w packages/shared
 
       - name: Install EAS CLI
         run: npm install -g eas-cli

@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
+    "build:shared": "npm run build --prefix ../packages/shared",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
