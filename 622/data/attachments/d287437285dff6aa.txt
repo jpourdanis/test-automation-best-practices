@@ -1,0 +1,75 @@
+2026-05-03 00:41:06 - info: [BrowserstackCLI] Starting as child process with session ID: 7c482329-6c6e-4e06-8b43-74d746c98fe7
+2026-05-03 00:41:06 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-05-03 00:41:06 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=13720:0, state=AutomationFrameworkState.CREATE
+2026-05-03 00:41:06 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=2e6a59c4b66df2e2317d78564ae02df189e8234836abb4da9f26a1880a29d27b target=13720:0
+2026-05-03 00:41:06 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:41:06 - info: [GrpcClient] Sending DriverInit
+2026-05-03 00:41:06 - info: [GrpcClient] DriverInit request successful
+2026-05-03 00:41:06 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:41:06 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:41:06 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:41:06 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:41:06 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should maintain accessibility in el language and verify resilient locators: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-05-03 00:41:08 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-05-03 00:41:09 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-03 00:41:09 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:41:09 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:41:09 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:41:09 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-03 00:41:09 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-26325f19ea225be21054
+2026-05-03 00:41:09 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'ceb1d657-d96d-44ea-b2ce-a38d709e8ba1',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'ceb1d657-d96d-44ea-b2ce-a38d709e8ba1',
+  test_result: 'pending',
+  automate_session_name: 'i18n Accessibility Tests - should maintain accessibility in el language and verify resilient locators',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_id: 'b7be152566087f10fae4-26325f19ea225be21054',
+  test_name: 'should maintain accessibility in el language and verify resilient locators',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts:98',
+  test_code: 'async ({\n' +
+    '      homePage,\n' +
+    '      page\n' +
+    '    }) => {\n' +
+    '      await homePage.goto();\n' +
+    '\n' +
+    '      // Change the language. Default is English, so the label starts as English.\n' +
+    "      const languageDropdown = page.getByRole('combobox', {\n" +
+    '        name: _shared.enTranslations.languageSelector\n' +
+    '      });\n' +
+    '      await languageDropdown.selectOption(lang.code);\n' +
+    '\n' +
+    '      // Verify page layout using dynamic, translation-aware accessibility locators!\n' +
+    '      // This is the clean, resilient way over falling back to CSS selectors.\n' +
+    "      await (0, _baseFixtures.expect)(page.getByRole('heading', {\n" +
+    '        name: lang.i18n.title\n' +
+    '      })).toBeVisible();\n' +
+    "      await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    '        name: `${lang.i18n.changeColor} ${lang.i18n.colors.turquoise}`\n' +
+    '      })).toBeVisible();\n' +
+    "      await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    '        name: `${lang.i18n.changeColor} ${lang.i18n.colors.red}`\n' +
+    '      })).toBeVisible();\n' +
+    "      await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    '        name: `${lang.i18n.changeColor} ${lang.i18n.colors.yellow}`\n' +
+    '      })).toBeVisible();\n' +
+    '\n' +
+    '      // Run Axe to check for accessibility violations in the translated state\n' +
+    '      const accessibilityScanResults = await new _playwright.default({\n' +
+    '        page\n' +
+    '      }).analyze();\n' +
+    '      (0, _baseFixtures.expect)(accessibilityScanResults.violations).toEqual([]);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:40:57.544Z',
+  test_scope: 'i18n Accessibility Tests - should maintain accessibility in el language and verify resilient locators',
+  test_scopes: [ 'i18n Accessibility Tests' ],
+  test_rerun_name: ' bs-safari-ventura tests/a11y.spec.ts i18n Accessibility Tests should maintain accessibility in el language and verify resilient locators'
+}
+2026-05-03 00:41:09 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:41:09 - info: [GrpcClient] TestSessionEvent request successful

@@ -1,0 +1,59 @@
+2026-05-03 00:37:58 - info: [BrowserstackCLI] Starting as child process with session ID: 7c482329-6c6e-4e06-8b43-74d746c98fe7
+2026-05-03 00:37:58 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-05-03 00:37:58 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=5659:0, state=AutomationFrameworkState.CREATE
+2026-05-03 00:37:58 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=0fbf79e1159b1eae8705c9290bc6396db74eb805b555c015d0bf47665532b5ae target=5659:0
+2026-05-03 00:38:00 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:00 - info: [GrpcClient] Sending DriverInit
+2026-05-03 00:38:00 - info: [GrpcClient] DriverInit request successful
+2026-05-03 00:38:00 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:00 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:00 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:38:00 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:38:00 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-03 00:38:02 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-05-03 00:38:02 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-05-03 00:38:02 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-05-03 00:38:02 - info: Accessibility testing for this test case has ended.
+2026-05-03 00:38:02 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-03 00:38:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:38:02 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:38:02 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-03 00:38:02 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-0450478b5c26b4d4fa45
+2026-05-03 00:38:02 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '0242b0be-9e12-4329-b741-8f40b7b76156',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '0242b0be-9e12-4329-b741-8f40b7b76156',
+  test_result: 'pending',
+  automate_session_name: 'Accessibility Tests - should not have any automatically detectable accessibility issues',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_id: 'b7be152566087f10fae4-0450478b5c26b4d4fa45',
+  test_name: 'should not have any automatically detectable accessibility issues',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts:24',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Wait for the main elements to render\n' +
+    '    await (0, _baseFixtures.expect)(homePage.header).toBeVisible();\n' +
+    '\n' +
+    '    // Run Axe to check for accessibility violations\n' +
+    '    const accessibilityScanResults = await new _playwright.default({\n' +
+    '      page\n' +
+    '    }).analyze();\n' +
+    '\n' +
+    '    // Verify there are no violations\n' +
+    '    (0, _baseFixtures.expect)(accessibilityScanResults.violations).toEqual([]);\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:37:58.723Z',
+  test_scope: 'Accessibility Tests - should not have any automatically detectable accessibility issues',
+  test_scopes: [ 'Accessibility Tests' ],
+  test_rerun_name: ' bs-chrome-win11 tests/a11y.spec.ts Accessibility Tests should not have any automatically detectable accessibility issues'
+}
+2026-05-03 00:38:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:38:02 - info: [GrpcClient] TestSessionEvent request successful

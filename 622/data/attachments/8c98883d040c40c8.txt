@@ -1,0 +1,34 @@
+2026-05-03 00:41:08 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:41:08 - info: [Accessibility] afterTestHook state: accessibilityPlatform=undefined, bstackA11yShouldScan=true
+2026-05-03 00:41:08 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:41:08 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-3d8b5549e504b36be10f
+2026-05-03 00:41:08 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '04c1f46c-9a46-4177-9555-74c7f120bfc8',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '04c1f46c-9a46-4177-9555-74c7f120bfc8',
+  test_result: 'pending',
+  automate_session_name: 'Backend API Integration - GET /api/colors should return all colors',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-3d8b5549e504b36be10f',
+  test_name: 'GET /api/colors should return all colors',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts:58',
+  test_code: 'async ({\n' +
+    '    request\n' +
+    '  }) => {\n' +
+    '    const response = await request.get(`/api/colors`);\n' +
+    '    (0, _test.expect)(response.status()).toBe(200);\n' +
+    '    const data = await response.json();\n' +
+    '    (0, _test.expect)(Array.isArray(data)).toBeTruthy();\n' +
+    '    (0, _test.expect)(data.length).toBeGreaterThanOrEqual(3);\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:41:08.087Z',
+  test_scope: 'Backend API Integration - GET /api/colors should return all colors',
+  test_scopes: [ 'Backend API Integration' ],
+  test_rerun_name: ' bs-safari-ventura tests/api.spec.ts Backend API Integration GET /api/colors should return all colors'
+}
+2026-05-03 00:41:08 - info: [GrpcClient] Sending TestSessionEvent

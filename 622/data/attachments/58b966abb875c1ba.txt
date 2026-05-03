@@ -1,0 +1,43 @@
+2026-05-03 00:40:20 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-03 00:40:20 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:40:20 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:40:20 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:40:20 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-03 00:40:20 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-a1d46454dd8b65e1ffbb
+2026-05-03 00:40:20 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '235f98be-f8f7-420f-b2fa-cb9c7f961aa3',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '235f98be-f8f7-420f-b2fa-cb9c7f961aa3',
+  test_result: 'pending',
+  automate_session_name: 'Input Validation - oversized payload is rejected (413)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-a1d46454dd8b65e1ffbb',
+  test_name: 'oversized payload is rejected (413)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts:103',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      // Express.json() default limit is 100 kb; this body is ~150 kb\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        headers: {\n' +
+    "          'Content-Type': 'application/json'\n" +
+    '        },\n' +
+    '        data: JSON.stringify({\n' +
+    "          name: 'A'.repeat(150000),\n" +
+    "          hex: '#ff0000'\n" +
+    '        })\n' +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(413);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:40:20.611Z',
+  test_scope: 'Input Validation - oversized payload is rejected (413)',
+  test_scopes: [ 'Security', 'Input Validation' ],
+  test_rerun_name: ' bs-firefox-win11 tests/security.spec.ts Security Input Validation oversized payload is rejected (413)'
+}
+2026-05-03 00:40:20 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:40:20 - info: [GrpcClient] TestSessionEvent request successful

@@ -1,0 +1,35 @@
+2026-05-03 00:43:23 - info: [BrowserstackCLI] Starting as child process with session ID: 7c482329-6c6e-4e06-8b43-74d746c98fe7
+2026-05-03 00:43:23 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-05-03 00:43:23 - info: [Accessibility] afterTestHook state: accessibilityPlatform=undefined, bstackA11yShouldScan=true
+2026-05-03 00:43:23 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=17825:0, state=AutomationFrameworkState.CREATE
+2026-05-03 00:43:23 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=ab8e488ee8d3c35d76df94ad3349a800b48545bb749409d41e3f84422bc2d085 target=17825:0
+2026-05-03 00:43:23 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-ceeaddcaaa9b64aab8f8
+2026-05-03 00:43:23 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'b723aa86-f21f-4b2e-abb8-c0effa75a052',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'b723aa86-f21f-4b2e-abb8-c0effa75a052',
+  test_result: 'pending',
+  automate_session_name: 'DELETE /api/colors/:name - should return 404 for non-existent color deletion',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-ceeaddcaaa9b64aab8f8',
+  test_name: 'should return 404 for non-existent color deletion',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts:219',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const response = await request.delete(`/api/colors/DoesNotExist`);\n' +
+    '      (0, _test.expect)(response.status()).toBe(404);\n' +
+    '      const data = await response.json();\n' +
+    "      (0, _test.expect)(data.error).toBe('Color not found');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:43:23.424Z',
+  test_scope: 'DELETE /api/colors/:name - should return 404 for non-existent color deletion',
+  test_scopes: [ 'Backend API Integration', 'DELETE /api/colors/:name' ],
+  test_rerun_name: ' bs-pixel-7 tests/api.spec.ts Backend API Integration DELETE /api/colors/:name should return 404 for non-existent color deletion'
+}
+2026-05-03 00:43:23 - info: [GrpcClient] Sending TestSessionEvent

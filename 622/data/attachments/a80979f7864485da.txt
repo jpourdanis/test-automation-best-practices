@@ -1,0 +1,34 @@
+2026-05-03 00:38:59 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-03 00:38:59 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:59 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:38:59 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:38:59 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-03 00:38:59 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-95bac8cc6d9975720017
+2026-05-03 00:38:59 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'bb277771-1c57-4876-904d-66bf7f14bd37',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'bb277771-1c57-4876-904d-66bf7f14bd37',
+  test_result: 'pending',
+  automate_session_name: 'HTTP Method Restrictions - PATCH /api/colors returns 405',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-95bac8cc6d9975720017',
+  test_name: 'PATCH /api/colors returns 405',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts:159',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.patch('/api/colors');\n" +
+    '      (0, _test.expect)(res.status()).toBe(405);\n' +
+    "      (0, _test.expect)(res.headers()['allow']).toContain('GET');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:38:59.847Z',
+  test_scope: 'HTTP Method Restrictions - PATCH /api/colors returns 405',
+  test_scopes: [ 'Security', 'HTTP Method Restrictions' ],
+  test_rerun_name: ' bs-chrome-win11 tests/security.spec.ts Security HTTP Method Restrictions PATCH /api/colors returns 405'
+}
+2026-05-03 00:38:59 - info: [GrpcClient] Sending TestSessionEvent

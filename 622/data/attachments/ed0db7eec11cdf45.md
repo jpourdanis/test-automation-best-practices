@@ -1,0 +1,221 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: tests/a11y.spec.ts >> i18n Accessibility Tests >> should maintain accessibility in es language and verify resilient locators
+- Location: e2e/tests/a11y.spec.ts:98:9
+
+# Error details
+
+```
+Error: expect(received).toEqual(expected) // deep equality
+
+- Expected  -  1
++ Received  + 58
+
+- Array []
++ Array [
++   Object {
++     "description": "Ensure the contrast between foreground and background colors meets WCAG 2 AA minimum contrast ratio thresholds",
++     "help": "Elements must meet minimum color contrast ratio thresholds",
++     "helpUrl": "https://dequeuniversity.com/rules/axe/4.11/color-contrast?application=playwright",
++     "id": "color-contrast",
++     "impact": "serious",
++     "nodes": Array [
++       Object {
++         "all": Array [],
++         "any": Array [
++           Object {
++             "data": Object {
++               "bgColor": "#e74c3c",
++               "contrastRatio": 4.25,
++               "expectedContrastRatio": "4.5:1",
++               "fgColor": "#311a17",
++               "fontSize": "12.8pt (17.08px)",
++               "fontWeight": "normal",
++               "messageKey": null,
++             },
++             "id": "color-contrast",
++             "impact": "serious",
++             "message": "Element has insufficient color contrast of 4.25 (foreground color: #311a17, background color: #e74c3c, font size: 12.8pt (17.08px), font weight: normal). Expected contrast ratio of 4.5:1",
++             "relatedNodes": Array [
++               Object {
++                 "html": "<header class=\"App-header\" style=\"background-color: rgb(231, 76, 60); color: rgb(17, 17, 17);\">",
++                 "target": Array [
++                   "header",
++                 ],
++               },
++             ],
++           },
++         ],
++         "failureSummary": "Fix any of the following:
++   Element has insufficient color contrast of 4.25 (foreground color: #311a17, background color: #e74c3c, font size: 12.8pt (17.08px), font weight: normal). Expected contrast ratio of 4.5:1",
++         "html": "<span aria-live=\"polite\" class=\"current-color\">Color actual: #e74c3c</span>",
++         "impact": "serious",
++         "none": Array [],
++         "target": Array [
++           ".current-color",
++         ],
++       },
++     ],
++     "tags": Array [
++       "cat.color",
++       "wcag2aa",
++       "wcag143",
++       "TTv5",
++       "TT13.c",
++       "EN-301-549",
++       "EN-9.1.4.3",
++       "ACT",
++       "RGAAv4",
++       "RGAA-3.2.1",
++     ],
++   },
++ ]
+```
+
+# Page snapshot
+
+```yaml
+- main [ref=e4]:
+  - generic [ref=e5]:
+    - combobox "Seleccionar Idioma" [ref=e7] [cursor=pointer]:
+      - option "English"
+      - option "Español" [selected]
+      - option "Ελληνικά"
+    - img "logo"
+    - heading "Aplicación de elección de color" [level=1] [ref=e8]
+    - paragraph [ref=e9]:
+      - text: Edita
+      - code [ref=e10]: src/App.js
+      - text: y guarda para recargar.
+    - link "Aprender React" [ref=e11]:
+      - /url: https://reactjs.org
+    - generic [ref=e12]: "Color actual: #e74c3c"
+    - generic [ref=e13]:
+      - generic [ref=e14]:
+        - button "Cambiar el fondo a Rojo" [pressed] [ref=e15] [cursor=pointer]: Rojo
+        - 'button "Eliminar color: Rojo" [ref=e17] [cursor=pointer]': ×
+      - generic [ref=e18]:
+        - button "Cambiar el fondo a Amarillo" [ref=e19] [cursor=pointer]: Amarillo
+        - 'button "Eliminar color: Amarillo" [ref=e21] [cursor=pointer]': ×
+      - generic [ref=e22]:
+        - button "Cambiar el fondo a Turquesa" [ref=e23] [cursor=pointer]: Turquesa
+        - 'button "Eliminar color: Turquesa" [ref=e25] [cursor=pointer]': ×
+      - button "+ Añadir color" [ref=e26] [cursor=pointer]
+```
+
+# Test source
+
+```ts
+  23  |    */
+  24  |   test('should not have any automatically detectable accessibility issues', async ({ homePage, page }) => {
+  25  |     // Wait for the main elements to render
+  26  |     await expect(homePage.header).toBeVisible()
+  27  | 
+  28  |     // Run Axe to check for accessibility violations
+  29  |     const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
+  30  | 
+  31  |     // Verify there are no violations
+  32  |     expect(accessibilityScanResults.violations).toEqual([])
+  33  |   })
+  34  | 
+  35  |   /**
+  36  |    * Test: Accessibility after state change
+  37  |    *
+  38  |    * Verifies that the application remains accessible after user interactions,
+  39  |    * specifically ensuring that color contrast ratios remain valid when the
+  40  |    * background color changes dynamically.
+  41  |    */
+  42  |   test('should maintain accessibility after state change (color update)', async ({ homePage, page }) => {
+  43  |     // Change color to verify contrast and other rules still pass
+  44  |     await homePage.clickColorButton('Yellow')
+  45  | 
+  46  |     // Wait for the color change to apply (indicated by the text changing)
+  47  |     await expect(homePage.currentColorText).toContainText('#f1c40f')
+  48  | 
+  49  |     const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
+  50  | 
+  51  |     // We specifically check contrast rules after a background color change
+  52  |     const contrastViolations = accessibilityScanResults.violations.filter((v) => v.id === 'color-contrast')
+  53  |     expect(contrastViolations).toEqual([])
+  54  |   })
+  55  | 
+  56  |   /**
+  57  |    * Test: Accessibility Score via Google Lighthouse
+  58  |    *
+  59  |    * Runs a full Lighthouse accessibility audit on the page. Unlike Axe,
+  60  |    * Lighthouse provides a weighted score (from 0 to 100) based on multiple
+  61  |    * accessibility categories. We enforce a high bar (threshold > 90) to
+  62  |    * guarantee premium compliance.
+  63  |    */
+  64  |   test('should meet the accessibility threshold using Google Lighthouse', async ({ homePage, page }) => {
+  65  |     test.skip(
+  66  |       process.env.BROWSERSTACK === 'true',
+  67  |       'Lighthouse audits are non-deterministic on BrowserStack cloud browsers'
+  68  |     )
+  69  |     // Wait for the main elements to render
+  70  |     await expect(homePage.header).toBeVisible()
+  71  | 
+  72  |     // Run the Lighthouse audit
+  73  |     await playAudit({
+  74  |       page: page,
+  75  |       thresholds: {
+  76  |         accessibility: 90
+  77  |       },
+  78  |       port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)
+  79  |     })
+  80  |   })
+  81  | })
+  82  | 
+  83  | /**
+  84  |  * Test Suite: i18n Accessibility Tests
+  85  |  *
+  86  |  * Demonstrates best practices for handling multiple languages without
+  87  |  * relying on brittle DOM manipulation locators. By importing the language
+  88  |  * JSON directly, we can use resilient user-centric locators.
+  89  |  */
+  90  | test.describe('i18n Accessibility Tests', () => {
+  91  |   const languages = [
+  92  |     { code: 'en', i18n: enTranslations },
+  93  |     { code: 'es', i18n: esTranslations },
+  94  |     { code: 'el', i18n: elTranslations }
+  95  |   ]
+  96  | 
+  97  |   for (const lang of languages) {
+  98  |     test(`should maintain accessibility in ${lang.code} language and verify resilient locators`, async ({
+  99  |       homePage,
+  100 |       page
+  101 |     }) => {
+  102 |       await homePage.goto()
+  103 | 
+  104 |       // Change the language. Default is English, so the label starts as English.
+  105 |       const languageDropdown = page.getByRole('combobox', {
+  106 |         name: enTranslations.languageSelector
+  107 |       })
+  108 |       await languageDropdown.selectOption(lang.code)
+  109 | 
+  110 |       // Verify page layout using dynamic, translation-aware accessibility locators!
+  111 |       // This is the clean, resilient way over falling back to CSS selectors.
+  112 |       await expect(page.getByRole('heading', { name: lang.i18n.title })).toBeVisible()
+  113 |       await expect(
+  114 |         page.getByRole('button', { name: `${lang.i18n.changeColor} ${lang.i18n.colors.turquoise}` })
+  115 |       ).toBeVisible()
+  116 |       await expect(page.getByRole('button', { name: `${lang.i18n.changeColor} ${lang.i18n.colors.red}` })).toBeVisible()
+  117 |       await expect(
+  118 |         page.getByRole('button', { name: `${lang.i18n.changeColor} ${lang.i18n.colors.yellow}` })
+  119 |       ).toBeVisible()
+  120 | 
+  121 |       // Run Axe to check for accessibility violations in the translated state
+  122 |       const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
+> 123 |       expect(accessibilityScanResults.violations).toEqual([])
+      |                                                   ^ Error: expect(received).toEqual(expected) // deep equality
+  124 |     })
+  125 |   }
+  126 | })
+  127 | 
+```

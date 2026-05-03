@@ -1,0 +1,51 @@
+2026-05-03 00:42:20 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:42:20 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:42:20 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:42:20 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:42:20 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] handle color response missing hex property: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] handle color response missing hex property: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Yellow
+2026-05-03 00:42:22 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-05-03 00:42:22 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-03 00:42:22 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:42:22 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:42:22 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:42:22 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-03 00:42:22 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-9b11c840c57efc11c948
+2026-05-03 00:42:22 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'e0984c47-a37c-4cc9-ac33-fb6a104336ca',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'e0984c47-a37c-4cc9-ac33-fb6a104336ca',
+  test_result: 'pending',
+  automate_session_name: 'Edge cases and error handling - handle color response missing hex property',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_id: '3300dcb2e635619af3f7-9b11c840c57efc11c948',
+  test_name: 'handle color response missing hex property',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts:116',
+  test_code: 'async ({\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Mock response missing hex property\n' +
+    "    await page.route('/api/colors/Yellow', route => route.fulfill({\n" +
+    '      status: 200,\n' +
+    "      contentType: 'application/json',\n" +
+    '      body: JSON.stringify({\n' +
+    "        name: 'Yellow'\n" +
+    '      })\n' +
+    '    }));\n' +
+    "    await page.click('text=Yellow');\n" +
+    '    // Expect no crash and current color text to remain unchanged (or still be default)\n' +
+    "    await (0, _baseFixtures.expect)(page.locator('text=Current color:')).not.toContainText('undefined');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:42:20.672Z',
+  test_scope: 'Edge cases and error handling - handle color response missing hex property',
+  test_scopes: [ 'Edge cases and error handling' ],
+  test_rerun_name: ' bs-safari-ventura tests/coverage.spec.ts Edge cases and error handling handle color response missing hex property'
+}
+2026-05-03 00:42:22 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:42:22 - info: [GrpcClient] TestSessionEvent request successful

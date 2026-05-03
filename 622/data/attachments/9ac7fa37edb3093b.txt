@@ -1,0 +1,33 @@
+2026-05-03 00:43:18 - info: [Accessibility] afterTestHook state: accessibilityPlatform=undefined, bstackA11yShouldScan=true
+2026-05-03 00:43:18 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:43:18 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-5c5823abbe57f7db6f56
+2026-05-03 00:43:18 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '5de6d456-50b4-46f2-919a-78c4cb8edf22',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '5de6d456-50b4-46f2-919a-78c4cb8edf22',
+  test_result: 'pending',
+  automate_session_name: 'Backend API Integration - GET /api/colors should return all colors',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-5c5823abbe57f7db6f56',
+  test_name: 'GET /api/colors should return all colors',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts:58',
+  test_code: 'async ({\n' +
+    '    request\n' +
+    '  }) => {\n' +
+    '    const response = await request.get(`/api/colors`);\n' +
+    '    (0, _test.expect)(response.status()).toBe(200);\n' +
+    '    const data = await response.json();\n' +
+    '    (0, _test.expect)(Array.isArray(data)).toBeTruthy();\n' +
+    '    (0, _test.expect)(data.length).toBeGreaterThanOrEqual(3);\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:43:18.238Z',
+  test_scope: 'Backend API Integration - GET /api/colors should return all colors',
+  test_scopes: [ 'Backend API Integration' ],
+  test_rerun_name: ' bs-pixel-7 tests/api.spec.ts Backend API Integration GET /api/colors should return all colors'
+}
+2026-05-03 00:43:18 - info: [GrpcClient] Sending TestSessionEvent

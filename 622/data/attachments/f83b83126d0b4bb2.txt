@@ -1,0 +1,37 @@
+2026-05-03 00:39:44 - info: [Accessibility] afterTestHook state: accessibilityPlatform=undefined, bstackA11yShouldScan=true
+2026-05-03 00:39:44 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:39:44 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-4d50c04cb21c1ca4ae7e
+2026-05-03 00:39:44 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '87cafe51-6466-4b38-813c-e841a9406549',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '87cafe51-6466-4b38-813c-e841a9406549',
+  test_result: 'pending',
+  automate_session_name: 'POST /api/colors Schema Validation - should reject empty name',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-4d50c04cb21c1ca4ae7e',
+  test_name: 'should reject empty name',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts:117',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const response = await request.post(`/api/colors`, {\n' +
+    '        data: {\n' +
+    "          name: '',\n" +
+    "          hex: '#ffa500'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(response.status()).toBe(400);\n' +
+    '      const data = await response.json();\n' +
+    "      (0, _test.expect)(data.error).toBe('name must contain alphanumeric characters and spaces only, and at least one alphanumeric character');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:39:44.164Z',
+  test_scope: 'POST /api/colors Schema Validation - should reject empty name',
+  test_scopes: [ 'Backend API Integration', 'POST /api/colors Schema Validation' ],
+  test_rerun_name: ' bs-firefox-win11 tests/api.spec.ts Backend API Integration POST /api/colors Schema Validation should reject empty name'
+}
+2026-05-03 00:39:44 - info: [GrpcClient] Sending TestSessionEvent

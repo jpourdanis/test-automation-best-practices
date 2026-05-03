@@ -1,0 +1,45 @@
+2026-05-03 00:40:11 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:40:11 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:40:11 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:40:11 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:40:11 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-03 00:40:12 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-05-03 00:40:12 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-03 00:40:12 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:40:12 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:40:12 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:40:12 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-03 00:40:12 - info: [PlaywrightDriverModule] testId: 791bdff6f908e1de6c18-c9c41fdd77248f133200
+2026-05-03 00:40:12 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'e06d81e0-ad07-4390-9f3e-91c61c6a3cd4',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'e06d81e0-ad07-4390-9f3e-91c61c6a3cd4',
+  test_result: 'pending',
+  automate_session_name: 'UI Error Handling Coverage - should handle fetch colors network failure gracefully',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/error-handling.spec.ts',
+  test_id: '791bdff6f908e1de6c18-c9c41fdd77248f133200',
+  test_name: 'should handle fetch colors network failure gracefully',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/error-handling.spec.ts:19',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Abort the initial colors fetch\n' +
+    "    await page.route('**/api/colors', route => route.abort('failed'));\n" +
+    '    await homePage.goto();\n' +
+    '\n' +
+    '    // The UI should show "Loading colors..." because colors array is empty\n' +
+    "    await (0, _baseFixtures.expect)(page.locator('text=Loading colors...')).toBeVisible();\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:40:11.466Z',
+  test_scope: 'UI Error Handling Coverage - should handle fetch colors network failure gracefully',
+  test_scopes: [ 'UI Error Handling Coverage' ],
+  test_rerun_name: ' bs-firefox-win11 tests/error-handling.spec.ts UI Error Handling Coverage should handle fetch colors network failure gracefully'
+}
+2026-05-03 00:40:12 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:40:12 - info: [GrpcClient] TestSessionEvent request successful

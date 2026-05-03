@@ -1,0 +1,70 @@
+2026-05-03 00:38:40 - info: [BrowserstackCLI] Starting as child process with session ID: 7c482329-6c6e-4e06-8b43-74d746c98fe7
+2026-05-03 00:38:40 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-05-03 00:38:40 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=6919:0, state=AutomationFrameworkState.CREATE
+2026-05-03 00:38:40 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=2a987d550d1f2eaedbce76f173ede2ab98eee65f08ea736c54862265e9bdd927 target=6919:0
+2026-05-03 00:38:40 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:40 - info: [GrpcClient] Sending DriverInit
+2026-05-03 00:38:40 - info: [GrpcClient] DriverInit request successful
+2026-05-03 00:38:40 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:40 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:40 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:38:40 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:38:40 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] shows server-error message on 500 inside the picker: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-05-03 00:38:41 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-05-03 00:38:41 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-05-03 00:38:41 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-05-03 00:38:41 - info: Accessibility testing for this test case has ended.
+2026-05-03 00:38:41 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-03 00:38:41 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:41 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:38:41 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:38:41 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-03 00:38:41 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-32965893ed1bfb90bb8e
+2026-05-03 00:38:41 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '645b6594-6a26-4b17-be6a-1bde47e7f64e',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '645b6594-6a26-4b17-be6a-1bde47e7f64e',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - shows server-error message on 500 inside the picker',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-32965893ed1bfb90bb8e',
+  test_name: 'shows server-error message on 500 inside the picker',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts:177',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    "    await page.route('**/api/colors', async route => {\n" +
+    "      if (route.request().method() === 'POST') {\n" +
+    '        await route.fulfill({\n' +
+    '          status: 500,\n' +
+    "          contentType: 'application/json',\n" +
+    '          body: JSON.stringify({})\n' +
+    '        });\n' +
+    '      } else {\n' +
+    '        await route.fulfill({\n' +
+    '          status: 200,\n' +
+    "          contentType: 'application/json',\n" +
+    '          body: JSON.stringify(INITIAL_COLORS)\n' +
+    '        });\n' +
+    '      }\n' +
+    '    });\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    "    await homePage.pickerNameInput.fill('Unique');\n" +
+    '    await homePage.pickerSubmitBtn.click();\n' +
+    "    await (0, _baseFixtures.expect)(homePage.pickerCard.getByRole('alert')).toContainText('Server error. Please try again.');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:38:40.059Z',
+  test_scope: 'Color Management — Add & Delete - shows server-error message on 500 inside the picker',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-chrome-win11 tests/color-management.spec.ts Color Management — Add & Delete shows server-error message on 500 inside the picker'
+}
+2026-05-03 00:38:41 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:38:41 - info: [GrpcClient] TestSessionEvent request successful

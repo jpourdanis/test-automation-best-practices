@@ -1,0 +1,54 @@
+2026-05-03 00:38:43 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:43 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:43 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:38:43 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:38:43 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+2026-05-03 00:38:44 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-05-03 00:38:44 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-05-03 00:38:44 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-05-03 00:38:44 - info: Accessibility testing for this test case has ended.
+2026-05-03 00:38:45 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-03 00:38:45 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:38:45 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:38:45 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-03 00:38:45 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-03 00:38:45 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-e01fb6306e973a6cc839
+2026-05-03 00:38:45 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '2a686673-be88-439c-8454-30d425a1dae8',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '2a686673-be88-439c-8454-30d425a1dae8',
+  test_result: 'pending',
+  automate_session_name: 'Background color tests - verify Turquoise ( #1abc9c ) is applied as the background color',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_id: '3300dcb2e635619af3f7-e01fb6306e973a6cc839',
+  test_name: 'verify Turquoise ( #1abc9c ) is applied as the background color',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts:56',
+  test_code: 'async ({\n' +
+    '      page\n' +
+    '    }) => {\n' +
+    '      // Click the color name to change the background color\n' +
+    '      await page.click(`text=${color.name}`);\n' +
+    '\n' +
+    '      // Wait for React to fetch and update DOM\n' +
+    "      await (0, _baseFixtures.expect)(page.locator('text=Current color:')).toContainText(color.hex);\n" +
+    '\n' +
+    '      // Convert hex to RGB for CSS validation\n' +
+    '      const rgb = (0, _helper.convertHexToRGB)(`#${color.hex}`);\n' +
+    '\n' +
+    '      // Verify the header background color matches the expected RGB value\n' +
+    "      await (0, _baseFixtures.expect)(page.locator('header')).toHaveCSS('background-color', `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`);\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:38:43.712Z',
+  test_scope: 'Background color tests - verify Turquoise ( #1abc9c ) is applied as the background color',
+  test_scopes: [ 'Background color tests' ],
+  test_rerun_name: ' bs-chrome-win11 tests/coverage.spec.ts Background color tests verify Turquoise ( #1abc9c ) is applied as the background color'
+}
+2026-05-03 00:38:45 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-03 00:38:45 - info: [GrpcClient] TestSessionEvent request successful

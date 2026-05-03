@@ -1,0 +1,43 @@
+2026-05-03 00:39:44 - info: [Accessibility] afterTestHook state: accessibilityPlatform=undefined, bstackA11yShouldScan=true
+2026-05-03 00:39:44 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-03 00:39:44 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-8b782a939084889c3b5b
+2026-05-03 00:39:44 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '56913b55-cf5c-4671-82cc-511fb0e72258',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '56913b55-cf5c-4671-82cc-511fb0e72258',
+  test_result: 'pending',
+  automate_session_name: 'POST /api/colors Schema Validation - should return 409 for duplicate color creation',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-8b782a939084889c3b5b',
+  test_name: 'should return 409 for duplicate color creation',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts:98',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const uniqueName = _faker.faker.string.alphanumeric(15);\n' +
+    '      const color = {\n' +
+    '        name: uniqueName,\n' +
+    "        hex: '#111111'\n" +
+    '      };\n' +
+    '      createdColorName = color.name;\n' +
+    '      await request.post(`/api/colors`, {\n' +
+    '        data: color\n' +
+    '      });\n' +
+    '      const response = await request.post(`/api/colors`, {\n' +
+    '        data: color\n' +
+    '      });\n' +
+    '      (0, _test.expect)(response.status()).toBe(409);\n' +
+    '      const data = await response.json();\n' +
+    '      (0, _test.expect)(data.error).toBe(`Color "${uniqueName}" already exists`);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-03T00:39:43.550Z',
+  test_scope: 'POST /api/colors Schema Validation - should return 409 for duplicate color creation',
+  test_scopes: [ 'Backend API Integration', 'POST /api/colors Schema Validation' ],
+  test_rerun_name: ' bs-firefox-win11 tests/api.spec.ts Backend API Integration POST /api/colors Schema Validation should return 409 for duplicate color creation'
+}
+2026-05-03 00:39:44 - info: [GrpcClient] Sending TestSessionEvent
