@@ -69,6 +69,49 @@ describe('ColorPickerModal', () => {
     expect(defaultProps.onConfirm).not.toHaveBeenCalled()
   })
 
+  it('shows error and does not call onConfirm when name has invalid characters', () => {
+    const { getByTestId, getByPlaceholderText, getByText } = render(<ColorPickerModal {...defaultProps} />)
+
+    fireEvent.changeText(getByPlaceholderText('colorPicker.namePlaceholder'), 'Invalid@Name')
+    fireEvent.press(getByTestId('picker-save-btn'))
+
+    expect(getByText('colorPicker.errors.nameInvalid')).toBeTruthy()
+    expect(defaultProps.onConfirm).not.toHaveBeenCalled()
+  })
+
+  it('shows error and does not call onConfirm when schema validation fails', () => {
+    const { CreateColorSchema } = require('@color-app/shared')
+    const safeParseSpy = jest
+      .spyOn(CreateColorSchema, 'safeParse')
+      .mockReturnValue({ success: false, error: {} as any })
+
+    const { getByTestId, getByPlaceholderText, getByText } = render(<ColorPickerModal {...defaultProps} />)
+
+    fireEvent.changeText(getByPlaceholderText('colorPicker.namePlaceholder'), 'Valid Name')
+    fireEvent.press(getByTestId('picker-save-btn'))
+
+    expect(getByText('colorPicker.errors.nameInvalid')).toBeTruthy()
+    expect(defaultProps.onConfirm).not.toHaveBeenCalled()
+
+    safeParseSpy.mockRestore()
+  })
+
+  it('calls onCancel when modal requests close and not saving', () => {
+    const { UNSAFE_getByType } = render(<ColorPickerModal {...defaultProps} />)
+    const { Modal } = require('react-native')
+
+    fireEvent(UNSAFE_getByType(Modal), 'requestClose')
+    expect(defaultProps.onCancel).toHaveBeenCalledTimes(1)
+  })
+
+  it('does not call onCancel when modal requests close while saving', () => {
+    const { UNSAFE_getByType } = render(<ColorPickerModal {...defaultProps} saving={true} />)
+    const { Modal } = require('react-native')
+
+    fireEvent(UNSAFE_getByType(Modal), 'requestClose')
+    expect(defaultProps.onCancel).not.toHaveBeenCalled()
+  })
+
   it('calls onConfirm with name and hex when valid', () => {
     const { getByTestId, getByPlaceholderText } = render(<ColorPickerModal {...defaultProps} />)
 

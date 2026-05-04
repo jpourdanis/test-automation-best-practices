@@ -14,6 +14,7 @@ import Slider from '@react-native-community/slider'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useTranslation } from 'react-i18next'
 import { hslToRgb, rgbToHex, readableOn } from '../colorUtils'
+import { CreateColorSchema, STRICT_NAME_REGEX } from '@color-app/shared'
 
 interface Props {
   visible: boolean
@@ -76,6 +77,18 @@ export function ColorPickerModal({
       setNameError(t('colorPicker.errors.nameRequired'))
       return
     }
+
+    if (!STRICT_NAME_REGEX.test(trimmed)) {
+      setNameError(t('colorPicker.errors.nameInvalid'))
+      return
+    }
+
+    const validation = CreateColorSchema.safeParse({ name: trimmed, hex })
+    if (!validation.success) {
+      setNameError(t('colorPicker.errors.nameInvalid'))
+      return
+    }
+
     if (existingNames.some((n) => n.toLowerCase() === trimmed.toLowerCase())) {
       setNameError(t('colorPicker.errors.nameDuplicate', { name: trimmed }))
       return
