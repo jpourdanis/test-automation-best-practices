@@ -28,7 +28,6 @@
               "application/json": {
                 "schema": {
                   "type": "array",
-                  "maxItems": 100,
                   "items": {
                     "$ref": "#/components/schemas/Color"
                   }
@@ -100,7 +99,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20+]*[a-zA-Z0-9])?$"
+              "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20]*[a-zA-Z0-9])?$"
             },
             "description": "The color name to look up",
             "example": "Red"
@@ -146,7 +145,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20+]*[a-zA-Z0-9])?$"
+              "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20]*[a-zA-Z0-9])?$"
             },
             "description": "Current name of the color to update",
             "example": "Turquoise"
@@ -186,6 +185,9 @@
           "404": {
             "description": "Color not found"
           },
+          "409": {
+            "description": "A color with the new name already exists"
+          },
           "500": {
             "description": "Server error"
           }
@@ -202,7 +204,7 @@
             "required": true,
             "schema": {
               "type": "string",
-              "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20+]*[a-zA-Z0-9])?$"
+              "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20]*[a-zA-Z0-9])?$"
             },
             "description": "Name of the color to delete",
             "example": "Yellow"
@@ -255,7 +257,7 @@
           "name": {
             "type": "string",
             "minLength": 1,
-            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20+]*[a-zA-Z0-9])?$",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20]*[a-zA-Z0-9])?$",
             "description": "Human-readable color name",
             "example": "Turquoise"
           },
@@ -291,7 +293,7 @@
           "name": {
             "type": "string",
             "minLength": 1,
-            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20+]*[a-zA-Z0-9])?$",
+            "pattern": "^[a-zA-Z0-9]([a-zA-Z0-9\\x20]*[a-zA-Z0-9])?$",
             "description": "New name for the color",
             "example": "Turquoise"
           },

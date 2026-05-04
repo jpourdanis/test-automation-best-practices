@@ -214,10 +214,12 @@ describe('Server Unit Tests', () => {
       expect(res2.status).toBe(201)
     })
 
-    it('accepts names with the + character', async () => {
+    it('rejects names with the + character (+ encodes as space in URLs, causing lookup mismatches)', async () => {
       const res = await request(app).post('/api/colors').send({ name: 'Red+Blue', hex: '#800080' })
-      expect(res.status).toBe(201)
-      expect(res.body.name).toBe('Red+Blue')
+      expect(res.status).toBe(400)
+      expect(res.body.error).toBe(
+        'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
+      )
     })
 
     it('applies the createColorLimiter rate limit headers', async () => {
@@ -712,13 +714,15 @@ describe('Server Unit Tests', () => {
         expect(res5.status).toBe(400)
       })
 
-      it('STRICT_NAME_REGEX kills mutants by testing multiple spaces and pluses in the middle', async () => {
+      it('STRICT_NAME_REGEX kills mutants by testing multiple spaces in the middle and rejecting pluses', async () => {
+        // Multiple spaces in the middle should pass
         const res1 = await request(app).post('/api/colors').send({ name: 'Red  Blue', hex: '#123456' })
         expect(res1.status).toBe(201)
+        // + is no longer allowed: it encodes as space in URL paths causing lookup mismatches
         const res2 = await request(app).post('/api/colors').send({ name: 'Red++Blue', hex: '#123456' })
-        expect(res2.status).toBe(201)
+        expect(res2.status).toBe(400)
         const res3 = await request(app).post('/api/colors').send({ name: 'A + B', hex: '#123456' })
-        expect(res3.status).toBe(201)
+        expect(res3.status).toBe(400)
       })
 
       it('STRICT_NAME_REGEX is strict on forbidden special characters in the middle', async () => {

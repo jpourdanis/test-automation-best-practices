@@ -109,7 +109,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20+]*[a-zA-Z0-9])?$'
+ *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20]*[a-zA-Z0-9])?$'
  *           description: Human-readable color name
  *           example: Turquoise
  *         hex:
@@ -133,7 +133,7 @@ app.get('/openapi.json', (req, res) => {
  *         name:
  *           type: string
  *           minLength: 1
- *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20+]*[a-zA-Z0-9])?$'
+ *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20]*[a-zA-Z0-9])?$'
  *           description: New name for the color
  *           example: Turquoise
  *         hex:
@@ -151,7 +151,7 @@ const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/colorsdb'
 
 // Define Color Schema
 const colorSchema = new mongoose.Schema({
-  name: String,
+  name: { type: String, unique: true },
   hex: String
 })
 
@@ -281,7 +281,7 @@ app.get('/api/colors', async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20+]*[a-zA-Z0-9])?$'
+ *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20]*[a-zA-Z0-9])?$'
  *         description: The color name to look up
  *         example: Red
  *     responses:
@@ -305,7 +305,7 @@ app.get('/api/colors', async (req, res) => {
 
 app.get('/api/colors/:name', async (req, res) => {
   try {
-    const { name } = req.params
+    const name = req.params.name.replace(/\+/g, ' ')
     if (!STRICT_NAME_REGEX.test(name)) {
       return res.status(400).json({ error: STRICT_NAME_MSG })
     }
@@ -378,6 +378,9 @@ app.post('/api/colors', createColorLimiter, async (req, res) => {
     // Return the created color without internal fields
     res.status(201).json({ name: color.name, hex: color.hex })
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({ error: `Color "${req.body.name}" already exists` })
+    }
     // Stryker disable next-line all: error logging only
     console.error('POST /api/colors error:', error)
     res.status(500).json({ error: 'Failed to create color' })
@@ -403,7 +406,7 @@ app.post('/api/colors', createColorLimiter, async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20+]*[a-zA-Z0-9])?$'
+ *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20]*[a-zA-Z0-9])?$'
  *         description: Current name of the color to update
  *         example: Turquoise
  *     requestBody:
@@ -427,12 +430,14 @@ app.post('/api/colors', createColorLimiter, async (req, res) => {
  *               $ref: '#/components/schemas/Error'
  *       404:
  *         description: Color not found
+ *       409:
+ *         description: A color with the new name already exists
  *       500:
  *         description: Server error
  */
 app.put('/api/colors/:name', async (req, res) => {
   try {
-    const currentName = req.params.name
+    const currentName = req.params.name.replace(/\+/g, ' ')
     if (!STRICT_NAME_REGEX.test(currentName)) {
       return res.status(400).json({ error: STRICT_NAME_MSG })
     }
@@ -457,6 +462,9 @@ app.put('/api/colors/:name', async (req, res) => {
     const result = { name: color.name, hex: color.hex }
     res.json(result)
   } catch (error) {
+    if (error.code === 11000) {
+      return res.status(409).json({ error: `Color "${req.body.name}" already exists` })
+    }
     // Stryker disable next-line all: error logging only
     console.error('PUT /api/colors/:name error:', error)
     res.status(500).json({ error: 'Failed to update color' })
@@ -480,7 +488,7 @@ app.put('/api/colors/:name', async (req, res) => {
  *         required: true
  *         schema:
  *           type: string
- *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20+]*[a-zA-Z0-9])?$'
+ *           pattern: '^[a-zA-Z0-9]([a-zA-Z0-9\x20]*[a-zA-Z0-9])?$'
  *         description: Name of the color to delete
  *         example: Yellow
  *     responses:
@@ -507,7 +515,7 @@ app.put('/api/colors/:name', async (req, res) => {
  */
 app.delete('/api/colors/:name', async (req, res) => {
   try {
-    const { name } = req.params
+    const name = req.params.name.replace(/\+/g, ' ')
     if (!STRICT_NAME_REGEX.test(name)) {
       return res.status(400).json({ error: STRICT_NAME_MSG })
     }

@@ -85,6 +85,13 @@ export interface paths {
           }
           content?: never
         }
+        /** @description Too many requests */
+        429: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
         /** @description Server error */
         500: {
           headers: {
@@ -208,6 +215,13 @@ export interface paths {
           }
           content?: never
         }
+        /** @description A color with the new name already exists */
+        409: {
+          headers: {
+            [name: string]: unknown
+          }
+          content?: never
+        }
         /** @description Server error */
         500: {
           headers: {
@@ -299,18 +313,21 @@ export interface components {
       /** @description Error message */
       error?: string
     }
-    UpdateColor: {
-      /**
-       * @description New name for the color
-       * @example Turquoise
-       */
-      name?: string
-      /**
-       * @description New hex code for the color
-       * @example #1abc9c
-       */
-      hex?: string
-    }
+    UpdateColor:
+      | {
+          /**
+           * @description New name for the color
+           * @example Turquoise
+           */
+          name?: string
+          /**
+           * @description New hex code for the color
+           * @example #1abc9c
+           */
+          hex?: string
+        }
+      | unknown
+      | unknown
   }
   responses: never
   parameters: never

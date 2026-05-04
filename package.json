@@ -77,7 +77,7 @@
     "test:perf:ui:smoke:prod": "K6_BROWSER_ENABLED=true TEST_TYPE=production-smoke-ui k6 run performance/ui-performance.spec.ts",
     "test:perf:ui:load:prod": "K6_BROWSER_ENABLED=true TEST_TYPE=production-load-ui k6 run performance/ui-performance.spec.ts",
     "test:perf": "npm run test:perf:ui:smoke",
-    "test:api:schemathesis": "docker run --rm schemathesis/schemathesis run --checks all --exclude-checks use_after_free --suppress-health-check filter_too_much --phases examples,coverage,fuzzing http://host.docker.internal:5001/openapi.json",
+    "test:api:schemathesis": "docker run --rm schemathesis/schemathesis run --checks all --suppress-health-check filter_too_much --phases examples,coverage,fuzzing http://host.docker.internal:5001/openapi.json",
     "prebuild": "npm run build -w @color-app/shared",
     "pretest:unit": "npm run build -w @color-app/shared",
     "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-frontend-unit-tests.xml react-scripts test --watchAll=false --reporters=default --reporters=jest-junit --coverage",
