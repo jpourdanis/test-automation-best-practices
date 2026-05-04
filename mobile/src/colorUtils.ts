@@ -1,68 +1,190 @@
-export function hslToRgb(h: number, s: number, l: number): [number, number, number] {
-  h = ((h % 360) + 360) % 360
-  s = Math.max(0, Math.min(1, s))
-  l = Math.max(0, Math.min(1, l))
-  const c = (1 - Math.abs(2 * l - 1)) * s
-  const hp = h / 60
-  const x = c * (1 - Math.abs((hp % 2) - 1))
-  let r = 0,
-    g = 0,
+/**
+ * Utility functions for color conversions and calculations.
+ */
+
+type RGB = [number, number, number]
+type HSL = [number, number, number]
+
+const COLOR_CONSTANTS = {
+  MAX_HUE: 360,
+  HUE_SEGMENT_DEGREES: 60,
+  MAX_RGB: 255,
+  HEX_BASE: 16,
+  LIGHTNESS_MIDPOINT: 0.5,
+  HUE_OFFSET_G: 2,
+  HUE_OFFSET_B: 4,
+  HUE_OFFSET_NEG_R: 6
+} as const
+
+const LUMINANCE_CONSTANTS = {
+  SRGB_THRESHOLD: 0.03928,
+  SRGB_DIVISOR: 12.92,
+  SRGB_OFFSET: 0.055,
+  SRGB_SCALE: 1.055,
+  SRGB_GAMMA: 2.4,
+  WEIGHT_R: 0.2126,
+  WEIGHT_G: 0.7152,
+  WEIGHT_B: 0.0722,
+  READABLE_THRESHOLD: 0.179,
+  DARK_TEXT: '#111111',
+  LIGHT_TEXT: '#ffffff'
+} as const
+
+/**
+ * Converts HSL color values to RGB.
+ * @param h Hue (0-360)
+ * @param s Saturation (0-1)
+ * @param l Lightness (0-1)
+ * @returns An array containing [R, G, B] values in the range 0-255.
+ */
+export function hslToRgb(h: number, s: number, l: number): RGB {
+  const normalizedHue = ((h % COLOR_CONSTANTS.MAX_HUE) + COLOR_CONSTANTS.MAX_HUE) % COLOR_CONSTANTS.MAX_HUE
+  const saturation = Math.max(0, Math.min(1, s))
+  const lightness = Math.max(0, Math.min(1, l))
+
+  const chroma = (1 - Math.abs(2 * lightness - 1)) * saturation
+  const hueSegment = normalizedHue / COLOR_CONSTANTS.HUE_SEGMENT_DEGREES
+  const x = chroma * (1 - Math.abs((hueSegment % 2) - 1))
+  const match = lightness - chroma / 2
+
+  let r = 0
+  let g = 0
+  let b = 0
+
+  if (hueSegment >= 0 && hueSegment < 1) {
+    r = chroma
+    g = x
     b = 0
-  if (hp < 1) [r, g, b] = [c, x, 0]
-  else if (hp < 2) [r, g, b] = [x, c, 0]
-  else if (hp < 3) [r, g, b] = [0, c, x]
-  else if (hp < 4) [r, g, b] = [0, x, c]
-  else if (hp < 5) [r, g, b] = [x, 0, c]
-  else [r, g, b] = [c, 0, x]
-  const m = l - c / 2
-  return [Math.round((r + m) * 255), Math.round((g + m) * 255), Math.round((b + m) * 255)]
+  } else if (hueSegment >= 1 && hueSegment < 2) {
+    r = x
+    g = chroma
+    b = 0
+  } else if (hueSegment >= 2 && hueSegment < 3) {
+    r = 0
+    g = chroma
+    b = x
+  } else if (hueSegment >= 3 && hueSegment < 4) {
+    r = 0
+    g = x
+    b = chroma
+  } else if (hueSegment >= 4 && hueSegment < 5) {
+    r = x
+    g = 0
+    b = chroma
+  } else {
+    r = chroma
+    g = 0
+    b = x
+  }
+
+  return [
+    Math.round((r + match) * COLOR_CONSTANTS.MAX_RGB),
+    Math.round((g + match) * COLOR_CONSTANTS.MAX_RGB),
+    Math.round((b + match) * COLOR_CONSTANTS.MAX_RGB)
+  ]
 }
 
+/**
+ * Converts RGB color values to a hex string.
+ * @param r Red (0-255)
+ * @param g Green (0-255)
+ * @param b Blue (0-255)
+ * @returns A lowercase hex string (e.g., "#ff0000").
+ */
 export function rgbToHex(r: number, g: number, b: number): string {
-  const h = (n: number) => n.toString(16).padStart(2, '0')
-  return `#${h(r)}${h(g)}${h(b)}`.toLowerCase()
+  const toHex = (value: number) => {
+    const clamped = Math.max(0, Math.min(COLOR_CONSTANTS.MAX_RGB, Math.round(value)))
+    return clamped.toString(COLOR_CONSTANTS.HEX_BASE).padStart(2, '0')
+  }
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`.toLowerCase()
 }
 
-export function hexToRgb(hex: string): [number, number, number] | null {
-  const m = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
-  return m ? [parseInt(m[1], 16), parseInt(m[2], 16), parseInt(m[3], 16)] : null
+/**
+ * Parses a 6-digit hex string into RGB values.
+ * @param hex A hex string (e.g., "#ff0000" or "ff0000")
+ * @returns An array containing [R, G, B] or null if invalid.
+ */
+export function hexToRgb(hex: string): RGB | null {
+  const match = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
+  if (!match) return null
+
+  return [
+    parseInt(match[1], COLOR_CONSTANTS.HEX_BASE),
+    parseInt(match[2], COLOR_CONSTANTS.HEX_BASE),
+    parseInt(match[3], COLOR_CONSTANTS.HEX_BASE)
+  ]
 }
 
-export function rgbToHsl(r: number, g: number, b: number): [number, number, number] {
-  r /= 255
-  g /= 255
-  b /= 255
-  const max = Math.max(r, g, b),
-    min = Math.min(r, g, b)
-  let h = 0,
-    s = 0
-  const l = (max + min) / 2
-  if (max !== min) {
-    const d = max - min
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min)
+/**
+ * Converts RGB color values to HSL.
+ * @param r Red (0-255)
+ * @param g Green (0-255)
+ * @param b Blue (0-255)
+ * @returns An array containing [H, S, L] values.
+ */
+export function rgbToHsl(r: number, g: number, b: number): HSL {
+  const normalizedR = r / COLOR_CONSTANTS.MAX_RGB
+  const normalizedG = g / COLOR_CONSTANTS.MAX_RGB
+  const normalizedB = b / COLOR_CONSTANTS.MAX_RGB
+
+  const max = Math.max(normalizedR, normalizedG, normalizedB)
+  const min = Math.min(normalizedR, normalizedG, normalizedB)
+  const delta = max - min
+
+  const lightness = (max + min) / 2
+  let hue = 0
+  let saturation = 0
+
+  if (delta !== 0) {
+    saturation = lightness > COLOR_CONSTANTS.LIGHTNESS_MIDPOINT ? delta / (2 - max - min) : delta / (max + min)
+
     switch (max) {
-      case r:
-        h = (g - b) / d + (g < b ? 6 : 0)
+      case normalizedR:
+        hue = (normalizedG - normalizedB) / delta + (normalizedG < normalizedB ? COLOR_CONSTANTS.HUE_OFFSET_NEG_R : 0)
         break
-      case g:
-        h = (b - r) / d + 2
+      case normalizedG:
+        hue = (normalizedB - normalizedR) / delta + COLOR_CONSTANTS.HUE_OFFSET_G
         break
-      case b:
-        h = (r - g) / d + 4
+      case normalizedB:
+        hue = (normalizedR - normalizedG) / delta + COLOR_CONSTANTS.HUE_OFFSET_B
         break
     }
-    h *= 60
+    hue *= COLOR_CONSTANTS.HUE_SEGMENT_DEGREES
   }
-  return [h, s, l]
+
+  return [hue, saturation, lightness]
 }
 
+/**
+ * Determines whether black or white text is more readable on a given background color.
+ * @param hex Background color in hex format
+ * @returns Hex code for white or near-black text based on luminance.
+ */
 export function readableOn(hex: string): string {
   const rgb = hexToRgb(hex)
-  if (!rgb) return '#111'
-  const [r, g, b] = rgb.map((v) => {
-    const s = v / 255
-    return s <= 0.03928 ? s / 12.92 : Math.pow((s + 0.055) / 1.055, 2.4)
-  })
-  const L = 0.2126 * r + 0.7152 * g + 0.0722 * b
-  return L > 0.179 ? '#111111' : '#ffffff'
+  if (!rgb) return LUMINANCE_CONSTANTS.DARK_TEXT
+
+  const calculateLuminance = (value: number) => {
+    const normalized = value / COLOR_CONSTANTS.MAX_RGB
+    return normalized <= LUMINANCE_CONSTANTS.SRGB_THRESHOLD
+      ? normalized / LUMINANCE_CONSTANTS.SRGB_DIVISOR
+      : Math.pow(
+          (normalized + LUMINANCE_CONSTANTS.SRGB_OFFSET) / LUMINANCE_CONSTANTS.SRGB_SCALE,
+          LUMINANCE_CONSTANTS.SRGB_GAMMA
+        )
+  }
+
+  const [r, g, b] = rgb
+  const luminanceR = calculateLuminance(r)
+  const luminanceG = calculateLuminance(g)
+  const luminanceB = calculateLuminance(b)
+
+  const relativeLuminance =
+    LUMINANCE_CONSTANTS.WEIGHT_R * luminanceR +
+    LUMINANCE_CONSTANTS.WEIGHT_G * luminanceG +
+    LUMINANCE_CONSTANTS.WEIGHT_B * luminanceB
+
+  return relativeLuminance > LUMINANCE_CONSTANTS.READABLE_THRESHOLD
+    ? LUMINANCE_CONSTANTS.DARK_TEXT
+    : LUMINANCE_CONSTANTS.LIGHT_TEXT
 }
