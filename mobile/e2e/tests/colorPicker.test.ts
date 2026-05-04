@@ -18,49 +18,61 @@ describe('Color Picker App', () => {
   })
 
   it('opens the color picker modal when Add is tapped', async () => {
-    await colorPickerScreen.addButton.click()
-    await colorPickerScreen.colorNameInput.waitForDisplayed({ timeout: 10000 })
+    await colorPickerScreen.openAddColorModal()
     await expect(colorPickerScreen.colorPreview).toBeDisplayed()
-    await colorPickerScreen.pickerCancelBtn.click()
+    await colorPickerScreen.closeAddColorModal()
   })
 
   it('shows a validation error when saving with an empty name', async () => {
-    await colorPickerScreen.addButton.click()
-    await colorPickerScreen.colorNameInput.waitForDisplayed({ timeout: 10000 })
+    await colorPickerScreen.openAddColorModal()
     await colorPickerScreen.pickerSaveBtn.click()
+
     await colorPickerScreen.pickerError.waitForDisplayed({ timeout: 5000 })
     await expect(colorPickerScreen.pickerError).toBeDisplayed()
-    await colorPickerScreen.pickerCancelBtn.click()
+
+    await colorPickerScreen.closeAddColorModal()
   })
 
-  it.skip('adds a new color and shows it as a chip', async () => {
+  it('adds a new color and shows it as a chip', async () => {
     const name = `Test${Date.now()}`
-    await colorPickerScreen.addButton.click()
-    await colorPickerScreen.colorNameInput.waitForDisplayed({ timeout: 10000 })
-    await colorPickerScreen.colorNameInput.setValue(name)
-    await colorPickerScreen.pickerSaveBtn.click()
+    await colorPickerScreen.openAddColorModal()
+    await colorPickerScreen.submitNewColor(name)
+
     // Modal closes only after both API calls (POST + GET) complete — wait for it
     // to disappear before looking for the chip, avoiding a race condition.
     await colorPickerScreen.colorNameInput.waitForDisplayed({ timeout: 30000, reverse: true })
+
     const chip = colorPickerScreen.colorChip(name)
     await chip.waitForExist({ timeout: 10000 })
     await expect(chip).toBeDisplayed()
 
     // cleanup — delete the color we just added
-    await colorPickerScreen.deleteChipButton(name).click()
-    await colorPickerScreen.confirmDeleteBtn.waitForDisplayed({ timeout: 5000 })
-    await colorPickerScreen.confirmDeleteBtn.click()
+    await colorPickerScreen.deleteColor(name)
   })
 
-  it.skip('switches the UI language', async () => {
-    await colorPickerScreen.langButton('es').click()
-    await driver.pause(800)
+  it('switches the UI language', async () => {
+    const esButton = colorPickerScreen.langButton('es')
+    await esButton.click()
+
+    // Explicit wait for the state change instead of arbitrary pause
+    await driver.waitUntil(
+      async () => {
+        const attr = driver.isAndroid ? 'selected' : 'value'
+        const selected = await esButton.getAttribute(attr)
+        return selected === '1' || selected === 'true'
+      },
+      {
+        timeout: 5000,
+        timeoutMsg: 'Expected ES language button to be selected'
+      }
+    )
 
     // Cross-platform check for selected state
     const attr = driver.isAndroid ? 'selected' : 'value'
-    const selected = await colorPickerScreen.langButton('es').getAttribute(attr)
+    const selected = await esButton.getAttribute(attr)
     expect(selected ?? '').toMatch(/^(1|true)$/)
 
-    await colorPickerScreen.langButton('en').click()
+    const enButton = colorPickerScreen.langButton('en')
+    await enButton.click()
   })
 })
