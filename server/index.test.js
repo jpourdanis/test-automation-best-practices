@@ -551,14 +551,20 @@ describe('Server Unit Tests', () => {
     })
 
     it('JSON error middleware passes non-syntax errors to next()', async () => {
-      // Create a temporary route that throws a non-syntax error
-      app.get('/test-error-next', (req, res, next) => {
-        const err = new Error('Normal Error')
-        err.status = 400
-        next(err)
-      })
-      const res = await request(app).get('/test-error-next')
-      expect(res.status).toBe(400) // Default express handler or no matching route
+      // Send invalid gzip data so body-parser throws a decompression error
+      // This error is a Z_DATA_ERROR, not a SyntaxError, so it should fall through to next(err)
+      const res = await request(app)
+        .post('/api/colors')
+        .set('Content-Type', 'application/json')
+        .set('Content-Encoding', 'gzip')
+        .send(Buffer.from('not valid gzip data'))
+
+      // The default express error handler will catch it and return 500 or 400
+      expect(res.status).toBeGreaterThanOrEqual(400)
+      // Since it fell through our custom handler, it won't have the custom JSON error format
+      if (res.body) {
+        expect(res.body.error).toBeUndefined()
+      }
     })
 
     it('JSON error middleware ignores SyntaxError with status != 400', async () => {
@@ -624,11 +630,32 @@ describe('Server Unit Tests', () => {
       expect(res.body.error).toBe('Failed to create color')
     })
 
+    it('POST /api/colors returns 409 when database throws duplicate key error (code 11000)', async () => {
+      jest.spyOn(Color, 'findOne').mockResolvedValue(null)
+      const error = new Error('Duplicate key')
+      error.code = 11000
+      jest.spyOn(Color, 'create').mockRejectedValue(error)
+      const res = await request(app).post('/api/colors').send({ name: 'Purple', hex: '#800080' })
+      expect(res.status).toBe(409)
+      expect(res.body.error).toBe('Color "Purple" already exists')
+    })
+
     it('PUT /api/colors/:name returns 500 when database fails', async () => {
       jest.spyOn(Color, 'findOne').mockRejectedValue(new Error('DB Error'))
       const res = await request(app).put('/api/colors/Red').send({ hex: '#ff0000' })
       expect(res.status).toBe(500)
       expect(res.body.error).toBe('Failed to update color')
+    })
+
+    it('PUT /api/colors/:name returns 409 when database throws duplicate key error (code 11000) on save', async () => {
+      const mockColor = { name: 'Red', hex: '#ff0000', save: jest.fn() }
+      const error = new Error('Duplicate key')
+      error.code = 11000
+      mockColor.save.mockRejectedValue(error)
+      jest.spyOn(Color, 'findOne').mockResolvedValue(mockColor)
+      const res = await request(app).put('/api/colors/Red').send({ name: 'NewRed' })
+      expect(res.status).toBe(409)
+      expect(res.body.error).toBe('Color "NewRed" already exists')
     })
 
     it('DELETE /api/colors/:name returns 500 when database fails', async () => {
