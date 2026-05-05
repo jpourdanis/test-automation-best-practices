@@ -257,8 +257,8 @@ app.all('/api/colors/:name', (req, res, next) => {
  */
 app.get('/api/colors', async (req, res) => {
   try {
-    // Return all colors, hiding internal MongoDB __v and _id
-    const colors = await Color.find({}, { _id: 0, __v: 0 })
+    // Return all colors sorted alphabetically by name, hiding internal MongoDB __v and _id
+    const colors = await Color.find({}, { _id: 0, __v: 0 }).sort({ name: 1 })
     res.json(colors)
   } catch (error) {
     res.status(500).json({ error: 'Error fetching colors' })

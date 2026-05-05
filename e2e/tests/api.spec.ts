@@ -64,6 +64,19 @@ test.describe('Backend API Integration', () => {
   })
 
   /**
+   * Test: GET /api/colors sort order
+   * Verifies that the API returns colors sorted alphabetically by name so that
+   * test results are deterministic regardless of MongoDB's internal storage order.
+   */
+  test('GET /api/colors should return colors sorted alphabetically by name', async ({ request }) => {
+    const response = await request.get('/api/colors')
+    expect(response.status()).toBe(200)
+    const data = await response.json()
+    const names = data.map((c: { name: string }) => c.name)
+    expect(names).toEqual([...names].sort((a, b) => a.localeCompare(b)))
+  })
+
+  /**
    * Negative Test: GET /api/colors/:name
    * Verifies that the API correctly handles requests for colors that do not exist.
    */

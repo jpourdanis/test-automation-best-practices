@@ -68,6 +68,13 @@ describe('Server Unit Tests', () => {
       const res = await request(app).get('/api/colors')
       expect(res.headers['content-type']).toMatch(/json/)
     })
+
+    it('returns colors sorted alphabetically by name', async () => {
+      const res = await request(app).get('/api/colors')
+      expect(res.status).toBe(200)
+      const names = res.body.map((c) => c.name)
+      expect(names).toEqual(['Red', 'Turquoise', 'Yellow'])
+    })
   })
 
   // =========================================================================
@@ -589,7 +596,7 @@ describe('Server Unit Tests', () => {
     })
 
     it('GET /api/colors returns 500 when database fails', async () => {
-      jest.spyOn(Color, 'find').mockRejectedValue(new Error('DB Error'))
+      jest.spyOn(Color, 'find').mockReturnValue({ sort: jest.fn().mockRejectedValue(new Error('DB Error')) })
       const res = await request(app).get('/api/colors')
       expect(res.status).toBe(500)
       expect(res.body.error).toBe('Error fetching colors')
