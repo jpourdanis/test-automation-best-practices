@@ -25,6 +25,10 @@ test.describe('Accessibility Tests', () => {
     // Wait for the main elements to render
     await expect(homePage.header).toBeVisible()
 
+    // Pin to Turquoise so the background is always #1abc9c regardless of what the API returns first
+    await homePage.clickColorButton('Turquoise')
+    await expect(homePage.currentColorText).toContainText('#1abc9c')
+
     // Run Axe to check for accessibility violations
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
 
@@ -117,6 +121,10 @@ test.describe('i18n Accessibility Tests', () => {
       await expect(
         page.getByRole('button', { name: `${lang.i18n.changeColor} ${lang.i18n.colors.yellow}` })
       ).toBeVisible()
+
+      // Pin to Turquoise so the background is always #1abc9c regardless of what the API returns first
+      await homePage.clickColorButton(lang.i18n.colors.turquoise)
+      await expect(homePage.currentColorText).toContainText('#1abc9c')
 
       // Run Axe to check for accessibility violations in the translated state
       const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
