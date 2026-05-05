@@ -13,6 +13,8 @@ import { enTranslations, esTranslations, elTranslations } from '@color-app/share
 test.describe('Accessibility Tests', () => {
   test.beforeEach(async ({ homePage }) => {
     await homePage.goto()
+    await homePage.clickColorButton('Turquoise')
+    await expect(homePage.currentColorText).toContainText('#1abc9c')
   })
 
   /**
@@ -24,10 +26,6 @@ test.describe('Accessibility Tests', () => {
   test('should not have any automatically detectable accessibility issues', async ({ homePage, page }) => {
     // Wait for the main elements to render
     await expect(homePage.header).toBeVisible()
-
-    // Pin to Turquoise so the background is always #1abc9c regardless of what the API returns first
-    await homePage.clickColorButton('Turquoise')
-    await expect(homePage.currentColorText).toContainText('#1abc9c')
 
     // Run Axe to check for accessibility violations
     const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
@@ -79,7 +77,7 @@ test.describe('Accessibility Tests', () => {
       thresholds: {
         accessibility: 90
       },
-      port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)
+      port: 9222 + (process.env.TEST_WORKER_INDEX ? Number.parseInt(process.env.TEST_WORKER_INDEX) : 0)
     })
   })
 })
@@ -98,13 +96,14 @@ test.describe('i18n Accessibility Tests', () => {
     { code: 'el', i18n: elTranslations }
   ]
 
-  for (const lang of languages) {
-    test(`should maintain accessibility in ${lang.code} language and verify resilient locators`, async ({
-      homePage,
-      page
-    }) => {
-      await homePage.goto()
+  test.beforeEach(async ({ homePage }) => {
+    await homePage.goto()
+    await homePage.clickColorButton('Turquoise')
+    await expect(homePage.currentColorText).toContainText('#1abc9c')
+  })
 
+  for (const lang of languages) {
+    test(`should maintain accessibility in ${lang.code} language and verify resilient locators`, async ({ page }) => {
       // Change the language. Default is English, so the label starts as English.
       const languageDropdown = page.getByRole('combobox', {
         name: enTranslations.languageSelector
@@ -121,10 +120,6 @@ test.describe('i18n Accessibility Tests', () => {
       await expect(
         page.getByRole('button', { name: `${lang.i18n.changeColor} ${lang.i18n.colors.yellow}` })
       ).toBeVisible()
-
-      // Pin to Turquoise so the background is always #1abc9c regardless of what the API returns first
-      await homePage.clickColorButton(lang.i18n.colors.turquoise)
-      await expect(homePage.currentColorText).toContainText('#1abc9c')
 
       // Run Axe to check for accessibility violations in the translated state
       const accessibilityScanResults = await new AxeBuilder({ page }).analyze()
