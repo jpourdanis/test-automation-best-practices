@@ -101,6 +101,18 @@ class ColorPickerScreen {
     await this.pickerSaveBtn.click()
   }
 
+  async scrollToChip(name: string): Promise<void> {
+    if (driver.isIOS) {
+      const chip = this.colorChip(name)
+      await driver.execute('mobile: scroll', { element: await chip.elementId, toVisible: true })
+    } else {
+      // UiScrollable scrolls the parent automatically while locating the element
+      await $(
+        `android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().resourceIdMatches(".*chip-select-${name}"))`
+      ).waitForExist()
+    }
+  }
+
   async deleteColor(name: string): Promise<void> {
     await this.deleteChipButton(name).click()
     await this.confirmDeleteBtn.waitForDisplayed({ timeout: 5000 })

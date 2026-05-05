@@ -59,9 +59,10 @@ describe('Color Picker App', () => {
     await driver.activateApp(BUNDLE_ID)
     await colorPickerScreen.waitForLoad()
 
-    // 3. Assert — the chip must be visible
+    // 3. Assert — scroll horizontally to reveal the chip, then assert
     const chip = colorPickerScreen.colorChip(name)
     await chip.waitForExist({ timeout: 10000 })
+    await colorPickerScreen.scrollToChip(name)
     await expect(chip).toBeDisplayed()
   })
 
