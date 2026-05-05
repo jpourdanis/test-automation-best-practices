@@ -5,8 +5,7 @@ ENV CI=true
 
 # Install dependencies using npm (this repo uses npm)
 COPY package.json package-lock.json* ./
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci --ignore-scripts --legacy-peer-deps
+RUN npm ci --ignore-scripts --legacy-peer-deps
 
 # Copy project files
 COPY . .
@@ -20,6 +19,11 @@ RUN npm run build -w @color-app/shared \
 FROM base AS build
 ARG USE_BABEL_PLUGIN_ISTANBUL=1
 ENV USE_BABEL_PLUGIN_ISTANBUL=$USE_BABEL_PLUGIN_ISTANBUL
+# Cap Node heap to stay well under the Docker VM memory limit.
+# Without this, webpack + babel-plugin-istanbul triggers an OOM kill which
+# surfaces as "exited too early" with no actionable error message.
+# 1024 MB is safe for a ~2 GB Docker VM that also runs mongo + api + web.
+ENV NODE_OPTIONS="--max-old-space-size=1024"
 RUN npm run build
 
 # ---- App stage: serves the production build using Nginx ----
