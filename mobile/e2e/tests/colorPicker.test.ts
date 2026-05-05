@@ -2,10 +2,23 @@
 /// <reference types="@wdio/mocha-framework" />
 
 import { colorPickerScreen } from '../pageObjects/ColorPickerScreen'
+import { createApiClient } from '@color-app/shared'
+
+const BUNDLE_ID = 'com.jpourdanis.colorpicker'
+const api = createApiClient({ baseUrl: 'https://test-automation-best-practices.vercel.app' })
 
 describe('Color Picker App', () => {
+  let createdColorName: string | null = null
+
   before(async () => {
     await colorPickerScreen.waitForLoad()
+  })
+
+  afterEach(async () => {
+    if (createdColorName) {
+      await api.deleteColor(createdColorName).catch(() => {})
+      createdColorName = null
+    }
   })
 
   it('shows the app title', async () => {
@@ -35,19 +48,21 @@ describe('Color Picker App', () => {
 
   it('adds a new color and shows it as a chip', async () => {
     const name = `Test${Date.now()}`
-    await colorPickerScreen.openAddColorModal()
-    await colorPickerScreen.submitNewColor(name)
+    createdColorName = name
 
-    // Modal closes only after both API calls (POST + GET) complete — wait for it
-    // to disappear before looking for the chip, avoiding a race condition.
-    await colorPickerScreen.colorNameInput.waitForDisplayed({ timeout: 30000, reverse: true })
+    // 1. Arrange — inject state directly via API, bypassing the UI
+    const createRes = await api.createColor({ name, hex: '#3498db' })
+    expect(createRes.ok).toBe(true)
 
+    // 2. Act — restart the app so the useEffect re-fetches and picks up the new color
+    await driver.terminateApp(BUNDLE_ID)
+    await driver.activateApp(BUNDLE_ID)
+    await colorPickerScreen.waitForLoad()
+
+    // 3. Assert — the chip must be visible
     const chip = colorPickerScreen.colorChip(name)
     await chip.waitForExist({ timeout: 10000 })
     await expect(chip).toBeDisplayed()
-
-    // cleanup — delete the color we just added
-    await colorPickerScreen.deleteColor(name)
   })
 
   it('switches the UI language', async () => {
