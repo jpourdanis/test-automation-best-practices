@@ -136,7 +136,7 @@
     "browserstack-node-sdk": "^1.52.0",
     "http-proxy-middleware": "^3.0.5",
     "husky": "^9.1.7",
-    "jest-junit": "^16.0.0",
+    "jest-junit": "^17.0.0",
     "lighthouse": "^13.0.3",
     "lint-staged": "^16.4.0",
     "playwright-bdd": "^8.5.0",
