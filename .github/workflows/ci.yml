@@ -226,7 +226,7 @@ jobs:
         run: curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
 
       - name: Run Trivy vulnerability scanner on fs
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
         with:
           scan-type: "fs"
           ignore-unfixed: true
@@ -266,7 +266,7 @@ jobs:
         run: curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
 
       - name: Run Trivy vulnerability scanner on frontend image
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
         with:
           scan-type: "image"
           image-ref: "test-automation-best-practices-app:latest"
@@ -305,7 +305,7 @@ jobs:
         run: curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
 
       - name: Run Trivy vulnerability scanner on API image
-        uses: aquasecurity/trivy-action@57a97c7e7821a5776cebc9bb87c984fa69cba8f1
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
         with:
           scan-type: "image"
           image-ref: "test-automation-best-practices-api:latest"
