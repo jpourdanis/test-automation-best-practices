@@ -38,7 +38,7 @@ export default function ColorPickerInner({
   onClearError,
   onConfirm,
   onCancel
-}: ColorPickerInnerProps) {
+}: Readonly<ColorPickerInnerProps>) {
   const { t } = useTranslation()
   const { width: screenWidth } = useWindowDimensions()
   const wheelSize = screenWidth - H_PAD

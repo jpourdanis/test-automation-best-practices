@@ -24,7 +24,7 @@ export function ConfirmDialog({
   busy,
   onConfirm,
   onCancel
-}: Props) {
+}: Readonly<Props>) {
   return (
     <Modal
       testID='confirm-modal'

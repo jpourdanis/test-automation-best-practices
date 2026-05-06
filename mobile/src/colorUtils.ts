@@ -54,26 +54,20 @@ export function hslToRgb(h: number, s: number, l: number): RGB {
   if (hueSegment >= 0 && hueSegment < 1) {
     r = chroma
     g = x
-    b = 0
   } else if (hueSegment >= 1 && hueSegment < 2) {
     r = x
     g = chroma
-    b = 0
   } else if (hueSegment >= 2 && hueSegment < 3) {
-    r = 0
     g = chroma
     b = x
   } else if (hueSegment >= 3 && hueSegment < 4) {
-    r = 0
     g = x
     b = chroma
   } else if (hueSegment >= 4 && hueSegment < 5) {
     r = x
-    g = 0
     b = chroma
   } else {
     r = chroma
-    g = 0
     b = x
   }
 
@@ -109,9 +103,9 @@ export function hexToRgb(hex: string): RGB | null {
   if (!match) return null
 
   return [
-    parseInt(match[1], COLOR_CONSTANTS.HEX_BASE),
-    parseInt(match[2], COLOR_CONSTANTS.HEX_BASE),
-    parseInt(match[3], COLOR_CONSTANTS.HEX_BASE)
+    Number.parseInt(match[1], COLOR_CONSTANTS.HEX_BASE),
+    Number.parseInt(match[2], COLOR_CONSTANTS.HEX_BASE),
+    Number.parseInt(match[3], COLOR_CONSTANTS.HEX_BASE)
   ]
 }
 

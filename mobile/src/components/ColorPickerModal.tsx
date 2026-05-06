@@ -34,7 +34,7 @@ export function ColorPickerModal({
   onClearError,
   onConfirm,
   onCancel
-}: Props) {
+}: Readonly<Props>) {
   const { t } = useTranslation()
 
   const [name, setName] = React.useState('')
