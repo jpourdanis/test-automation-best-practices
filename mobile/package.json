@@ -58,7 +58,7 @@
     "@wdio/spec-reporter": "^9.0.0",
     "@wdio/types": "^9.0.0",
     "appium": "^3.3.1",
-    "cross-env": "^7.0.3",
+    "cross-env": "^10.1.0",
     "jest": "^29.7.0",
     "jest-expo": "~52.0.3",
     "jest-junit": "^16.0.0",
