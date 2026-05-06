@@ -136,14 +136,21 @@ jobs:
         run: |
           mkdir -p e2e/artifacts
 
-          BUILD_URL=$(eas build:list \
+          EAS_OUTPUT=$(eas build:list \
             --platform ios \
             --profile simulator \
             --status finished \
             --limit 1 \
             --json \
-            --non-interactive \
-            | jq -r '.[0].artifacts.buildUrl')
+            --non-interactive 2>&1)
+
+          if ! echo "$EAS_OUTPUT" | jq empty 2>/dev/null; then
+            echo "::error::eas build:list did not return valid JSON (EXPO_TOKEN may be missing or invalid). Raw output:"
+            echo "$EAS_OUTPUT"
+            exit 1
+          fi
+
+          BUILD_URL=$(echo "$EAS_OUTPUT" | jq -r '.[0].artifacts.buildUrl')
 
           if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
             echo "::error::No finished simulator build found on EAS. Trigger one with: npm run build:ios"
@@ -303,14 +310,21 @@ jobs:
         run: |
           mkdir -p e2e/artifacts
 
-          BUILD_URL=$(eas build:list \
+          EAS_OUTPUT=$(eas build:list \
             --platform android \
             --profile preview \
             --status finished \
             --limit 1 \
             --json \
-            --non-interactive \
-            | jq -r '.[0].artifacts.buildUrl')
+            --non-interactive 2>&1)
+
+          if ! echo "$EAS_OUTPUT" | jq empty 2>/dev/null; then
+            echo "::error::eas build:list did not return valid JSON (EXPO_TOKEN may be missing or invalid). Raw output:"
+            echo "$EAS_OUTPUT"
+            exit 1
+          fi
+
+          BUILD_URL=$(echo "$EAS_OUTPUT" | jq -r '.[0].artifacts.buildUrl')
 
           if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
             echo "::error::No finished Android emulator build found on EAS. Trigger one with: npm run build:android"
