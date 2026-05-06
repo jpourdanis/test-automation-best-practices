@@ -54,7 +54,7 @@ export default function App() {
           setActiveName(data[0].name)
         }
       })
-      .catch(() => setError('Failed to load colors'))
+      .catch(() => setError(t('errors.loadColors')))
       .finally(() => setLoading(false))
   }, [])
 
@@ -65,7 +65,7 @@ export default function App() {
       setBackgroundColor(data.hex)
       setActiveName(data.name)
     } catch {
-      setError(`Failed to load color: ${colorName}`)
+      setError(t('errors.loadColor', { name: colorName }))
     }
   }
 
@@ -81,10 +81,10 @@ export default function App() {
       setPickerOpen(false)
     } catch (err: unknown) {
       const e = err as { status?: number; data?: { error?: string } }
-      let msg = e.data?.error ?? 'Network error — could not reach the server.'
-      if (e.status === 409) msg = e.data?.error ?? `A color named "${name}" already exists.`
-      if (e.status === 429) msg = 'Too many requests. Try again in a moment.'
-      if (e.status != null && e.status >= 500) msg = 'Server error. Please try again.'
+      let msg = e.data?.error ?? t('errors.network')
+      if (e.status === 409) msg = e.data?.error ?? t('errors.conflict', { name })
+      if (e.status === 429) msg = t('errors.rateLimit')
+      if (e.status != null && e.status >= 500) msg = t('errors.server')
       setPickerError(msg)
     } finally {
       setSaving(false)
@@ -111,7 +111,7 @@ export default function App() {
       setConfirmTarget(null)
     } catch (err: unknown) {
       const e = err as { data?: { error?: string } }
-      setError(e.data?.error ?? 'Network error — could not delete color.')
+      setError(e.data?.error ?? t('errors.deleteNetwork'))
     } finally {
       setDeleting(false)
     }

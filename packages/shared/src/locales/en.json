@@ -18,6 +18,15 @@
   "cancel": "Cancel",
   "delete": "Delete",
   "deleting": "Deleting\u2026",
+  "errors": {
+    "loadColors": "Failed to load colors",
+    "loadColor": "Failed to load color: {{name}}",
+    "network": "Network error — could not reach the server.",
+    "conflict": "A color named \"{{name}}\" already exists.",
+    "rateLimit": "Too many requests. Try again in a moment.",
+    "server": "Server error. Please try again.",
+    "deleteNetwork": "Network error — could not delete color."
+  },
   "colorPicker": {
     "title": "Add a color",
     "dialogAriaLabel": "Add custom color",
