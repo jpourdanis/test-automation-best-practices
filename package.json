@@ -182,7 +182,9 @@
       "src/setupProxy.js",
       "src/index.tsx",
       "src/setupTests.ts",
-      "src/react-app-env.d.ts"
+      "src/react-app-env.d.ts",
+      "mobile/src/api/client.ts",
+      "mobile/src/i18n.ts"
     ]
   }
 }
