@@ -25,13 +25,23 @@ async function handleResponse<T>(res: Response): Promise<T> {
   return data as T
 }
 
-export const api = {
-  getColors: (): Promise<Color[]> => client.getColors().then((r) => handleResponse<Color[]>(r)),
+async function withTimeout<T>(fn: (signal: AbortSignal) => Promise<Response>): Promise<T> {
+  const controller = new AbortController()
+  const timer = setTimeout(() => controller.abort(), 15_000)
+  try {
+    return await handleResponse<T>(await fn(controller.signal))
+  } finally {
+    clearTimeout(timer)
+  }
+}
 
-  getColor: (name: string): Promise<Color> => client.getColor(name).then((r) => handleResponse<Color>(r)),
+export const api = {
+  getColors: (): Promise<Color[]> => withTimeout<Color[]>((signal) => client.getColors(signal)),
+
+  getColor: (name: string): Promise<Color> => withTimeout<Color>((signal) => client.getColor(name, signal)),
 
   addColor: (name: string, hex: string): Promise<Color> =>
-    client.createColor({ name, hex }).then((r) => handleResponse<Color>(r)),
+    withTimeout<Color>((signal) => client.createColor({ name, hex }, signal)),
 
-  deleteColor: (name: string): Promise<void> => client.deleteColor(name).then((r) => handleResponse<void>(r))
+  deleteColor: (name: string): Promise<void> => withTimeout<void>((signal) => client.deleteColor(name, signal))
 }
