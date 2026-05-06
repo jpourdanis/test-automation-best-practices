@@ -18,10 +18,21 @@
   "cancel": "Cancelar",
   "delete": "Eliminar",
   "deleting": "Eliminando\u2026",
+  "errors": {
+    "loadColors": "No se pudieron cargar los colores",
+    "loadColor": "No se pudo cargar el color: {{name}}",
+    "network": "Error de red — no se pudo conectar al servidor.",
+    "conflict": "Ya existe un color llamado \"{{name}}\".",
+    "rateLimit": "Demasiadas solicitudes. Inténtalo de nuevo en un momento.",
+    "server": "Error del servidor. Inténtalo de nuevo.",
+    "deleteNetwork": "Error de red — no se pudo eliminar el color."
+  },
   "colorPicker": {
     "title": "Añadir un color",
     "dialogAriaLabel": "Añadir color personalizado",
     "closeAriaLabel": "Cerrar",
+    "hueLabel": "Tono",
+    "saturationLabel": "Saturación",
     "lightnessLabel": "Luminosidad",
     "nameLabel": "Nombre",
     "namePlaceholder": "p. ej. Océano",

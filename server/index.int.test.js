@@ -81,6 +81,13 @@ describe('Server Integration Tests (Testcontainers)', () => {
       expect(res.status).toBe(200)
       expect(res.body).toEqual([])
     })
+
+    it('should return colors sorted alphabetically by name', async () => {
+      const res = await request(app).get('/api/colors')
+      expect(res.status).toBe(200)
+      const names = res.body.map((c) => c.name)
+      expect(names).toEqual(['Red', 'Turquoise', 'Yellow'])
+    })
   })
 
   // ---------------------------------------------------------------------------

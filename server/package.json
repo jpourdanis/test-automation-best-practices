@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "NODE_OPTIONS='--experimental-vm-modules --preserve-symlinks' node_modules/.bin/jest --config jest.config.js index.test.js",
+    "test": "NODE_OPTIONS='--experimental-vm-modules --preserve-symlinks' jest --config jest.config.js index.test.js",
     "test:int": "TESTCONTAINERS_RYUK_DISABLED=true jest index.int.test.js",
     "test:watch": "npm test -- --watch",
     "mutation": "stryker run",
@@ -20,11 +20,11 @@
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
     "express": "^5.2.1",
-    "express-rate-limit": "^8.3.2",
-    "mongoose": "^9.5.0",
+    "express-rate-limit": "^8.5.0",
+    "mongoose": "^9.6.1",
     "swagger-jsdoc": "^6.2.8",
     "swagger-ui-express": "^5.0.1",
-    "zod": "^4.3.6"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@stryker-mutator/core": "^9.6.0",
@@ -32,7 +32,7 @@
     "@testcontainers/mongodb": "^11.14.0",
     "jest": "^30.3.0",
     "jest-junit": "^17.0.0",
-    "mongodb-memory-server": "^11.0.1",
+    "mongodb-memory-server": "^11.1.0",
     "picomatch": "^4.0.4",
     "supertest": "^7.2.2",
     "testcontainers": "^11.14.0"

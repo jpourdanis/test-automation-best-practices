@@ -1,0 +1,40 @@
+{
+  "expo": {
+    "name": "Color Picker",
+    "slug": "color-picker",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "newArchEnabled": true,
+    "extra": {
+      "apiUrl": "https://test-automation-best-practices.vercel.app",
+      "eas": {
+        "projectId": "fbeb76b5-c7a3-4f30-bef2-beb95cf132e7"
+      }
+    },
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.jpourdanis.colorpicker"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "edgeToEdgeEnabled": true,
+      "predictiveBackGestureEnabled": false,
+      "package": "com.jpourdanis.colorpicker"
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": ["expo-localization"],
+    "owner": "jpourdanis"
+  }
+}

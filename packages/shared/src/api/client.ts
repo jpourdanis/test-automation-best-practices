@@ -11,32 +11,34 @@ export function createApiClient(options: ApiClientOptions = {}) {
   const base = options.baseUrl ?? ''
 
   return {
-    getColors(): Promise<Response> {
-      return fetch(`${base}/api/colors`)
+    getColors(signal?: AbortSignal): Promise<Response> {
+      return fetch(`${base}/api/colors`, { cache: 'no-store', signal })
     },
 
-    getColor(name: string): Promise<Response> {
-      return fetch(`${base}/api/colors/${encodeURIComponent(name)}`, { cache: 'no-store' })
+    getColor(name: string, signal?: AbortSignal): Promise<Response> {
+      return fetch(`${base}/api/colors/${encodeURIComponent(name)}`, { cache: 'no-store', signal })
     },
 
-    createColor(body: ColorBody): Promise<Response> {
+    createColor(body: ColorBody, signal?: AbortSignal): Promise<Response> {
       return fetch(`${base}/api/colors`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
+        signal
       })
     },
 
-    updateColor(name: string, body: UpdateColorBody): Promise<Response> {
+    updateColor(name: string, body: UpdateColorBody, signal?: AbortSignal): Promise<Response> {
       return fetch(`${base}/api/colors/${encodeURIComponent(name)}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
+        signal
       })
     },
 
-    deleteColor(name: string): Promise<Response> {
-      return fetch(`${base}/api/colors/${encodeURIComponent(name)}`, { method: 'DELETE' })
+    deleteColor(name: string, signal?: AbortSignal): Promise<Response> {
+      return fetch(`${base}/api/colors/${encodeURIComponent(name)}`, { method: 'DELETE', signal })
     }
   }
 }

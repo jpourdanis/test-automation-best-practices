@@ -13,6 +13,8 @@ import { enTranslations, esTranslations, elTranslations } from '@color-app/share
 test.describe('Accessibility Tests', () => {
   test.beforeEach(async ({ homePage }) => {
     await homePage.goto()
+    await homePage.clickColorButton('Turquoise')
+    await expect(homePage.currentColorText).toContainText('#1abc9c')
   })
 
   /**
@@ -75,7 +77,7 @@ test.describe('Accessibility Tests', () => {
       thresholds: {
         accessibility: 90
       },
-      port: 9222 + (process.env.TEST_WORKER_INDEX ? parseInt(process.env.TEST_WORKER_INDEX) : 0)
+      port: 9222 + (process.env.TEST_WORKER_INDEX ? Number.parseInt(process.env.TEST_WORKER_INDEX) : 0)
     })
   })
 })
@@ -94,13 +96,14 @@ test.describe('i18n Accessibility Tests', () => {
     { code: 'el', i18n: elTranslations }
   ]
 
-  for (const lang of languages) {
-    test(`should maintain accessibility in ${lang.code} language and verify resilient locators`, async ({
-      homePage,
-      page
-    }) => {
-      await homePage.goto()
+  test.beforeEach(async ({ homePage }) => {
+    await homePage.goto()
+    await homePage.clickColorButton('Turquoise')
+    await expect(homePage.currentColorText).toContainText('#1abc9c')
+  })
 
+  for (const lang of languages) {
+    test(`should maintain accessibility in ${lang.code} language and verify resilient locators`, async ({ page }) => {
       // Change the language. Default is English, so the label starts as English.
       const languageDropdown = page.getByRole('combobox', {
         name: enTranslations.languageSelector

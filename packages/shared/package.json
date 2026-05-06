@@ -22,7 +22,7 @@
     "generate:client": "node scripts/generate-api.js"
   },
   "dependencies": {
-    "zod": "^4.0.0"
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "openapi-typescript": "^7.8.0",

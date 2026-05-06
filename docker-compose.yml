@@ -55,6 +55,7 @@ services:
       retries: 10
     environment:
       - MONGO_URI=mongodb://mongo:27017/colorsdb
+      - RATE_LIMIT_MAX=1000000
 
   mongo:
     image: mongo:latest

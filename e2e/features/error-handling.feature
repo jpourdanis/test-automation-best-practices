@@ -19,7 +19,8 @@ Feature: API Error Handling
 
   @story:Color_Fetch_Error @severity:normal @jira:UI-791
   Scenario: Background stays unchanged when fetching a specific color fails
-    Given I am on the home page
+    Given the API returns a colors list with only "Turquoise" as "#1abc9c" and "Red" as "#e74c3c"
+    And I am on the home page
     And the API returns a server error for the "Red" color
     When I click the "Red" color button
     Then the background color should be "rgb(26, 188, 156)"
