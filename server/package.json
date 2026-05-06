@@ -4,7 +4,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "NODE_OPTIONS='--experimental-vm-modules --preserve-symlinks' node_modules/.bin/jest --config jest.config.js index.test.js",
+    "test": "NODE_OPTIONS='--experimental-vm-modules --preserve-symlinks' jest --config jest.config.js index.test.js",
     "test:int": "TESTCONTAINERS_RYUK_DISABLED=true jest index.int.test.js",
     "test:watch": "npm test -- --watch",
     "mutation": "stryker run",

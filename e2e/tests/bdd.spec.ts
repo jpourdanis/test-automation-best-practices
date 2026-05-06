@@ -72,6 +72,22 @@ Given('the API returns an empty colors list', async ({ page }) => {
 })
 
 /**
+ * Given Step: Route mock — controlled two-color list so the initial background
+ * is always the first entry's hex value (#1abc9c for Turquoise).
+ * Must be registered before navigation so it intercepts the initial fetch.
+ */
+Given(
+  'the API returns a colors list with only {string} as {string} and {string} as {string}',
+  async ({ page }, name1: string, hex1: string, name2: string, hex2: string) => {
+    const body = JSON.stringify([
+      { name: name1, hex: hex1 },
+      { name: name2, hex: hex2 }
+    ])
+    await page.route('**/api/colors', (route) => route.fulfill({ status: 200, contentType: 'application/json', body }))
+  }
+)
+
+/**
  * Given Step: Route mock — 500 on GET /api/colors/:name
  * Registered after navigation so only the specific button click is affected.
  */

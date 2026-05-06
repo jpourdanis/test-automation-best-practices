@@ -127,7 +127,7 @@ describe('Frontend Unit Tests', () => {
       render(<App />)
       expect(screen.getByText('Color Chooser App')).toBeInTheDocument()
       expect(screen.getByAltText('logo')).toHaveAttribute('src', 'logo.svg')
-      expect(mockFetch).toHaveBeenCalledWith('/api/colors')
+      expect(mockFetch).toHaveBeenCalledWith('/api/colors', { cache: 'no-store', signal: undefined })
     })
 
     test('learn react link has correct text', () => {

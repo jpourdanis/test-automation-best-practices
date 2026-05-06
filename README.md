@@ -43,25 +43,29 @@ Every pattern here solves a real problem that teams hit in production:
 
 ## Tech stack
 
-| Layer            | Technology                                             |
-| ---------------- | ------------------------------------------------------ |
-| Frontend         | React 19, TypeScript, react-i18next (EN / ES / EL)     |
-| Backend          | Express 5, Mongoose 9, Zod, Swagger                    |
-| Database         | MongoDB                                                |
-| E2E              | Playwright, playwright-bdd (Cucumber), Allure          |
-| Unit / Component | Jest, React Testing Library, Supertest                 |
-| Integration      | Testcontainers (real MongoDB in Docker)                |
-| Performance      | k6 (API load + browser UI tests)                       |
-| Mutation         | Stryker Mutator                                        |
-| Security         | Trivy, npm audit, Playwright security suite            |
-| CI/CD            | GitHub Actions, Docker Compose, Vercel Preview         |
-| Quality Gates    | SonarCloud, Coveralls, NYC (80% threshold), MegaLinter |
+| Layer            | Technology                                                      |
+| ---------------- | --------------------------------------------------------------- |
+| Frontend         | React 19, TypeScript, react-i18next (EN / ES / EL)              |
+| Backend          | Express 5, Mongoose 9, Zod, Swagger                             |
+| Database         | MongoDB                                                         |
+| E2E              | Playwright, playwright-bdd (Cucumber), Allure                   |
+| Unit / Component | Jest, React Testing Library, Supertest                          |
+| Integration      | Testcontainers (real MongoDB in Docker)                         |
+| Performance      | k6 (API load + browser UI tests)                                |
+| Mutation         | Stryker Mutator                                                 |
+| Security         | Trivy, npm audit, Playwright security suite                     |
+| CI/CD            | GitHub Actions, Docker Compose, Vercel Preview                  |
+| Quality Gates    | SonarCloud, Coveralls, NYC (80% threshold), MegaLinter          |
+| Mobile           | React Native 0.81, Expo 54, TypeScript, i18next (EN / ES / EL)  |
+| Mobile E2E       | WebdriverIO 9, Appium 3, XCUITest (iOS), UiAutomator2 (Android) |
+| Mobile Builds    | EAS Build, Expo Dev Client, EAS Workflows                       |
 
 ---
 
 ## Table of Contents
 
 - [Architecture](#architecture)
+- [Mobile App](#mobile-app)
 - [Quick Start](#quick-start)
 - [Running Tests](#running-tests)
 - [Best Practices](#best-practices)
@@ -105,6 +109,409 @@ Every pattern here solves a real problem that teams hit in production:
 | `POST`   | `/api/colors`       | Create a new color         |
 | `PUT`    | `/api/colors/:name` | Update an existing color   |
 | `DELETE` | `/api/colors/:name` | Delete a color             |
+
+The **mobile app** connects to the same Express 5 backend — locally via `EXPO_PUBLIC_API_URL=http://localhost:5001`, and in production via the Vercel deployment.
+
+---
+
+## Mobile App
+
+### Mobile Architecture
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                   React Native Mobile App (Expo 54)              │
+│                                                                  │
+│  ┌─────────────────────────┐    ┌──────────────────────────────┐ │
+│  │       iOS App           │    │       Android App            │ │
+│  │   (XCUITest / WDA)      │    │   (UiAutomator2)             │ │
+│  └───────────┬─────────────┘    └──────────────┬───────────────┘ │
+│              │                                  │                 │
+│  ┌───────────▼──────────────────────────────────▼───────────────┐ │
+│  │      WebdriverIO 9 + Appium 3  (localhost:4723)              │ │
+│  └──────────────────────────────────────────────────────────────┘ │
+└─────────────────────────────┬────────────────────────────────────┘
+                              │ REST API (same backend)
+                              ▼
+         ┌────────────────────────────────────┐
+         │  Express 5 · Port 5001 / Vercel    │
+         │  ──────────────────────────────    │
+         │  GET/POST/PUT/DELETE /api/colors   │
+         └────────────────────────────────────┘
+```
+
+**React Native app** (`mobile/`) — Expo 54 + React Native 0.81 color-picker for iOS and Android. Mirrors the web app's feature set: fetch colors from the API, render color chips, open an HSL color-picker modal to add a color, delete with confirmation, and switch between English, Spanish, and Greek via i18next + expo-localization. Accessibility labels and `testID` props are applied throughout, providing stable selectors for Appium.
+
+**Shared monorepo package** (`packages/shared/`) — The `@color-app/shared` package is consumed by both the web app and the mobile app. It provides the `createApiClient` factory, the `STRICT_NAME_REGEX` color-name validation rule, and all three translation files (EN / ES / EL). This guarantees that both surfaces validate identically and never translate a string differently.
+
+**API client** (`mobile/src/api/client.ts`) — Wraps `createApiClient` from the shared package. The base URL is resolved in order: `EXPO_PUBLIC_API_URL` environment variable → `Constants.expoConfig.extra.apiUrl` (set in `app.json`) → production Vercel URL. Switching between local dev and production requires only a `.env.local` file — no code change.
+
+```typescript
+// mobile/src/api/client.ts — API URL resolution priority
+const apiUrl =
+  process.env.EXPO_PUBLIC_API_URL ||
+  Constants.expoConfig?.extra?.apiUrl ||
+  'https://test-automation-best-practices.vercel.app'
+
+export const api = createApiClient(apiUrl)
+// api.getColors() · api.addColor(name, hex) · api.deleteColor(name)
+```
+
+**EAS Build** — Native iOS (`.ipa` / `.app`) and Android (`.apk`) binaries are built on Expo's cloud infrastructure via EAS Build. Two EAS Workflow files orchestrate parallel platform builds.
+
+```yaml
+# mobile/.eas/workflows/create-development-builds.yml
+name: Create Development Builds
+
+jobs:
+  build_android:
+    type: build
+    params:
+      platform: android
+      profile: development # includes expo-dev-client for live reloading
+  build_ios:
+    type: build
+    params:
+      platform: ios
+      profile: development
+```
+
+```yaml
+# mobile/eas.json — build profiles
+{
+  'cli': { 'version': '>= 16.0.0' },
+  'build':
+    {
+      'development': { 'developmentClient': true, 'distribution': 'internal' },
+      'simulator': { 'ios': { 'simulator': true } },
+      'preview': { 'android': { 'buildType': 'apk' }, 'distribution': 'internal' },
+      'production': { 'autoIncrement': true }
+    }
+}
+```
+
+**Local dev** — run `expo start` to launch the Metro bundler. Use `expo start --ios` / `expo start --android` to open on a simulator. Point the app to the local backend by creating `mobile/.env.local`:
+
+```bash
+EXPO_PUBLIC_API_URL=http://localhost:5001
+```
+
+```bash
+# Mobile development commands
+cd mobile
+npm start                    # Metro bundler
+npm run ios                  # Open iOS simulator
+npm run android              # Open Android emulator
+npm run build:ios            # EAS simulator build
+npm run build:android        # EAS preview APK build
+npm run workflow:dev         # Trigger EAS workflow (both platforms)
+```
+
+---
+
+### Mobile Test Automation
+
+#### Unit Tests (Jest + React Testing Library for Native)
+
+**Files:** [`mobile/src/colorUtils.test.ts`](mobile/src/colorUtils.test.ts) · [`mobile/src/components/ColorPickerInner.test.tsx`](mobile/src/components/ColorPickerInner.test.tsx) · [`mobile/src/components/ColorPickerModal.test.tsx`](mobile/src/components/ColorPickerModal.test.tsx) · [`mobile/src/components/ConfirmDialog.test.tsx`](mobile/src/components/ConfirmDialog.test.tsx)
+
+The unit suite uses **Jest** with the `react-native` preset and **@testing-library/react-native** to render and query components natively — no browser, no device. It mirrors the web test strategy: pure utility functions are covered directly, and component tests fire user events and assert rendered output.
+
+**Color utility coverage** — `colorUtils.ts` exposes HSL → RGB → hex conversion chains and a WCAG luminance-based `readableOn()` helper. Tests exercise every HSL sector (0° red, 30° orange, 60° yellow, 120° green, 180° cyan, 240° blue) to catch off-by-one errors in the colour-wheel maths:
+
+```typescript
+// mobile/src/colorUtils.test.ts
+describe('hslToRgb', () => {
+  test('hue=0 (red) → [255,0,0]', () => expect(hslToRgb(0, 1, 0.5)).toEqual([255, 0, 0]))
+  test('hue=120 (green) → [0,255,0]', () => expect(hslToRgb(120, 1, 0.5)).toEqual([0, 255, 0]))
+  test('hue=240 (blue) → [0,0,255]', () => expect(hslToRgb(240, 1, 0.5)).toEqual([0, 0, 255]))
+})
+
+describe('readableOn — WCAG contrast', () => {
+  test('returns dark text on light background', () => expect(readableOn('#ffffff')).toBe('#111111'))
+  test('returns light text on dark background', () => expect(readableOn('#000000')).toBe('#ffffff'))
+})
+```
+
+**Component tests** — `ConfirmDialog`, `ColorPickerInner`, and `ColorPickerModal` are rendered with `@testing-library/react-native`. Tests assert that `testID` selectors resolve, buttons fire callbacks, validation errors appear for empty input, and loading states disable interactive controls:
+
+```typescript
+// mobile/src/components/ConfirmDialog.test.tsx
+import { render, fireEvent } from '@testing-library/react-native'
+import { ConfirmDialog } from '../ConfirmDialog'
+
+test('calls onConfirm when Delete button pressed', () => {
+  const onConfirm = jest.fn()
+  const { getByTestId } = render(
+    <ConfirmDialog colorName="Red" hex="#e74c3c" onConfirm={onConfirm} onCancel={jest.fn()} busy={false} />
+  )
+  fireEvent.press(getByTestId('confirm-delete-btn'))
+  expect(onConfirm).toHaveBeenCalledTimes(1)
+})
+
+test('Delete button is disabled while busy', () => {
+  const { getByTestId } = render(
+    <ConfirmDialog colorName="Red" hex="#e74c3c" onConfirm={jest.fn()} onCancel={jest.fn()} busy={true} />
+  )
+  expect(getByTestId('confirm-delete-btn').props.accessibilityState.disabled).toBe(true)
+})
+```
+
+**Coverage** is collected and reported in multiple formats (JSON, LCOV, text, Clover). JUnit XML is written to `allure-results/junit-mobile-unit-tests.xml` for Allure ingestion and CI reporting.
+
+```bash
+# Run from mobile/
+npm run test:unit              # Jest with coverage
+```
+
+```json
+// mobile/jest.config.js — coverage configuration
+{
+  "preset": "react-native",
+  "testMatch": ["<rootDir>/src/**/*.test.(ts|tsx|js|jsx)"],
+  "collectCoverageFrom": ["src/**/*.{ts,tsx}", "!src/**/*.d.ts", "!src/i18n.ts", "!src/api/client.ts"],
+  "coverageReporters": ["json", "lcov", "text", "clover"],
+  "reporters": ["default", ["jest-junit", { "outputFile": "allure-results/junit-mobile-unit-tests.xml" }]]
+}
+```
+
+---
+
+#### E2E Tests (WebdriverIO 9 + Appium 3)
+
+**Files:** [`mobile/e2e/pageObjects/ColorPickerScreen.ts`](mobile/e2e/pageObjects/ColorPickerScreen.ts) · [`mobile/e2e/tests/colorPicker.test.ts`](mobile/e2e/tests/colorPicker.test.ts) · [`mobile/e2e/wdio.ios.conf.ts`](mobile/e2e/wdio.ios.conf.ts) · [`mobile/e2e/wdio.android.conf.ts`](mobile/e2e/wdio.android.conf.ts)
+
+The E2E suite drives the real native app on iOS Simulator (XCUITest driver) and Android Emulator (UiAutomator2 driver). WebdriverIO acts as the test runner and Appium as the automation server; the `@wdio/appium-service` can start Appium automatically, but in CI the server runs as a separate step before the suite.
+
+**Platform-aware Page Object** — `ColorPickerScreen.ts` centralises every selector. iOS uses accessibility IDs (`~testID`) while Android uses `UiSelector` with a resource-id wildcard, because Android prefixes `testID` values with the bundle identifier. A single `buildLocator(testID)` helper abstracts this difference so test code stays platform-agnostic:
+
+```typescript
+// mobile/e2e/pageObjects/ColorPickerScreen.ts
+import { browser } from '@wdio/globals'
+
+const isIOS = () => browser.isIOS
+
+function buildLocator(testID: string): string {
+  if (isIOS()) {
+    return `~${testID}` // iOS: accessibility ID
+  }
+  return `//*[@resource-id[contains(., '${testID}')]]` // Android: resource-id wildcard
+}
+
+export class ColorPickerScreen {
+  get title() {
+    return $(buildLocator('app-title'))
+  }
+  get addButton() {
+    return $(buildLocator('add-color-btn'))
+  }
+  get colorNameInput() {
+    return $(buildLocator('color-name-input'))
+  }
+  get pickerSaveBtn() {
+    return $(buildLocator('picker-save-btn'))
+  }
+  get confirmDeleteBtn() {
+    return $(buildLocator('confirm-delete-btn'))
+  }
+
+  colorChip(name: string) {
+    return $(buildLocator(`chip-select-${name}`))
+  }
+  deleteChipButton(name: string) {
+    return $(buildLocator(`chip-delete-${name}`))
+  }
+  langButton(code: string) {
+    return $(buildLocator(`lang-btn-${code}`))
+  }
+
+  async waitForLoad() {
+    await this.title.waitForDisplayed({ timeout: 15_000 })
+    await this.addButton.waitForDisplayed({ timeout: 15_000 })
+  }
+
+  async openAddColorModal() {
+    await this.addButton.click()
+    await this.colorNameInput.waitForDisplayed({ timeout: 10_000 })
+  }
+
+  async submitNewColor(name: string) {
+    await this.colorNameInput.setValue(name)
+    await this.pickerSaveBtn.click()
+  }
+
+  async scrollToChip(name: string) {
+    // iOS: use mobile:scroll command; Android: use UiScrollable via shell
+    if (isIOS()) {
+      await browser.execute('mobile:scroll', { direction: 'right', element: await this.colorChip(name).elementId })
+    } else {
+      const el = await $(
+        `android=new UiScrollable(new UiSelector().scrollable(true)).scrollIntoView(new UiSelector().resourceIdMatches(".*chip-select-${name}.*"))`
+      )
+      await el.waitForExist()
+    }
+  }
+
+  async deleteColor(name: string) {
+    await this.deleteChipButton(name).click()
+    await this.confirmDeleteBtn.waitForDisplayed({ timeout: 10_000 })
+    await this.confirmDeleteBtn.click()
+    await this.colorChip(name).waitForExist({ reverse: true, timeout: 10_000 })
+  }
+}
+```
+
+**Test suite** — tests follow the same Arrange–Act–Assert pattern as the web suite. The `afterEach` hook calls the production API directly to delete any color created during the test, keeping the state clean without a reset/restart cycle:
+
+```typescript
+// mobile/e2e/tests/colorPicker.test.ts
+import { browser } from '@wdio/globals'
+import { ColorPickerScreen } from '../pageObjects/ColorPickerScreen'
+
+const screen = new ColorPickerScreen()
+const API_BASE = 'https://test-automation-best-practices.vercel.app'
+const BUNDLE_ID = 'com.jpourdanis.colorpicker'
+const createdColors: string[] = []
+
+describe('Color Picker App', () => {
+  before(async () => {
+    await screen.waitForLoad()
+  })
+
+  afterEach(async () => {
+    // API-driven teardown — no UI interaction needed for cleanup
+    for (const name of createdColors) {
+      await fetch(`${API_BASE}/api/colors/${name}`, { method: 'DELETE' }).catch(() => {})
+    }
+    createdColors.length = 0
+  })
+
+  it('shows the app title', async () => {
+    await expect(screen.title).toBeDisplayed()
+  })
+
+  it('displays a hex color value', async () => {
+    const text = await screen.currentColor.getText()
+    expect(text).toMatch(/^#[0-9A-Fa-f]{6}$/)
+  })
+
+  it('opens the color picker modal on Add tap', async () => {
+    await screen.openAddColorModal()
+    await expect(screen.colorNameInput).toBeDisplayed()
+    await screen.closeAddColorModal()
+  })
+
+  it('shows a validation error on empty name submit', async () => {
+    await screen.openAddColorModal()
+    await screen.pickerSaveBtn.click()
+    await expect(screen.pickerError).toBeDisplayed()
+    await screen.closeAddColorModal()
+  })
+
+  it('adds a color via API then verifies chip appears after app restart', async function () {
+    if (browser.isAndroid) {
+      return this.skip()
+    } // flaky on Android emulator
+    const name = `E2EColor${Date.now()}`
+    createdColors.push(name)
+
+    await fetch(`${API_BASE}/api/colors`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, hex: '#7b2fbe' })
+    })
+
+    // Restart the app to pick up the newly seeded color from the API
+    await browser.terminateApp(BUNDLE_ID)
+    await browser.activateApp(BUNDLE_ID)
+    await screen.waitForLoad()
+    await screen.scrollToChip(name)
+    await expect(screen.colorChip(name)).toBeDisplayed()
+  })
+
+  it('switches UI language', async function () {
+    if (browser.isAndroid) {
+      return this.skip()
+    } // flaky on Android emulator
+    await screen.langButton('es').click()
+    await expect(screen.title).toHaveText('Selector de Color')
+    await screen.langButton('en').click()
+  })
+})
+```
+
+**Platform configurations** — separate config files pass the correct Appium capabilities for each platform. App paths are resolved from environment variables so CI can inject the binary path built by EAS without changing source:
+
+```typescript
+// mobile/e2e/wdio.ios.conf.ts
+export const config: Options.Testrunner = {
+  runner: 'local',
+  framework: 'mocha',
+  mochaOpts: { timeout: 90_000 },
+  specs: ['./e2e/tests/**/*.test.ts'],
+  reporters: ['spec', ['allure', { outputDir: 'e2e/allure-results' }]],
+
+  capabilities: [
+    {
+      platformName: 'iOS',
+      'appium:automationName': 'XCUITest',
+      'appium:deviceName': process.env.IOS_DEVICE || 'iPhone 16',
+      'appium:platformVersion': process.env.IOS_VERSION || '18.5',
+      'appium:app': process.env.APP_PATH || 'e2e/artifacts/ColorPicker.app',
+      'appium:newCommandTimeout': 240,
+      'appium:wdaLaunchTimeout': 1_200_000,
+      'appium:derivedDataPath': '.wda-derived-data/',
+      'appium:noReset': false,
+      'appium:videoRecording': { timeLimit: 120 } // saved on failure
+    }
+  ]
+}
+```
+
+```typescript
+// mobile/e2e/wdio.android.conf.ts
+capabilities: [
+  {
+    platformName: 'Android',
+    'appium:automationName': 'UiAutomator2',
+    'appium:deviceName': process.env.ANDROID_DEVICE || 'Pixel_6_API_35',
+    'appium:platformVersion': process.env.ANDROID_VERSION || '35',
+    'appium:app': process.env.APP_PATH || 'e2e/artifacts/android.apk',
+    'appium:autoGrantPermissions': true,
+    'appium:noReset': false,
+    'appium:newCommandTimeout': 240
+  }
+]
+```
+
+**Appium driver setup** — install native drivers once per machine before running E2E tests:
+
+```bash
+cd mobile
+
+# Install Appium drivers
+npm run appium:install-drivers            # XCUITest (iOS)
+npm run appium:install-drivers:android    # UiAutomator2 (Android)
+```
+
+**Running the E2E suite:**
+
+```bash
+cd mobile
+
+# iOS Simulator
+npm run test:ios
+
+# Android Emulator
+npm run test:android
+
+# Override device / binary path via env
+APP_PATH=/path/to/ColorPicker.app IOS_DEVICE="iPhone 15" npm run test:ios
+APP_PATH=/path/to/android.apk ANDROID_DEVICE="Pixel_7_API_34" npm run test:android
+```
+
+> [!NOTE]
+> E2E tests require a pre-built app binary (`e2e/artifacts/ColorPicker.app` for iOS or `e2e/artifacts/android.apk` for Android). Build one with `npm run build:ios` / `npm run build:android` via EAS, then download the artifact into `e2e/artifacts/` before running the suite. Videos of failing tests are saved automatically to `e2e/videos/`.
 
 ---
 
@@ -2041,6 +2448,40 @@ src/
 ├── ColorPicker.tsx      # Color wheel + HSL/RGB/hex conversion utilities
 ├── ConfirmDialog.tsx    # Accessible confirmation dialog
 └── locales/             # i18n JSON (en, es, el)
+mobile/
+├── .eas/workflows/
+│   ├── create-development-builds.yml   # EAS parallel iOS + Android dev builds
+│   └── create-production-builds.yml    # EAS parallel iOS + Android production builds
+├── e2e/
+│   ├── pageObjects/
+│   │   └── ColorPickerScreen.ts        # Platform-aware POM (iOS accessibility ID / Android UiSelector)
+│   ├── tests/
+│   │   └── colorPicker.test.ts         # WebdriverIO + Appium E2E test suite
+│   ├── wdio.ios.conf.ts                # iOS config (XCUITest, iPhone 16, iOS 18.5)
+│   └── wdio.android.conf.ts            # Android config (UiAutomator2, Pixel 6, API 35)
+├── src/
+│   ├── api/client.ts                   # API client (wraps shared package, resolves base URL)
+│   ├── components/
+│   │   ├── ColorPickerInner.tsx        # HSL slider component
+│   │   ├── ColorPickerInner.test.tsx
+│   │   ├── ColorPickerModal.tsx        # Add-color modal with name validation
+│   │   ├── ColorPickerModal.test.tsx
+│   │   ├── ConfirmDialog.tsx           # Delete confirmation modal
+│   │   └── ConfirmDialog.test.tsx
+│   ├── colorUtils.ts                   # HSL→RGB→hex conversions + WCAG readability
+│   ├── colorUtils.test.ts
+│   └── i18n.ts                         # i18next init (EN / ES / EL via shared package)
+├── App.tsx                             # Root component (colors list, picker, confirm, i18n)
+├── index.ts                            # Expo entry point (registers root component)
+├── app.json                            # Expo config (bundle IDs, EAS project ID, API URL)
+├── eas.json                            # EAS build profiles (development/simulator/preview/production)
+├── jest.config.js                      # Jest preset, coverage config, JUnit reporter
+├── metro.config.js                     # Metro bundler (monorepo watch folders, React pin)
+└── tsconfig.json                       # TypeScript config (extends expo base, strict)
+packages/shared/                        # Monorepo shared package (@color-app/shared)
+│   ├── createApiClient                 # Shared API client factory (web + mobile)
+│   ├── STRICT_NAME_REGEX               # Color name validation (same rule on both surfaces)
+│   └── locales/                        # EN / ES / EL translation files
 .github/workflows/
 ├── ci.yml               # Full CI/CD pipeline
 └── dependabot.yml       # Automated dependency updates

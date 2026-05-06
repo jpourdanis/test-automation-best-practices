@@ -1,7 +1,7 @@
 import { z } from 'zod'
 
 // Strict regex: allows spaces and +, but REQUIRES at least one letter or number
-export const STRICT_NAME_REGEX = /^[a-zA-Z0-9]([a-zA-Z0-9 +]*[a-zA-Z0-9])?$/
+export const STRICT_NAME_REGEX = /^[a-zA-Z0-9]([a-zA-Z0-9 ]*[a-zA-Z0-9])?$/
 export const STRICT_NAME_MSG =
   'name must contain alphanumeric characters and spaces only, and at least one alphanumeric character'
 

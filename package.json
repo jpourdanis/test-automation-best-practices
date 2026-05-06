@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "private": true,
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "mobile",
+    "server"
   ],
   "overrides": {
     "nth-check": "^2.1.1",
@@ -47,12 +49,12 @@
     "typescript": "^6.0.3"
   },
   "scripts": {
-    "prepare": "husky",
+    "prepare": "node -e \"if (!process.env.CI) require('child_process').execFileSync('husky', [], {stdio: 'inherit'})\"",
     "build:shared": "npm run build -w packages/shared",
     "generate:openapi": "npm run generate:openapi --prefix server",
     "generate:client": "npm run generate:openapi --prefix server && npm run generate:client -w packages/shared",
-    "lint": "eslint --ext .ts,.tsx,.js,.jsx src e2e performance && npx prettier --check .",
-    "lint:fix": "eslint --fix --ext .ts,.tsx,.js,.jsx src e2e performance && npx prettier --write .",
+    "lint": "eslint --ext .ts,.tsx,.js,.jsx src e2e performance mobile && npx prettier --check .",
+    "lint:fix": "eslint --fix --ext .ts,.tsx,.js,.jsx src e2e performance mobile && npx prettier --write .",
     "format": "npx prettier --write .",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
@@ -90,7 +92,18 @@
     "test:browserstack": "cross-env BROWSERSTACK=true browserstack-node-sdk playwright test"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": "react-app",
+    "overrides": [
+      {
+        "files": [
+          "mobile/**/*.ts",
+          "mobile/**/*.tsx"
+        ],
+        "parserOptions": {
+          "project": "./mobile/tsconfig.json"
+        }
+      }
+    ]
   },
   "browserslist": {
     "production": [
@@ -169,7 +182,9 @@
       "src/setupProxy.js",
       "src/index.tsx",
       "src/setupTests.ts",
-      "src/react-app-env.d.ts"
+      "src/react-app-env.d.ts",
+      "mobile/src/api/client.ts",
+      "mobile/src/i18n.ts"
     ]
   }
 }

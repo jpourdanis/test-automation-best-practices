@@ -33,6 +33,14 @@ const colors: Color[] = [
  * 5. Verify the header background color of the page matches the RGB values
  */
 test('check Turquoise ( #1abc9c) is the default background color.', async ({ page }) => {
+  await page.route('**/api/colors', (route) =>
+    route.fulfill({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify(colors)
+    })
+  )
+  await page.goto('/')
   const turquoiseHex = colors.find((c) => c.name === 'Turquoise')?.hex || '1abc9c'
   await expect(page.locator('text=Current color:')).toContainText(turquoiseHex)
 

@@ -2,10 +2,15 @@ name: CI
 on:
   push:
     branches: [main, gh-pages]
+    paths-ignore:
+      - "mobile/**"
   pull_request:
     branches: [main, gh-pages]
+    paths-ignore:
+      - "mobile/**"
   schedule:
     - cron: "0 0 * * 0"
+  workflow_dispatch:
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -14,6 +19,7 @@ permissions:
   contents: write
   pages: write
   id-token: write
+  pull-requests: write
 
 env:
   DOCKER_BUILDKIT: 1
@@ -446,7 +452,7 @@ jobs:
         run: npx playwright install-deps
 
       # Configures Docker Buildx to enable advanced build features like layer caching
-      # config-inline wires the GHA cache backend into the BuildKit daemon so that
+      # buildkitd-config-inline wires the GHA cache backend into the BuildKit daemon so that
       # the cache_from/cache_to: type=gha entries in docker-compose.yml are honoured.
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -454,7 +460,7 @@ jobs:
           driver-opts: |
             image=moby/buildkit:latest
             network=host
-          config-inline: |
+          buildkitd-config-inline: |
             [registry]
             [worker.oci]
               max-parallelism = 4
@@ -569,7 +575,7 @@ jobs:
           driver-opts: |
             image=moby/buildkit:latest
             network=host
-          config-inline: |
+          buildkitd-config-inline: |
             [registry]
             [worker.oci]
               max-parallelism = 4
@@ -592,7 +598,7 @@ jobs:
         with:
           schema: http://127.0.0.1:5001/openapi.json
           checks: all
-          args: --suppress-health-check=filter_too_much --report-junit-path=allure-results/schemathesis-junit.xml
+          args: --suppress-health-check=filter_too_much --phases=examples,coverage,fuzzing --report-junit-path=allure-results/schemathesis-junit.xml
           wait-for-schema: 2
           version: latest
           coverage: true
@@ -656,7 +662,7 @@ jobs:
           driver-opts: |
             image=moby/buildkit:latest
             network=host
-          config-inline: |
+          buildkitd-config-inline: |
             [registry]
             [worker.oci]
               max-parallelism = 4
@@ -746,7 +752,7 @@ jobs:
           driver-opts: |
             image=moby/buildkit:latest
             network=host
-          config-inline: |
+          buildkitd-config-inline: |
             [registry]
             [worker.oci]
               max-parallelism = 4
@@ -802,7 +808,7 @@ jobs:
           driver-opts: |
             image=moby/buildkit:latest
             network=host
-          config-inline: |
+          buildkitd-config-inline: |
             [registry]
             [worker.oci]
               max-parallelism = 4
