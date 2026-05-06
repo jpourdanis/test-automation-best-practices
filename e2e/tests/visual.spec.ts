@@ -59,7 +59,17 @@ for (const vp of snapshotViewports) {
     test('homepage should match snapshot', async ({ page }, testInfo) => {
       test.skip(testInfo.project.name === 'percy', 'Skipping local snapshots during Percy run')
       await page.goto('/')
-      await page.waitForSelector('header')
+
+      // Wait for the initial colors fetch so the background is set from the API,
+      // not just the React default (#1abc9c). waitForSelector('header') only
+      // confirms the element exists — it does not guarantee the API has responded.
+      await page.waitForResponse(
+        (resp) => resp.url().includes('/api/colors') && !resp.url().includes('/api/colors/') && resp.status() === 200
+      )
+
+      // Allow the 260ms CSS background-color transition (defined in App.css) to
+      // complete before capturing the screenshot to avoid mid-transition frames.
+      await page.waitForTimeout(300)
 
       const screenshot = await page.screenshot({
         fullPage: true,
