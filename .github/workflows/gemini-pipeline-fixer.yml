@@ -65,7 +65,7 @@ jobs:
           gemini -y --prompt "The GitHub Actions CI pipeline just failed. Here are the logs: $LOGS. Analyze the issue and modify the files locally. Only make targeted fixes related to the error, do not launch open-ended extensive searches."
 
       - name: Create Pull Request with the AI Fix
-        uses: peter-evans/create-pull-request@v6
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GH_PAT_WORKFLOWS }}
           commit-message: "fix: resolve pipeline failure for PR #${{ github.event.pull_request.number }}"
