@@ -16,6 +16,7 @@ import { useTranslation } from 'react-i18next'
 // until after Reanimated's native runtime is fully initialised.
 import ColorPicker, { Panel3, LuminanceSlider, Preview } from 'reanimated-color-picker'
 import type { ColorFormatsObject } from 'reanimated-color-picker'
+import { STRICT_NAME_REGEX } from '@color-app/shared'
 import { readableOn } from '../colorUtils'
 
 export interface ColorPickerInnerProps {
@@ -27,7 +28,6 @@ export interface ColorPickerInnerProps {
   onCancel: () => void
 }
 
-const STRICT = /^[a-zA-Z0-9]([a-zA-Z0-9 +]*[a-zA-Z0-9])?$/
 const INITIAL_HEX = '#3478f6'
 const H_PAD = 40 // 20px each side
 
@@ -78,7 +78,7 @@ export default function ColorPickerInner({
       setNameError(t('colorPicker.errors.nameRequired'))
       return
     }
-    if (!STRICT.test(n)) {
+    if (!STRICT_NAME_REGEX.test(n)) {
       setNameError(t('colorPicker.errors.nameInvalid'))
       return
     }
