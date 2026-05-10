@@ -1,0 +1,34 @@
+2026-05-10 00:42:01 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-10 00:42:01 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:42:01 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:42:01 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:42:01 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-10 00:42:01 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-fc664f3605aabaa13081
+2026-05-10 00:42:01 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '74232ebe-ec4c-442a-b29d-7b3222a42529',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '74232ebe-ec4c-442a-b29d-7b3222a42529',
+  test_result: 'pending',
+  automate_session_name: 'Injection Prevention - NoSQL operator in GET path param is rejected (400 or 404)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-fc664f3605aabaa13081',
+  test_name: 'NoSQL operator in GET path param is rejected (400 or 404)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts:84',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.get('/api/colors/%24gt');\n" +
+    '      (0, _test.expect)([400, 404]).toContain(res.status());\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-10T00:42:01.470Z',
+  test_scope: 'Injection Prevention - NoSQL operator in GET path param is rejected (400 or 404)',
+  test_scopes: [ 'Security', 'Injection Prevention' ],
+  test_rerun_name: ' bs-firefox-win11 tests/security.spec.ts Security Injection Prevention NoSQL operator in GET path param is rejected (400 or 404)'
+}
+2026-05-10 00:42:01 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:42:01 - info: [GrpcClient] TestSessionEvent request successful

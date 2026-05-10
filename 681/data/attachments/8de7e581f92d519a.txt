@@ -1,0 +1,61 @@
+2026-05-10 00:43:56 - info: [BrowserstackCLI] Starting as child process with session ID: 3aff7a77-e406-47ec-9377-93208ea23b3a
+2026-05-10 00:43:56 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-05-10 00:43:56 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=12268:0, state=AutomationFrameworkState.CREATE
+2026-05-10 00:43:56 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=dca0780cc42c9e9bfb296a037a3360d7d07a26a2c09c5c7680e856534ddf66b4 target=12268:0
+2026-05-10 00:43:57 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:43:57 - info: [GrpcClient] Sending DriverInit
+2026-05-10 00:43:57 - info: [GrpcClient] DriverInit request successful
+2026-05-10 00:43:57 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:43:57 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:43:57 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:43:57 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:43:57 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+2026-05-10 00:43:59 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-05-10 00:43:59 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-05-10 00:43:59 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-05-10 00:43:59 - info: Accessibility testing for this test case has ended.
+2026-05-10 00:43:59 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-10 00:43:59 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:43:59 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:43:59 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:43:59 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-10 00:43:59 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-2eb6a32db8df0932dd28
+2026-05-10 00:43:59 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '381f4549-ffba-4137-9f37-1f1e94a42447',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '381f4549-ffba-4137-9f37-1f1e94a42447',
+  test_result: 'pending',
+  automate_session_name: 'Accessibility Tests - should not have any automatically detectable accessibility issues',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_id: 'b7be152566087f10fae4-2eb6a32db8df0932dd28',
+  test_name: 'should not have any automatically detectable accessibility issues',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts:26',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Wait for the main elements to render\n' +
+    '    await (0, _baseFixtures.expect)(homePage.header).toBeVisible();\n' +
+    '\n' +
+    '    // Run Axe to check for accessibility violations\n' +
+    '    const accessibilityScanResults = await new _playwright.default({\n' +
+    '      page\n' +
+    '    }).analyze();\n' +
+    '\n' +
+    '    // Verify there are no violations\n' +
+    '    (0, _baseFixtures.expect)(accessibilityScanResults.violations).toEqual([]);\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-10T00:43:56.917Z',
+  test_scope: 'Accessibility Tests - should not have any automatically detectable accessibility issues',
+  test_scopes: [ 'Accessibility Tests' ],
+  test_rerun_name: ' bs-pixel-7 tests/a11y.spec.ts Accessibility Tests should not have any automatically detectable accessibility issues'
+}
+2026-05-10 00:43:59 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:43:59 - info: [GrpcClient] TestSessionEvent request successful

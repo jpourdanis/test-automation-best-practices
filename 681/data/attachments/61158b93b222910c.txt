@@ -1,0 +1,39 @@
+2026-05-10 00:42:02 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-10 00:42:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:42:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:42:02 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:42:02 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-10 00:42:02 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-e80aebdb6e68b41ab252
+2026-05-10 00:42:02 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '339fe8a7-3aae-4cfe-b37e-f2e7b56ab75e',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '339fe8a7-3aae-4cfe-b37e-f2e7b56ab75e',
+  test_result: 'pending',
+  automate_session_name: 'Input Validation - empty body on POST returns 400',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-e80aebdb6e68b41ab252',
+  test_name: 'empty body on POST returns 400',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts:120',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        headers: {\n' +
+    "          'Content-Type': 'application/json'\n" +
+    '        },\n' +
+    "        data: '{}'\n" +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(400);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-10T00:42:01.936Z',
+  test_scope: 'Input Validation - empty body on POST returns 400',
+  test_scopes: [ 'Security', 'Input Validation' ],
+  test_rerun_name: ' bs-firefox-win11 tests/security.spec.ts Security Input Validation empty body on POST returns 400'
+}
+2026-05-10 00:42:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:42:02 - info: [GrpcClient] TestSessionEvent request successful

@@ -1,0 +1,44 @@
+2026-05-10 00:41:56 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:56 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:56 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:56 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:41:56 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+2026-05-10 00:41:57 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-05-10 00:41:57 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-10 00:41:57 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:57 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:57 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:41:57 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-10 00:41:57 - info: [PlaywrightDriverModule] testId: 5eba12ddea46f1af336f-82306077d5e5523073e8
+2026-05-10 00:41:57 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '32a1fa00-a98b-404e-820c-ce5ee7d8b64e',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '32a1fa00-a98b-404e-820c-ce5ee7d8b64e',
+  test_result: 'pending',
+  automate_session_name: 'POM Refactored: Background color tests - verify Turquoise ( #1abc9c ) is applied as the background color',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/pom-refactored.spec.ts',
+  test_id: '5eba12ddea46f1af336f-82306077d5e5523073e8',
+  test_name: 'verify Turquoise ( #1abc9c ) is applied as the background color',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/pom-refactored.spec.ts:29',
+  test_code: 'async ({\n' +
+    '      homePage\n' +
+    '    }) => {\n' +
+    '      await homePage.clickColorButton(color.name);\n' +
+    '      await (0, _baseFixtures.expect)(homePage.currentColorText).toContainText(color.hex);\n' +
+    '      const rgb = (0, _helper.convertHexToRGB)(`#${color.hex}`);\n' +
+    "      await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`);\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-10T00:41:55.988Z',
+  test_scope: 'POM Refactored: Background color tests - verify Turquoise ( #1abc9c ) is applied as the background color',
+  test_scopes: [ 'POM Refactored: Background color tests' ],
+  test_rerun_name: ' bs-firefox-win11 tests/pom-refactored.spec.ts POM Refactored: Background color tests verify Turquoise ( #1abc9c ) is applied as the background color'
+}
+2026-05-10 00:41:57 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:57 - info: [GrpcClient] TestSessionEvent request successful

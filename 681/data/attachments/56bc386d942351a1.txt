@@ -1,0 +1,76 @@
+2026-05-10 00:41:00 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:00 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:00 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:00 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:41:00 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] deleting the active color switches background to the first remaining: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] deleting the active color switches background to the first remaining: 200 DELETE https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+[NETWORK INFO] deleting the active color switches background to the first remaining: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-05-10 00:41:02 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-05-10 00:41:02 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-05-10 00:41:02 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-05-10 00:41:02 - info: Accessibility testing for this test case has ended.
+2026-05-10 00:41:02 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-10 00:41:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:02 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:41:02 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-10 00:41:02 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-6b441db2f2d33d6e9a77
+2026-05-10 00:41:02 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'b5cbbe8a-05fa-4cee-9c22-d0dd8177e909',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'b5cbbe8a-05fa-4cee-9c22-d0dd8177e909',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - deleting the active color switches background to the first remaining',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-6b441db2f2d33d6e9a77',
+  test_name: 'deleting the active color switches background to the first remaining',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts:256',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    const remaining = [INITIAL_COLORS[1], INITIAL_COLORS[2]]; // Red, Yellow\n' +
+    '\n' +
+    "    await page.route('**/api/colors/Turquoise', async route => {\n" +
+    "      if (route.request().method() === 'DELETE') {\n" +
+    '        await route.fulfill({\n' +
+    '          status: 200,\n' +
+    "          contentType: 'application/json',\n" +
+    '          body: JSON.stringify({\n' +
+    "            message: 'deleted'\n" +
+    '          })\n' +
+    '        });\n' +
+    '      } else {\n' +
+    '        await route.continue();\n' +
+    '      }\n' +
+    '    });\n' +
+    '    let callCount = 0;\n' +
+    "    await page.route('**/api/colors', async route => {\n" +
+    '      callCount++;\n' +
+    '      await route.fulfill({\n' +
+    '        status: 200,\n' +
+    "        contentType: 'application/json',\n" +
+    '        body: JSON.stringify(callCount === 1 ? INITIAL_COLORS : remaining)\n' +
+    '      });\n' +
+    '    });\n' +
+    '    await homePage.goto();\n' +
+    '    // Turquoise is active by default\n' +
+    "    await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)');\n" +
+    "    await homePage.deleteColor('Turquoise');\n" +
+    '\n' +
+    '    // Background switches to Red (first remaining)\n' +
+    "    await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', 'rgb(231, 76, 60)');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-10T00:41:00.914Z',
+  test_scope: 'Color Management — Add & Delete - deleting the active color switches background to the first remaining',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-chrome-win11 tests/color-management.spec.ts Color Management — Add & Delete deleting the active color switches background to the first remaining'
+}
+2026-05-10 00:41:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:02 - info: [GrpcClient] TestSessionEvent request successful

@@ -1,0 +1,56 @@
+2026-05-10 00:41:53 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:54 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:54 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:54 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:41:54 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-10 00:41:54 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+[NETWORK INFO] should handle missing image gracefully by showing alt text: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-05-10 00:41:54 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-10 00:41:54 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:54 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:54 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:41:54 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-10 00:41:54 - info: [PlaywrightDriverModule] testId: 3519c5209bc58d4ab510-247d371979d71933a4ce
+2026-05-10 00:41:54 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '25ebe9f1-283e-4f6d-ade4-851eaedd85b9',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '25ebe9f1-283e-4f6d-ade4-851eaedd85b9',
+  test_result: 'pending',
+  automate_session_name: 'Network Mocking & Interception - should handle missing image gracefully by showing alt text',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/network-mocking.spec.ts',
+  test_id: '3519c5209bc58d4ab510-247d371979d71933a4ce',
+  test_name: 'should handle missing image gracefully by showing alt text',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/network-mocking.spec.ts:21',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Intercept requests for the logo and abort them\n' +
+    "    await page.route('**/logo.svg', route => route.abort());\n" +
+    '\n' +
+    '    // Now go to the page\n' +
+    '    await homePage.goto();\n' +
+    '\n' +
+    "    // The image won't load, but it should still be in the DOM\n" +
+    "    const logoImg = page.getByRole('img', {\n" +
+    "      name: 'logo'\n" +
+    '    });\n' +
+    '\n' +
+    '    // We expect the image element to exist\n' +
+    '    await (0, _baseFixtures.expect)(logoImg).toBeVisible();\n' +
+    '\n' +
+    '    // And verify the alt text is present for screen readers/fallback\n' +
+    "    await (0, _baseFixtures.expect)(logoImg).toHaveAttribute('alt', 'logo');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-10T00:41:53.929Z',
+  test_scope: 'Network Mocking & Interception - should handle missing image gracefully by showing alt text',
+  test_scopes: [ 'Network Mocking & Interception' ],
+  test_rerun_name: ' bs-firefox-win11 tests/network-mocking.spec.ts Network Mocking & Interception should handle missing image gracefully by showing alt text'
+}
+2026-05-10 00:41:54 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:54 - info: [GrpcClient] TestSessionEvent request successful

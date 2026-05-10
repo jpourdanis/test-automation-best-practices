@@ -1,0 +1,43 @@
+2026-05-10 00:41:36 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:36 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:36 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:36 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:41:36 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] shows client-side "Name is required" when submitting empty name: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-05-10 00:41:37 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-05-10 00:41:38 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-10 00:41:38 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:41:38 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:38 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:41:38 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-10 00:41:38 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-e8212362c7141957416a
+2026-05-10 00:41:38 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'cabfad8c-afc6-48c2-a13e-0acc50643395',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'cabfad8c-afc6-48c2-a13e-0acc50643395',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - shows client-side "Name is required" when submitting empty name',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-e8212362c7141957416a',
+  test_name: 'shows client-side "Name is required" when submitting empty name',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts:137',
+  test_code: 'async ({\n' +
+    '    homePage\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    '    await homePage.pickerSubmitBtn.click();\n' +
+    "    await (0, _baseFixtures.expect)(homePage.pickerCard.getByText('Name is required')).toBeVisible();\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-10T00:41:36.760Z',
+  test_scope: 'Color Management — Add & Delete - shows client-side "Name is required" when submitting empty name',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-firefox-win11 tests/color-management.spec.ts Color Management — Add & Delete shows client-side "Name is required" when submitting empty name'
+}
+2026-05-10 00:41:38 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:41:38 - info: [GrpcClient] TestSessionEvent request successful

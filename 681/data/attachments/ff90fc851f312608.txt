@@ -1,0 +1,41 @@
+2026-05-10 00:43:52 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-10 00:43:52 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-10 00:43:52 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:43:52 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-10 00:43:52 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-10 00:43:52 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-19525ab2bccb801c06d1
+2026-05-10 00:43:52 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '4a6ca88b-c47d-4c84-a7e7-16cfd6a30385',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '4a6ca88b-c47d-4c84-a7e7-16cfd6a30385',
+  test_result: 'pending',
+  automate_session_name: 'XSS Prevention - POST with HTML tag in name is rejected (400)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-19525ab2bccb801c06d1',
+  test_name: 'POST with HTML tag in name is rejected (400)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts:22',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        data: {\n' +
+    "          name: '<img src=x onerror=alert(1)>',\n" +
+    "          hex: '#ff0000'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(400);\n' +
+    '      const body = await res.json();\n' +
+    '      (0, _test.expect)(body.error).toBeTruthy();\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-10T00:43:52.254Z',
+  test_scope: 'XSS Prevention - POST with HTML tag in name is rejected (400)',
+  test_scopes: [ 'Security', 'XSS Prevention' ],
+  test_rerun_name: ' bs-safari-ventura tests/security.spec.ts Security XSS Prevention POST with HTML tag in name is rejected (400)'
+}
+2026-05-10 00:43:52 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-10 00:43:52 - info: [GrpcClient] TestSessionEvent request successful
