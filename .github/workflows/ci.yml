@@ -599,6 +599,7 @@ jobs:
         with:
           schema: http://127.0.0.1:5001/openapi.json
           checks: all
+          config-file: schemathesis.toml
           args: --suppress-health-check=filter_too_much --phases=examples,coverage,fuzzing --report-junit-path=allure-results/schemathesis-junit.xml
           wait-for-schema: 2
           version: latest
