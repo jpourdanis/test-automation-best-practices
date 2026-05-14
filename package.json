@@ -51,7 +51,7 @@
     "typescript": "^6.0.3"
   },
   "scripts": {
-    "prepare": "node -e \"if (!process.env.CI) require('child_process').execFileSync('husky', [], {stdio: 'inherit'})\"",
+    "prepare": "node -e \"if (!process.env.CI) { try { require('child_process').execFileSync('husky', [], {stdio: 'inherit'}) } catch (e) { if (e.code !== 'ENOENT') throw e } }\"",
     "build:shared": "npm run build -w packages/shared",
     "generate:openapi": "npm run generate:openapi --prefix server",
     "generate:client": "npm run generate:openapi --prefix server && npm run generate:client -w packages/shared",

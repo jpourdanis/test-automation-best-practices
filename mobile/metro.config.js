@@ -6,7 +6,7 @@ const monorepoRoot = path.resolve(projectRoot, '..')
 
 const config = getDefaultConfig(projectRoot)
 
-config.watchFolders = [monorepoRoot]
+config.watchFolders = [monorepoRoot, ...(config.watchFolders ?? [])]
 
 config.resolver.nodeModulesPaths = [
   path.resolve(projectRoot, 'node_modules'),
