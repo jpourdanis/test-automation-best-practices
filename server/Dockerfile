@@ -6,14 +6,13 @@ RUN apk upgrade --no-cache
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY packages/shared ./packages/shared
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci --ignore-scripts --legacy-peer-deps --workspace=packages/shared && \
-    npm run build --workspace=packages/shared
+# tsup/rollup need post-install scripts to fetch the correct platform-native binary (e.g. @rollup/rollup-linux-arm64-musl).
+# --ignore-scripts is intentionally omitted here; the production server install below still uses it.
+RUN npm ci --legacy-peer-deps --workspace=packages/shared && npm run build --workspace=packages/shared # NOSONAR
 
 WORKDIR /app/server
 COPY server/package*.json ./
-RUN --mount=type=cache,target=/root/.npm \
-    npm ci --ignore-scripts --omit=dev --legacy-peer-deps
+RUN npm ci --ignore-scripts --omit=dev --legacy-peer-deps
 
 COPY server/ ./
 
