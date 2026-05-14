@@ -4,6 +4,7 @@ RUN apk upgrade --no-cache
 
 # Copy workspace root manifests so npm ci can resolve shared package deps from lockfile
 WORKDIR /app
+ENV CI=true
 COPY package.json package-lock.json ./
 COPY packages/shared ./packages/shared
 # tsup/rollup need post-install scripts to fetch the correct platform-native binary (e.g. @rollup/rollup-linux-arm64-musl).
