@@ -598,7 +598,7 @@ jobs:
         with:
           schema: http://127.0.0.1:5001/openapi.json
           checks: all
-          args: --suppress-health-check=filter_too_much,not_enough_responses --phases=examples,coverage,fuzzing --report-junit-path=allure-results/schemathesis-junit.xml
+          args: --suppress-health-check=filter_too_much --phases=examples,coverage,fuzzing --report-junit-path=allure-results/schemathesis-junit.xml
           wait-for-schema: 2
           version: latest
           coverage: true

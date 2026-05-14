@@ -6,12 +6,14 @@ RUN apk upgrade --no-cache
 WORKDIR /app
 COPY package.json package-lock.json ./
 COPY packages/shared ./packages/shared
-RUN npm ci --ignore-scripts --legacy-peer-deps --workspace=packages/shared && \
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --ignore-scripts --legacy-peer-deps --workspace=packages/shared && \
     npm run build --workspace=packages/shared
 
 WORKDIR /app/server
 COPY server/package*.json ./
-RUN npm ci --ignore-scripts --omit=dev --legacy-peer-deps
+RUN --mount=type=cache,target=/root/.npm \
+    npm ci --ignore-scripts --omit=dev --legacy-peer-deps
 
 COPY server/ ./
 
