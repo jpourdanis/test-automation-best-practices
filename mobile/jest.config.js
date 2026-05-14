@@ -4,7 +4,7 @@ module.exports = {
   testMatch: ['<rootDir>/src/**/*.test.(ts|tsx|js|jsx)'],
   moduleNameMapper: {
     '^react$': '<rootDir>/node_modules/react',
-    '^react-test-renderer$': '<rootDir>/node_modules/react-test-renderer',
+    '^react-test-renderer$': '<rootDir>/../node_modules/react-test-renderer',
     '^@testing-library/react-native$': '<rootDir>/node_modules/@testing-library/react-native'
   },
   transformIgnorePatterns: [
