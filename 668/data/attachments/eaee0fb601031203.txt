@@ -1,6 +1,0 @@
-[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices-1r4jf2zi6-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: POST https://vercel.live/login/validate?hostname=test-automation-best-practices-1r4jf2zi6-jpourdanis-projects.vercel.app&deploymentId=dpl_8dHTnJy4fxnEMXPVXsoSMnSMzGEX - net::ERR_ABORTED
-[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices-1r4jf2zi6-jpourdanis-projects.vercel.app/_vercel/speed-insights/script.js - net::ERR_ABORTED
-[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices-1r4jf2zi6-jpourdanis-projects.vercel.app/api/colors - net::ERR_ABORTED
-[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices-1r4jf2zi6-jpourdanis-projects.vercel.app/static/media/logo.103b5fa18196d5665a7e12318285c916.svg - net::ERR_ABORTED
-[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices-1r4jf2zi6-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
