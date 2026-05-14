@@ -119,6 +119,9 @@
       "last 1 safari version"
     ]
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.60.2"
+  },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
     "@cucumber/cucumber": "^12.8.2",
