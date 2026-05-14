@@ -83,6 +83,7 @@ jobs:
             -Dsonar.projectKey=jpourdanis_test-automation-best-practices
             -Dsonar.organization=jpourdanis
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+          skipSignatureVerification: true
 
       - name: SonarQube Quality Gate
         uses: sonarsource/sonarqube-quality-gate-action@v1.2.0

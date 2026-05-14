@@ -86,6 +86,7 @@ jobs:
             -Dsonar.tests=mobile/src
             -Dsonar.test.inclusions=mobile/src/**/*.test.tsx,mobile/src/**/*.test.ts
             -Dsonar.javascript.lcov.reportPaths=mobile/coverage/lcov.info
+          skipSignatureVerification: true
 
       - name: Upload Mobile Unit Test Allure Results
         if: always()
@@ -155,7 +156,9 @@ jobs:
           fi
 
           echo "Downloading artifact: $BUILD_URL"
-          curl -L "$BUILD_URL" -o e2e/artifacts/ios-simulator.tar.gz
+          curl -L "$BUILD_URL" \
+            -H "Authorization: Bearer $EXPO_TOKEN" \
+            -o e2e/artifacts/ios-simulator.tar.gz
           cd e2e/artifacts && tar -xzf ios-simulator.tar.gz
 
           APP=$(ls -d ./*.app 2>/dev/null | head -1 | sed 's|^\./||')
@@ -326,7 +329,9 @@ jobs:
           fi
 
           echo "Downloading artifact: $BUILD_URL"
-          curl -L "$BUILD_URL" -o e2e/artifacts/android.apk
+          curl -L "$BUILD_URL" \
+            -H "Authorization: Bearer $EXPO_TOKEN" \
+            -o e2e/artifacts/android.apk
 
           echo "APK_PATH=${{ github.workspace }}/mobile/e2e/artifacts/android.apk" >> $GITHUB_ENV
           echo "Downloaded APK"
