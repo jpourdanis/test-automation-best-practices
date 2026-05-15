@@ -72,11 +72,9 @@
     "@typescript-eslint/eslint-plugin": "^8.0.0",
     "@typescript-eslint/parser": "^8.0.0",
     "eslint": "^9.0.0",
-    "eslint-plugin-react": "^7.37.0",
     "eslint-plugin-react-hooks": "^5.0.0"
   },
   "private": true,
-  "type": "module",
   "overrides": {
     "@xmldom/xmldom": "^0.8.10",
     "serialize-javascript": "^7.0.5"

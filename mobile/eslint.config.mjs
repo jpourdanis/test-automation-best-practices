@@ -1,7 +1,6 @@
 import js from '@eslint/js'
 import typescript from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
-import reactPlugin from 'eslint-plugin-react'
 import reactHooks from 'eslint-plugin-react-hooks'
 
 const reactNativeGlobals = {
@@ -11,7 +10,6 @@ const reactNativeGlobals = {
   module: 'readonly',
   __dirname: 'readonly',
   __filename: 'readonly',
-  // Web APIs available in React Native runtime
   fetch: 'readonly',
   Response: 'readonly',
   Request: 'readonly',
@@ -28,7 +26,7 @@ const reactNativeGlobals = {
   FormData: 'readonly',
   Blob: 'readonly',
   TextEncoder: 'readonly',
-  TextDecoder: 'readonly'
+  TextDecoder: 'readonly',
 }
 
 const jestGlobals = {
@@ -40,7 +38,7 @@ const jestGlobals = {
   afterAll: 'readonly',
   beforeEach: 'readonly',
   afterEach: 'readonly',
-  jest: 'readonly'
+  jest: 'readonly',
 }
 
 export default [
@@ -49,43 +47,37 @@ export default [
     files: ['**/*.ts', '**/*.tsx'],
     plugins: {
       '@typescript-eslint': typescript,
-      react: reactPlugin,
-      'react-hooks': reactHooks
+      'react-hooks': reactHooks,
     },
     languageOptions: {
       parser: tsParser,
       parserOptions: {
         ecmaFeatures: { jsx: true },
         ecmaVersion: 2022,
-        sourceType: 'module'
+        sourceType: 'module',
       },
-      globals: reactNativeGlobals
-    },
-    settings: {
-      react: { version: 'detect' }
+      globals: reactNativeGlobals,
     },
     rules: {
       ...typescript.configs.recommended.rules,
-      ...reactPlugin.configs.recommended.rules,
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
-      'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
       '@typescript-eslint/no-explicit-any': 'warn',
-      'no-undef': 'off' // TypeScript's type checker handles undefined references
-    }
+      'no-undef': 'off',
+    },
   },
   {
     files: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
     languageOptions: {
-      globals: { ...reactNativeGlobals, ...jestGlobals }
+      globals: { ...reactNativeGlobals, ...jestGlobals },
     },
     rules: {
       // require() is valid inside jest.mock() factory functions (they are hoisted and can't use import)
-      '@typescript-eslint/no-require-imports': 'off'
-    }
+      '@typescript-eslint/no-require-imports': 'off',
+    },
   },
   {
-    ignores: ['node_modules/**', 'dist/**', '.expo/**', 'android/**', 'ios/**']
-  }
+    ignores: ['node_modules/**', 'dist/**', '.expo/**', 'android/**', 'ios/**'],
+  },
 ]
