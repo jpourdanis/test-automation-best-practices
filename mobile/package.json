@@ -4,7 +4,7 @@
   "main": "index.ts",
   "scripts": {
     "build:shared": "npm run build --prefix ../packages/shared",
-    "eas-build-pre-install": "cd ../packages/shared && npm install --ignore-scripts --workspaces false --legacy-peer-deps && npx tsup",
+    "eas-build-pre-install": "cd ../packages/shared && npm install --ignore-scripts --workspaces false --legacy-peer-deps --include=dev && npm run build",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",

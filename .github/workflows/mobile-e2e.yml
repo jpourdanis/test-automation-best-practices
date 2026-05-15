@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -90,7 +90,7 @@ jobs:
 
       - name: Upload Mobile Unit Test Allure Results
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results-mobile-unit-testing
           path: mobile/allure-results/
@@ -106,7 +106,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -242,7 +242,7 @@ jobs:
 
       - name: Upload Appium server log
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-ios-appium-log
           path: mobile/e2e/appium.log
@@ -251,7 +251,7 @@ jobs:
 
       - name: Upload failure videos
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-ios-failure-videos
           path: mobile/e2e/videos/
@@ -260,7 +260,7 @@ jobs:
 
       - name: Upload WDIO results
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-ios-wdio-results
           path: |
@@ -279,7 +279,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -460,7 +460,7 @@ jobs:
 
       - name: Upload Appium server log
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-android-appium-log
           path: mobile/e2e/appium.log
@@ -469,7 +469,7 @@ jobs:
 
       - name: Upload failure videos
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-android-failure-videos
           path: mobile/e2e/videos/
@@ -478,7 +478,7 @@ jobs:
 
       - name: Upload WDIO results
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-android-wdio-results
           path: |
