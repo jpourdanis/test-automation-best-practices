@@ -26,7 +26,8 @@
     "lodash": "^4.18.1",
     "lodash-es": "^4.18.1",
     "node-forge": "^1.3.0",
-    "js-yaml": "^4.1.1"
+    "js-yaml": "^4.1.1",
+    "axios": ">=1.15.2"
   },
   "dependencies": {
     "@color-app/shared": "*",
@@ -49,7 +50,7 @@
     "typescript": "^6.0.3"
   },
   "scripts": {
-    "prepare": "node -e \"if (!process.env.CI) require('child_process').execFileSync('husky', [], {stdio: 'inherit'})\"",
+    "prepare": "node -e \"if (!process.env.CI) { try { require('child_process').execFileSync('husky', [], {stdio: 'inherit'}) } catch (e) { if (e.code !== 'ENOENT') throw e } }\"",
     "build:shared": "npm run build -w packages/shared",
     "generate:openapi": "npm run generate:openapi --prefix server",
     "generate:client": "npm run generate:openapi --prefix server && npm run generate:client -w packages/shared",
@@ -117,7 +118,15 @@
       "last 1 safari version"
     ]
   },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.60.2",
+    "@rollup/rollup-linux-x64-musl": "4.60.2",
+    "@rollup/rollup-linux-arm64-musl": "4.60.2",
+    "@esbuild/linux-x64": "0.27.7",
+    "@esbuild/linux-arm64": "0.27.7"
+  },
   "devDependencies": {
+    "@xmldom/xmldom": "^0.8.13",
     "@axe-core/playwright": "^4.11.3",
     "@cucumber/cucumber": "^12.8.2",
     "@faker-js/faker": "^10.4.0",

@@ -1,0 +1,19 @@
+# Schemathesis configuration for Colors API
+# Provides realistic parameter values so tests can reach API core logic
+# instead of repeatedly hitting 404 (unknown names) or 400 (hard-to-satisfy regexes).
+
+[[operations]]
+include-name = "GET /api/colors/{name}"
+parameters = { "path.name" = "Red" }
+
+[[operations]]
+include-name = "PUT /api/colors/{name}"
+parameters = { "path.name" = "Turquoise" }
+
+[[operations]]
+include-name = "DELETE /api/colors/{name}"
+parameters = { "path.name" = "Yellow" }
+
+[[operations]]
+include-name = "POST /api/colors"
+parameters = { "body.name" = "Fuchsia", "body.hex" = "#FF00FF" }

@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -31,17 +31,18 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Install mobile dependencies
         working-directory: mobile
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Build shared package
         run: npm run build -w packages/shared
 
       - name: Run ESLint (Mobile)
-        run: npx eslint mobile/src --ext .ts,.tsx
+        working-directory: mobile
+        run: npm run lint
 
   # ==========================================
   # UNIT TESTS (Mobile)
@@ -51,7 +52,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -60,11 +61,11 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Install mobile dependencies
         working-directory: mobile
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Build shared package
         run: npm run build -w packages/shared
@@ -86,10 +87,11 @@ jobs:
             -Dsonar.tests=mobile/src
             -Dsonar.test.inclusions=mobile/src/**/*.test.tsx,mobile/src/**/*.test.ts
             -Dsonar.javascript.lcov.reportPaths=mobile/coverage/lcov.info
+          skipSignatureVerification: true
 
       - name: Upload Mobile Unit Test Allure Results
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: allure-results-mobile-unit-testing
           path: mobile/allure-results/
@@ -105,7 +107,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -114,17 +116,17 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Install mobile dependencies
         working-directory: mobile
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Build shared package
         run: npm run build -w packages/shared
 
       - name: Install EAS CLI
-        run: npm install -g eas-cli
+        run: npm install -g eas-cli@18.13.0 --ignore-scripts
 
       # Fetches the artifact URL of the most recent successful iOS simulator
       # build from EAS and downloads it. The .app is extracted from the tarball
@@ -155,7 +157,9 @@ jobs:
           fi
 
           echo "Downloading artifact: $BUILD_URL"
-          curl -L "$BUILD_URL" -o e2e/artifacts/ios-simulator.tar.gz
+          curl -L "$BUILD_URL" \
+            -H "Authorization: Bearer $EXPO_TOKEN" \
+            -o e2e/artifacts/ios-simulator.tar.gz
           cd e2e/artifacts && tar -xzf ios-simulator.tar.gz
 
           APP=$(ls -d ./*.app 2>/dev/null | head -1 | sed 's|^\./||')
@@ -208,7 +212,7 @@ jobs:
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
-          npx appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
+          ./node_modules/.bin/appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
           echo "APPIUM_PID=$!" >> $GITHUB_ENV
           for i in {1..30}; do
             if curl -s http://127.0.0.1:4723/status > /dev/null; then
@@ -228,7 +232,7 @@ jobs:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
           IOS_DEVICE: "iPhone 16"
           IOS_VERSION: "18.5"
-        run: npx wdio run e2e/wdio.ios.conf.ts
+        run: ./node_modules/.bin/wdio run e2e/wdio.ios.conf.ts
 
       - name: Stop Appium Server
         if: always()
@@ -239,7 +243,7 @@ jobs:
 
       - name: Upload Appium server log
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-ios-appium-log
           path: mobile/e2e/appium.log
@@ -248,7 +252,7 @@ jobs:
 
       - name: Upload failure videos
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-ios-failure-videos
           path: mobile/e2e/videos/
@@ -257,7 +261,7 @@ jobs:
 
       - name: Upload WDIO results
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-ios-wdio-results
           path: |
@@ -276,7 +280,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v4
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -285,17 +289,17 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Install mobile dependencies
         working-directory: mobile
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Build shared package
         run: npm run build -w packages/shared
 
       - name: Install EAS CLI
-        run: npm install -g eas-cli
+        run: npm install -g eas-cli@18.13.0 --ignore-scripts
 
       # Fetches the artifact URL of the most recent successful Android emulator
       # build from EAS and downloads it. The .apk path is written to $GITHUB_ENV
@@ -326,7 +330,9 @@ jobs:
           fi
 
           echo "Downloading artifact: $BUILD_URL"
-          curl -L "$BUILD_URL" -o e2e/artifacts/android.apk
+          curl -L "$BUILD_URL" \
+            -H "Authorization: Bearer $EXPO_TOKEN" \
+            -o e2e/artifacts/android.apk
 
           echo "APK_PATH=${{ github.workspace }}/mobile/e2e/artifacts/android.apk" >> $GITHUB_ENV
           echo "Downloaded APK"
@@ -424,7 +430,7 @@ jobs:
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
-          npx appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
+          ./node_modules/.bin/appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
           echo "APPIUM_PID=$!" >> $GITHUB_ENV
           for i in {1..30}; do
             if curl -s http://127.0.0.1:4723/status > /dev/null; then
@@ -444,7 +450,7 @@ jobs:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
           ANDROID_DEVICE: "Pixel_6_API_35"
           ANDROID_VERSION: "15" # Android OS version (API 35 = Android 15)
-        run: npx wdio run e2e/wdio.android.conf.ts
+        run: ./node_modules/.bin/wdio run e2e/wdio.android.conf.ts
 
       - name: Stop Appium Server
         if: always()
@@ -455,7 +461,7 @@ jobs:
 
       - name: Upload Appium server log
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-android-appium-log
           path: mobile/e2e/appium.log
@@ -464,7 +470,7 @@ jobs:
 
       - name: Upload failure videos
         if: failure()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-android-failure-videos
           path: mobile/e2e/videos/
@@ -473,7 +479,7 @@ jobs:
 
       - name: Upload WDIO results
         if: always()
-        uses: actions/upload-artifact@v7
+        uses: actions/upload-artifact@v4
         with:
           name: mobile-android-wdio-results
           path: |
