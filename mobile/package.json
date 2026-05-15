@@ -20,7 +20,9 @@
     "appium:install-drivers:android": "appium driver install uiautomator2",
     "test:ios": "wdio run e2e/wdio.ios.conf.ts",
     "test:android": "wdio run e2e/wdio.android.conf.ts",
-    "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-mobile-unit-tests.xml jest --coverage"
+    "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-mobile-unit-tests.xml jest --coverage",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix"
   },
   "dependencies": {
     "@color-app/shared": "file:../packages/shared",
@@ -65,9 +67,16 @@
     "react-test-renderer": "19.1.0",
     "ts-node": "^10.9.0",
     "typescript": "~5.9.2",
-    "webdriverio": "^9.0.0"
+    "webdriverio": "^9.0.0",
+    "@eslint/js": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react": "^7.37.0",
+    "eslint-plugin-react-hooks": "^5.0.0"
   },
   "private": true,
+  "type": "module",
   "overrides": {
     "@xmldom/xmldom": "^0.8.10",
     "serialize-javascript": "^7.0.5"

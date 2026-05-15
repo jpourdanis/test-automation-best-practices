@@ -41,7 +41,8 @@ jobs:
         run: npm run build -w packages/shared
 
       - name: Run ESLint (Mobile)
-        run: npx eslint mobile/src --ext .ts,.tsx
+        working-directory: mobile
+        run: npm run lint
 
   # ==========================================
   # UNIT TESTS (Mobile)
@@ -211,7 +212,7 @@ jobs:
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
-          npx appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
+          ./node_modules/.bin/appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
           echo "APPIUM_PID=$!" >> $GITHUB_ENV
           for i in {1..30}; do
             if curl -s http://127.0.0.1:4723/status > /dev/null; then
@@ -231,7 +232,7 @@ jobs:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
           IOS_DEVICE: "iPhone 16"
           IOS_VERSION: "18.5"
-        run: npx wdio run e2e/wdio.ios.conf.ts
+        run: ./node_modules/.bin/wdio run e2e/wdio.ios.conf.ts
 
       - name: Stop Appium Server
         if: always()
@@ -429,7 +430,7 @@ jobs:
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
-          npx appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
+          ./node_modules/.bin/appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
           echo "APPIUM_PID=$!" >> $GITHUB_ENV
           for i in {1..30}; do
             if curl -s http://127.0.0.1:4723/status > /dev/null; then
@@ -449,7 +450,7 @@ jobs:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
           ANDROID_DEVICE: "Pixel_6_API_35"
           ANDROID_VERSION: "15" # Android OS version (API 35 = Android 15)
-        run: npx wdio run e2e/wdio.android.conf.ts
+        run: ./node_modules/.bin/wdio run e2e/wdio.android.conf.ts
 
       - name: Stop Appium Server
         if: always()
