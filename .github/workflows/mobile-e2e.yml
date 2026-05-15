@@ -31,11 +31,11 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Install mobile dependencies
         working-directory: mobile
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Build shared package
         run: npm run build -w packages/shared
@@ -60,11 +60,11 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Install mobile dependencies
         working-directory: mobile
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Build shared package
         run: npm run build -w packages/shared
@@ -115,17 +115,17 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Install mobile dependencies
         working-directory: mobile
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Build shared package
         run: npm run build -w packages/shared
 
       - name: Install EAS CLI
-        run: npm install -g eas-cli
+        run: npm install -g eas-cli@18.13.0 --ignore-scripts
 
       # Fetches the artifact URL of the most recent successful iOS simulator
       # build from EAS and downloads it. The .app is extracted from the tarball
@@ -288,17 +288,17 @@ jobs:
           cache: "npm"
 
       - name: Install dependencies
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Install mobile dependencies
         working-directory: mobile
-        run: npm install
+        run: npm ci --ignore-scripts
 
       - name: Build shared package
         run: npm run build -w packages/shared
 
       - name: Install EAS CLI
-        run: npm install -g eas-cli
+        run: npm install -g eas-cli@18.13.0 --ignore-scripts
 
       # Fetches the artifact URL of the most recent successful Android emulator
       # build from EAS and downloads it. The .apk path is written to $GITHUB_ENV
