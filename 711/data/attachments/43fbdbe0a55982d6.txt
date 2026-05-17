@@ -1,0 +1,39 @@
+2026-05-17 00:43:45 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:43:45 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:43:45 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:43:45 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:43:45 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:43:45 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-f7d075294bf0f5448e7e
+2026-05-17 00:43:45 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '3a4c52eb-9379-4414-bcde-44cd46fdef9a',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '3a4c52eb-9379-4414-bcde-44cd46fdef9a',
+  test_result: 'pending',
+  automate_session_name: 'Injection Prevention - SQL injection characters in name are rejected (400)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-f7d075294bf0f5448e7e',
+  test_name: 'SQL injection characters in name are rejected (400)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        data: {\n' +
+    `          name: "'; DROP TABLE colors; --",\n` +
+    "          hex: '#ff0000'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(400);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:43:45.058Z',
+  test_scope: 'Injection Prevention - SQL injection characters in name are rejected (400)',
+  test_scopes: [ 'Security', 'Injection Prevention' ],
+  test_rerun_name: ' bs-firefox-win11 tests/security.spec.ts Security Injection Prevention SQL injection characters in name are rejected (400)'
+}
+2026-05-17 00:43:45 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:43:45 - info: [GrpcClient] TestSessionEvent request successful

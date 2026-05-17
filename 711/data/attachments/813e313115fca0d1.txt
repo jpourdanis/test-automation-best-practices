@@ -1,0 +1,35 @@
+2026-05-17 00:47:53 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:47:53 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:47:53 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:47:53 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:47:53 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:47:53 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-e87dbfdf83d5b8a1fec2
+2026-05-17 00:47:53 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '59bbfe98-ebed-47d9-963d-e45667466c17',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '59bbfe98-ebed-47d9-963d-e45667466c17',
+  test_result: 'pending',
+  automate_session_name: 'HTTP Method Restrictions - PATCH /api/colors/:name returns 405',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-e87dbfdf83d5b8a1fec2',
+  test_name: 'PATCH /api/colors/:name returns 405',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.patch('/api/colors/Turquoise');\n" +
+    '      (0, _test.expect)(res.status()).toBe(405);\n' +
+    "      (0, _test.expect)(res.headers()['allow']).toContain('PUT');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:47:53.434Z',
+  test_scope: 'HTTP Method Restrictions - PATCH /api/colors/:name returns 405',
+  test_scopes: [ 'Security', 'HTTP Method Restrictions' ],
+  test_rerun_name: ' bs-iphone-15 tests/security.spec.ts Security HTTP Method Restrictions PATCH /api/colors/:name returns 405'
+}
+2026-05-17 00:47:53 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:47:53 - info: [GrpcClient] TestSessionEvent request successful

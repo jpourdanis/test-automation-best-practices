@@ -1,0 +1,50 @@
+2026-05-17 00:46:03 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:46:03 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:46:03 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:46:03 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:46:03 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] close (×) button closes the picker: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-05-17 00:46:04 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-05-17 00:46:04 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-05-17 00:46:04 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-05-17 00:46:04 - info: Accessibility testing for this test case has ended.
+2026-05-17 00:46:04 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:46:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:46:04 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:46:04 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:46:04 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:46:04 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-b3f44774ec7abd853f19
+2026-05-17 00:46:04 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'a96005ed-dfce-4202-a9c7-b7ff0a61ffb7',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'a96005ed-dfce-4202-a9c7-b7ff0a61ffb7',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - close (×) button closes the picker',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-b3f44774ec7abd853f19',
+  test_name: 'close (×) button closes the picker',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    "    await page.getByRole('button', {\n" +
+    "      name: 'Close',\n" +
+    '      exact: true\n' +
+    '    }).click();\n' +
+    '    await (0, _baseFixtures.expect)(homePage.pickerCard).not.toBeVisible();\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:46:03.734Z',
+  test_scope: 'Color Management — Add & Delete - close (×) button closes the picker',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-pixel-7 tests/color-management.spec.ts Color Management — Add & Delete close (×) button closes the picker'
+}
+2026-05-17 00:46:04 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:46:04 - info: [GrpcClient] TestSessionEvent request successful

@@ -1,0 +1,40 @@
+2026-05-17 00:45:51 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:45:51 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:45:51 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:45:51 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:45:51 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:45:51 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:45:51 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-37e6c1ca7174e1821d22
+2026-05-17 00:45:51 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'c1a8cefc-cf7b-4164-ad31-dd073dde69f8',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'c1a8cefc-cf7b-4164-ad31-dd073dde69f8',
+  test_result: 'pending',
+  automate_session_name: 'Security Headers - error responses return JSON, not HTML (no info leakage)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-37e6c1ca7174e1821d22',
+  test_name: 'error responses return JSON, not HTML (no info leakage)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        data: {\n' +
+    "          name: '<xss>',\n" +
+    "          hex: '#000000'\n" +
+    '        }\n' +
+    '      });\n' +
+    "      (0, _test.expect)(res.headers()['content-type']).toContain('application/json');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:45:51.061Z',
+  test_scope: 'Security Headers - error responses return JSON, not HTML (no info leakage)',
+  test_scopes: [ 'Security', 'Security Headers' ],
+  test_rerun_name: ' bs-safari-ventura tests/security.spec.ts Security Security Headers error responses return JSON, not HTML (no info leakage)'
+}
+2026-05-17 00:45:51 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:45:51 - info: [GrpcClient] TestSessionEvent request successful

@@ -1,0 +1,48 @@
+2026-05-17 00:42:55 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:42:55 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:42:55 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:42:55 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:42:55 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:42:56 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-05-17 00:42:56 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-05-17 00:42:56 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-05-17 00:42:56 - info: Accessibility testing for this test case has ended.
+2026-05-17 00:42:56 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:42:56 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:42:56 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:42:56 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:42:56 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:42:56 - info: [PlaywrightDriverModule] testId: 791bdff6f908e1de6c18-3a08f2ecd2c838a7d8ec
+2026-05-17 00:42:56 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'a91f35cf-1a76-40a0-9783-277d746a3621',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'a91f35cf-1a76-40a0-9783-277d746a3621',
+  test_result: 'pending',
+  automate_session_name: 'UI Error Handling Coverage - should handle fetch colors network failure gracefully',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/error-handling.spec.ts',
+  test_id: '791bdff6f908e1de6c18-3a08f2ecd2c838a7d8ec',
+  test_name: 'should handle fetch colors network failure gracefully',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/error-handling.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Abort the initial colors fetch\n' +
+    "    await page.route('**/api/colors', route => route.abort('failed'));\n" +
+    '    await homePage.goto();\n' +
+    '\n' +
+    '    // The UI should show "Loading colors..." because colors array is empty\n' +
+    "    await (0, _baseFixtures.expect)(page.locator('text=Loading colors...')).toBeVisible();\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:42:55.799Z',
+  test_scope: 'UI Error Handling Coverage - should handle fetch colors network failure gracefully',
+  test_scopes: [ 'UI Error Handling Coverage' ],
+  test_rerun_name: ' bs-chrome-win11 tests/error-handling.spec.ts UI Error Handling Coverage should handle fetch colors network failure gracefully'
+}
+2026-05-17 00:42:56 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:42:56 - info: [GrpcClient] TestSessionEvent request successful

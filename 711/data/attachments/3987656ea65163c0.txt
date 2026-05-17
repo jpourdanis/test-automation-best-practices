@@ -1,0 +1,34 @@
+2026-05-17 00:47:53 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:47:53 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:47:53 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:47:53 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:47:53 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:47:53 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-c30159b87980419ad62d
+2026-05-17 00:47:53 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'eb808a4c-68d5-4557-b501-19d19754b710',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'eb808a4c-68d5-4557-b501-19d19754b710',
+  test_result: 'pending',
+  automate_session_name: 'Security Headers - X-Powered-By header is not exposed',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-c30159b87980419ad62d',
+  test_name: 'X-Powered-By header is not exposed',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.get('/api/colors');\n" +
+    "      (0, _test.expect)(res.headers()['x-powered-by']).toBeUndefined();\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:47:53.096Z',
+  test_scope: 'Security Headers - X-Powered-By header is not exposed',
+  test_scopes: [ 'Security', 'Security Headers' ],
+  test_rerun_name: ' bs-iphone-15 tests/security.spec.ts Security Security Headers X-Powered-By header is not exposed'
+}
+2026-05-17 00:47:53 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:47:53 - info: [GrpcClient] TestSessionEvent request successful

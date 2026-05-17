@@ -1,0 +1,52 @@
+2026-05-17 00:47:13 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:47:13 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:47:13 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:47:13 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:47:13 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] chip-x click opens confirm dialog with color name: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-05-17 00:47:14 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-05-17 00:47:14 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:47:14 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:47:14 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:47:14 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:47:14 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:47:14 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-aad4f518eb9bfab380ca
+2026-05-17 00:47:14 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'd643a14e-c12f-4a89-99cd-cf73b68f75c7',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'd643a14e-c12f-4a89-99cd-cf73b68f75c7',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - chip-x click opens confirm dialog with color name',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-aad4f518eb9bfab380ca',
+  test_name: 'chip-x click opens confirm dialog with color name',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    "    await homePage.clickDeleteChip('Red');\n" +
+    '    await (0, _baseFixtures.expect)(homePage.confirmCard).toBeVisible();\n' +
+    "    await (0, _baseFixtures.expect)(page.getByText('Delete color?')).toBeVisible();\n" +
+    "    await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    "      name: 'Delete',\n" +
+    '      exact: true\n' +
+    '    })).toBeVisible();\n' +
+    "    await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    "      name: 'Cancel',\n" +
+    '      exact: true\n' +
+    '    })).toBeVisible();\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:47:13.218Z',
+  test_scope: 'Color Management — Add & Delete - chip-x click opens confirm dialog with color name',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-iphone-15 tests/color-management.spec.ts Color Management — Add & Delete chip-x click opens confirm dialog with color name'
+}
+2026-05-17 00:47:14 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:47:14 - info: [GrpcClient] TestSessionEvent request successful

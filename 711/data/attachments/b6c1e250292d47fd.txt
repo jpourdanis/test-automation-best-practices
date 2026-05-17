@@ -1,0 +1,53 @@
+2026-05-17 00:46:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:46:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:46:04 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:46:04 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:46:04 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] clicking the backdrop closes the picker: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-05-17 00:46:05 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-05-17 00:46:05 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-05-17 00:46:05 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-05-17 00:46:05 - info: Accessibility testing for this test case has ended.
+2026-05-17 00:46:05 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:46:05 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:46:05 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:46:05 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:46:05 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:46:05 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-d90042baa46246f9929e
+2026-05-17 00:46:05 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '369eb583-2422-4289-aa1e-ab84da5f4e1a',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '369eb583-2422-4289-aa1e-ab84da5f4e1a',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - clicking the backdrop closes the picker',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-d90042baa46246f9929e',
+  test_name: 'clicking the backdrop closes the picker',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    '    // Click in the backdrop area (outside the card) using the backdrop element directly\n' +
+    "    await page.locator('.picker-backdrop').click({\n" +
+    '      position: {\n' +
+    '        x: 5,\n' +
+    '        y: 5\n' +
+    '      }\n' +
+    '    });\n' +
+    '    await (0, _baseFixtures.expect)(homePage.pickerCard).not.toBeVisible();\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:46:04.660Z',
+  test_scope: 'Color Management — Add & Delete - clicking the backdrop closes the picker',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-pixel-7 tests/color-management.spec.ts Color Management — Add & Delete clicking the backdrop closes the picker'
+}
+2026-05-17 00:46:05 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:46:05 - info: [GrpcClient] TestSessionEvent request successful

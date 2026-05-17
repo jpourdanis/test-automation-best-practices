@@ -1,0 +1,33 @@
+2026-05-17 00:45:51 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:45:51 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:45:51 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:45:51 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:45:51 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:45:51 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-98a3e6d7253c73fdf2e4
+2026-05-17 00:45:51 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '9f2b544c-cb1b-468b-ac91-ff037b455bba',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '9f2b544c-cb1b-468b-ac91-ff037b455bba',
+  test_result: 'pending',
+  automate_session_name: 'Security Headers - X-Powered-By header is not exposed',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-98a3e6d7253c73fdf2e4',
+  test_name: 'X-Powered-By header is not exposed',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.get('/api/colors');\n" +
+    "      (0, _test.expect)(res.headers()['x-powered-by']).toBeUndefined();\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:45:50.895Z',
+  test_scope: 'Security Headers - X-Powered-By header is not exposed',
+  test_scopes: [ 'Security', 'Security Headers' ],
+  test_rerun_name: ' bs-safari-ventura tests/security.spec.ts Security Security Headers X-Powered-By header is not exposed'
+}
+2026-05-17 00:45:51 - info: [GrpcClient] Sending TestSessionEvent

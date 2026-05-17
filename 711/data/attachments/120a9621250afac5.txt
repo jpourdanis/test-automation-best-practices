@@ -1,0 +1,50 @@
+2026-05-17 00:42:52 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:42:52 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:42:52 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:42:52 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:42:52 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] handle initial fetch with empty data: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-05-17 00:42:53 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-05-17 00:42:53 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-05-17 00:42:53 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-05-17 00:42:53 - info: Accessibility testing for this test case has ended.
+2026-05-17 00:42:53 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:42:53 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:42:53 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:42:53 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:42:53 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:42:53 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-a8bb20039f7d627ce58f
+2026-05-17 00:42:53 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'b03962cf-180f-4ee6-b4ae-bfee7060e565',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'b03962cf-180f-4ee6-b4ae-bfee7060e565',
+  test_result: 'pending',
+  automate_session_name: 'Edge cases and error handling - handle initial fetch with empty data',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_id: '3300dcb2e635619af3f7-a8bb20039f7d627ce58f',
+  test_name: 'handle initial fetch with empty data',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_code: 'async ({\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Mock empty array response\n' +
+    "    await page.route('/api/colors', route => route.fulfill({\n" +
+    '      status: 200,\n' +
+    "      contentType: 'application/json',\n" +
+    '      body: JSON.stringify([])\n' +
+    '    }));\n' +
+    "    await page.goto('/');\n" +
+    "    await (0, _baseFixtures.expect)(page.locator('text=Loading colors...')).toBeVisible();\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:42:52.571Z',
+  test_scope: 'Edge cases and error handling - handle initial fetch with empty data',
+  test_scopes: [ 'Edge cases and error handling' ],
+  test_rerun_name: ' bs-chrome-win11 tests/coverage.spec.ts Edge cases and error handling handle initial fetch with empty data'
+}
+2026-05-17 00:42:53 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:42:53 - info: [GrpcClient] TestSessionEvent request successful

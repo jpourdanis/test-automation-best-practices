@@ -1,0 +1,58 @@
+2026-05-17 00:46:43 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:46:43 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:46:43 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:46:43 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:46:43 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] clicking a chip makes it active: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] clicking a chip makes it active: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Red
+2026-05-17 00:46:45 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-05-17 00:46:45 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:46:45 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:46:45 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:46:45 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:46:45 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:46:45 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-51fb82d2c65c438a00a3
+2026-05-17 00:46:45 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'cac157bf-1cbc-4b8b-bb02-bca0d9f3d9d4',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'cac157bf-1cbc-4b8b-bb02-bca0d9f3d9d4',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - clicking a chip makes it active',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-51fb82d2c65c438a00a3',
+  test_name: 'clicking a chip makes it active',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    "    await page.route('**/api/colors/Red', async route => {\n" +
+    '      await route.fulfill({\n' +
+    '        status: 200,\n' +
+    "        contentType: 'application/json',\n" +
+    '        body: JSON.stringify({\n' +
+    "          name: 'Red',\n" +
+    "          hex: '#e74c3c'\n" +
+    '        })\n' +
+    '      });\n' +
+    '    });\n' +
+    '    await homePage.goto();\n' +
+    "    await homePage.clickColorButton('Red');\n" +
+    "    await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    "      name: 'Change background to Red',\n" +
+    '      exact: true\n' +
+    "    })).toHaveAttribute('aria-pressed', 'true');\n" +
+    "    await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', 'rgb(231, 76, 60)');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:46:43.587Z',
+  test_scope: 'Color Management — Add & Delete - clicking a chip makes it active',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-iphone-15 tests/color-management.spec.ts Color Management — Add & Delete clicking a chip makes it active'
+}
+2026-05-17 00:46:45 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:46:45 - info: [GrpcClient] TestSessionEvent request successful

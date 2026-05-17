@@ -1,0 +1,41 @@
+2026-05-17 00:45:50 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-05-17 00:45:50 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-05-17 00:45:50 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:45:50 - info: [GrpcClient] TestSessionEvent request successful
+2026-05-17 00:45:50 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-05-17 00:45:50 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-60caa5678c82389e5a34
+2026-05-17 00:45:50 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '2a15cc8b-6f93-4397-8463-d3c1eeb506ac',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.59.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '2a15cc8b-6f93-4397-8463-d3c1eeb506ac',
+  test_result: 'pending',
+  automate_session_name: 'Injection Prevention - NoSQL $where operator in name is rejected (400)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-60caa5678c82389e5a34',
+  test_name: 'NoSQL $where operator in name is rejected (400)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        data: {\n' +
+    '          name: {\n' +
+    "            $where: 'sleep(1000)'\n" +
+    '          },\n' +
+    "          hex: '#ffffff'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(400);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-05-17T00:45:50.328Z',
+  test_scope: 'Injection Prevention - NoSQL $where operator in name is rejected (400)',
+  test_scopes: [ 'Security', 'Injection Prevention' ],
+  test_rerun_name: ' bs-safari-ventura tests/security.spec.ts Security Injection Prevention NoSQL $where operator in name is rejected (400)'
+}
+2026-05-17 00:45:50 - info: [GrpcClient] Sending TestSessionEvent
+2026-05-17 00:45:50 - info: [GrpcClient] TestSessionEvent request successful
