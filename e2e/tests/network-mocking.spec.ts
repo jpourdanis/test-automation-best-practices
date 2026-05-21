@@ -20,7 +20,7 @@ test.describe('Network Mocking & Interception', () => {
    */
   test('should handle missing image gracefully by showing alt text', async ({ homePage, page }) => {
     // Intercept requests for the logo and abort them
-    await page.route('**/logo.svg', (route) => route.abort())
+    await page.route('**/logo*.svg', (route) => route.abort())
 
     // Now go to the page
     await homePage.goto()
