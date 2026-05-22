@@ -27,4 +27,5 @@ runs:
 
     - name: Build shared package
       shell: bash
-      run: npm run build -w @color-app/shared
+      working-directory: packages/shared
+      run: npm ci --legacy-peer-deps && npm run build
