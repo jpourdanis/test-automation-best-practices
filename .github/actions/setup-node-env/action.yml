@@ -27,7 +27,7 @@ runs:
 
     - name: Install esbuild platform binary
       shell: bash
-      run: node node_modules/esbuild/install.js
+      run: npm_config_ignore_scripts=false npm rebuild esbuild
 
     - name: Build shared package
       shell: bash
