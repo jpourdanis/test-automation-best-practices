@@ -25,6 +25,14 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: npm ci --legacy-peer-deps
 
+    - name: Cache shared package build
+      id: shared-build-cache
+      uses: actions/cache@v5
+      with:
+        path: packages/shared/dist
+        key: shared-build-${{ hashFiles('packages/shared/src/**', 'packages/shared/tsup.config.ts', 'packages/shared/package.json') }}
+
     - name: Build shared package
+      if: steps.shared-build-cache.outputs.cache-hit != 'true'
       shell: bash
       run: NODE_PATH=$(pwd)/node_modules/tsup/node_modules npm run build -w @color-app/shared

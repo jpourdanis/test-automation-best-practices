@@ -31,29 +31,46 @@ env:
 
 jobs:
   # ==========================================
-  # 1. STATIC ANALYSIS
+  # 1a. STATIC ANALYSIS — MegaLinter
+  # Runs immediately with no upstream dependencies so it never blocks
+  # the test pipeline. PARALLEL_PROCESS_NUMBER raised from 2 → 4 to
+  # saturate the 2-vCPU runner with I/O-overlapping linter processes.
   # ==========================================
-  static-code-analysis:
-    name: Static Code Analysis
-    needs: [backend-unit-tests, frontend-unit-tests]
+  megalinter:
+    name: MegaLinter
     runs-on: ubuntu-latest
     steps:
-      # Checks out the repository code so the workflow can access it
       - name: Checkout Code
         uses: actions/checkout@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          # Fetches all history for all tags and branches so MegaLinter can check the diff
           fetch-depth: 0
 
-      # Runs MegaLinter to detect issues, formatting errors, and bugs in the codebase
       - name: MegaLinter
         uses: oxsecurity/megalinter/flavors/javascript@v9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PARALLEL_PROCESS_NUMBER: 2
-          # Lint only changed files to drastically improve performance
+          PARALLEL_PROCESS_NUMBER: 4
           VALIDATE_ALL_CODEBASE: false
+
+  # ==========================================
+  # 1b. STATIC ANALYSIS — SonarCloud
+  # Decoupled from MegaLinter so it runs as soon as unit-test coverage
+  # artifacts are available (~1-2 min), instead of waiting for MegaLinter
+  # to finish (~15-20 min) before the scan can even start.
+  # ==========================================
+  sonarcloud:
+    name: SonarCloud Analysis
+    needs: [backend-unit-tests, frontend-unit-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - uses: ./.github/actions/setup-node-env
 
       - name: Download Backend Unit Coverage
         uses: actions/download-artifact@v8
@@ -443,36 +460,15 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
 
-      # Installs Playwright browsers if they were not found in the cache
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
+        run: npx playwright install --with-deps
 
-      # Installs OS-level dependencies required by Playwright browsers (e.g., fonts, libraries)
       - name: Install Playwright OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps
 
-      # Configures Docker Buildx to enable advanced build features like layer caching
-      # buildkitd-config-inline wires the GHA cache backend into the BuildKit daemon so that
-      # the cache_from/cache_to: type=gha entries in docker-compose.yml are honoured.
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-        with:
-          driver-opts: |
-            image=moby/buildkit:latest
-            network=host
-          buildkitd-config-inline: |
-            [registry]
-            [worker.oci]
-              max-parallelism = 4
-            [worker.containerd]
-              max-parallelism = 4
-
-            [cache]
-              [cache.gha]
-                token = "${{ env.ACTIONS_RUNTIME_TOKEN }}"
-                url   = "${{ env.ACTIONS_CACHE_URL }}"
-                scope = "buildkit"
+      - uses: ./.github/actions/setup-buildx
 
       # Spins up the application frontend, backend API, and MongoDB database via Docker
       - name: Start web service (Docker Compose)
@@ -569,25 +565,7 @@ jobs:
       # Checks out the repository code
       - uses: actions/checkout@v6
 
-      # Configures Docker Buildx to enable advanced build features like layer caching
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-        with:
-          driver-opts: |
-            image=moby/buildkit:latest
-            network=host
-          buildkitd-config-inline: |
-            [registry]
-            [worker.oci]
-              max-parallelism = 4
-            [worker.containerd]
-              max-parallelism = 4
-
-            [cache]
-              [cache.gha]
-                token = "${{ env.ACTIONS_RUNTIME_TOKEN }}"
-                url   = "${{ env.ACTIONS_CACHE_URL }}"
-                scope = "buildkit"
+      - uses: ./.github/actions/setup-buildx
 
       # Spins up the backend API and MongoDB database via Docker for testing
       - name: Start app service (Docker Compose)
@@ -648,34 +626,15 @@ jobs:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
 
-      # Installs Playwright browsers if they were not found in the cache
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
+        run: npx playwright install --with-deps
 
-      # Installs OS dependencies required by browsers
       - name: Install Playwright OS dependencies
+        if: steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps
 
-      # Sets up Docker Buildx for advanced image building
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-        with:
-          driver-opts: |
-            image=moby/buildkit:latest
-            network=host
-          buildkitd-config-inline: |
-            [registry]
-            [worker.oci]
-              max-parallelism = 4
-            [worker.containerd]
-              max-parallelism = 4
-
-            [cache]
-              [cache.gha]
-                token = "${{ env.ACTIONS_RUNTIME_TOKEN }}"
-                url   = "${{ env.ACTIONS_CACHE_URL }}"
-                scope = "buildkit"
+      - uses: ./.github/actions/setup-buildx
 
       # Completely isolated environment spin-up for this exact shard runner
       - name: Start web service (Docker Compose)
@@ -747,25 +706,7 @@ jobs:
       # Checks out the repository code
       - uses: actions/checkout@v6
 
-      # Configures Docker Buildx to enable advanced build features like layer caching
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-        with:
-          driver-opts: |
-            image=moby/buildkit:latest
-            network=host
-          buildkitd-config-inline: |
-            [registry]
-            [worker.oci]
-              max-parallelism = 4
-            [worker.containerd]
-              max-parallelism = 4
-
-            [cache]
-              [cache.gha]
-                token = "${{ env.ACTIONS_RUNTIME_TOKEN }}"
-                url   = "${{ env.ACTIONS_CACHE_URL }}"
-                scope = "buildkit"
+      - uses: ./.github/actions/setup-buildx
 
       # Starts the backend API and MongoDB database via Docker
       - name: Start API & Mongo (Docker Compose)
@@ -803,25 +744,7 @@ jobs:
       # Checks out the repository code
       - uses: actions/checkout@v6
 
-      # Configures Docker Buildx to enable advanced build features like layer caching
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v4
-        with:
-          driver-opts: |
-            image=moby/buildkit:latest
-            network=host
-          buildkitd-config-inline: |
-            [registry]
-            [worker.oci]
-              max-parallelism = 4
-            [worker.containerd]
-              max-parallelism = 4
-
-            [cache]
-              [cache.gha]
-                token = "${{ env.ACTIONS_RUNTIME_TOKEN }}"
-                url   = "${{ env.ACTIONS_CACHE_URL }}"
-                scope = "buildkit"
+      - uses: ./.github/actions/setup-buildx
 
       # Spins up the application frontend, backend API, and MongoDB database via Docker
       - name: Start Full Stack (Docker Compose)
@@ -948,8 +871,6 @@ jobs:
         e2e-sharded,
         performance-testing-api,
         performance-testing-frontend,
-        mutation-testing,
-        mutation-testing-frontend,
         backend-unit-tests,
         backend-integration-tests,
         frontend-unit-tests
@@ -974,10 +895,10 @@ jobs:
 
       - name: Install Playwright browsers
         if: env.VERCEL_TOKEN != '' && steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
+        run: npx playwright install --with-deps
 
       - name: Install Playwright OS dependencies
-        if: env.VERCEL_TOKEN != ''
+        if: env.VERCEL_TOKEN != '' && steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps
 
       - name: Deploy to Vercel (Preview)
@@ -1086,10 +1007,10 @@ jobs:
 
       - name: Install Playwright browsers
         if: env.PERCY_TOKEN != '' && steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install
+        run: npx playwright install --with-deps
 
       - name: Install Playwright OS dependencies
-        if: env.PERCY_TOKEN != ''
+        if: env.PERCY_TOKEN != '' && steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps
 
       - name: Run Percy Visual Regression Tests
@@ -1112,7 +1033,9 @@ jobs:
   # ==========================================
   publish-reports:
     name: Merge Reports & Publish
-    # This job 'fans in', running only after all the test runners finish
+    # Fans in after all blocking test runners finish. Mutation jobs are excluded
+    # from needs[] intentionally — they are informational quality gates that run
+    # in parallel and must not delay report publishing or the overall wall time.
     needs:
       [
         security-testing-fs,
@@ -1125,8 +1048,6 @@ jobs:
         performance-testing-frontend,
         performance-testing-api-prod,
         performance-testing-ui-prod,
-        mutation-testing,
-        mutation-testing-frontend,
         backend-unit-tests,
         backend-integration-tests,
         frontend-unit-tests,
