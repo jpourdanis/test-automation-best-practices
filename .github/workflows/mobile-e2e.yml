@@ -205,24 +205,33 @@ jobs:
         working-directory: mobile
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
-        run: npm run appium:install-drivers
+        run: |
+          npm run appium:install-drivers
+          ./node_modules/.bin/appium driver list --installed
 
       - name: Start Appium Server
         working-directory: mobile
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
-          ./node_modules/.bin/appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
-          echo "APPIUM_PID=$!" >> $GITHUB_ENV
-          for i in {1..30}; do
+          ./node_modules/.bin/appium --port 4723 --log-level info > e2e/appium.log 2>&1 &
+          APPIUM_PID=$!
+          echo "APPIUM_PID=$APPIUM_PID" >> $GITHUB_ENV
+          for i in {1..60}; do
+            if ! kill -0 "$APPIUM_PID" 2>/dev/null; then
+              echo "::error::Appium process exited unexpectedly. Log output:"
+              cat e2e/appium.log
+              exit 1
+            fi
             if curl -s http://127.0.0.1:4723/status > /dev/null; then
-              echo "Appium is ready"
+              echo "Appium is ready (attempt $i)"
               exit 0
             fi
-            echo "Waiting for Appium... attempt $i/30"
-            sleep 1
+            echo "Waiting for Appium... attempt $i/60"
+            sleep 2
           done
-          echo "::error::Appium failed to start within 30 seconds"
+          echo "::error::Appium failed to start within 120 seconds. Log output:"
+          cat e2e/appium.log
           exit 1
 
       - name: Run iOS E2E tests
@@ -423,24 +432,33 @@ jobs:
         working-directory: mobile
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
-        run: npm run appium:install-drivers:android
+        run: |
+          npm run appium:install-drivers:android
+          ./node_modules/.bin/appium driver list --installed
 
       - name: Start Appium Server
         working-directory: mobile
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
-          ./node_modules/.bin/appium --port 4723 --log-level warn > e2e/appium.log 2>&1 &
-          echo "APPIUM_PID=$!" >> $GITHUB_ENV
-          for i in {1..30}; do
+          ./node_modules/.bin/appium --port 4723 --log-level info > e2e/appium.log 2>&1 &
+          APPIUM_PID=$!
+          echo "APPIUM_PID=$APPIUM_PID" >> $GITHUB_ENV
+          for i in {1..60}; do
+            if ! kill -0 "$APPIUM_PID" 2>/dev/null; then
+              echo "::error::Appium process exited unexpectedly. Log output:"
+              cat e2e/appium.log
+              exit 1
+            fi
             if curl -s http://127.0.0.1:4723/status > /dev/null; then
-              echo "Appium is ready"
+              echo "Appium is ready (attempt $i)"
               exit 0
             fi
-            echo "Waiting for Appium... attempt $i/30"
-            sleep 1
+            echo "Waiting for Appium... attempt $i/60"
+            sleep 2
           done
-          echo "::error::Appium failed to start within 30 seconds"
+          echo "::error::Appium failed to start within 120 seconds. Log output:"
+          cat e2e/appium.log
           exit 1
 
       - name: Run Android E2E tests
