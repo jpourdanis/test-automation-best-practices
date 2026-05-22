@@ -77,6 +77,11 @@
   "private": true,
   "overrides": {
     "@xmldom/xmldom": "^0.8.10",
-    "serialize-javascript": "^7.0.5"
+    "serialize-javascript": "^7.0.5",
+    "ws": "^8.20.1",
+    "postcss": "^8.5.10",
+    "@tootallnate/once": "^3.0.1",
+    "brace-expansion": "^5.0.6",
+    "uuid": "^11.1.1"
   }
 }

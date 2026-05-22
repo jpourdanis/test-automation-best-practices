@@ -990,6 +990,7 @@ jobs:
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-version: latest
+          vercel-args: "--yes"
 
       - name: Run E2E tests against Vercel Preview
         if: env.VERCEL_TOKEN != ''

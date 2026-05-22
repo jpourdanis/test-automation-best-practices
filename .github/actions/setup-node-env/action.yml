@@ -18,14 +18,13 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
         cache: "npm"
-        cache-dependency-path: |
-          package-lock.json
-          ${{ inputs.working-directory }}/package-lock.json
+        cache-dependency-path: "**/package-lock.json"
 
     - name: Install dependencies
       shell: bash
-      run: npm ci --ignore-scripts --legacy-peer-deps
+      working-directory: ${{ inputs.working-directory }}
+      run: npm ci --legacy-peer-deps
 
     - name: Build shared package
       shell: bash
-      run: npm run build -w @color-app/shared
+      run: NODE_PATH=$(pwd)/node_modules/tsup/node_modules npm run build -w @color-app/shared

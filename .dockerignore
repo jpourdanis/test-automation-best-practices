@@ -1,4 +1,7 @@
 node_modules
+mobile/ios
+mobile/android
+mobile/.expo
 .git
 .gitignore
 build

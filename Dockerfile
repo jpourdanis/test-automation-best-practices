@@ -1,11 +1,11 @@
-FROM mcr.microsoft.com/playwright:v1.59.1-noble AS base
+FROM mcr.microsoft.com/playwright:v1.60.0-noble AS base
 
 WORKDIR /app
 ENV CI=true
 
 # Install dependencies using npm (this repo uses npm)
 COPY package.json package-lock.json* ./
-RUN npm install --ignore-scripts --legacy-peer-deps
+RUN npm install --ignore-scripts --legacy-peer-deps && npm rebuild esbuild
 
 # Copy project files
 COPY . .
@@ -24,6 +24,7 @@ ENV USE_BABEL_PLUGIN_ISTANBUL=$USE_BABEL_PLUGIN_ISTANBUL
 # surfaces as "exited too early" with no actionable error message.
 # 1024 MB is safe for a ~2 GB Docker VM that also runs mongo + api + web.
 ENV NODE_OPTIONS="--max-old-space-size=1024"
+ENV DISABLE_ESLINT_PLUGIN=true
 RUN npm run build
 
 # ---- App stage: serves the production build using Nginx ----

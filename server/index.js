@@ -2,6 +2,21 @@ require('dotenv').config()
 const express = require('express')
 const mongoose = require('mongoose')
 const cors = require('cors')
+
+// swagger-jsdoc@6.2.8 uses yaml 1.x/2.0.0-pre APIs (defaultOptions, document.anchors) that were
+// removed in yaml 2.x stable (hoisted to 2.9.0 by appium in the mobile workspace).
+// Shim these before the library loads: defaultOptions avoids a TypeError; the parseDocument wrapper
+// stubs anchors.getNames() so all docs flow to yamlDocsReady and bypass cross-doc anchor resolution
+// (not used in this project's swagger annotations).
+const YAML = require('yaml')
+if (!YAML.defaultOptions) YAML.defaultOptions = {}
+const _parseDocument = YAML.parseDocument.bind(YAML)
+YAML.parseDocument = (...args) => {
+  const doc = _parseDocument(...args)
+  if (!doc.anchors) doc.anchors = { getNames: () => [] }
+  return doc
+}
+
 const swaggerJsdoc = require('swagger-jsdoc')
 const swaggerUi = require('swagger-ui-express')
 const rateLimit = require('express-rate-limit')
@@ -261,7 +276,7 @@ app.get('/api/colors', async (req, res) => {
     // Return all colors sorted alphabetically by name, hiding internal MongoDB __v and _id
     const colors = await Color.find({}, { _id: 0, __v: 0 }).sort({ name: 1 })
     res.json(colors)
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Error fetching colors' })
   }
 })
@@ -315,7 +330,7 @@ app.get('/api/colors/:name', async (req, res) => {
       return res.status(404).json({ error: 'Color not found' })
     }
     res.json(color)
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to fetch color' })
   }
 })
@@ -527,7 +542,7 @@ app.delete('/api/colors/:name', async (req, res) => {
     }
 
     res.json({ message: `Color "${req.params.name}" deleted successfully` })
-  } catch (error) {
+  } catch {
     res.status(500).json({ error: 'Failed to delete color' })
   }
 })

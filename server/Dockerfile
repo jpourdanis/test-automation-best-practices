@@ -7,7 +7,8 @@ WORKDIR /app
 ENV CI=true
 COPY package.json package-lock.json ./
 COPY packages/shared ./packages/shared
-RUN npm ci --ignore-scripts --legacy-peer-deps --workspace=packages/shared && npm run build --workspace=packages/shared
+RUN npm ci --ignore-scripts --legacy-peer-deps --workspace=packages/shared && \
+    npm run build --workspace=packages/shared
 
 WORKDIR /app/server
 COPY server/package*.json ./

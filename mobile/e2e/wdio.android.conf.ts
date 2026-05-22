@@ -3,7 +3,7 @@ import path from 'node:path'
 
 const APK = process.env.APK_PATH ?? path.resolve(__dirname, 'artifacts/android.apk')
 const DEVICE = process.env.ANDROID_DEVICE ?? 'Pixel_6_API_35'
-const ANDROID_VERSION = process.env.ANDROID_VERSION ?? '35'
+const ANDROID_VERSION = process.env.ANDROID_VERSION ?? '15'
 const VIDEO_DIR = path.resolve(__dirname, 'videos')
 
 export const config: WebdriverIO.Config = {
