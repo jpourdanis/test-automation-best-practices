@@ -25,20 +25,6 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: npm ci --legacy-peer-deps
 
-    - name: Debug esbuild installation
-      shell: bash
-      run: |
-        echo "=== node_modules/esbuild ==="
-        ls node_modules/esbuild 2>/dev/null || echo "NOT FOUND at root"
-        echo "=== node_modules/tsup/node_modules/esbuild ==="
-        ls node_modules/tsup/node_modules/esbuild 2>/dev/null || echo "NOT FOUND nested in tsup"
-        echo "=== node_modules/@esbuild ==="
-        ls node_modules/@esbuild 2>/dev/null || echo "NOT FOUND"
-        echo "=== npm ls esbuild ==="
-        npm ls esbuild --depth=2 2>/dev/null || true
-        echo "=== resolve attempt ==="
-        node -e "try { console.log(require.resolve('esbuild')); } catch(e) { console.log('FAIL:', e.message); }"
-
     - name: Build shared package
       shell: bash
-      run: npm run build -w @color-app/shared
+      run: NODE_PATH=$(pwd)/node_modules/tsup/node_modules npm run build -w @color-app/shared
