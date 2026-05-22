@@ -129,6 +129,7 @@
     "@esbuild/linux-arm64": "0.27.7"
   },
   "devDependencies": {
+    "esbuild": "~0.28.0",
     "@xmldom/xmldom": "^0.8.13",
     "@axe-core/playwright": "^4.11.3",
     "@cucumber/cucumber": "^12.8.2",
