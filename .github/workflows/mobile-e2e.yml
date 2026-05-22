@@ -207,14 +207,14 @@ jobs:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
           npm run appium:install-drivers
-          ./node_modules/.bin/appium driver list --installed
+          npm exec --ignore-scripts -- appium driver list --installed
 
       - name: Start Appium Server
         working-directory: mobile
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
-          ./node_modules/.bin/appium --port 4723 --log-level info > e2e/appium.log 2>&1 &
+          npm exec --ignore-scripts -- appium --port 4723 --log-level info > e2e/appium.log 2>&1 &
           APPIUM_PID=$!
           echo "APPIUM_PID=$APPIUM_PID" >> $GITHUB_ENV
           for i in {1..60}; do
@@ -434,14 +434,14 @@ jobs:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
           npm run appium:install-drivers:android
-          ./node_modules/.bin/appium driver list --installed
+          npm exec --ignore-scripts -- appium driver list --installed
 
       - name: Start Appium Server
         working-directory: mobile
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
-          ./node_modules/.bin/appium --port 4723 --log-level info > e2e/appium.log 2>&1 &
+          npm exec --ignore-scripts -- appium --port 4723 --log-level info > e2e/appium.log 2>&1 &
           APPIUM_PID=$!
           echo "APPIUM_PID=$APPIUM_PID" >> $GITHUB_ENV
           for i in {1..60}; do
