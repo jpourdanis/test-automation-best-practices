@@ -5,7 +5,7 @@ ENV CI=true
 
 # Install dependencies using npm (this repo uses npm)
 COPY package.json package-lock.json* ./
-RUN npm install --ignore-scripts --legacy-peer-deps
+RUN npm install --ignore-scripts --legacy-peer-deps && npm rebuild esbuild
 
 # Copy project files
 COPY . .
