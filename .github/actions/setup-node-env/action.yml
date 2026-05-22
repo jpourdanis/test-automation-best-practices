@@ -25,9 +25,9 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: npm ci --ignore-scripts --legacy-peer-deps
 
-    - name: Rebuild esbuild native binary
+    - name: Install esbuild platform binary
       shell: bash
-      run: npm rebuild esbuild
+      run: node node_modules/esbuild/install.js
 
     - name: Build shared package
       shell: bash
