@@ -23,11 +23,7 @@ runs:
     - name: Install dependencies
       shell: bash
       working-directory: ${{ inputs.working-directory }}
-      run: npm ci --ignore-scripts --legacy-peer-deps
-
-    - name: Install esbuild platform binary
-      shell: bash
-      run: npm_config_ignore_scripts=false npm rebuild esbuild
+      run: npm ci --legacy-peer-deps
 
     - name: Build shared package
       shell: bash
