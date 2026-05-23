@@ -33,8 +33,7 @@ jobs:
   # ==========================================
   # 1a. STATIC ANALYSIS — MegaLinter
   # Runs immediately with no upstream dependencies so it never blocks
-  # the test pipeline. PARALLEL_PROCESS_NUMBER raised from 2 → 4 to
-  # saturate the 2-vCPU runner with I/O-overlapping linter processes.
+  # the test pipeline.
   # ==========================================
   megalinter:
     name: MegaLinter
@@ -50,7 +49,7 @@ jobs:
         uses: oxsecurity/megalinter/flavors/javascript@v9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PARALLEL_PROCESS_NUMBER: 4
+          PARALLEL_PROCESS_NUMBER: 2
           VALIDATE_ALL_CODEBASE: false
 
   # ==========================================
