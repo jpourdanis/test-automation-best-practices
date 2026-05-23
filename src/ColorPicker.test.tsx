@@ -4,8 +4,7 @@ import { readableOn, hexToRgb, hslToRgb, rgbToHex, rgbToHsl, paintWheelPixel, Co
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, options?: Record<string, string>) => {
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const en = require('@color-app/shared').enTranslations
+      const en = jest.requireActual<{ enTranslations: Record<string, unknown> }>('@color-app/shared').enTranslations
       const parts = key.split('.')
       let value: unknown = en
       for (const part of parts) {
@@ -20,14 +19,11 @@ jest.mock('react-i18next', () => ({
 }))
 
 // ── Canvas mock (JSDOM doesn't implement it) ─────────────────────────────────
-HTMLCanvasElement.prototype.getContext = jest.fn(
-  () =>
-    ({
-      scale: jest.fn(),
-      putImageData: jest.fn(),
-      createImageData: jest.fn((w: number, h: number) => ({ data: new Uint8ClampedArray(w * h * 4) }))
-    }) as any
-)
+HTMLCanvasElement.prototype.getContext = jest.fn(() => ({
+  scale: jest.fn(),
+  putImageData: jest.fn(),
+  createImageData: jest.fn((w: number, h: number) => ({ data: new Uint8ClampedArray(w * h * 4) }))
+})) as unknown as typeof HTMLCanvasElement.prototype.getContext
 
 // ── Default props helpers ────────────────────────────────────────────────────
 const noop = jest.fn()
@@ -435,8 +431,39 @@ describe('Component Tests', () => {
     test('clicking the backdrop calls onCancel', () => {
       const onCancel = jest.fn()
       render(<ColorPicker {...makeProps({ onCancel })} />)
-      fireEvent.click(document.querySelector('.picker-backdrop') as Element)
+      fireEvent.click(document.querySelector('.picker-backdrop-dismiss') as Element)
       expect(onCancel).toHaveBeenCalledTimes(1)
+    })
+
+    test('backdrop dismiss button is aria-hidden and not in tab order', () => {
+      render(<ColorPicker {...makeProps()} />)
+      const btn = document.querySelector('.picker-backdrop-dismiss') as HTMLButtonElement
+      expect(btn).toBeInTheDocument()
+      expect(btn).toHaveAttribute('aria-hidden', 'true')
+      expect(btn.tabIndex).toBe(-1)
+    })
+
+    test('pressing Escape calls onCancel', () => {
+      const onCancel = jest.fn()
+      render(<ColorPicker {...makeProps({ onCancel })} />)
+      fireEvent.keyDown(document, { key: 'Escape' })
+      expect(onCancel).toHaveBeenCalledTimes(1)
+    })
+
+    test('pressing a non-Escape key does not call onCancel', () => {
+      const onCancel = jest.fn()
+      render(<ColorPicker {...makeProps({ onCancel })} />)
+      fireEvent.keyDown(document, { key: 'Enter' })
+      fireEvent.keyDown(document, { key: 'Tab' })
+      expect(onCancel).not.toHaveBeenCalled()
+    })
+
+    test('Escape listener is removed after unmount', () => {
+      const onCancel = jest.fn()
+      const { unmount } = render(<ColorPicker {...makeProps({ onCancel })} />)
+      unmount()
+      fireEvent.keyDown(document, { key: 'Escape' })
+      expect(onCancel).not.toHaveBeenCalled()
     })
 
     test('clicking inside the card does NOT call onCancel', () => {
@@ -831,8 +858,9 @@ describe('Component Tests', () => {
     // ── ResizeObserver fallback ────────────────────────────────────────────────
 
     test('falls back to window resize listener when ResizeObserver is not available', () => {
-      const original = (globalThis as any).ResizeObserver
-      delete (globalThis as any).ResizeObserver
+      const g = globalThis as Record<string, unknown>
+      const original = g['ResizeObserver']
+      delete g['ResizeObserver']
 
       expect(() => {
         render(<ColorPicker {...makeProps()} />)
@@ -840,7 +868,7 @@ describe('Component Tests', () => {
           fireEvent(globalThis as unknown as Window, new Event('resize'))
         })
       }).not.toThrow()
-      ;(globalThis as any).ResizeObserver = original
+      g['ResizeObserver'] = original
     })
 
     // ── server error ──────────────────────────────────────────────────────────

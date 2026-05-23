@@ -280,15 +280,20 @@ export function ColorPicker({
     onConfirm({ name: n, hex })
   }
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onCancel()
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => document.removeEventListener('keydown', handleKeyDown)
+  }, [onCancel])
+
   const gradRgbMid = hslToRgb(hue, sat, 0.5)
   const sliderBg = `linear-gradient(to right, #000 0%, rgb(${gradRgbMid.join(',')}) 50%, #fff 100%)`
 
   return (
-    <div
-      className='picker-backdrop'
-      onClick={(e) => e.target === e.currentTarget && onCancel()}
-      onKeyDown={(e) => e.key === 'Escape' && onCancel()}
-    >
+    <div className='picker-backdrop'>
+      <button type='button' className='picker-backdrop-dismiss' aria-hidden='true' tabIndex={-1} onClick={onCancel} />
       <dialog className='picker-card' aria-label={t('colorPicker.dialogAriaLabel')} open>
         <div className='picker-head'>
           <h2>{t('colorPicker.title')}</h2>
