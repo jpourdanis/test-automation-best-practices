@@ -12,6 +12,7 @@ concurrency:
 
 permissions:
   contents: read
+  pull-requests: read
 
 jobs:
   # ==========================================
@@ -80,13 +81,18 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         with:
+          projectBaseDir: mobile
           args: >
             -Dsonar.projectKey=jpourdanis_test-automation-best-practices
             -Dsonar.organization=jpourdanis
-            -Dsonar.sources=mobile/src
-            -Dsonar.tests=mobile/src
-            -Dsonar.test.inclusions=mobile/src/**/*.test.tsx,mobile/src/**/*.test.ts
-            -Dsonar.javascript.lcov.reportPaths=mobile/coverage/lcov.info
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=src/**/*.test.tsx,src/**/*.test.ts
+            -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
+            -Dsonar.pullrequest.key=${{ github.event.pull_request.number }}
+            -Dsonar.pullrequest.branch=${{ github.head_ref }}
+            -Dsonar.pullrequest.base=${{ github.base_ref }}
+            -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
           skipSignatureVerification: true
 
       - name: Upload Mobile Unit Test Allure Results
@@ -408,8 +414,9 @@ jobs:
             -no-window \
             -no-audio \
             -no-boot-anim \
+            -no-snapshot \
             -gpu swiftshader_indirect \
-            -memory 2048 &
+            -memory 3072 &
           echo "EMULATOR_PID=$!" >> $GITHUB_ENV
           $ANDROID_HOME/platform-tools/adb wait-for-device
           for i in {1..60}; do
@@ -425,6 +432,14 @@ jobs:
             echo "::error::Android emulator failed to boot within 5 minutes"
             exit 1
           fi
+          # Dismiss keyguard and disable animations so the UI is fully interactive
+          # and element transitions don't race with Appium element lookups.
+          $ANDROID_HOME/platform-tools/adb shell wm dismiss-keyguard || true
+          $ANDROID_HOME/platform-tools/adb shell settings put global window_animation_scale 0
+          $ANDROID_HOME/platform-tools/adb shell settings put global transition_animation_scale 0
+          $ANDROID_HOME/platform-tools/adb shell settings put global animator_duration_scale 0
+          # Give system services a moment to settle after boot before Appium connects
+          sleep 5
 
       # Install the UiAutomator2 driver into a project-local APPIUM_HOME so the
       # version is pinned to the repo and isolated from any global Appium install.
@@ -461,6 +476,12 @@ jobs:
           cat e2e/appium.log
           exit 1
 
+      - name: Start logcat capture
+        run: |
+          mkdir -p mobile/e2e
+          $ANDROID_HOME/platform-tools/adb logcat -v time > mobile/e2e/logcat.txt 2>&1 &
+          echo "LOGCAT_PID=$!" >> $GITHUB_ENV
+
       - name: Run Android E2E tests
         working-directory: mobile
         env:
@@ -476,6 +497,9 @@ jobs:
           if [ -n "$APPIUM_PID" ]; then
             kill "$APPIUM_PID" || true
           fi
+          if [ -n "$LOGCAT_PID" ]; then
+            kill "$LOGCAT_PID" || true
+          fi
 
       - name: Upload Appium server log
         if: always()
@@ -483,6 +507,15 @@ jobs:
         with:
           name: mobile-android-appium-log
           path: mobile/e2e/appium.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload Android logcat
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-android-logcat
+          path: mobile/e2e/logcat.txt
           retention-days: 7
           if-no-files-found: ignore
 

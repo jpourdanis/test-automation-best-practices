@@ -26,7 +26,7 @@ const app = express()
 app.disable('x-powered-by')
 const createColorLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: parseInt(process.env.RATE_LIMIT_MAX || '100', 10)
+  max: Number.parseInt(process.env.RATE_LIMIT_MAX || '100', 10)
 })
 
 // Validation schemas imported from @color-app/shared (single source of truth).
@@ -321,7 +321,7 @@ app.get('/api/colors', async (req, res) => {
 
 app.get('/api/colors/:name', async (req, res) => {
   try {
-    const name = req.params.name.replace(/\+/g, ' ')
+    const name = req.params.name.replaceAll('+', ' ')
     if (!STRICT_NAME_REGEX.test(name)) {
       return res.status(400).json({ error: STRICT_NAME_MSG })
     }
@@ -453,7 +453,7 @@ app.post('/api/colors', createColorLimiter, async (req, res) => {
  */
 app.put('/api/colors/:name', async (req, res) => {
   try {
-    const currentName = req.params.name.replace(/\+/g, ' ')
+    const currentName = req.params.name.replaceAll('+', ' ')
     if (!STRICT_NAME_REGEX.test(currentName)) {
       return res.status(400).json({ error: STRICT_NAME_MSG })
     }
@@ -531,7 +531,7 @@ app.put('/api/colors/:name', async (req, res) => {
  */
 app.delete('/api/colors/:name', async (req, res) => {
   try {
-    const name = req.params.name.replace(/\+/g, ' ')
+    const name = req.params.name.replaceAll('+', ' ')
     if (!STRICT_NAME_REGEX.test(name)) {
       return res.status(400).json({ error: STRICT_NAME_MSG })
     }

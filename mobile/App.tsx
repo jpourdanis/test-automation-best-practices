@@ -230,19 +230,18 @@ export default function App() {
             )}
 
             {/* Add button — always visible below the chips row */}
-            {!loading && (
-              <TouchableOpacity
-                testID='add-color-btn'
-                style={[styles.btnAdd, { borderColor: `${textColor}60` }]}
-                onPress={() => {
-                  setPickerError(null)
-                  setPickerOpen(true)
-                }}
-                accessibilityLabel={t('add')}
-              >
-                <Text style={[styles.btnAddText, { color: textColor }]}>＋ {t('add').replace('+ ', '')}</Text>
-              </TouchableOpacity>
-            )}
+            <TouchableOpacity
+              testID='add-color-btn'
+              disabled={loading}
+              style={[styles.btnAdd, { borderColor: `${textColor}60`, opacity: loading ? 0.5 : 1 }]}
+              onPress={() => {
+                setPickerError(null)
+                setPickerOpen(true)
+              }}
+              accessibilityLabel={t('add')}
+            >
+              <Text style={[styles.btnAddText, { color: textColor }]}>＋ {t('add').replace('+ ', '')}</Text>
+            </TouchableOpacity>
           </View>
         </ScrollView>
       </SafeAreaView>

@@ -226,7 +226,16 @@
   }
 }
 
+.picker-backdrop-dismiss {
+  position: absolute;
+  inset: 0;
+  background: transparent;
+  border: none;
+  cursor: default;
+}
+
 .picker-card {
+  position: relative;
   background: #fff;
   color: #111;
   width: min(620px, 100%);
