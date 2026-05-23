@@ -17,9 +17,10 @@ const client = createApiClient({ baseUrl: BASE })
 async function handleResponse<T>(res: Response): Promise<T> {
   const data = await res.json().catch(() => ({}))
   if (!res.ok) {
-    const error: any = new Error(`API Error: ${res.status}`)
-    error.status = res.status
-    error.data = data
+    const error = Object.assign(new Error(`API Error: ${res.status}`), {
+      status: res.status,
+      data
+    })
     throw error
   }
   return data as T
@@ -27,11 +28,18 @@ async function handleResponse<T>(res: Response): Promise<T> {
 
 async function withTimeout<T>(fn: (signal: AbortSignal) => Promise<Response>): Promise<T> {
   const controller = new AbortController()
-  const timer = setTimeout(() => controller.abort(), 15_000)
+  // Use Promise.race so the timeout wins even if React Native's fetch polyfill
+  // doesn't reject when abort() is called (observed on Android emulator in CI).
+  const timeoutPromise = new Promise<never>((_, reject) =>
+    setTimeout(() => {
+      controller.abort()
+      reject(new Error('Request timed out'))
+    }, 15_000)
+  )
   try {
-    return await handleResponse<T>(await fn(controller.signal))
+    return await handleResponse<T>(await Promise.race([fn(controller.signal), timeoutPromise]))
   } finally {
-    clearTimeout(timer)
+    controller.abort()
   }
 }
 
