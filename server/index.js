@@ -201,7 +201,7 @@ const seedDatabase = async () => {
 // Stryker disable all: infrastructure-only code, not testable in unit tests
 // Connect to MongoDB (only when run directly, not when imported by tests)
 /* istanbul ignore next */
-if (require.main == module) {
+if (require.main === module) {
   mongoose
     .connect(MONGO_URI)
     .then(async () => {
@@ -554,7 +554,7 @@ app.delete('/api/colors/:name', async (req, res) => {
 // Stryker disable all: infrastructure-only code, not testable in unit tests
 const PORT = process.env.PORT || 5001
 /* istanbul ignore next */
-if (require.main == module) {
+if (require.main === module) {
   app.listen(PORT, '0.0.0.0', () => {
     console.log(`Server running on port ${PORT}`)
     console.log(`Swagger docs available at http://localhost:${PORT}/api-docs`)

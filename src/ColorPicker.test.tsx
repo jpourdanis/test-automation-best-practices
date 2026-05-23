@@ -861,14 +861,16 @@ describe('Component Tests', () => {
       const g = globalThis as Record<string, unknown>
       const original = g['ResizeObserver']
       delete g['ResizeObserver']
-
-      expect(() => {
-        render(<ColorPicker {...makeProps()} />)
-        act(() => {
-          fireEvent(globalThis as unknown as Window, new Event('resize'))
-        })
-      }).not.toThrow()
-      g['ResizeObserver'] = original
+      try {
+        expect(() => {
+          render(<ColorPicker {...makeProps()} />)
+          act(() => {
+            fireEvent(globalThis as unknown as Window, new Event('resize'))
+          })
+        }).not.toThrow()
+      } finally {
+        g['ResizeObserver'] = original
+      }
     })
 
     // ── server error ──────────────────────────────────────────────────────────
