@@ -26,18 +26,16 @@ async function globalSetup() {
   if (token) {
     const context = await request.newContext({ baseURL })
     try {
-      const res = await context.post('/api/reseed', {
-        headers: { Authorization: `Bearer ${token}` }
-      })
+      const res = await context
+        .post('/api/reseed', { headers: { Authorization: `Bearer ${token}` } })
+        .catch((err: unknown) => {
+          throw new Error(`[Global Setup] Reseed request failed: ${err instanceof Error ? err.message : err}`)
+        })
       if (res.ok()) {
         console.log('[Global Setup] Database reseeded successfully')
       } else {
-        console.warn(`[Global Setup] Reseed returned HTTP ${res.status()} — continuing anyway`)
+        throw new Error(`[Global Setup] Reseed returned HTTP ${res.status()}`)
       }
-    } catch (err: unknown) {
-      console.warn(
-        `[Global Setup] Reseed request failed: ${err instanceof Error ? err.message : err} — continuing anyway`
-      )
     } finally {
       await context.dispose()
     }
