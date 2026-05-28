@@ -1,5 +1,19 @@
 import { PlaywrightTestConfig, devices } from '@playwright/test'
 import { defineBddConfig } from 'playwright-bdd'
+import * as fs from 'node:fs'
+import * as path from 'node:path'
+
+// When running locally, load RESEED_API_TOKEN from server/.env so test hooks
+// can call POST /api/reseed. In CI/Docker the var is injected via the environment.
+if (!process.env.RESEED_API_TOKEN) {
+  try {
+    const envContent = fs.readFileSync(path.join(__dirname, 'server', '.env'), 'utf8')
+    const match = envContent.match(/^RESEED_API_TOKEN=(.+)$/m)
+    if (match) process.env.RESEED_API_TOKEN = match[1].trim()
+  } catch {
+    /* file absent; RESEED_API_TOKEN must be set externally */
+  }
+}
 
 const testDir = defineBddConfig({
   features: 'e2e/features/*.feature',
@@ -12,9 +26,6 @@ const isPercyEnabled = !!process.env.PERCY_TOKEN
 // Tests that don't make sense on BrowserStack: visual diffs are environment-specific
 // and BDD tests are covered by the Chrome project already
 const BS_IGNORE = [/.*visual\.spec\.ts$/, /.*\.feature\.spec.*$/]
-
-// For Percy on production: run visual tests against the production URL
-const PERCY_PROJECTS = isPercyEnabled ? ['Percy Visual'] : []
 
 const config: PlaywrightTestConfig = {
   // If a test fails then passes on a retry, Allure marks it as flaky automatically.

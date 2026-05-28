@@ -75,7 +75,15 @@ const swaggerOptions = {
         url: `http://localhost:${process.env.PORT || 5001}`,
         description: 'Local development server'
       }
-    ]
+    ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer'
+        }
+      }
+    }
   },
   // Scan this and api/index.js for JSDoc @swagger annotations
   apis: [__filename, 'api/index.js']
@@ -195,6 +203,7 @@ const seedDatabase = async () => {
   } catch (error) {
     // Stryker disable next-line all: error logging only
     console.error('Error seeding database:', error)
+    throw error
   }
 }
 
@@ -220,6 +229,16 @@ if (require.main === module) {
 // 405 Method Not Allowed Handler
 // ---------------------------------------------------------------------------
 
+// Validates the Bearer token in the Authorization header against RESEED_API_TOKEN env var.
+const authenticateApiToken = (req, res, next) => {
+  const authHeader = req.headers.authorization
+  const token = authHeader?.startsWith('Bearer ') ? authHeader.slice(7) : null
+  if (!token || token !== process.env.RESEED_API_TOKEN) {
+    return res.status(401).json({ error: 'Unauthorized' })
+  }
+  next()
+}
+
 /**
  * Middleware to catch methods that are not explicitly defined on existing routes
  * and return 405 Method Not Allowed instead of 404 Not Found.
@@ -228,6 +247,7 @@ if (require.main === module) {
 const allowedMethods = {
   '/api/colors': ['GET', 'POST'],
   '/api/colors/:name': ['GET', 'PUT', 'DELETE'],
+  '/api/reseed': ['POST'],
   '/openapi.json': ['GET'],
   '/api-docs': ['GET']
 }
@@ -244,6 +264,14 @@ app.all('/api/colors/:name', (req, res, next) => {
   if (!allowedMethods['/api/colors/:name'].includes(req.method)) {
     res.setHeader('Allow', allowedMethods['/api/colors/:name'].join(', '))
     return res.status(405).json({ error: `Method ${req.method} not allowed on /api/colors/:name` })
+  }
+  next()
+})
+
+app.all('/api/reseed', (req, res, next) => {
+  if (!allowedMethods['/api/reseed'].includes(req.method)) {
+    res.setHeader('Allow', allowedMethods['/api/reseed'].join(', '))
+    return res.status(405).json({ error: `Method ${req.method} not allowed on /api/reseed` })
   }
   next()
 })
@@ -548,6 +576,55 @@ app.delete('/api/colors/:name', async (req, res) => {
 })
 
 // ---------------------------------------------------------------------------
+// POST /api/reseed – Reset database to default seed state (test utility)
+// ---------------------------------------------------------------------------
+
+/**
+ * @swagger
+ * /api/reseed:
+ *   post:
+ *     summary: Reseed the database with default colors
+ *     description: >
+ *       Resets the database to the default seed state (Turquoise, Red, Yellow).
+ *       Requires a valid Bearer token via the Authorization header.
+ *       Intended for use in test suite before/beforeEach hooks to guarantee a clean state.
+ *     tags: [Admin]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Database reseeded successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: Database reseeded successfully
+ *       401:
+ *         description: Unauthorized — missing or invalid Bearer token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ *       500:
+ *         description: Failed to reseed database
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Error'
+ */
+app.post('/api/reseed', authenticateApiToken, async (req, res) => {
+  try {
+    await seedDatabase()
+    res.json({ message: 'Database reseeded successfully' })
+  } catch {
+    res.status(500).json({ error: 'Failed to reseed database' })
+  }
+})
+
+// ---------------------------------------------------------------------------
 // Start the server
 // ---------------------------------------------------------------------------
 
@@ -562,4 +639,4 @@ if (require.main === module) {
 }
 // Stryker restore all
 
-module.exports = { app, seedDatabase, Color, mongoose, MONGO_URI, swaggerSpec }
+module.exports = { app, seedDatabase, authenticateApiToken, Color, mongoose, MONGO_URI, swaggerSpec }
