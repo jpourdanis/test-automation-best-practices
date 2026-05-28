@@ -12,6 +12,8 @@ import { ColorSchema } from '@color-app/shared'
  * live API responses against the shared type definitions.
  */
 test.describe('Backend API Integration', () => {
+  // Track colors created within this worker so afterEach can clean them up.
+  // Each worker in the parallel run has its own copy of this variable.
   let createdColorName: string | null = null
 
   test.afterEach(async ({ request }) => {
@@ -99,7 +101,7 @@ test.describe('Backend API Integration', () => {
     test('should create a new color with valid schema', async ({ request }) => {
       const uniqueName = faker.string.alphanumeric(15)
       const newColor = { name: uniqueName, hex: '#ffa500' }
-      createdColorName = newColor.name
+      createdColorName = uniqueName
       const response = await request.post(`/api/colors`, { data: newColor })
       expect(response.status()).toBe(201)
 
@@ -111,7 +113,7 @@ test.describe('Backend API Integration', () => {
     test('should return 409 for duplicate color creation', async ({ request }) => {
       const uniqueName = faker.string.alphanumeric(15)
       const color = { name: uniqueName, hex: '#111111' }
-      createdColorName = color.name
+      createdColorName = uniqueName
       await request.post(`/api/colors`, { data: color })
 
       const response = await request.post(`/api/colors`, { data: color })
@@ -165,7 +167,7 @@ test.describe('Backend API Integration', () => {
     test('should update a color with valid schema', async ({ request }) => {
       const uniqueName = faker.string.alphanumeric(15)
       const tempColor = { name: uniqueName, hex: '#112233' }
-      createdColorName = tempColor.name
+      createdColorName = uniqueName
       await request.post(`/api/colors`, { data: tempColor })
 
       const updateData = { hex: '#332211' }
@@ -220,7 +222,6 @@ test.describe('Backend API Integration', () => {
     test('should delete an existing color', async ({ request }) => {
       const uniqueName = faker.string.alphanumeric(15)
       const color = { name: uniqueName, hex: '#333333' }
-      createdColorName = color.name
       await request.post(`/api/colors`, { data: color })
 
       const response = await request.delete(`/api/colors/${color.name}`)

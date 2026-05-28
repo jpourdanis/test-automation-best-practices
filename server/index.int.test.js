@@ -1,9 +1,9 @@
-/* eslint-env jest */
+/* global describe, it, expect, jest, beforeAll, beforeEach, afterAll, afterEach */
 const request = require('supertest')
 const { MongoDBContainer } = require('@testcontainers/mongodb')
 const mongoose = require('mongoose')
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 let app, seedDatabase, Color, mongodbContainer
 
@@ -22,7 +22,7 @@ describe('Server Integration Tests (Testcontainers)', () => {
             process.env.DOCKER_HOST = config.DOCKER_HOST
           }
         }
-      } catch (e) {
+      } catch {
         // Fallback to default Testcontainers detection
       }
     }
@@ -343,6 +343,78 @@ describe('Server Integration Tests (Testcontainers)', () => {
       expect(res.headers.allow).toContain('GET')
       expect(res.headers.allow).toContain('PUT')
       expect(res.headers.allow).toContain('DELETE')
+    })
+  })
+
+  // ---------------------------------------------------------------------------
+  // POST /api/reseed
+  // ---------------------------------------------------------------------------
+
+  describe('POST /api/reseed', () => {
+    const validToken = 'integration-reseed-secret'
+
+    beforeEach(() => {
+      process.env.RESEED_API_TOKEN = validToken
+    })
+
+    afterEach(() => {
+      delete process.env.RESEED_API_TOKEN
+    })
+
+    it('should reseed the database to the three default colors with a valid token', async () => {
+      await request(app).post('/api/colors').send({ name: 'Custom', hex: '#aabbcc' })
+      let colors = await request(app).get('/api/colors')
+      expect(colors.body).toHaveLength(4)
+
+      const res = await request(app).post('/api/reseed').set('Authorization', `Bearer ${validToken}`)
+
+      expect(res.status).toBe(200)
+      expect(res.body.message).toBe('Database reseeded successfully')
+
+      colors = await request(app).get('/api/colors')
+      expect(colors.body).toHaveLength(3)
+      const names = colors.body.map((c) => c.name)
+      expect(names).toEqual(expect.arrayContaining(['Turquoise', 'Red', 'Yellow']))
+      expect(names).not.toContain('Custom')
+    })
+
+    it('should be idempotent — calling reseed twice always yields exactly 3 colors', async () => {
+      await request(app).post('/api/reseed').set('Authorization', `Bearer ${validToken}`)
+      const res = await request(app).post('/api/reseed').set('Authorization', `Bearer ${validToken}`)
+      expect(res.status).toBe(200)
+
+      const colors = await request(app).get('/api/colors')
+      expect(colors.body).toHaveLength(3)
+    })
+
+    it('should return 401 when Authorization header is missing', async () => {
+      const res = await request(app).post('/api/reseed')
+      expect(res.status).toBe(401)
+      expect(res.body.error).toBe('Unauthorized')
+    })
+
+    it('should return 401 when token is invalid', async () => {
+      const res = await request(app).post('/api/reseed').set('Authorization', 'Bearer invalid-token')
+      expect(res.status).toBe(401)
+      expect(res.body.error).toBe('Unauthorized')
+    })
+
+    it('should return 405 for GET on /api/reseed', async () => {
+      const res = await request(app).get('/api/reseed')
+      expect(res.status).toBe(405)
+      expect(res.body.error).toBe('Method GET not allowed on /api/reseed')
+      expect(res.headers.allow).toBe('POST')
+    })
+
+    it('should not modify the database when token is invalid', async () => {
+      await Color.deleteMany({})
+      await Color.insertMany([{ name: 'OnlyColor', hex: '#123456' }])
+
+      await request(app).post('/api/reseed').set('Authorization', 'Bearer wrong-token')
+
+      const colors = await Color.find({}).lean()
+      expect(colors).toHaveLength(1)
+      expect(colors[0].name).toBe('OnlyColor')
     })
   })
 

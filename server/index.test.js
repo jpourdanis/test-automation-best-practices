@@ -1,4 +1,4 @@
-/* eslint-env jest */
+/* global describe, it, expect, jest, beforeAll, beforeEach, afterAll, afterEach */
 const request = require('supertest')
 const { MongoMemoryServer } = require('mongodb-memory-server')
 const mongoose = require('mongoose')
@@ -446,6 +446,84 @@ describe('Server Unit Tests', () => {
   })
 
   // =========================================================================
+  // POST /api/reseed
+  // =========================================================================
+  describe('POST /api/reseed', () => {
+    const validToken = 'test-reseed-secret'
+
+    beforeEach(() => {
+      process.env.RESEED_API_TOKEN = validToken
+    })
+
+    afterEach(() => {
+      delete process.env.RESEED_API_TOKEN
+    })
+
+    it('returns 200 and reseeds the database with a valid token', async () => {
+      await Color.create({ name: 'Extra', hex: '#ffffff' })
+      expect(await Color.countDocuments()).toBe(4)
+
+      const res = await request(app).post('/api/reseed').set('Authorization', `Bearer ${validToken}`)
+
+      expect(res.status).toBe(200)
+      expect(res.body.message).toBe('Database reseeded successfully')
+      expect(await Color.countDocuments()).toBe(3)
+
+      const names = (await Color.find({}, { _id: 0, __v: 0 }).lean()).map((c) => c.name)
+      expect(names).toEqual(expect.arrayContaining(['Turquoise', 'Red', 'Yellow']))
+      expect(names).not.toContain('Extra')
+    })
+
+    it('returns 401 when Authorization header is missing', async () => {
+      const res = await request(app).post('/api/reseed')
+      expect(res.status).toBe(401)
+      expect(res.body.error).toBe('Unauthorized')
+    })
+
+    it('returns 401 when token is incorrect', async () => {
+      const res = await request(app).post('/api/reseed').set('Authorization', 'Bearer wrong-token')
+      expect(res.status).toBe(401)
+      expect(res.body.error).toBe('Unauthorized')
+    })
+
+    it('returns 401 when Bearer scheme prefix is missing', async () => {
+      const res = await request(app).post('/api/reseed').set('Authorization', validToken)
+      expect(res.status).toBe(401)
+      expect(res.body.error).toBe('Unauthorized')
+    })
+
+    it('returns 401 when RESEED_API_TOKEN is not configured', async () => {
+      delete process.env.RESEED_API_TOKEN
+      const res = await request(app).post('/api/reseed').set('Authorization', `Bearer ${validToken}`)
+      expect(res.status).toBe(401)
+      expect(res.body.error).toBe('Unauthorized')
+    })
+
+    it('returns 405 for GET on /api/reseed', async () => {
+      const res = await request(app).get('/api/reseed')
+      expect(res.status).toBe(405)
+      expect(res.body.error).toBe('Method GET not allowed on /api/reseed')
+      expect(res.headers.allow).toBe('POST')
+    })
+
+    it('returns 405 for PUT on /api/reseed', async () => {
+      const res = await request(app).put('/api/reseed')
+      expect(res.status).toBe(405)
+      expect(res.body.error).toBe('Method PUT not allowed on /api/reseed')
+      expect(res.headers.allow).toBe('POST')
+    })
+
+    it('returns 500 when seedDatabase throws', async () => {
+      jest.spyOn(Color, 'deleteMany').mockRejectedValueOnce(new Error('DB Error'))
+      jest.spyOn(console, 'error').mockImplementation(() => {})
+      const res = await request(app).post('/api/reseed').set('Authorization', `Bearer ${validToken}`)
+      expect(res.status).toBe(500)
+      expect(res.body.error).toBe('Failed to reseed database')
+      jest.restoreAllMocks()
+    })
+  })
+
+  // =========================================================================
   // Seed database
   // =========================================================================
   describe('seedDatabase', () => {
@@ -665,11 +743,11 @@ describe('Server Unit Tests', () => {
       expect(res.body.error).toBe('Failed to delete color')
     })
 
-    it('seedDatabase logs error when database fails', async () => {
+    it('seedDatabase logs error and re-throws when database fails', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
       jest.spyOn(Color, 'deleteMany').mockRejectedValue(new Error('DB Error'))
 
-      await seedDatabase()
+      await expect(seedDatabase()).rejects.toThrow('DB Error')
 
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error seeding database:', expect.any(Error))
       consoleErrorSpy.mockRestore()
