@@ -3,10 +3,14 @@
 // merged into playwright/lib/common/index.js and removed from the exports map.
 // This script patches both the exports map and creates stub files so the SDK's
 // requirePWModule calls resolve correctly.
-const fs = require('fs')
-const path = require('path')
+const fs = require('node:fs')
+const path = require('node:path')
 
 const playwrightPkgPath = path.join('node_modules', 'playwright', 'package.json')
+if (!fs.existsSync(playwrightPkgPath)) {
+  console.log('postinstall: playwright not found, skipping patch')
+  process.exit(0)
+}
 const pkg = JSON.parse(fs.readFileSync(playwrightPkgPath, 'utf8'))
 let pkgChanged = false
 
