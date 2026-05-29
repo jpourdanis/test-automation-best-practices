@@ -28,3 +28,4 @@ server/.env
 /server/coverage
 /mobile/e2e/allure-results/
 /mobile/allure-results/
+/log/
