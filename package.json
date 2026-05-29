@@ -124,16 +124,13 @@
     ]
   },
   "optionalDependencies": {
-    "@rollup/rollup-linux-x64-gnu": "4.60.2",
-    "@rollup/rollup-linux-x64-musl": "4.60.2",
-    "@rollup/rollup-linux-arm64-musl": "4.60.2",
+    "@esbuild/linux-arm64": "0.28.0",
     "@esbuild/linux-x64": "0.27.7",
-    "@esbuild/linux-arm64": "0.28.0"
+    "@rollup/rollup-linux-arm64-musl": "4.60.2",
+    "@rollup/rollup-linux-x64-gnu": "4.60.2",
+    "@rollup/rollup-linux-x64-musl": "4.60.2"
   },
   "devDependencies": {
-    "esbuild": "~0.28.0",
-    "react-refresh": "~0.14.0",
-    "@xmldom/xmldom": "^0.8.13",
     "@axe-core/playwright": "^4.11.3",
     "@cucumber/cucumber": "^12.8.2",
     "@faker-js/faker": "^10.4.0",
@@ -148,8 +145,10 @@
     "@types/jest": "^29.5.14",
     "@types/k6": "^1.7.0",
     "@types/node": "^25.6.0",
+    "@xmldom/xmldom": "^0.8.13",
     "allure-playwright": "^3.6.0",
-    "browserstack-node-sdk": "^1.55.1",
+    "browserstack-node-sdk": "^1.55.4",
+    "esbuild": "~0.28.0",
     "http-proxy-middleware": "^3.0.5",
     "husky": "^9.1.7",
     "jest-junit": "^17.0.0",
@@ -157,6 +156,7 @@
     "lint-staged": "^16.4.0",
     "playwright-bdd": "^8.5.0",
     "playwright-lighthouse": "^4.0.0",
+    "react-refresh": "~0.14.0",
     "sonarqube-scanner": "^4.3.6",
     "zod": "^4.4.3"
   },
