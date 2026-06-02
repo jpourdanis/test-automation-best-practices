@@ -1,3 +1,0 @@
-[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices-g843f3cuh-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: POST https://vercel.live/login/validate?hostname=test-automation-best-practices-g843f3cuh-jpourdanis-projects.vercel.app&deploymentId=dpl_FFY9CQoMAooPVuPDYQeF8FdKqxaU - net::ERR_ABORTED
-[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices-g843f3cuh-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
