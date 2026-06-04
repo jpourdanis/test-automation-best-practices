@@ -23,7 +23,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -53,7 +53,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -76,7 +76,7 @@ jobs:
         working-directory: mobile
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v8.0.0
+        uses: SonarSource/sonarqube-scan-action@v8.1.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -113,7 +113,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -200,7 +200,7 @@ jobs:
       # Cache the compiled WDA binary so it only builds from source on the
       # first run or after the xcuitest driver version changes.
       - name: Cache WDA derived data
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: mobile/e2e/.wda-derived-data
           key: wda-${{ runner.os }}-ios18.5-${{ hashFiles('mobile/package.json') }}
@@ -295,7 +295,7 @@ jobs:
 
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -379,7 +379,7 @@ jobs:
       # location of the .ini / .avd directory pair.
       - name: Cache Android AVD
         id: avd-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           ANDROID_AVD_HOME: ${{ github.workspace }}/.android/avd
         with:
