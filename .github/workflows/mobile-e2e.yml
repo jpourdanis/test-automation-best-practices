@@ -200,7 +200,7 @@ jobs:
       # Cache the compiled WDA binary so it only builds from source on the
       # first run or after the xcuitest driver version changes.
       - name: Cache WDA derived data
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: mobile/e2e/.wda-derived-data
           key: wda-${{ runner.os }}-ios18.5-${{ hashFiles('mobile/package.json') }}
@@ -379,7 +379,7 @@ jobs:
       # location of the .ini / .avd directory pair.
       - name: Cache Android AVD
         id: avd-cache
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         env:
           ANDROID_AVD_HOME: ${{ github.workspace }}/.android/avd
         with:
