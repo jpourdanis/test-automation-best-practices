@@ -84,6 +84,10 @@ class ColorPickerScreen {
   async waitForLoad(): Promise<void> {
     await this.title.waitForDisplayed({ timeout: 60000 })
     await this.addButton.waitForDisplayed({ timeout: 60000 })
+    // Wait for the add button to be enabled — it starts disabled while the app
+    // fetches the initial color list. Clicking it before the fetch completes
+    // is a no-op and causes the first modal-open test to time out.
+    await this.addButton.waitForEnabled({ timeout: 60000 })
   }
 
   async openAddColorModal(): Promise<void> {
