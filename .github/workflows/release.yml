@@ -48,9 +48,5 @@ jobs:
 
       - name: Release
         env:
-          # GH_TOKEN must be a PAT (or GitHub App token) whose owner has the
-          # "bypass branch protection" privilege on main. The default GITHUB_TOKEN
-          # cannot push directly to a protected branch even with contents:write,
-          # which causes @semantic-release/git to fail with GH006.
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npx semantic-release
