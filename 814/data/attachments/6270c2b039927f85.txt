@@ -1,4 +1,0 @@
-[NETWORK INFO] cancel in confirm dialog closes it without deleting: 200 GET https://test-automation-best-practices-2596gfa6s-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] cancel in confirm dialog closes it without deleting: 204 GET https://test-automation-best-practices-2596gfa6s-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] cancel in confirm dialog closes it without deleting: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-2596gfa6s-jpourdanis-projects.vercel.app&deploymentId=dpl_2WMyXJnmrR1qGVBtwjB56YRhiQdt
-[NETWORK INFO] cancel in confirm dialog closes it without deleting: 204 HEAD https://test-automation-best-practices-2596gfa6s-jpourdanis-projects.vercel.app/
