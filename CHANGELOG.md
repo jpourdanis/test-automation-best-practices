@@ -1,3 +1,11 @@
+## [1.0.1](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.0...v1.0.1) (2026-06-07)
+
+
+### Bug Fixes
+
+* **ci:** fix release workflow protected-branch push failure and Node 20 deprecation ([3aff122](https://github.com/jpourdanis/test-automation-best-practices/commit/3aff122b8f91c297f1b5c57cd378e8a0730e8ec0))
+* **ci:** revert release token back to GITHUB_TOKEN ([b6936e7](https://github.com/jpourdanis/test-automation-best-practices/commit/b6936e7bd474d89fdecdfffbccbd5700c915da8e))
+
 # 1.0.0 (2026-06-07)
 
 
