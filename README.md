@@ -7,6 +7,7 @@
 _29 battle-tested patterns — from unit testing to security scanning — in a single, runnable full-stack project._
 
 [![CI](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml)
+[![Release](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/release.yml)
 [![Coverage Status](https://coveralls.io/repos/github/jpourdanis/test-automation-best-practices/badge.svg?branch=main)](https://coveralls.io/github/jpourdanis/test-automation-best-practices?branch=main)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=jpourdanis_test-automation-best-practices&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=jpourdanis_test-automation-best-practices)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=jpourdanis_test-automation-best-practices&metric=coverage)](https://sonarcloud.io/summary/new_code?id=jpourdanis_test-automation-best-practices)
@@ -2413,6 +2414,109 @@ npx playwright test e2e/tests/security.spec.ts
 
 ---
 
+#### 30. Automated Semantic Versioning & Releases
+
+**Files:** [`.releaserc.json`](/.releaserc.json) · [`.github/workflows/release.yml`](/.github/workflows/release.yml)
+
+**The problem:** Versioning is manual, inconsistent, and forgotten. Engineers decide arbitrarily whether a change is a patch or a minor bump. `CHANGELOG.md` drifts out of sync — or is never written at all.
+
+**The solution:** semantic-release automates the entire release lifecycle — version bumping, changelog generation, GitHub Release creation, and tag push — driven entirely by [Conventional Commits](https://www.conventionalcommits.org/). Zero human decisions required.
+
+**Commit message → version bump:**
+
+| Commit prefix                        | Example                                      | Version bump          |
+| ------------------------------------ | -------------------------------------------- | --------------------- |
+| `fix:`                               | `fix: handle null response from /api/colors` | Patch `1.0.0 → 1.0.1` |
+| `feat:`                              | `feat: add language switcher`                | Minor `1.0.0 → 1.1.0` |
+| `BREAKING CHANGE:`                   | Footer in any commit body                    | Major `1.0.0 → 2.0.0` |
+| `chore:`, `docs:`, `test:`, `style:` | `chore: update Playwright`                   | No release            |
+
+**Plugin chain (`.releaserc.json`):**
+
+```json
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/changelog",
+    ["@semantic-release/npm", { "npmPublish": false }],
+    [
+      "@semantic-release/git",
+      {
+        "assets": ["CHANGELOG.md", "package.json"],
+        "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+      }
+    ],
+    "@semantic-release/github"
+  ]
+}
+```
+
+Each plugin has a single responsibility:
+
+| Plugin                      | What it does                                                            |
+| --------------------------- | ----------------------------------------------------------------------- |
+| `commit-analyzer`           | Reads commits since the last tag; decides patch / minor / major         |
+| `release-notes-generator`   | Formats the changelog body from commit messages                         |
+| `changelog`                 | Writes or prepends `CHANGELOG.md`                                       |
+| `npm` (`npmPublish: false`) | Bumps `version` in `package.json` without publishing to npm             |
+| `git`                       | Commits `CHANGELOG.md` + `package.json` back to `main` with `[skip ci]` |
+| `github`                    | Creates the GitHub Release and annotated tag                            |
+
+> [!IMPORTANT]
+> The `[skip ci]` flag in the git plugin's commit message prevents the release commit from re-triggering CI, avoiding an infinite release loop.
+
+**Workflow (`.github/workflows/release.yml`):**
+
+```yaml
+name: Release
+on:
+  push:
+    branches:
+      - main # only releases from main
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # push the release tag and commit
+      issues: write # comment on issues closed by the release
+      pull-requests: write # comment on PRs included in the release
+      id-token: write # OIDC provenance attestation
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0 # full history required to find the last release tag
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*'
+      - run: npm clean-install
+      - run: npm audit signatures # verify supply-chain integrity
+      - run: npx semantic-release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+**Key design decisions:**
+
+- **`fetch-depth: 0`** — semantic-release walks the full commit history to find the last release tag. The default shallow clone (`fetch-depth: 1`) would cause every commit to appear unreleased.
+- **No `NPM_TOKEN`** — `package.json` has `"private": true`. `@semantic-release/npm` is in the chain only to bump the `version` field; `npmPublish: false` prevents any publish attempt.
+- **No `registry-url` on `setup-node`** — including it conflicts with semantic-release's own npm authentication mechanism.
+- **`GITHUB_TOKEN` only** — GitHub automatically provisions this token with the permissions declared in the workflow; no manual secret configuration is required.
+
+**When no release is created:**
+
+- All commits since the last tag are `chore:`, `docs:`, `test:`, or `style:` — semantic-release exits cleanly with code 0.
+- The push targets a branch other than `main` — the `branches` config restricts releases to `main` only.
+
+```bash
+# Simulate the next release without side effects
+npx semantic-release --dry-run
+```
+
+---
+
 ## Project Structure
 
 ```
@@ -2484,7 +2588,9 @@ packages/shared/                        # Monorepo shared package (@color-app/sh
 │   └── locales/                        # EN / ES / EL translation files
 .github/workflows/
 ├── ci.yml               # Full CI/CD pipeline
+├── release.yml          # semantic-release — runs on push to main
 └── dependabot.yml       # Automated dependency updates
+.releaserc.json          # semantic-release plugin chain & branch config
 ```
 
 ---
