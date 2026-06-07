@@ -4,7 +4,7 @@
 
 **The definitive reference for production-grade test automation engineering.**
 
-_29 battle-tested patterns — from unit testing to security scanning — in a single, runnable full-stack project._
+_30 battle-tested patterns — from unit testing to security scanning — in a single, runnable full-stack project._
 
 [![CI](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/ci.yml)
 [![Release](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/release.yml/badge.svg?branch=main)](https://github.com/jpourdanis/test-automation-best-practices/actions/workflows/release.yml)
