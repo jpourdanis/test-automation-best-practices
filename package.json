@@ -145,7 +145,7 @@
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.2.0",
     "@testing-library/user-event": "^14.6.1",
-    "@types/jest": "^29.5.14",
+    "@types/jest": "^30.0.0",
     "@types/k6": "^1.7.0",
     "@types/node": "^25.6.0",
     "@xmldom/xmldom": "^0.8.13",
