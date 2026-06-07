@@ -21,6 +21,10 @@ jobs:
       issues: write
       pull-requests: write
       id-token: write
+    env:
+      # Opt into Node.js 24 action runtime ahead of the forced cutover on June 16 2026.
+      # See: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
     steps:
       - name: Checkout
         uses: actions/checkout@v6
@@ -32,7 +36,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: "24"
           cache: "npm"
           cache-dependency-path: "**/package-lock.json"
 
@@ -44,5 +48,9 @@ jobs:
 
       - name: Release
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # GH_TOKEN must be a PAT (or GitHub App token) whose owner has the
+          # "bypass branch protection" privilege on main. The default GITHUB_TOKEN
+          # cannot push directly to a protected branch even with contents:write,
+          # which causes @semantic-release/git to fail with GH006.
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
         run: npx semantic-release
