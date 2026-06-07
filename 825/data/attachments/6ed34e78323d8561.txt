@@ -1,0 +1,1 @@
+[NETWORK INFO] handle color selection fetch error: 200 GET https://test-automation-best-practices.vercel.app/api/colors

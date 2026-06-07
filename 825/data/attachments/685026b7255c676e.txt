@@ -1,0 +1,2 @@
+[NETWORK INFO] should create dynamic random color via API and verify through UI: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should create dynamic random color via API and verify through UI: 200 GET https://test-automation-best-practices.vercel.app/api/colors/0Kd1s8G2k0Kdx42
