@@ -1,2 +1,0 @@
-[NETWORK INFO] should maintain accessibility in en language and verify resilient locators: 200 GET https://test-automation-best-practices.vercel.app/api/colors
-[NETWORK INFO] should maintain accessibility in en language and verify resilient locators: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
