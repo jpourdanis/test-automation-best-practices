@@ -75,6 +75,42 @@ jobs:
         run: npm run test:unit
         working-directory: mobile
 
+      - name: Upload Mobile Coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-coverage-lcov
+          path: mobile/coverage/lcov.info
+          retention-days: 1
+          if-no-files-found: ignore
+
+      - name: Upload Mobile Unit Test Allure Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results-mobile-unit-testing
+          path: mobile/allure-results/
+          retention-days: 1
+
+  # ==========================================
+  # SONARCLOUD ANALYSIS (Mobile)
+  # ==========================================
+  mobile-sonar:
+    name: SonarCloud Analysis (Mobile)
+    needs: [mobile-unit-tests]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Download Mobile Coverage
+        uses: actions/download-artifact@v4
+        with:
+          name: mobile-coverage-lcov
+          path: mobile/coverage
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarqube-scan-action@v8.1.0
         env:
@@ -94,14 +130,6 @@ jobs:
             -Dsonar.pullrequest.base=${{ github.base_ref }}
             -Dsonar.scm.revision=${{ github.event.pull_request.head.sha }}
           skipSignatureVerification: true
-
-      - name: Upload Mobile Unit Test Allure Results
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: allure-results-mobile-unit-testing
-          path: mobile/allure-results/
-          retention-days: 1
 
   # ==========================================
   # iOS E2E TESTS (Appium + iOS Simulator)
