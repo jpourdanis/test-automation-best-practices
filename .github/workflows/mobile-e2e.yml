@@ -364,7 +364,7 @@ jobs:
         run: sudo apt-get install -y ffmpeg
 
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"

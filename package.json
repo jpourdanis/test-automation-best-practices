@@ -137,6 +137,8 @@
     "@faker-js/faker": "^10.4.0",
     "@percy/cli": "^1.29.0",
     "@percy/playwright": "^1.1.0",
+    "@semantic-release/changelog": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
     "@stryker-mutator/core": "^9.6.1",
     "@stryker-mutator/jest-runner": "^9.6.1",
     "@testing-library/dom": "^10.0.0",
@@ -158,6 +160,7 @@
     "playwright-bdd": "^8.5.0",
     "playwright-lighthouse": "^4.0.0",
     "react-refresh": "~0.14.0",
+    "semantic-release": "^25.0.3",
     "sonarqube-scanner": "^4.3.6",
     "zod": "^4.4.3"
   },

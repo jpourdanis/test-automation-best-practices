@@ -1159,7 +1159,7 @@ jobs:
 
       # Consolidates new and historical results into a new interactive Allure build report
       - name: Build Allure report
-        uses: simple-elf/allure-report-action@v1.13
+        uses: simple-elf/allure-report-action@v1.14
         with:
           gh_pages: gh-pages
           allure_history: allure-history
