@@ -1,3 +1,0 @@
-[NETWORK ERROR] handle initial fetch with empty data: GET https://test-automation-best-practices-3uiv9qy3t-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
-[NETWORK ERROR] handle initial fetch with empty data: POST https://vercel.live/login/validate?hostname=test-automation-best-practices-3uiv9qy3t-jpourdanis-projects.vercel.app&deploymentId=dpl_CaSsvWnvcweqnpaHr5JdbRc3EpaH - net::ERR_ABORTED
-[NETWORK ERROR] handle initial fetch with empty data: GET https://test-automation-best-practices-3uiv9qy3t-jpourdanis-projects.vercel.app/.well-known/vercel/jwe - net::ERR_ABORTED
