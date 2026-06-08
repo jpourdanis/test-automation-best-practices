@@ -1,3 +1,11 @@
+## [1.0.2](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.1...v1.0.2) (2026-06-08)
+
+
+### Bug Fixes
+
+* **mutation:** resolve jest-environment-node@30 via jest-runner nested path ([a1fe534](https://github.com/jpourdanis/test-automation-best-practices/commit/a1fe5343dadaf1aa9d44016c62fe200b6141d108))
+* resolve merge conflict and revert mobile jest to v29 ([a84a4bc](https://github.com/jpourdanis/test-automation-best-practices/commit/a84a4bc57d9304a5ce2ee2d36c599d4438064593))
+
 ## [1.0.1](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.0...v1.0.1) (2026-06-07)
 
 
