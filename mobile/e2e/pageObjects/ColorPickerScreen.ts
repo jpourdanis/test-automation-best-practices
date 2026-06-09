@@ -84,16 +84,26 @@ class ColorPickerScreen {
   async waitForLoad(): Promise<void> {
     await this.title.waitForDisplayed({ timeout: 60000 })
     await this.addButton.waitForDisplayed({ timeout: 60000 })
-    // UiAutomator2 caches the accessibility tree; if we only warm it once
-    // before the loop, the cache goes stale again mid-poll and isEnabled()
-    // returns false indefinitely even after loading completes. Re-probing the
-    // element on every iteration keeps the cache fresh for each isEnabled() call.
     await driver.waitUntil(
       async () => {
         try {
-          await this.addButton.waitForDisplayed({ timeout: 3000 })
+          if (driver.isAndroid) {
+            // After the chip row loads, the Add button may be pushed just below
+            // the viewport. Simple resourceIdMatches only finds on-screen elements,
+            // so use UiScrollable.scrollIntoView to bring it back into view.
+            const btn = $(
+              `android=new UiScrollable(new UiSelector().scrollable(true)).setMaxSearchSwipes(5).scrollIntoView(new UiSelector().resourceIdMatches(".*add-color-btn"))`
+            )
+            return await btn.isEnabled()
+          }
           return await this.addButton.isEnabled()
         } catch {
+          // On iOS, WDA temporarily loses the app's accessibility tree during
+          // React Native re-renders (e.g. when loading=false flips and the chip
+          // row appears). A short pause lets the tree stabilise before retrying.
+          if (driver.isIOS) {
+            await driver.pause(2000)
+          }
           return false
         }
       },
