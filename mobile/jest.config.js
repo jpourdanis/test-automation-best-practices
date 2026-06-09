@@ -3,6 +3,10 @@ module.exports = {
   setupFilesAfterEnv: [],
   testMatch: ['<rootDir>/src/**/*.test.(ts|tsx|js|jsx)'],
   moduleNameMapper: {
+    // Redirect Modal to a minimal stub so that mockComponent.js does not load
+    // the real Modal (which triggers AppContainer-dev → LogBox → Text), avoiding
+    // a circular-initialisation crash introduced by expo 56 dependency changes.
+    '^react-native/Libraries/Modal/Modal$': '<rootDir>/__mocks__/ModalMock.js',
     '^react$': '<rootDir>/node_modules/react',
     '^react/(.*)$': '<rootDir>/node_modules/react/$1',
     '^react-test-renderer$': '<rootDir>/../node_modules/react-test-renderer',
