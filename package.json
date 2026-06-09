@@ -32,7 +32,8 @@
     "js-yaml": "^4.1.1",
     "axios": ">=1.15.2",
     "underscore": "^1.13.8",
-    "tmp": "^0.2.6"
+    "tmp": "^0.2.6",
+    "shell-quote": ">=1.8.4"
   },
   "dependencies": {
     "@color-app/shared": "*",
