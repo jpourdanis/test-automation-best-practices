@@ -1,3 +1,10 @@
+## [1.0.3](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.2...v1.0.3) (2026-06-09)
+
+
+### Bug Fixes
+
+* **mobile:** align react version with react-test-renderer to fix unit test failures ([d512bf0](https://github.com/jpourdanis/test-automation-best-practices/commit/d512bf0344bc9ce0ec65b5887adf58d507df64cd))
+
 ## [1.0.2](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.1...v1.0.2) (2026-06-08)
 
 
