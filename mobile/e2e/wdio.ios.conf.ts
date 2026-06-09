@@ -57,12 +57,21 @@ export const config: WebdriverIO.Config = {
   connectionRetryCount: 3,
 
   beforeTest: async function () {
-    await browser.startRecordingScreen({ timeLimit: '120' })
+    try {
+      await browser.startRecordingScreen({ timeLimit: 120 })
+    } catch {
+      console.warn('[wdio] startRecordingScreen failed — continuing without video for this test')
+    }
   },
 
   afterTest: async function (test, _context, { error }) {
-    const videoBase64 = await browser.stopRecordingScreen()
-    if (error) {
+    let videoBase64 = ''
+    try {
+      videoBase64 = await browser.stopRecordingScreen()
+    } catch {
+      console.warn('[wdio] stopRecordingScreen failed — no video will be saved for:', test.title)
+    }
+    if (error && videoBase64) {
       fs.mkdirSync(VIDEO_DIR, { recursive: true })
       const safeName = test.title.replaceAll(/[^a-z0-9]+/gi, '-').toLowerCase()
       fs.writeFileSync(path.join(VIDEO_DIR, `${safeName}.mp4`), Buffer.from(videoBase64, 'base64'))

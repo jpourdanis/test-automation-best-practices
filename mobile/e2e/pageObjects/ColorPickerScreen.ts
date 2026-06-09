@@ -88,22 +88,33 @@ class ColorPickerScreen {
       async () => {
         try {
           if (driver.isAndroid) {
-            // After the chip row loads, the Add button may be pushed just below
-            // the viewport. Simple resourceIdMatches only finds on-screen elements,
-            // so use UiScrollable.scrollIntoView to bring it back into view.
-            const btn = $(
-              `android=new UiScrollable(new UiSelector().scrollable(true)).setMaxSearchSwipes(5).scrollIntoView(new UiSelector().resourceIdMatches(".*add-color-btn"))`
+            // Two-step approach to handle both states:
+            //
+            // Step 1 — button is in the viewport (loading=true, no chips yet, or
+            // content fits the screen). Use the direct selector; it finds the
+            // element and isEnabled() returns the live state without needing any
+            // scroll. This also avoids UiScrollable picking the wrong container.
+            //
+            // Step 2 — button is below the viewport (chip row appeared and pushed
+            // it off-screen). The direct selector may not find the element, so
+            // fall back to UiScrollable with the OUTER vertical ScrollView targeted
+            // by its class name (android.widget.ScrollView) to avoid accidentally
+            // selecting the inner horizontal chip-row HorizontalScrollView.
+            const direct = $(`android=new UiSelector().resourceIdMatches(".*add-color-btn")`)
+            if (await direct.isExisting()) {
+              return await direct.isEnabled()
+            }
+            const scrolled = $(
+              `android=new UiScrollable(new UiSelector().className("android.widget.ScrollView")).setMaxSearchSwipes(10).scrollIntoView(new UiSelector().resourceIdMatches(".*add-color-btn"))`
             )
-            return await btn.isEnabled()
+            return await scrolled.isEnabled()
           }
-          return await this.addButton.isEnabled()
+          // iOS: use a predicate string that evaluates existence AND enabled state
+          // in a single XCUITest call. This bypasses WDA's per-element accessibility
+          // state cache which can return stale disabled=true after a React Native
+          // re-render even when the button is genuinely enabled in the UI.
+          return await $('-ios predicate string:name == "add-color-btn" AND enabled == 1').isExisting()
         } catch {
-          // On iOS, WDA temporarily loses the app's accessibility tree during
-          // React Native re-renders (e.g. when loading=false flips and the chip
-          // row appears). A short pause lets the tree stabilise before retrying.
-          if (driver.isIOS) {
-            await driver.pause(2000)
-          }
           return false
         }
       },
