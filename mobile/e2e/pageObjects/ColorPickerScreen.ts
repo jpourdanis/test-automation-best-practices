@@ -83,14 +83,15 @@ class ColorPickerScreen {
   // --- High-Level Actions ---
   async waitForLoad(): Promise<void> {
     await this.title.waitForDisplayed({ timeout: 60000 })
-    // Wait for the add button to be enabled (disabled={loading} in App.tsx).
-    // Uses driver.waitUntil with try/catch instead of waitForDisplayed +
-    // waitForEnabled for two reasons:
-    //   iOS: stale-element errors during React re-renders are caught and
-    //        retried rather than propagated as a fatal waitUntil failure.
-    //   Android: waitForDisplayed triggers UiAutomator2 auto-scroll to bring
-    //        the button into view (it sits below the chip list), which pushes
-    //        the title off screen and breaks subsequent title assertions.
+    // waitForDisplayed keeps the UiAutomator2 accessibility-tree cache warm on
+    // Android — without it, subsequent isEnabled() calls see stale state and
+    // always return false even after loading completes.
+    await this.addButton.waitForDisplayed({ timeout: 60000 })
+    // Use driver.waitUntil with try/catch instead of waitForEnabled.
+    // On iOS, waitForEnabled's internal waitUntil propagates "element not found"
+    // errors (stale references from React re-renders) as fatal failures instead
+    // of retrying. Catching errors here treats them as "not yet ready" so the
+    // poll retries until the button is genuinely enabled (loading=false).
     await driver.waitUntil(
       async () => {
         try {
@@ -101,9 +102,6 @@ class ColorPickerScreen {
       },
       { timeout: 60000, interval: 500, timeoutMsg: 'Add button did not become enabled within 60s' }
     )
-    // Re-confirm the title is visible after loading completes. On Android the
-    // accessibility tree can briefly lag behind a batch state update.
-    await this.title.waitForDisplayed({ timeout: 30000 })
   }
 
   async openAddColorModal(): Promise<void> {
