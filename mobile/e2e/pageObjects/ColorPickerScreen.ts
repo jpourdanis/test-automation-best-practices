@@ -83,18 +83,15 @@ class ColorPickerScreen {
   // --- High-Level Actions ---
   async waitForLoad(): Promise<void> {
     await this.title.waitForDisplayed({ timeout: 60000 })
-    // waitForDisplayed keeps the UiAutomator2 accessibility-tree cache warm on
-    // Android — without it, subsequent isEnabled() calls see stale state and
-    // always return false even after loading completes.
     await this.addButton.waitForDisplayed({ timeout: 60000 })
-    // Use driver.waitUntil with try/catch instead of waitForEnabled.
-    // On iOS, waitForEnabled's internal waitUntil propagates "element not found"
-    // errors (stale references from React re-renders) as fatal failures instead
-    // of retrying. Catching errors here treats them as "not yet ready" so the
-    // poll retries until the button is genuinely enabled (loading=false).
+    // UiAutomator2 caches the accessibility tree; if we only warm it once
+    // before the loop, the cache goes stale again mid-poll and isEnabled()
+    // returns false indefinitely even after loading completes. Re-probing the
+    // element on every iteration keeps the cache fresh for each isEnabled() call.
     await driver.waitUntil(
       async () => {
         try {
+          await this.addButton.waitForDisplayed({ timeout: 3000 })
           return await this.addButton.isEnabled()
         } catch {
           return false
