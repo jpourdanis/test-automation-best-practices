@@ -105,7 +105,7 @@ class ColorPickerScreen {
               return await direct.isEnabled()
             }
             const scrolled = $(
-              `android=new UiScrollable(new UiSelector().className("android.widget.ScrollView")).setMaxSearchSwipes(10).scrollIntoView(new UiSelector().resourceIdMatches(".*add-color-btn"))`
+              `android=new UiScrollable(new UiSelector().resourceIdMatches(".*main-scroll")).setMaxSearchSwipes(10).scrollIntoView(new UiSelector().resourceIdMatches(".*add-color-btn"))`
             )
             return await scrolled.isEnabled()
           }
@@ -138,7 +138,7 @@ class ColorPickerScreen {
     if (driver.isAndroid) {
       try {
         await $(
-          `android=new UiScrollable(new UiSelector().className("android.widget.ScrollView").scrollable(true)).scrollToBeginning(10)`
+          `android=new UiScrollable(new UiSelector().resourceIdMatches(".*main-scroll")).scrollToBeginning(10)`
         ).isExisting()
       } catch {
         // ignore — scroll is best-effort
