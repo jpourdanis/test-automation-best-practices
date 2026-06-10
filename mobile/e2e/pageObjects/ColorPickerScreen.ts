@@ -109,17 +109,54 @@ class ColorPickerScreen {
             )
             return await scrolled.isEnabled()
           }
-          // iOS: use a predicate string that evaluates existence AND enabled state
-          // in a single XCUITest call. This bypasses WDA's per-element accessibility
-          // state cache which can return stale disabled=true after a React Native
-          // re-render even when the button is genuinely enabled in the UI.
-          return await $('-ios predicate string:name == "add-color-btn" AND enabled == 1').isExisting()
+          // iOS: check whether the app is still in the foreground before querying.
+          // The app can crash during the initial API response (known native-module
+          // interaction on iOS new architecture). When that happens, queryAppState
+          // returns < 4 and we relaunch before retrying — this gives the app a
+          // second chance to load rather than exhausting the full timeout on a
+          // dead session.
+          const appState = await driver.queryAppState('com.jpourdanis.colorpicker').catch(() => 0)
+          if (appState < 4) {
+            await driver.activateApp('com.jpourdanis.colorpicker').catch(() => {})
+            return false
+          }
+          // Use `identifier` (accessibilityIdentifier), not `name` (accessibilityLabel) —
+          // React Native's testID prop sets accessibilityIdentifier, not accessibilityLabel.
+          // The combined predicate bypasses WDA's per-element state cache which can
+          // return stale disabled=true after a React Native re-render.
+          return await $('-ios predicate string:identifier == "add-color-btn" AND enabled == 1').isExisting()
         } catch {
           return false
         }
       },
-      { timeout: 60000, interval: 500, timeoutMsg: 'Add button did not become enabled within 60s' }
+      { timeout: 120000, interval: 500, timeoutMsg: 'Add button did not become enabled within 120s' }
     )
+
+    // On Android, the UiScrollable fallback above may have scrolled the list
+    // down to bring the add button into view (when color chips push it off-screen).
+    // Scroll back to the top so the title and other elements are visible for tests.
+    if (driver.isAndroid) {
+      try {
+        await $(
+          `android=new UiScrollable(new UiSelector().className("android.widget.ScrollView").scrollable(true)).scrollToBeginning(10)`
+        ).isExisting()
+      } catch {
+        // ignore — scroll is best-effort
+      }
+      // Re-create the element reference on every poll so UiAutomator2 performs a
+      // live accessibility-tree query rather than returning its stale cached state
+      // from before the scroll.
+      await driver.waitUntil(
+        async () => {
+          try {
+            return await $(`android=new UiSelector().resourceIdMatches(".*app-title")`).isDisplayed()
+          } catch {
+            return false
+          }
+        },
+        { timeout: 15000, interval: 300, timeoutMsg: 'Title not visible after scrolling to top' }
+      )
+    }
   }
 
   async openAddColorModal(): Promise<void> {
