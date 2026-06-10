@@ -131,7 +131,6 @@ export default function App() {
       <SafeAreaView style={[styles.safe, { backgroundColor }]}>
         <StatusBar style={isDark ? 'light' : 'dark'} />
         <ScrollView
-          testID='main-scroll'
           style={{ backgroundColor }}
           contentContainerStyle={styles.content}
           showsVerticalScrollIndicator={false}

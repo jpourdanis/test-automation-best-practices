@@ -88,24 +88,25 @@ class ColorPickerScreen {
       async () => {
         try {
           if (driver.isAndroid) {
-            // Two-step approach to handle both states:
-            //
-            // Step 1 — button is in the viewport (loading=true, no chips yet, or
-            // content fits the screen). Use the direct selector; it finds the
-            // element and isEnabled() returns the live state without needing any
-            // scroll. This also avoids UiScrollable picking the wrong container.
-            //
-            // Step 2 — button is below the viewport (chip row appeared and pushed
-            // it off-screen). The direct selector may not find the element, so
-            // fall back to UiScrollable with the OUTER vertical ScrollView targeted
-            // by its class name (android.widget.ScrollView) to avoid accidentally
-            // selecting the inner horizontal chip-row HorizontalScrollView.
+            // Guard against crashes: new-arch React Native can silently lose
+            // foreground during API-triggered re-renders on Android emulators.
+            const appState = await driver.queryAppState('com.jpourdanis.colorpicker').catch(() => 0)
+            if (appState < 4) {
+              await driver.activateApp('com.jpourdanis.colorpicker').catch(() => {})
+              return false
+            }
+            // Step 1 — button on-screen: direct resource-id lookup (fast path).
             const direct = $(`android=new UiSelector().resourceIdMatches(".*add-color-btn")`)
             if (await direct.isExisting()) {
               return await direct.isEnabled()
             }
+            // Step 2 — button off-screen: when the chip row loads it pushes the
+            // button below the viewport and UiAutomator2 drops it from the tree.
+            // Use UiSelector().scrollable(true) without a class filter so that
+            // depth-first traversal picks up the outer vertical ReactScrollView
+            // before the inner horizontal chip-row ScrollView.
             const scrolled = $(
-              `android=new UiScrollable(new UiSelector().resourceIdMatches(".*main-scroll")).setMaxSearchSwipes(10).scrollIntoView(new UiSelector().resourceIdMatches(".*add-color-btn"))`
+              `android=new UiScrollable(new UiSelector().scrollable(true)).setMaxSearchSwipes(10).scrollIntoView(new UiSelector().resourceIdMatches(".*add-color-btn"))`
             )
             return await scrolled.isEnabled()
           }
@@ -137,9 +138,7 @@ class ColorPickerScreen {
     // Scroll back to the top so the title and other elements are visible for tests.
     if (driver.isAndroid) {
       try {
-        await $(
-          `android=new UiScrollable(new UiSelector().resourceIdMatches(".*main-scroll")).scrollToBeginning(10)`
-        ).isExisting()
+        await $(`android=new UiScrollable(new UiSelector().scrollable(true)).scrollToBeginning(10)`).isExisting()
       } catch {
         // ignore — scroll is best-effort
       }
