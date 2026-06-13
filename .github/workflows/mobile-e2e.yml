@@ -231,7 +231,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: mobile/e2e/.wda-derived-data
-          key: wda-${{ runner.os }}-ios18.5-${{ hashFiles('mobile/package.json') }}
+          key: wda-${{ runner.os }}-${{ runner.arch }}-ios18.5-xcode16-${{ hashFiles('mobile/package.json') }}
 
       # Install the XCUITest driver into a project-local APPIUM_HOME so the
       # version is pinned to the repo and isolated from any global Appium install.
@@ -267,6 +267,35 @@ jobs:
           echo "::error::Appium failed to start within 120 seconds. Log output:"
           cat e2e/appium.log
           exit 1
+
+      # Pre-build WDA against the booted simulator so the POST /session call
+      # during the test run returns immediately instead of waiting 10+ minutes
+      # for an on-demand XCUITest build (which causes UND_ERR_SOCKET timeouts).
+      - name: Pre-build WebDriverAgent (WDA)
+        working-directory: mobile
+        env:
+          APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
+        run: |
+          UDID=$(xcrun simctl list devices booted | grep -Eo '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}' | head -1)
+          echo "Pre-building WDA for simulator: $UDID"
+          npm exec --ignore-scripts -- appium driver run xcuitest open-wda \
+            --udid "$UDID" \
+            --derived-data-path "$(pwd)/e2e/.wda-derived-data" \
+            &
+          WDA_BUILD_PID=$!
+          # Wait up to 12 minutes for WDA HTTP server to become available on port 8100
+          for i in {1..144}; do
+            if curl -sf http://127.0.0.1:8100/status > /dev/null 2>&1; then
+              echo "WDA is ready on port 8100 (attempt $i)"
+              break
+            fi
+            if ! kill -0 "$WDA_BUILD_PID" 2>/dev/null; then
+              echo "::warning::WDA process exited — will fall back to on-demand build during test run"
+              break
+            fi
+            echo "Waiting for WDA... attempt $i/144"
+            sleep 5
+          done
 
       - name: Run iOS E2E tests
         working-directory: mobile

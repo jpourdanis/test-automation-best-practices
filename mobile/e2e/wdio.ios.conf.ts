@@ -24,6 +24,8 @@ export const config: WebdriverIO.Config = {
       'appium:wdaLaunchTimeout': 1200000,
       'appium:wdaConnectionTimeout': 1200000,
       'appium:derivedDataPath': path.resolve(__dirname, '.wda-derived-data'),
+      'appium:useNewWDA': false,
+      'appium:waitForQuiescence': false,
       'appium:noReset': false
     }
   ],
