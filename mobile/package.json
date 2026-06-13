@@ -47,9 +47,12 @@
     "reanimated-color-picker": "^4.2.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
     "@testing-library/react-native": "^13.0.1",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
     "@wdio/allure-reporter": "^9.27.0",
     "@wdio/appium-service": "^9.0.0",
     "@wdio/cli": "^9.0.0",
@@ -60,18 +63,15 @@
     "@wdio/types": "^9.0.0",
     "appium": "^3.4.2",
     "cross-env": "^10.1.0",
+    "eslint": "^9.0.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
     "jest": "^29.7.0",
     "jest-expo": "~54.0.17",
     "jest-junit": "^17.0.0",
-    "react-test-renderer": "19.2.7",
+    "react-test-renderer": "19.1.0",
     "ts-node": "^10.9.0",
     "typescript": "~5.9.2",
-    "webdriverio": "^9.0.0",
-    "@eslint/js": "^9.0.0",
-    "@typescript-eslint/eslint-plugin": "^8.0.0",
-    "@typescript-eslint/parser": "^8.0.0",
-    "eslint": "^9.0.0",
-    "eslint-plugin-react-hooks": "^5.0.0"
+    "webdriverio": "^9.0.0"
   },
   "private": true,
   "overrides": {
