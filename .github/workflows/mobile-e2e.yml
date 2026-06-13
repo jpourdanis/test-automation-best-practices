@@ -268,34 +268,33 @@ jobs:
           cat e2e/appium.log
           exit 1
 
-      # Pre-build WDA against the booted simulator so the POST /session call
-      # during the test run returns immediately instead of waiting 10+ minutes
-      # for an on-demand XCUITest build (which causes UND_ERR_SOCKET timeouts).
+      # Compile WDA with xcodebuild so the binary lands in the cached
+      # derivedDataPath. When Appium then creates a session with
+      # usePrebuiltWDA=true it installs from that path instead of
+      # rebuilding from source, eliminating the 10-min compile that
+      # previously caused UND_ERR_SOCKET timeouts on cold runners.
+      # open-wda only opens Xcode IDE and exits immediately — it does
+      # not actually build WDA, which is why the previous approach failed.
       - name: Pre-build WebDriverAgent (WDA)
         working-directory: mobile
         env:
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
         run: |
           UDID=$(xcrun simctl list devices booted | grep -Eo '[A-F0-9]{8}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{4}-[A-F0-9]{12}' | head -1)
-          echo "Pre-building WDA for simulator: $UDID"
-          npm exec --ignore-scripts -- appium driver run xcuitest open-wda \
-            --udid "$UDID" \
-            --derived-data-path "$(pwd)/e2e/.wda-derived-data" \
-            &
-          WDA_BUILD_PID=$!
-          # Wait up to 12 minutes for WDA HTTP server to become available on port 8100
-          for i in {1..144}; do
-            if curl -sf http://127.0.0.1:8100/status > /dev/null 2>&1; then
-              echo "WDA is ready on port 8100 (attempt $i)"
-              break
-            fi
-            if ! kill -0 "$WDA_BUILD_PID" 2>/dev/null; then
-              echo "::warning::WDA process exited — will fall back to on-demand build during test run"
-              break
-            fi
-            echo "Waiting for WDA... attempt $i/144"
-            sleep 5
-          done
+          WDA_PROJECT="$APPIUM_HOME/node_modules/appium-xcuitest-driver/node_modules/appium-webdriveragent/WebDriverAgent.xcodeproj"
+          DERIVED_DATA="$(pwd)/e2e/.wda-derived-data"
+          echo "Compiling WDA for simulator UDID: $UDID"
+          echo "Project: $WDA_PROJECT"
+          xcodebuild build-for-testing \
+            -project "$WDA_PROJECT" \
+            -scheme WebDriverAgentRunner \
+            -destination "platform=iOS Simulator,id=$UDID" \
+            -derivedDataPath "$DERIVED_DATA" \
+            CODE_SIGN_IDENTITY="" \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            2>&1 | grep -E "^(Build|error:|warning: |note: |xcodebuild:|✓|✗|CompileC|Ld )" || true
+          echo "WDA build complete"
 
       - name: Run iOS E2E tests
         working-directory: mobile
