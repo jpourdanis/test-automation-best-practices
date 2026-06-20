@@ -59,7 +59,7 @@
     "@wdio/mocha-framework": "^9.0.0",
     "@wdio/spec-reporter": "^9.0.0",
     "@wdio/types": "^9.0.0",
-    "appium": "^3.4.2",
+    "appium": "^3.5.2",
     "cross-env": "^10.1.0",
     "jest": "^29.7.0",
     "jest-expo": "~54.0.17",
