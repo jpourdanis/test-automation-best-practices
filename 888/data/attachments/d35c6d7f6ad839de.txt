@@ -1,0 +1,2 @@
+[NETWORK INFO] should create color via API and verify through UI: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should create color via API and verify through UI: 200 GET https://test-automation-best-practices.vercel.app/api/colors/8HIo5MbGMngYymg

@@ -1,0 +1,1 @@
+[NETWORK INFO] Escape key closes the confirm dialog: 200 GET https://test-automation-best-practices.vercel.app/api/colors

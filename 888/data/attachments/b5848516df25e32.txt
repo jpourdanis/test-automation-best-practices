@@ -1,0 +1,1 @@
+[NETWORK INFO] shows a chip for each color with a swatch, name, and delete button: 200 GET https://test-automation-best-practices.vercel.app/api/colors
