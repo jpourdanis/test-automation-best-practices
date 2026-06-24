@@ -7,3 +7,20 @@ CVE-2026-33750
 
 # node-forge vulnerability
 CVE-2026-2361
+
+# undici vulnerabilities in node_modules/npm/node_modules/undici (npm's own bundled dep,
+# not our application code; dev-only transitive via @semantic-release/npm -> npm)
+GHSA-p88m-4jfj-68fv
+GHSA-vxpw-j846-p89q
+GHSA-35p6-xmwp-9g52
+GHSA-g8m3-5g58-fq7m
+
+# esbuild dev-server arbitrary file read on Windows only (GHSA-g7r4-m6w7-qqqr)
+# tsup@8.5.1 requires esbuild ^0.27.0 (max 0.27.x); we use esbuild as a build tool,
+# not a dev server, and CI runs on Linux — not exploitable in our context
+GHSA-g7r4-m6w7-qqqr
+
+# @opentelemetry/core unbounded memory (GHSA-8988-4f7v-96qf)
+# Fix requires major bump 1.x -> 2.x; affected only via lighthouse -> @sentry/node
+# (dev/perf toolchain dependency, not production application code)
+GHSA-8988-4f7v-96qf
