@@ -248,6 +248,8 @@ jobs:
           scan-type: "fs"
           ignore-unfixed: true
           severity: "CRITICAL,HIGH"
+          # Skip npm's own bundled toolchain deps (node-gyp/undici) — not our application code
+          skip-dirs: "node_modules/npm/node_modules"
           # Fail the pipeline and output as JUnit for Allure
           exit-code: "1"
           format: "template"
