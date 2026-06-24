@@ -4,5 +4,5 @@ useDefault = true
 [[allowlists]]
 description = "False positives in minified vendor assets (Playwright trace viewer)"
 paths = [
-    '''825/playwright-trace-viewer/''',
+    '''\d+/playwright-trace-viewer/''',
 ]

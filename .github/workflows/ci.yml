@@ -248,6 +248,8 @@ jobs:
           scan-type: "fs"
           ignore-unfixed: true
           severity: "CRITICAL,HIGH"
+          # Skip npm's own bundled toolchain deps (node-gyp/undici) — not our application code
+          skip-dirs: "node_modules/npm/node_modules"
           # Fail the pipeline and output as JUnit for Allure
           exit-code: "1"
           format: "template"
@@ -461,7 +463,9 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome*.list
+          npx playwright install --with-deps
 
       - name: Install Playwright OS dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
@@ -627,7 +631,9 @@ jobs:
 
       - name: Install Playwright browsers
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome*.list
+          npx playwright install --with-deps
 
       - name: Install Playwright OS dependencies
         if: steps.playwright-cache.outputs.cache-hit == 'true'
@@ -894,7 +900,9 @@ jobs:
 
       - name: Install Playwright browsers
         if: env.VERCEL_TOKEN != '' && steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome*.list
+          npx playwright install --with-deps
 
       - name: Install Playwright OS dependencies
         if: env.VERCEL_TOKEN != '' && steps.playwright-cache.outputs.cache-hit == 'true'
@@ -955,7 +963,9 @@ jobs:
 
       - name: Install Playwright Browsers & OS Dependencies
         if: steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome*.list
+          npx playwright install --with-deps
 
       - name: Install Playwright OS Dependencies (Force)
         if: steps.playwright-cache.outputs.cache-hit == 'true'
@@ -1006,7 +1016,9 @@ jobs:
 
       - name: Install Playwright browsers
         if: env.PERCY_TOKEN != '' && steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps
+        run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome*.list
+          npx playwright install --with-deps
 
       - name: Install Playwright OS dependencies
         if: env.PERCY_TOKEN != '' && steps.playwright-cache.outputs.cache-hit == 'true'
