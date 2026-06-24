@@ -1,3 +1,11 @@
+## [1.0.4](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.3...v1.0.4) (2026-06-24)
+
+
+### Bug Fixes
+
+* **ci:** resolve Trivy and Playwright browser install failures ([f0335f7](https://github.com/jpourdanis/test-automation-best-practices/commit/f0335f7ca57c9a0ab8c75e31562804141255f8f8))
+* **security:** patch CRITICAL/HIGH CVEs in mobile dependencies ([4cfa7fb](https://github.com/jpourdanis/test-automation-best-practices/commit/4cfa7fbba362818b0c72ec224ed10a07d7c70846))
+
 ## [1.0.3](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.2...v1.0.3) (2026-06-09)
 
 
