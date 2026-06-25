@@ -1,2 +1,0 @@
-[NETWORK INFO] should load the application and verify core functionality across browsers: 200 GET https://test-automation-best-practices.vercel.app/api/colors
-[NETWORK INFO] should load the application and verify core functionality across browsers: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Yellow

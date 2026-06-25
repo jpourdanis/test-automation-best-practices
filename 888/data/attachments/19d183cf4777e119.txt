@@ -1,2 +1,0 @@
-[NETWORK INFO] clicking a chip makes it active: 200 GET https://test-automation-best-practices.vercel.app/api/colors
-[NETWORK INFO] clicking a chip makes it active: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Red

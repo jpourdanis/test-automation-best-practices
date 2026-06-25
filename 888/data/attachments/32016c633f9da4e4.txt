@@ -1,3 +1,0 @@
-[NETWORK INFO] successfully adds a new color and shows its chip: 200 GET https://test-automation-best-practices.vercel.app/api/colors
-[NETWORK INFO] successfully adds a new color and shows its chip: 201 POST https://test-automation-best-practices.vercel.app/api/colors
-[NETWORK INFO] successfully adds a new color and shows its chip: 200 GET https://test-automation-best-practices.vercel.app/api/colors
