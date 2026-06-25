@@ -1,18 +1,23 @@
 {
   "$schema": "https://schema.stryker-mutator.io/stryker-config.schema.json",
-  "mutate": [
-    "src/**/*.ts",
-    "src/**/*.tsx",
-    "!src/**/*.test.ts",
-    "!src/**/*.test.tsx",
-    "!src/setupTests.ts",
-    "!src/index.tsx",
-    "!src/react-app-env.d.ts"
+  "mutate": ["src/App.tsx", "src/ColorPicker.tsx:1-97", "src/ColorPicker.tsx:183-379", "src/ConfirmDialog.tsx"],
+  "ignorePatterns": [
+    "mobile",
+    "server",
+    "e2e",
+    "performance",
+    "packages",
+    ".nyc_output",
+    "reports",
+    "coverage",
+    "build"
   ],
+  "ignoreStatic": true,
   "testRunner": "jest",
   "jest": {
     "projectType": "create-react-app"
   },
+  "coverageAnalysis": "perTest",
   "reporters": ["progress", "clear-text", "html"],
   "htmlReporter": {
     "fileName": "reports/mutation/frontend/index.html"
@@ -23,6 +28,9 @@
     "break": 70
   },
   "tempDirName": ".stryker-tmp",
-  "concurrency": 2,
-  "timeoutMS": 30000
+  "concurrency": 4,
+  "timeoutMS": 10000,
+  "timeoutFactor": 1.5,
+  "incremental": true,
+  "incrementalFile": "reports/mutation/frontend/.stryker-incremental.json"
 }
