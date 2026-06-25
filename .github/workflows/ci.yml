@@ -49,7 +49,7 @@ jobs:
         uses: oxsecurity/megalinter/flavors/javascript@v9
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PARALLEL_PROCESS_NUMBER: 2
+          PARALLEL_PROCESS_NUMBER: 4
           VALIDATE_ALL_CODEBASE: false
 
   # ==========================================

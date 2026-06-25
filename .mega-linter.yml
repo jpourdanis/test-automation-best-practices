@@ -20,9 +20,18 @@ DISABLE_LINTERS:
   - COPYPASTE_JSCPD
   - JSON_V8R
   - DOCKERFILE_HADOLINT
+  # ESLint variants — disabled; project uses its own ESLint config via `npm run lint`
   - JAVASCRIPT_ES
   - TYPESCRIPT_ES
   - TSX_ESLINT
+  # Standard.js — redundant; ESLint + SonarCloud already cover JS/TS code quality
+  - JAVASCRIPT_STANDARD
+  - TYPESCRIPT_STANDARD
+  # Prettier — redundant; `npm run lint` already runs `prettier --check`
+  - JAVASCRIPT_PRETTIER
+  - TYPESCRIPT_PRETTIER
+  # Link checker — slow network I/O in CI, high false-positive rate, no code quality value
+  - SPELL_LYCHEE
 
 SPELL_CSPELL_FILTER_REGEX_EXCLUDE: "(src/locales/.*)"
 SPELL_LYCHEE_FILTER_REGEX_EXCLUDE: '(server/package.*\.json)'
