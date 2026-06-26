@@ -1,3 +1,0 @@
-[NETWORK INFO] deleting the active color switches background to the first remaining: 200 GET http://localhost:3000/api/colors
-[NETWORK INFO] deleting the active color switches background to the first remaining: 200 DELETE http://localhost:3000/api/colors/Turquoise
-[NETWORK INFO] deleting the active color switches background to the first remaining: 200 GET http://localhost:3000/api/colors
