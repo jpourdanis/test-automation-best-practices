@@ -1,0 +1,51 @@
+2026-06-28 00:47:38 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:47:38 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:47:38 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:47:38 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:47:38 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] shows a chip for each color with a swatch, name, and delete button: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-06-28 00:47:39 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-06-28 00:47:39 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:47:39 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:47:39 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:47:39 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:47:39 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:47:39 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-e2d53aa774e0c258d986
+2026-06-28 00:47:39 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '2fb73c64-6bca-4294-b647-6c40bb305812',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '2fb73c64-6bca-4294-b647-6c40bb305812',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - shows a chip for each color with a swatch, name, and delete button',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-e2d53aa774e0c258d986',
+  test_name: 'shows a chip for each color with a swatch, name, and delete button',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    '    for (const color of INITIAL_COLORS) {\n' +
+    "      await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    '        name: `Change background to ${color.name}`,\n' +
+    '        exact: true\n' +
+    '      })).toBeVisible();\n' +
+    "      await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    '        name: `Remove color: ${color.name}`,\n' +
+    '        exact: true\n' +
+    '      })).toBeVisible();\n' +
+    '    }\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:47:38.147Z',
+  test_scope: 'Color Management — Add & Delete - shows a chip for each color with a swatch, name, and delete button',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-safari-ventura tests/color-management.spec.ts Color Management — Add & Delete shows a chip for each color with a swatch, name, and delete button'
+}
+2026-06-28 00:47:39 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:47:39 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

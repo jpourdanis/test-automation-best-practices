@@ -1,0 +1,37 @@
+2026-06-28 00:49:30 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:49:30 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:49:30 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:49:30 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:49:30 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:49:30 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-66513ca9b1e5f3260b9a
+2026-06-28 00:49:30 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '190ee5a6-780b-43c0-b52e-4992b8e50194',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '190ee5a6-780b-43c0-b52e-4992b8e50194',
+  test_result: 'pending',
+  automate_session_name: 'Backend API Integration - GET /api/colors/:name should return 404 for non-existent color',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-66513ca9b1e5f3260b9a',
+  test_name: 'GET /api/colors/:name should return 404 for non-existent color',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_code: 'async ({\n' +
+    '    request\n' +
+    '  }) => {\n' +
+    '    const response = await request.get(`/api/colors/DoesNotExist`);\n' +
+    '    (0, _test.expect)(response.status()).toBe(404);\n' +
+    '    const data = await response.json();\n' +
+    "    (0, _test.expect)(data.error).toBe('Color not found');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:49:30.548Z',
+  test_scope: 'Backend API Integration - GET /api/colors/:name should return 404 for non-existent color',
+  test_scopes: [ 'Backend API Integration' ],
+  test_rerun_name: ' bs-pixel-7 tests/api.spec.ts Backend API Integration GET /api/colors/:name should return 404 for non-existent color'
+}
+2026-06-28 00:49:30 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:49:30 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:49:30 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

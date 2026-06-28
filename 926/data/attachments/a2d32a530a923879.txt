@@ -1,0 +1,46 @@
+2026-06-28 00:49:05 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:49:05 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:49:05 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:49:05 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:49:05 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:49:06 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-06-28 00:49:06 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:49:06 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:49:06 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:49:06 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:49:06 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:49:06 - info: [PlaywrightDriverModule] testId: 791bdff6f908e1de6c18-1b588e211c1ca7f69631
+2026-06-28 00:49:06 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '6fb5acd3-1c68-43dc-940d-3a084b568533',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '6fb5acd3-1c68-43dc-940d-3a084b568533',
+  test_result: 'pending',
+  automate_session_name: 'UI Error Handling Coverage - should handle fetch colors network failure gracefully',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/error-handling.spec.ts',
+  test_id: '791bdff6f908e1de6c18-1b588e211c1ca7f69631',
+  test_name: 'should handle fetch colors network failure gracefully',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/error-handling.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Abort the initial colors fetch\n' +
+    "    await page.route('**/api/colors', route => route.abort('failed'));\n" +
+    '    await homePage.goto();\n' +
+    '\n' +
+    '    // The UI should show "Loading colors..." because colors array is empty\n' +
+    "    await (0, _baseFixtures.expect)(page.locator('text=Loading colors...')).toBeVisible();\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:49:05.321Z',
+  test_scope: 'UI Error Handling Coverage - should handle fetch colors network failure gracefully',
+  test_scopes: [ 'UI Error Handling Coverage' ],
+  test_rerun_name: ' bs-safari-ventura tests/error-handling.spec.ts UI Error Handling Coverage should handle fetch colors network failure gracefully'
+}
+2026-06-28 00:49:06 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:49:06 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:49:06 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

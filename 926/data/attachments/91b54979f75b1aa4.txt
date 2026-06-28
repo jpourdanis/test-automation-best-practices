@@ -1,0 +1,77 @@
+2026-06-28 00:47:54 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:47:54 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:47:54 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:47:54 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:47:54 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] successfully adds a new color and shows its chip: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] successfully adds a new color and shows its chip: 201 POST https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] successfully adds a new color and shows its chip: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-06-28 00:48:04 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-06-28 00:48:04 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:48:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:48:04 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:48:04 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:48:04 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:48:04 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-5e8406b3546df5597f7f
+2026-06-28 00:48:04 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '8e65a617-3fd1-4a6e-8925-018e2f8481ce',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '8e65a617-3fd1-4a6e-8925-018e2f8481ce',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - successfully adds a new color and shows its chip',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-5e8406b3546df5597f7f',
+  test_name: 'successfully adds a new color and shows its chip',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    const OCEAN = {\n' +
+    "      name: 'Ocean',\n" +
+    "      hex: '#0077be'\n" +
+    '    };\n' +
+    '    const updatedList = [...INITIAL_COLORS, OCEAN];\n' +
+    '    let getCallCount = 0;\n' +
+    "    await page.route('**/api/colors', async route => {\n" +
+    '      const method = route.request().method();\n' +
+    "      if (method === 'POST') {\n" +
+    '        await route.fulfill({\n' +
+    '          status: 201,\n' +
+    "          contentType: 'application/json',\n" +
+    '          body: JSON.stringify(OCEAN)\n' +
+    '        });\n' +
+    '      } else {\n' +
+    '        getCallCount++;\n' +
+    '        await route.fulfill({\n' +
+    '          status: 200,\n' +
+    "          contentType: 'application/json',\n" +
+    '          body: JSON.stringify(getCallCount === 1 ? INITIAL_COLORS : updatedList)\n' +
+    '        });\n' +
+    '      }\n' +
+    '    });\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    "    await homePage.pickerNameInput.fill('Ocean');\n" +
+    '    await homePage.pickerSubmitBtn.click();\n' +
+    '    await (0, _baseFixtures.expect)(homePage.pickerCard).not.toBeVisible();\n' +
+    "    await (0, _baseFixtures.expect)(page.getByRole('button', {\n" +
+    "      name: 'Change background to Ocean',\n" +
+    '      exact: true\n' +
+    '    })).toBeVisible();\n' +
+    '    // background should switch to the new color\n' +
+    "    await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', 'rgb(0, 119, 190)');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:47:54.037Z',
+  test_scope: 'Color Management — Add & Delete - successfully adds a new color and shows its chip',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-safari-ventura tests/color-management.spec.ts Color Management — Add & Delete successfully adds a new color and shows its chip'
+}
+2026-06-28 00:48:04 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:48:04 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:48:04 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

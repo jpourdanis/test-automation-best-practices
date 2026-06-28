@@ -1,0 +1,43 @@
+2026-06-28 00:49:57 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:49:57 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:49:57 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:49:57 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:49:57 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:49:57 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-8d3a90f2a80b7100f5e9
+2026-06-28 00:49:57 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'da3131b8-9765-49ff-af80-78ff2de6db1a',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'da3131b8-9765-49ff-af80-78ff2de6db1a',
+  test_result: 'pending',
+  automate_session_name: 'Injection Prevention - NoSQL injection object in name is rejected (400)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-8d3a90f2a80b7100f5e9',
+  test_name: 'NoSQL injection object in name is rejected (400)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      // Zod rejects non-string types before they reach MongoDB\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        data: {\n' +
+    '          name: {\n' +
+    "            $gt: ''\n" +
+    '          },\n' +
+    "          hex: '#ffffff'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(400);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:49:57.204Z',
+  test_scope: 'Injection Prevention - NoSQL injection object in name is rejected (400)',
+  test_scopes: [ 'Security', 'Injection Prevention' ],
+  test_rerun_name: ' bs-pixel-7 tests/security.spec.ts Security Injection Prevention NoSQL injection object in name is rejected (400)'
+}
+2026-06-28 00:49:57 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:49:57 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:49:57 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

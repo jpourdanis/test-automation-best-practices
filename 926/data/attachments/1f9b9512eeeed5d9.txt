@@ -1,0 +1,40 @@
+2026-06-28 00:46:59 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:46:59 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:46:59 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:46:59 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:46:59 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:46:59 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-4a04fbfd449366f93f2e
+2026-06-28 00:46:59 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'dbb24562-73eb-490f-b4a6-b7c6a0af08c2',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'dbb24562-73eb-490f-b4a6-b7c6a0af08c2',
+  test_result: 'pending',
+  automate_session_name: 'Input Validation - array body on POST returns 400',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-4a04fbfd449366f93f2e',
+  test_name: 'array body on POST returns 400',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        data: [{\n' +
+    "          name: 'Purple',\n" +
+    "          hex: '#800080'\n" +
+    '        }]\n' +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(400);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:46:59.566Z',
+  test_scope: 'Input Validation - array body on POST returns 400',
+  test_scopes: [ 'Security', 'Input Validation' ],
+  test_rerun_name: ' bs-firefox-win11 tests/security.spec.ts Security Input Validation array body on POST returns 400'
+}
+2026-06-28 00:46:59 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:46:59 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:46:59 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

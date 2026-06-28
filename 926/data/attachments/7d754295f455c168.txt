@@ -1,0 +1,47 @@
+2026-06-28 00:46:45 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:46:45 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:46:45 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:46:45 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:46:45 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should load the application and verify core functionality across browsers: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should load the application and verify core functionality across browsers: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Yellow
+2026-06-28 00:46:46 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-06-28 00:46:46 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:46:46 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:46:46 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:46:46 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:46:46 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:46:46 - info: [PlaywrightDriverModule] testId: 62283333948404e7e97f-f03cad829a702bb04745
+2026-06-28 00:46:46 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '67c97486-4442-41e3-a090-de36e4fcc4b6',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '67c97486-4442-41e3-a090-de36e4fcc4b6',
+  test_result: 'pending',
+  automate_session_name: 'Cross-Browser Core Functionality - should load the application and verify core functionality across browsers',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/cross-browser.spec.ts',
+  test_id: '62283333948404e7e97f-f03cad829a702bb04745',
+  test_name: 'should load the application and verify core functionality across browsers',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/cross-browser.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage\n' +
+    '  }) => {\n' +
+    '    // Verify core UI loads\n' +
+    '    await (0, _baseFixtures.expect)(homePage.header).toBeVisible();\n' +
+    '    await (0, _baseFixtures.expect)(homePage.currentColorText).toBeVisible();\n' +
+    '\n' +
+    '    // Verify interactivity works across different browser engines\n' +
+    "    await homePage.clickColorButton('Yellow');\n" +
+    "    await (0, _baseFixtures.expect)(homePage.currentColorText).toContainText('#f1c40f');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:46:45.439Z',
+  test_scope: 'Cross-Browser Core Functionality - should load the application and verify core functionality across browsers',
+  test_scopes: [ 'Cross-Browser Core Functionality' ],
+  test_rerun_name: ' bs-firefox-win11 tests/cross-browser.spec.ts Cross-Browser Core Functionality should load the application and verify core functionality across browsers'
+}
+2026-06-28 00:46:46 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:46:46 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

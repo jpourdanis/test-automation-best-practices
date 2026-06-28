@@ -1,0 +1,35 @@
+2026-06-28 00:46:58 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:46:58 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:46:58 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:46:58 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:46:58 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:46:58 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-fc664f3605aabaa13081
+2026-06-28 00:46:58 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'c7d6c3ac-353f-4032-a58b-831a2a9a3b4d',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'c7d6c3ac-353f-4032-a58b-831a2a9a3b4d',
+  test_result: 'pending',
+  automate_session_name: 'Injection Prevention - NoSQL operator in GET path param is rejected (400 or 404)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-fc664f3605aabaa13081',
+  test_name: 'NoSQL operator in GET path param is rejected (400 or 404)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.get('/api/colors/%24gt');\n" +
+    '      (0, _test.expect)([400, 404]).toContain(res.status());\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:46:58.828Z',
+  test_scope: 'Injection Prevention - NoSQL operator in GET path param is rejected (400 or 404)',
+  test_scopes: [ 'Security', 'Injection Prevention' ],
+  test_rerun_name: ' bs-firefox-win11 tests/security.spec.ts Security Injection Prevention NoSQL operator in GET path param is rejected (400 or 404)'
+}
+2026-06-28 00:46:58 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:46:58 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:46:58 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

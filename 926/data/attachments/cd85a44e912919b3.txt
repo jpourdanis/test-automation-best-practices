@@ -1,0 +1,42 @@
+2026-06-28 00:50:17 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:50:17 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:50:17 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:50:17 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:50:17 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:50:17 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-d35dedd1239174da6223
+2026-06-28 00:50:17 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '7c7ddc7b-8a1c-480c-a732-f35cbdae48cf',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '7c7ddc7b-8a1c-480c-a732-f35cbdae48cf',
+  test_result: 'pending',
+  automate_session_name: 'POST /api/colors Schema Validation - should reject empty name',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-d35dedd1239174da6223',
+  test_name: 'should reject empty name',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const response = await request.post(`/api/colors`, {\n' +
+    '        data: {\n' +
+    "          name: '',\n" +
+    "          hex: '#ffa500'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(response.status()).toBe(400);\n' +
+    '      const data = await response.json();\n' +
+    "      (0, _test.expect)(data.error).toBe('name must contain alphanumeric characters and spaces only, and at least one alphanumeric character');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:50:17.033Z',
+  test_scope: 'POST /api/colors Schema Validation - should reject empty name',
+  test_scopes: [ 'Backend API Integration', 'POST /api/colors Schema Validation' ],
+  test_rerun_name: ' bs-iphone-15 tests/api.spec.ts Backend API Integration POST /api/colors Schema Validation should reject empty name'
+}
+2026-06-28 00:50:17 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:50:17 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:50:17 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

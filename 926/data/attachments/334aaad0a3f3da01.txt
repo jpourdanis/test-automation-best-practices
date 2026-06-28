@@ -1,0 +1,41 @@
+2026-06-28 00:50:17 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:50:17 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:50:17 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:50:17 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:50:17 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:50:17 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-9a688e1b29217bb705c9
+2026-06-28 00:50:17 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'bd88d846-cec6-409e-85bf-2d0ef8a51e81',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'bd88d846-cec6-409e-85bf-2d0ef8a51e81',
+  test_result: 'pending',
+  automate_session_name: 'POST /api/colors Schema Validation - should reject missing hex',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-9a688e1b29217bb705c9',
+  test_name: 'should reject missing hex',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const response = await request.post(`/api/colors`, {\n' +
+    '        data: {\n' +
+    "          name: 'Orange'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(response.status()).toBe(400);\n' +
+    '      const data = await response.json();\n' +
+    "      (0, _test.expect)(data.error).toBe('Invalid input: expected string, received undefined');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:50:17.110Z',
+  test_scope: 'POST /api/colors Schema Validation - should reject missing hex',
+  test_scopes: [ 'Backend API Integration', 'POST /api/colors Schema Validation' ],
+  test_rerun_name: ' bs-iphone-15 tests/api.spec.ts Backend API Integration POST /api/colors Schema Validation should reject missing hex'
+}
+2026-06-28 00:50:17 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:50:17 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:50:17 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

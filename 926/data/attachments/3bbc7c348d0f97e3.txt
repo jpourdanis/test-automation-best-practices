@@ -1,0 +1,45 @@
+2026-06-28 00:50:59 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:51:00 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:51:00 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:51:00 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:51:00 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] Escape key closes the confirm dialog: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-06-28 00:51:01 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-06-28 00:51:02 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-06-28 00:51:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-06-28 00:51:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:51:02 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:51:02 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-06-28 00:51:02 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-6243dd617645a31090bc
+2026-06-28 00:51:02 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'f7afe215-1777-47fd-a276-1e241a048c26',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'f7afe215-1777-47fd-a276-1e241a048c26',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - Escape key closes the confirm dialog',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-6243dd617645a31090bc',
+  test_name: 'Escape key closes the confirm dialog',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    "    await homePage.clickDeleteChip('Red');\n" +
+    "    await page.keyboard.press('Escape');\n" +
+    '    await (0, _baseFixtures.expect)(homePage.confirmCard).not.toBeVisible();\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-06-28T00:50:59.702Z',
+  test_scope: 'Color Management — Add & Delete - Escape key closes the confirm dialog',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-iphone-15 tests/color-management.spec.ts Color Management — Add & Delete Escape key closes the confirm dialog'
+}
+2026-06-28 00:51:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-06-28 00:51:02 - info: [GrpcClient] TestSessionEvent request successful
+2026-06-28 00:51:02 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
