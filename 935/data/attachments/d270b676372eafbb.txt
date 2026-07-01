@@ -1,0 +1,2 @@
+[NETWORK ERROR] should handle fetch colors network failure gracefully: GET http://localhost:3000/api/colors - net::ERR_FAILED
+[CONSOLE ERROR] should handle fetch colors network failure gracefully: Failed to load resource: net::ERR_FAILED
