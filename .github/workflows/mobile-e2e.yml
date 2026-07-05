@@ -77,7 +77,7 @@ jobs:
 
       - name: Upload Mobile Coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mobile-coverage-lcov
           path: mobile/coverage/lcov.info
@@ -86,7 +86,7 @@ jobs:
 
       - name: Upload Mobile Unit Test Allure Results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: allure-results-mobile-unit-testing
           path: mobile/allure-results/
@@ -286,7 +286,7 @@ jobs:
 
       - name: Upload Appium server log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mobile-ios-appium-log
           path: mobile/e2e/appium.log
@@ -295,7 +295,7 @@ jobs:
 
       - name: Upload failure videos
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mobile-ios-failure-videos
           path: mobile/e2e/videos/
@@ -304,7 +304,7 @@ jobs:
 
       - name: Upload WDIO results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mobile-ios-wdio-results
           path: |
@@ -531,7 +531,7 @@ jobs:
 
       - name: Upload Appium server log
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mobile-android-appium-log
           path: mobile/e2e/appium.log
@@ -540,7 +540,7 @@ jobs:
 
       - name: Upload Android logcat
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mobile-android-logcat
           path: mobile/e2e/logcat.txt
@@ -549,7 +549,7 @@ jobs:
 
       - name: Upload failure videos
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mobile-android-failure-videos
           path: mobile/e2e/videos/
@@ -558,7 +558,7 @@ jobs:
 
       - name: Upload WDIO results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: mobile-android-wdio-results
           path: |
