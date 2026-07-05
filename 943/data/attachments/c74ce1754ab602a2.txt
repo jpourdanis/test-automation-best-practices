@@ -1,0 +1,36 @@
+2026-07-05 00:41:16 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-05 00:41:16 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:41:16 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:41:16 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:41:16 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:41:16 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-74abdbaadf246f113a9c
+2026-07-05 00:41:16 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '9eaa85e3-9cbc-456c-bb49-d213af54c647',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '9eaa85e3-9cbc-456c-bb49-d213af54c647',
+  test_result: 'pending',
+  automate_session_name: 'HTTP Method Restrictions - POST /api-docs returns 405',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-74abdbaadf246f113a9c',
+  test_name: 'POST /api-docs returns 405',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.post('/api-docs');\n" +
+    '      (0, _test.expect)(res.status()).toBe(405);\n' +
+    "      (0, _test.expect)(res.headers()['allow']).toBe('GET');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-05T00:41:16.673Z',
+  test_scope: 'HTTP Method Restrictions - POST /api-docs returns 405',
+  test_scopes: [ 'Security', 'HTTP Method Restrictions' ],
+  test_rerun_name: ' bs-chrome-win11 tests/security.spec.ts Security HTTP Method Restrictions POST /api-docs returns 405'
+}
+2026-07-05 00:41:16 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:41:16 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:41:16 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

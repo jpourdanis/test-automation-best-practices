@@ -1,0 +1,40 @@
+2026-07-05 00:44:49 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-05 00:44:49 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:44:49 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:44:49 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:44:49 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:44:49 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-39e26fc8f874eb961a09
+2026-07-05 00:44:49 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '029ebc0f-899b-4643-b884-9c6370ba881c',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '029ebc0f-899b-4643-b884-9c6370ba881c',
+  test_result: 'pending',
+  automate_session_name: 'Injection Prevention - SQL injection characters in name are rejected (400)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-39e26fc8f874eb961a09',
+  test_name: 'SQL injection characters in name are rejected (400)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        data: {\n' +
+    `          name: "'; DROP TABLE colors; --",\n` +
+    "          hex: '#ff0000'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(400);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-05T00:44:48.965Z',
+  test_scope: 'Injection Prevention - SQL injection characters in name are rejected (400)',
+  test_scopes: [ 'Security', 'Injection Prevention' ],
+  test_rerun_name: ' bs-pixel-7 tests/security.spec.ts Security Injection Prevention SQL injection characters in name are rejected (400)'
+}
+2026-07-05 00:44:49 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:44:49 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:44:49 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

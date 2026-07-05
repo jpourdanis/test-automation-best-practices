@@ -1,0 +1,51 @@
+2026-07-05 00:46:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:46:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:46:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:46:02 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:46:02 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] check Turquoise ( #1abc9c) is the default background color.: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-07-05 00:46:03 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-05 00:46:04 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-05 00:46:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:46:04 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:46:04 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:46:04 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:46:04 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-fa9a800280fed91899bf
+2026-07-05 00:46:04 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '689f6ded-ea3d-4d5b-bae7-34728242e43d',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '689f6ded-ea3d-4d5b-bae7-34728242e43d',
+  test_result: 'pending',
+  automate_session_name: 'tests/coverage.spec.ts - check Turquoise ( #1abc9c) is the default background color.',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_id: '3300dcb2e635619af3f7-fa9a800280fed91899bf',
+  test_name: 'check Turquoise ( #1abc9c) is the default background color.',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_code: 'async ({\n' +
+    '  page\n' +
+    '}) => {\n' +
+    '  var _colors$find;\n' +
+    "  await page.route('**/api/colors', route => route.fulfill({\n" +
+    '    status: 200,\n' +
+    "    contentType: 'application/json',\n" +
+    '    body: JSON.stringify(colors)\n' +
+    '  }));\n' +
+    "  await page.goto('/');\n" +
+    "  const turquoiseHex = ((_colors$find = colors.find(c => c.name === 'Turquoise')) === null || _colors$find === void 0 ? void 0 : _colors$find.hex) || '1abc9c';\n" +
+    "  await (0, _baseFixtures.expect)(page.locator('text=Current color:')).toContainText(turquoiseHex);\n" +
+    '  let rgbColors = (0, _helper.convertHexToRGB)(`#${turquoiseHex}`);\n' +
+    "  await (0, _baseFixtures.expect)(page.locator('header')).toHaveCSS('background-color', `rgb(${rgbColors.red}, ${rgbColors.green}, ${rgbColors.blue})`);\n" +
+    '}',
+  test_tags: [],
+  test_started_at: '2026-07-05T00:46:02.392Z',
+  test_scope: 'tests/coverage.spec.ts - check Turquoise ( #1abc9c) is the default background color.',
+  test_scopes: [],
+  test_rerun_name: ' bs-iphone-15 tests/coverage.spec.ts check Turquoise ( #1abc9c) is the default background color.'
+}
+2026-07-05 00:46:04 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:46:04 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:46:04 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

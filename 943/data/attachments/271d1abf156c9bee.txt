@@ -1,0 +1,47 @@
+2026-07-05 00:41:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:41:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:41:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:41:02 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:41:02 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:41:03 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-07-05 00:41:03 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-07-05 00:41:03 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-07-05 00:41:03 - info: Accessibility testing for this test case has ended.
+2026-07-05 00:41:03 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-05 00:41:03 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:41:03 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:41:03 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:41:03 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:41:03 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-06b29271878e7634879d
+2026-07-05 00:41:03 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'ecb7437e-9089-4211-bd70-fe256be5615b',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'ecb7437e-9089-4211-bd70-fe256be5615b',
+  test_result: 'pending',
+  automate_session_name: 'Edge cases and error handling - handle initial fetch error',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_id: '3300dcb2e635619af3f7-06b29271878e7634879d',
+  test_name: 'handle initial fetch error',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_code: 'async ({\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Mock 500 error for initial colors fetch\n' +
+    "    await page.route('/api/colors', route => route.fulfill({\n" +
+    '      status: 500\n' +
+    '    }));\n' +
+    "    await page.goto('/');\n" +
+    "    await (0, _baseFixtures.expect)(page.locator('.error-message')).toHaveText('Failed to load colors');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-05T00:41:02.625Z',
+  test_scope: 'Edge cases and error handling - handle initial fetch error',
+  test_scopes: [ 'Edge cases and error handling' ],
+  test_rerun_name: ' bs-chrome-win11 tests/coverage.spec.ts Edge cases and error handling handle initial fetch error'
+}
+2026-07-05 00:41:03 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:41:03 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

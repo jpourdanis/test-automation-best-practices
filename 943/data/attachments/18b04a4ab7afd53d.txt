@@ -1,0 +1,35 @@
+2026-07-05 00:46:29 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-05 00:46:29 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:46:29 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:46:29 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:46:29 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:46:29 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-c30159b87980419ad62d
+2026-07-05 00:46:29 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'a655a10e-956d-4fb7-b2fc-5723d32ea7f8',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'a655a10e-956d-4fb7-b2fc-5723d32ea7f8',
+  test_result: 'pending',
+  automate_session_name: 'Security Headers - X-Powered-By header is not exposed',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-c30159b87980419ad62d',
+  test_name: 'X-Powered-By header is not exposed',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.get('/api/colors');\n" +
+    "      (0, _test.expect)(res.headers()['x-powered-by']).toBeUndefined();\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-05T00:46:29.014Z',
+  test_scope: 'Security Headers - X-Powered-By header is not exposed',
+  test_scopes: [ 'Security', 'Security Headers' ],
+  test_rerun_name: ' bs-iphone-15 tests/security.spec.ts Security Security Headers X-Powered-By header is not exposed'
+}
+2026-07-05 00:46:29 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:46:29 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:46:29 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

@@ -1,0 +1,54 @@
+2026-07-05 00:44:40 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:44:40 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:44:40 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:44:40 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:44:40 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] changing color to Yellow should reflect in UI and DOM: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] changing color to Yellow should reflect in UI and DOM: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Yellow
+2026-07-05 00:44:41 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-07-05 00:44:41 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-07-05 00:44:41 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-07-05 00:44:41 - info: Accessibility testing for this test case has ended.
+2026-07-05 00:44:42 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-05 00:44:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:44:42 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:44:42 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:44:42 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:44:42 - info: [PlaywrightDriverModule] testId: 00b11043fe1f1d2b9864-2fd6334b61e2fdb29e15
+2026-07-05 00:44:42 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '3fac97e6-7b09-4844-b525-77ab514cf1ab',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '3fac97e6-7b09-4844-b525-77ab514cf1ab',
+  test_result: 'pending',
+  automate_session_name: 'Data-Driven Testing - changing color to Yellow should reflect in UI and DOM',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/data-driven.spec.ts',
+  test_id: '00b11043fe1f1d2b9864-2fd6334b61e2fdb29e15',
+  test_name: 'changing color to Yellow should reflect in UI and DOM',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/data-driven.spec.ts',
+  test_code: 'async ({\n' +
+    '      homePage\n' +
+    '    }) => {\n' +
+    '      // Act\n' +
+    '      await homePage.clickColorButton(data.name);\n' +
+    '\n' +
+    '      // Assert Text updates correctly\n' +
+    '      await (0, _baseFixtures.expect)(homePage.currentColorText).toContainText(data.expectedHex);\n' +
+    '\n' +
+    '      // Assert DOM styling updates correctly\n' +
+    '      // We use page.locator directly here instead of exposing it via POM if we want\n' +
+    "      // to check raw CSS properties that don't belong in a simple POM interface.\n" +
+    "      await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', data.expectedRgb);\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-05T00:44:40.798Z',
+  test_scope: 'Data-Driven Testing - changing color to Yellow should reflect in UI and DOM',
+  test_scopes: [ 'Data-Driven Testing' ],
+  test_rerun_name: ' bs-pixel-7 tests/data-driven.spec.ts Data-Driven Testing changing color to Yellow should reflect in UI and DOM'
+}
+2026-07-05 00:44:42 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:44:42 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:44:42 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

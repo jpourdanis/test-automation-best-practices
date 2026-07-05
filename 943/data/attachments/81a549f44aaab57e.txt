@@ -1,0 +1,45 @@
+2026-07-05 00:41:46 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:41:46 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:41:46 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:41:46 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:41:46 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:41:47 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-05 00:41:47 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-05 00:41:47 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:41:47 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:41:47 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:41:47 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:41:47 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-135864540f032072f5b0
+2026-07-05 00:41:47 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'd8f51ba0-3848-4541-a1cb-672f8f448322',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'd8f51ba0-3848-4541-a1cb-672f8f448322',
+  test_result: 'pending',
+  automate_session_name: 'Edge cases and error handling - handle initial fetch error',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_id: '3300dcb2e635619af3f7-135864540f032072f5b0',
+  test_name: 'handle initial fetch error',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_code: 'async ({\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Mock 500 error for initial colors fetch\n' +
+    "    await page.route('/api/colors', route => route.fulfill({\n" +
+    '      status: 500\n' +
+    '    }));\n' +
+    "    await page.goto('/');\n" +
+    "    await (0, _baseFixtures.expect)(page.locator('.error-message')).toHaveText('Failed to load colors');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-05T00:41:46.402Z',
+  test_scope: 'Edge cases and error handling - handle initial fetch error',
+  test_scopes: [ 'Edge cases and error handling' ],
+  test_rerun_name: ' bs-firefox-win11 tests/coverage.spec.ts Edge cases and error handling handle initial fetch error'
+}
+2026-07-05 00:41:47 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:41:47 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:41:47 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

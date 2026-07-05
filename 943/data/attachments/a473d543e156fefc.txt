@@ -1,0 +1,46 @@
+2026-07-05 00:44:23 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-05 00:44:23 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:44:23 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:44:23 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:44:23 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:44:23 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-1ce46e45008e7f528fe3
+2026-07-05 00:44:23 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'bf8f083f-7696-4cb4-8734-ba9c841b2386',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'bf8f083f-7696-4cb4-8734-ba9c841b2386',
+  test_result: 'pending',
+  automate_session_name: 'POST /api/colors Schema Validation - should create a new color with valid schema',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-1ce46e45008e7f528fe3',
+  test_name: 'should create a new color with valid schema',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const uniqueName = _faker.faker.string.alphanumeric(15);\n' +
+    '      const newColor = {\n' +
+    '        name: uniqueName,\n' +
+    "        hex: '#ffa500'\n" +
+    '      };\n' +
+    '      createdColorName = uniqueName;\n' +
+    '      const response = await request.post(`/api/colors`, {\n' +
+    '        data: newColor\n' +
+    '      });\n' +
+    '      (0, _test.expect)(response.status()).toBe(201);\n' +
+    '      const data = await response.json();\n' +
+    '      _shared.ColorSchema.parse(data);\n' +
+    '      (0, _test.expect)(data).toEqual(_test.expect.objectContaining(newColor));\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-05T00:44:23.467Z',
+  test_scope: 'POST /api/colors Schema Validation - should create a new color with valid schema',
+  test_scopes: [ 'Backend API Integration', 'POST /api/colors Schema Validation' ],
+  test_rerun_name: ' bs-pixel-7 tests/api.spec.ts Backend API Integration POST /api/colors Schema Validation should create a new color with valid schema'
+}
+2026-07-05 00:44:23 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:44:23 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:44:23 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

@@ -1,0 +1,48 @@
+2026-07-05 00:40:48 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-05 00:40:48 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:40:48 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:40:48 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:40:48 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:40:48 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-6e6a045ba4bfcf2cbdf5
+2026-07-05 00:40:48 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '3b25ee87-d4fc-4498-8cff-c08b300f9f17',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '3b25ee87-d4fc-4498-8cff-c08b300f9f17',
+  test_result: 'pending',
+  automate_session_name: 'POST /api/colors Schema Validation - should return 409 for duplicate color creation',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-6e6a045ba4bfcf2cbdf5',
+  test_name: 'should return 409 for duplicate color creation',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const uniqueName = _faker.faker.string.alphanumeric(15);\n' +
+    '      const color = {\n' +
+    '        name: uniqueName,\n' +
+    "        hex: '#111111'\n" +
+    '      };\n' +
+    '      createdColorName = uniqueName;\n' +
+    '      await request.post(`/api/colors`, {\n' +
+    '        data: color\n' +
+    '      });\n' +
+    '      const response = await request.post(`/api/colors`, {\n' +
+    '        data: color\n' +
+    '      });\n' +
+    '      (0, _test.expect)(response.status()).toBe(409);\n' +
+    '      const data = await response.json();\n' +
+    '      (0, _test.expect)(data.error).toBe(`Color "${uniqueName}" already exists`);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-05T00:40:48.022Z',
+  test_scope: 'POST /api/colors Schema Validation - should return 409 for duplicate color creation',
+  test_scopes: [ 'Backend API Integration', 'POST /api/colors Schema Validation' ],
+  test_rerun_name: ' bs-chrome-win11 tests/api.spec.ts Backend API Integration POST /api/colors Schema Validation should return 409 for duplicate color creation'
+}
+2026-07-05 00:40:48 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:40:48 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:40:48 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

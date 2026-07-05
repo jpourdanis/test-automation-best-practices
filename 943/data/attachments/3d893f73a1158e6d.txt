@@ -1,0 +1,52 @@
+2026-07-05 00:41:20 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:41:20 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:41:20 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:41:20 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:41:20 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+2026-07-05 00:41:21 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-05 00:41:21 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-05 00:41:21 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-05 00:41:21 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-05 00:41:21 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-05 00:41:21 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-05 00:41:21 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-da830502c035239f3c1e
+2026-07-05 00:41:21 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'fab256b9-258e-4267-ae70-6a09253d233e',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'fab256b9-258e-4267-ae70-6a09253d233e',
+  test_result: 'pending',
+  automate_session_name: 'Accessibility Tests - should meet the accessibility threshold using Google Lighthouse',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_id: 'b7be152566087f10fae4-da830502c035239f3c1e',
+  test_name: 'should meet the accessibility threshold using Google Lighthouse',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    "    _baseFixtures.test.skip(process.env.BROWSERSTACK === 'true', 'Lighthouse audits are non-deterministic on BrowserStack cloud browsers');\n" +
+    '    // Wait for the main elements to render\n' +
+    '    await (0, _baseFixtures.expect)(homePage.header).toBeVisible();\n' +
+    '\n' +
+    '    // Run the Lighthouse audit\n' +
+    '    await (0, _playwrightLighthouse.playAudit)({\n' +
+    '      page: page,\n' +
+    '      thresholds: {\n' +
+    '        accessibility: 90\n' +
+    '      },\n' +
+    '      port: 9222 + (process.env.TEST_WORKER_INDEX ? Number.parseInt(process.env.TEST_WORKER_INDEX) : 0)\n' +
+    '    });\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-05T00:41:20.604Z',
+  test_scope: 'Accessibility Tests - should meet the accessibility threshold using Google Lighthouse',
+  test_scopes: [ 'Accessibility Tests' ],
+  test_rerun_name: ' bs-firefox-win11 tests/a11y.spec.ts Accessibility Tests should meet the accessibility threshold using Google Lighthouse'
+}
+2026-07-05 00:41:21 - info: [GrpcClient] Sending TestSessionEvent
