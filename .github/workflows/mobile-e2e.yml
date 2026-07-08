@@ -162,31 +162,31 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli@18.13.0 --ignore-scripts
 
-      # Fetches the artifact URL of the most recent successful iOS simulator
-      # build from EAS and downloads it. The .app is extracted from the tarball
-      # and its absolute path is written to $GITHUB_ENV for later steps.
-      - name: Download latest EAS iOS simulator build
+      # Submits a new iOS simulator build to EAS for the exact commit under
+      # test and blocks until it finishes (eas build waits by default). This
+      # guarantees the binary under test matches this PR's code, instead of
+      # trusting whatever build happened to be "latest finished" on EAS.
+      - name: Build iOS Simulator app on EAS
         working-directory: mobile
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           mkdir -p e2e/artifacts
 
-          if ! EAS_OUTPUT=$(eas build:list \
+          if ! BUILD_JSON=$(eas build \
             --platform ios \
             --profile simulator \
-            --status finished \
-            --limit 1 \
-            --json \
-            --non-interactive); then
-            echo "::error::eas build:list failed (EXPO_TOKEN may be missing or invalid)"
+            --non-interactive \
+            --json); then
+            echo "::error::EAS build failed or did not finish successfully."
             exit 1
           fi
 
-          BUILD_URL=$(echo "$EAS_OUTPUT" | jq -r '.[0].artifacts.buildUrl')
+          STATUS=$(echo "$BUILD_JSON" | jq -r '.[0].status')
+          BUILD_URL=$(echo "$BUILD_JSON" | jq -r '.[0].artifacts.buildUrl // empty')
 
-          if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
-            echo "::error::No finished simulator build found on EAS. Trigger one with: npm run build:ios"
+          if [ "$STATUS" != "FINISHED" ] || [ -z "$BUILD_URL" ]; then
+            echo "::error::EAS build did not finish successfully (status: $STATUS). Response: $BUILD_JSON"
             exit 1
           fi
 
@@ -344,31 +344,31 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli@18.13.0 --ignore-scripts
 
-      # Fetches the artifact URL of the most recent successful Android emulator
-      # build from EAS and downloads it. The .apk path is written to $GITHUB_ENV
-      # for later steps.
-      - name: Download latest EAS Android emulator build
+      # Submits a new Android preview build to EAS for the exact commit under
+      # test and blocks until it finishes (eas build waits by default). This
+      # guarantees the binary under test matches this PR's code, instead of
+      # trusting whatever build happened to be "latest finished" on EAS.
+      - name: Build Android app on EAS
         working-directory: mobile
         env:
           EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           mkdir -p e2e/artifacts
 
-          if ! EAS_OUTPUT=$(eas build:list \
+          if ! BUILD_JSON=$(eas build \
             --platform android \
             --profile preview \
-            --status finished \
-            --limit 1 \
-            --json \
-            --non-interactive); then
-            echo "::error::eas build:list failed (EXPO_TOKEN may be missing or invalid)"
+            --non-interactive \
+            --json); then
+            echo "::error::EAS build failed or did not finish successfully."
             exit 1
           fi
 
-          BUILD_URL=$(echo "$EAS_OUTPUT" | jq -r '.[0].artifacts.buildUrl')
+          STATUS=$(echo "$BUILD_JSON" | jq -r '.[0].status')
+          BUILD_URL=$(echo "$BUILD_JSON" | jq -r '.[0].artifacts.buildUrl // empty')
 
-          if [ -z "$BUILD_URL" ] || [ "$BUILD_URL" = "null" ]; then
-            echo "::error::No finished Android emulator build found on EAS. Trigger one with: npm run build:android"
+          if [ "$STATUS" != "FINISHED" ] || [ -z "$BUILD_URL" ]; then
+            echo "::error::EAS build did not finish successfully (status: $STATUS). Response: $BUILD_JSON"
             exit 1
           fi
 
