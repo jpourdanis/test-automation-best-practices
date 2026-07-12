@@ -1,0 +1,83 @@
+2026-07-12 02:12:36 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:12:36 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:12:36 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:12:36 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:12:36 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should gracefully handle a color not found in the database: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-07-12 02:12:36 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-07-12 02:12:36 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-07-12 02:12:36 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-07-12 02:12:36 - info: Accessibility testing for this test case has ended.
+2026-07-12 02:12:37 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-12 02:12:37 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:12:37 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:12:37 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:12:37 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-12 02:12:37 - info: [PlaywrightDriverModule] testId: 3519c5209bc58d4ab510-e70d8a3b16f58f9ca829
+2026-07-12 02:12:37 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '88aec62d-c312-45ec-bbaf-72d3a7c08314',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '88aec62d-c312-45ec-bbaf-72d3a7c08314',
+  test_result: 'pending',
+  automate_session_name: 'Network Mocking & Interception - should gracefully handle a color not found in the database',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/network-mocking.spec.ts',
+  test_id: '3519c5209bc58d4ab510-e70d8a3b16f58f9ca829',
+  test_name: 'should gracefully handle a color not found in the database',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/network-mocking.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Verify that the UI handles a 404 gracefully without changing the background\n' +
+    "    await page.route('**/api/colors', async route => {\n" +
+    '      await route.fulfill({\n' +
+    '        status: 200,\n' +
+    "        contentType: 'application/json',\n" +
+    '        body: JSON.stringify([{\n' +
+    "          name: 'Turquoise',\n" +
+    "          hex: '#1abc9c'\n" +
+    '        }, {\n' +
+    "          name: 'Red',\n" +
+    "          hex: '#e74c3c'\n" +
+    '        }])\n' +
+    '      });\n' +
+    '    });\n' +
+    '\n' +
+    "    // Intercept the request for 'Red' and simulate a 404 Not Found response\n" +
+    "    await page.route('**/api/colors/Red', async route => {\n" +
+    '      await route.fulfill({\n' +
+    '        status: 404,\n' +
+    "        contentType: 'application/json',\n" +
+    '        body: JSON.stringify({\n' +
+    "          error: 'Color not found'\n" +
+    '        })\n' +
+    '      });\n' +
+    '    });\n' +
+    '    await homePage.goto();\n' +
+    '\n' +
+    '    // The background should initially be the first color (Turquoise: #1abc9c / rgb(26, 188, 156))\n' +
+    "    await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)');\n" +
+    '\n' +
+    "    // Attempt to click the 'Red' button, which will trigger the 404\n" +
+    "    const redBtn = page.getByRole('button', {\n" +
+    '      name: `${_shared.enTranslations.changeColor} ${_shared.enTranslations.colors.red}`,\n' +
+    '      exact: true\n' +
+    '    });\n' +
+    '    await redBtn.click();\n' +
+    '\n' +
+    '    // The background color should not have changed, since the fetch failed\n' +
+    "    await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', 'rgb(26, 188, 156)');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-12T02:12:36.351Z',
+  test_scope: 'Network Mocking & Interception - should gracefully handle a color not found in the database',
+  test_scopes: [ 'Network Mocking & Interception' ],
+  test_rerun_name: ' bs-chrome-win11 tests/network-mocking.spec.ts Network Mocking & Interception should gracefully handle a color not found in the database'
+}
+2026-07-12 02:12:37 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:12:37 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:12:37 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

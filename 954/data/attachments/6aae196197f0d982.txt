@@ -1,0 +1,46 @@
+2026-07-12 02:12:57 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:12:57 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:12:57 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:12:57 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:12:57 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] first color chip is active on load (aria-pressed=true): 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-07-12 02:12:58 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-12 02:12:58 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-12 02:12:58 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:12:58 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:12:58 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:12:58 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-12 02:12:58 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-593f783c1ccbda55df15
+2026-07-12 02:12:58 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'f548cc5f-9978-409e-b52a-ee473c023892',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'f548cc5f-9978-409e-b52a-ee473c023892',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - first color chip is active on load (aria-pressed=true)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-593f783c1ccbda55df15',
+  test_name: 'first color chip is active on load (aria-pressed=true)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    "    const firstBtn = page.getByRole('button', {\n" +
+    "      name: 'Change background to Turquoise',\n" +
+    '      exact: true\n' +
+    '    });\n' +
+    "    await (0, _baseFixtures.expect)(firstBtn).toHaveAttribute('aria-pressed', 'true');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-12T02:12:57.339Z',
+  test_scope: 'Color Management — Add & Delete - first color chip is active on load (aria-pressed=true)',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-firefox-win11 tests/color-management.spec.ts Color Management — Add & Delete first color chip is active on load (aria-pressed=true)'
+}
+2026-07-12 02:12:58 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:12:58 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

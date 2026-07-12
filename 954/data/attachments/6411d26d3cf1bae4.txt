@@ -1,0 +1,44 @@
+2026-07-12 02:13:03 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:13:03 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:13:03 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:13:03 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:13:03 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] shows client-side validation error for invalid name chars: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-07-12 02:13:04 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-12 02:13:04 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-12 02:13:04 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:13:04 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:13:04 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:13:04 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-12 02:13:04 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-bea61b0cdf301d11c316
+2026-07-12 02:13:04 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'e56c2b82-35ce-402f-9dc4-45251af60d72',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'e56c2b82-35ce-402f-9dc4-45251af60d72',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - shows client-side validation error for invalid name chars',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-bea61b0cdf301d11c316',
+  test_name: 'shows client-side validation error for invalid name chars',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    "    await homePage.pickerNameInput.fill('!!!invalid');\n" +
+    '    await homePage.pickerSubmitBtn.click();\n' +
+    "    await (0, _baseFixtures.expect)(homePage.pickerCard.getByText('Letters, numbers, spaces, + only')).toBeVisible();\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-12T02:13:03.267Z',
+  test_scope: 'Color Management — Add & Delete - shows client-side validation error for invalid name chars',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-firefox-win11 tests/color-management.spec.ts Color Management — Add & Delete shows client-side validation error for invalid name chars'
+}
+2026-07-12 02:13:04 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:13:04 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

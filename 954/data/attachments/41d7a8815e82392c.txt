@@ -1,0 +1,48 @@
+2026-07-12 02:16:15 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:16:15 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:16:15 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:16:15 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:16:15 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Red
+2026-07-12 02:16:16 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-07-12 02:16:16 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-07-12 02:16:16 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-07-12 02:16:16 - info: Accessibility testing for this test case has ended.
+2026-07-12 02:16:16 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-12 02:16:16 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:16:16 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:16:16 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:16:16 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-12 02:16:16 - info: [PlaywrightDriverModule] testId: 5eba12ddea46f1af336f-163fa91440931643903f
+2026-07-12 02:16:16 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '46a2aa7c-9617-4a45-8e86-abab11799dea',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '46a2aa7c-9617-4a45-8e86-abab11799dea',
+  test_result: 'pending',
+  automate_session_name: 'POM Refactored: Background color tests - verify Red ( #e74c3c ) is applied as the background color',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/pom-refactored.spec.ts',
+  test_id: '5eba12ddea46f1af336f-163fa91440931643903f',
+  test_name: 'verify Red ( #e74c3c ) is applied as the background color',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/pom-refactored.spec.ts',
+  test_code: 'async ({\n' +
+    '      homePage\n' +
+    '    }) => {\n' +
+    '      await homePage.clickColorButton(color.name);\n' +
+    '      await (0, _baseFixtures.expect)(homePage.currentColorText).toContainText(color.hex);\n' +
+    '      const rgb = (0, _helper.convertHexToRGB)(`#${color.hex}`);\n' +
+    "      await (0, _baseFixtures.expect)(homePage.header).toHaveCSS('background-color', `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`);\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-12T02:16:15.242Z',
+  test_scope: 'POM Refactored: Background color tests - verify Red ( #e74c3c ) is applied as the background color',
+  test_scopes: [ 'POM Refactored: Background color tests' ],
+  test_rerun_name: ' bs-pixel-7 tests/pom-refactored.spec.ts POM Refactored: Background color tests verify Red ( #e74c3c ) is applied as the background color'
+}
+2026-07-12 02:16:16 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:16:16 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:16:16 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

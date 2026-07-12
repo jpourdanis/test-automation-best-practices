@@ -1,0 +1,47 @@
+2026-07-12 02:15:19 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:15:20 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:15:20 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:15:20 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:15:20 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] handle initial fetch with empty data: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-07-12 02:15:20 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-12 02:15:21 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-12 02:15:21 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:15:21 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:15:21 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:15:21 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-12 02:15:21 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-e67f6d8462bd167a1def
+2026-07-12 02:15:21 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'bcc244bb-06fa-4152-aeb3-dd4f723bf662',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'bcc244bb-06fa-4152-aeb3-dd4f723bf662',
+  test_result: 'pending',
+  automate_session_name: 'Edge cases and error handling - handle initial fetch with empty data',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_id: '3300dcb2e635619af3f7-e67f6d8462bd167a1def',
+  test_name: 'handle initial fetch with empty data',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_code: 'async ({\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Mock empty array response\n' +
+    "    await page.route('/api/colors', route => route.fulfill({\n" +
+    '      status: 200,\n' +
+    "      contentType: 'application/json',\n" +
+    '      body: JSON.stringify([])\n' +
+    '    }));\n' +
+    "    await page.goto('/');\n" +
+    "    await (0, _baseFixtures.expect)(page.locator('text=Loading colors...')).toBeVisible();\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-12T02:15:19.755Z',
+  test_scope: 'Edge cases and error handling - handle initial fetch with empty data',
+  test_scopes: [ 'Edge cases and error handling' ],
+  test_rerun_name: ' bs-safari-ventura tests/coverage.spec.ts Edge cases and error handling handle initial fetch with empty data'
+}
+2026-07-12 02:15:21 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:15:21 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

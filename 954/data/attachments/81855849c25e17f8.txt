@@ -1,0 +1,36 @@
+2026-07-12 02:12:42 - error: Error while getting test UUID for f5433c5fd4a2092d439d-bc9f9bc4e783fd2cf3aa-0: Unexpected end of JSON input
+2026-07-12 02:12:42 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-12 02:12:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-12 02:12:42 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:12:42 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:12:42 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-12 02:12:42 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-bc9f9bc4e783fd2cf3aa
+2026-07-12 02:12:42 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'be2d2b86-1879-4ee7-ab1a-656bcb97796a',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'be2d2b86-1879-4ee7-ab1a-656bcb97796a',
+  test_result: 'pending',
+  automate_session_name: 'HTTP Method Restrictions - DELETE /api/colors (collection) returns 405',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-bc9f9bc4e783fd2cf3aa',
+  test_name: 'DELETE /api/colors (collection) returns 405',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.delete('/api/colors');\n" +
+    '      (0, _test.expect)(res.status()).toBe(405);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-12T02:12:42.824Z',
+  test_scope: 'HTTP Method Restrictions - DELETE /api/colors (collection) returns 405',
+  test_scopes: [ 'Security', 'HTTP Method Restrictions' ],
+  test_rerun_name: ' bs-chrome-win11 tests/security.spec.ts Security HTTP Method Restrictions DELETE /api/colors (collection) returns 405'
+}
+2026-07-12 02:12:42 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-12 02:12:42 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-12 02:12:42 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
