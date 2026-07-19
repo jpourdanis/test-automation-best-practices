@@ -1,0 +1,47 @@
+2026-07-19 02:14:27 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:14:27 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:14:27 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:14:27 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:14:27 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] verify language switcher changes document language: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-07-19 02:14:29 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-19 02:14:29 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-19 02:14:29 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:14:29 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:14:29 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:14:29 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-19 02:14:29 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-45cecbdad2e3669e4878
+2026-07-19 02:14:29 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '3080c847-de43-4db7-ac66-18137f2bad90',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '3080c847-de43-4db7-ac66-18137f2bad90',
+  test_result: 'pending',
+  automate_session_name: 'tests/coverage.spec.ts - verify language switcher changes document language',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_id: '3300dcb2e635619af3f7-45cecbdad2e3669e4878',
+  test_name: 'verify language switcher changes document language',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_code: 'async ({\n' +
+    '  page\n' +
+    '}) => {\n' +
+    '  // Select Spanish\n' +
+    "  await page.selectOption('select', 'es');\n" +
+    "  await (0, _baseFixtures.expect)(page.locator('html')).toHaveAttribute('lang', 'es');\n" +
+    '\n' +
+    '  // Select Greek\n' +
+    "  await page.selectOption('select', 'el');\n" +
+    "  await (0, _baseFixtures.expect)(page.locator('html')).toHaveAttribute('lang', 'el');\n" +
+    '}',
+  test_tags: [],
+  test_started_at: '2026-07-19T02:14:27.542Z',
+  test_scope: 'tests/coverage.spec.ts - verify language switcher changes document language',
+  test_scopes: [],
+  test_rerun_name: ' bs-safari-ventura tests/coverage.spec.ts verify language switcher changes document language'
+}
+2026-07-19 02:14:29 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:14:29 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:14:29 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

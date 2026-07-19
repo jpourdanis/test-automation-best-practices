@@ -1,0 +1,38 @@
+2026-07-19 02:15:05 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-19 02:15:05 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:15:05 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:15:05 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:15:05 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-19 02:15:05 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-bab574a54588ba9030d0
+2026-07-19 02:15:05 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'ff3ba454-cf19-496b-9fde-0958f6810475',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'ff3ba454-cf19-496b-9fde-0958f6810475',
+  test_result: 'pending',
+  automate_session_name: 'Backend API Integration - GET /api/colors should return colors sorted alphabetically by name',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-bab574a54588ba9030d0',
+  test_name: 'GET /api/colors should return colors sorted alphabetically by name',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_code: 'async ({\n' +
+    '    request\n' +
+    '  }) => {\n' +
+    "    const response = await request.get('/api/colors');\n" +
+    '    (0, _test.expect)(response.status()).toBe(200);\n' +
+    '    const data = await response.json();\n' +
+    '    const names = data.map(c => c.name);\n' +
+    '    (0, _test.expect)(names).toEqual([...names].sort((a, b) => a.localeCompare(b)));\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-19T02:15:05.528Z',
+  test_scope: 'Backend API Integration - GET /api/colors should return colors sorted alphabetically by name',
+  test_scopes: [ 'Backend API Integration' ],
+  test_rerun_name: ' bs-pixel-7 tests/api.spec.ts Backend API Integration GET /api/colors should return colors sorted alphabetically by name'
+}
+2026-07-19 02:15:05 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:15:05 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:15:05 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

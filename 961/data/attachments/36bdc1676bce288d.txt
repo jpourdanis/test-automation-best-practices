@@ -1,0 +1,58 @@
+2026-07-19 02:14:17 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:14:17 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:14:17 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:14:17 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:14:17 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] delete API error shows alert banner: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-07-19 02:14:24 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-19 02:14:25 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-19 02:14:25 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:14:25 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:14:25 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:14:25 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-19 02:14:25 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-32917a3b7b7b0203e0df
+2026-07-19 02:14:25 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'eb25df57-b9a5-4d7e-8168-133c96399c7f',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'eb25df57-b9a5-4d7e-8168-133c96399c7f',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - delete API error shows alert banner',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-32917a3b7b7b0203e0df',
+  test_name: 'delete API error shows alert banner',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    "    await page.route('**/api/colors/Red', async route => {\n" +
+    "      if (route.request().method() === 'DELETE') {\n" +
+    '        await route.fulfill({\n' +
+    '          status: 500,\n' +
+    "          contentType: 'application/json',\n" +
+    '          body: JSON.stringify({\n' +
+    "            error: 'DB error'\n" +
+    '          })\n' +
+    '        });\n' +
+    '      } else {\n' +
+    '        await route.continue();\n' +
+    '      }\n' +
+    '    });\n' +
+    '    await homePage.goto();\n' +
+    "    await homePage.clickDeleteChip('Red');\n" +
+    '    await homePage.confirmDeleteBtn.click();\n' +
+    "    await (0, _baseFixtures.expect)(page.getByRole('alert')).toContainText('DB error');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-19T02:14:17.324Z',
+  test_scope: 'Color Management — Add & Delete - delete API error shows alert banner',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-safari-ventura tests/color-management.spec.ts Color Management — Add & Delete delete API error shows alert banner'
+}
+2026-07-19 02:14:25 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:14:25 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:14:25 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

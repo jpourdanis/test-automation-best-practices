@@ -1,0 +1,42 @@
+2026-07-19 02:15:53 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-19 02:15:53 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:15:53 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:15:53 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:15:53 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-19 02:15:53 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-ba4a8113b0f58941c06c
+2026-07-19 02:15:53 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'fcdb2fd8-0e89-40ff-be12-2e6e132ef9b6',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'fcdb2fd8-0e89-40ff-be12-2e6e132ef9b6',
+  test_result: 'pending',
+  automate_session_name: 'POST /api/colors Schema Validation - should reject invalid hex format',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-ba4a8113b0f58941c06c',
+  test_name: 'should reject invalid hex format',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const response = await request.post(`/api/colors`, {\n' +
+    '        data: {\n' +
+    "          name: 'Orange',\n" +
+    "          hex: 'ffa500'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(response.status()).toBe(400);\n' +
+    '      const data = await response.json();\n' +
+    "      (0, _test.expect)(data.error).toContain('hex must be a valid 6-digit hex format');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-19T02:15:53.618Z',
+  test_scope: 'POST /api/colors Schema Validation - should reject invalid hex format',
+  test_scopes: [ 'Backend API Integration', 'POST /api/colors Schema Validation' ],
+  test_rerun_name: ' bs-iphone-15 tests/api.spec.ts Backend API Integration POST /api/colors Schema Validation should reject invalid hex format'
+}
+2026-07-19 02:15:53 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:15:53 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:15:53 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

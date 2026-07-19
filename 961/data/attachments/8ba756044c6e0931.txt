@@ -1,0 +1,42 @@
+2026-07-19 02:11:51 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-19 02:11:51 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:11:51 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:11:51 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:11:51 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-19 02:11:51 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-f3b0c7624677835f713f
+2026-07-19 02:11:51 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'b40a4931-9947-40da-ad8c-1246d8603e21',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'b40a4931-9947-40da-ad8c-1246d8603e21',
+  test_result: 'pending',
+  automate_session_name: 'Input Validation - unknown extra fields in POST body are rejected (400)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-f3b0c7624677835f713f',
+  test_name: 'unknown extra fields in POST body are rejected (400)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      // Zod .strict() rejects any key not in the schema\n' +
+    "      const res = await request.post('/api/colors', {\n" +
+    '        data: {\n' +
+    "          name: 'Purple',\n" +
+    "          hex: '#800080',\n" +
+    "          injected: 'payload'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(res.status()).toBe(400);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-19T02:11:51.640Z',
+  test_scope: 'Input Validation - unknown extra fields in POST body are rejected (400)',
+  test_scopes: [ 'Security', 'Input Validation' ],
+  test_rerun_name: ' bs-chrome-win11 tests/security.spec.ts Security Input Validation unknown extra fields in POST body are rejected (400)'
+}
+2026-07-19 02:11:51 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:11:51 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:11:51 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

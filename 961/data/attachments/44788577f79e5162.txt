@@ -1,0 +1,2 @@
+[NETWORK INFO] mobile color picker workflow: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] mobile color picker workflow: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Red

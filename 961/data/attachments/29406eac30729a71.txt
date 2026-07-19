@@ -1,0 +1,64 @@
+2026-07-19 02:12:15 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:12:16 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:12:16 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:12:16 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:12:16 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] shows 409 duplicate error from server inside the picker: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-07-19 02:12:17 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-19 02:12:17 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-19 02:12:17 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:12:17 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:12:17 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:12:17 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-19 02:12:17 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-eeb0fb0b0d5238702482
+2026-07-19 02:12:17 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '6b1405dc-f95a-4fc3-a569-c195cbccea1f',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '6b1405dc-f95a-4fc3-a569-c195cbccea1f',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - shows 409 duplicate error from server inside the picker',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-eeb0fb0b0d5238702482',
+  test_name: 'shows 409 duplicate error from server inside the picker',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    "    await page.route('**/api/colors', async route => {\n" +
+    "      if (route.request().method() === 'POST') {\n" +
+    '        await route.fulfill({\n' +
+    '          status: 409,\n' +
+    "          contentType: 'application/json',\n" +
+    '          body: JSON.stringify({\n' +
+    `            error: 'Color "Unique" already exists'\n` +
+    '          })\n' +
+    '        });\n' +
+    '      } else {\n' +
+    '        await route.fulfill({\n' +
+    '          status: 200,\n' +
+    "          contentType: 'application/json',\n" +
+    '          body: JSON.stringify(INITIAL_COLORS)\n' +
+    '        });\n' +
+    '      }\n' +
+    '    });\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    "    await homePage.pickerNameInput.fill('Unique');\n" +
+    '    await homePage.pickerSubmitBtn.click();\n' +
+    `    await (0, _baseFixtures.expect)(homePage.pickerCard.getByRole('alert')).toContainText('Color "Unique" already exists');\n` +
+    '    // picker stays open so the user can correct the name\n' +
+    '    await (0, _baseFixtures.expect)(homePage.pickerCard).toBeVisible();\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-19T02:12:15.791Z',
+  test_scope: 'Color Management — Add & Delete - shows 409 duplicate error from server inside the picker',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-firefox-win11 tests/color-management.spec.ts Color Management — Add & Delete shows 409 duplicate error from server inside the picker'
+}
+2026-07-19 02:12:17 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:12:17 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

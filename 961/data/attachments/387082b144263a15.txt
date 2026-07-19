@@ -1,0 +1,48 @@
+2026-07-19 02:13:24 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:13:25 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:13:25 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:13:25 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:13:25 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] close (×) button closes the picker: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-07-19 02:13:34 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-19 02:13:35 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-19 02:13:35 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:13:35 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:13:35 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:13:35 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-19 02:13:35 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-d9abfacaecc82c5037d0
+2026-07-19 02:13:35 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '017893a8-2994-4312-908e-a55cd7f88c8d',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '017893a8-2994-4312-908e-a55cd7f88c8d',
+  test_result: 'pending',
+  automate_session_name: 'Color Management — Add & Delete - close (×) button closes the picker',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_id: '4efad2053de5fe3c73f7-d9abfacaecc82c5037d0',
+  test_name: 'close (×) button closes the picker',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/color-management.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    await homePage.goto();\n' +
+    '    await homePage.openColorPicker();\n' +
+    "    await page.getByRole('button', {\n" +
+    "      name: 'Close',\n" +
+    '      exact: true\n' +
+    '    }).click();\n' +
+    '    await (0, _baseFixtures.expect)(homePage.pickerCard).not.toBeVisible();\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-07-19T02:13:24.730Z',
+  test_scope: 'Color Management — Add & Delete - close (×) button closes the picker',
+  test_scopes: [ 'Color Management — Add & Delete' ],
+  test_rerun_name: ' bs-safari-ventura tests/color-management.spec.ts Color Management — Add & Delete close (×) button closes the picker'
+}
+2026-07-19 02:13:35 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:13:35 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:13:35 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

@@ -1,0 +1,46 @@
+2026-07-19 02:12:37 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:12:38 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:12:38 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:12:38 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:12:38 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-19 02:12:39 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-07-19 02:12:39 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-07-19 02:12:39 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-07-19 02:12:39 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:12:39 - info: [GrpcClient] TestSessionEvent request successful
+2026-07-19 02:12:39 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-07-19 02:12:39 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-450aa84d106c95daff92
+2026-07-19 02:12:39 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: 'c3ab9a5e-f736-4dc7-98e2-ca715fc5d3b2',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.60.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'c3ab9a5e-f736-4dc7-98e2-ca715fc5d3b2',
+  test_result: 'pending',
+  automate_session_name: 'XSS Prevention - color names rendered in the UI do not trigger script execution',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-450aa84d106c95daff92',
+  test_name: 'color names rendered in the UI do not trigger script execution',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      page\n' +
+    '    }) => {\n' +
+    '      // Navigate to the live app and confirm no dialog fires from rendered content\n' +
+    '      let alerted = false;\n' +
+    "      page.on('dialog', () => {\n" +
+    '        alerted = true;\n' +
+    '      });\n' +
+    "      await page.goto('/');\n" +
+    '      await page.waitForTimeout(1000);\n' +
+    '      (0, _test.expect)(alerted).toBe(false);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-07-19T02:12:37.904Z',
+  test_scope: 'XSS Prevention - color names rendered in the UI do not trigger script execution',
+  test_scopes: [ 'Security', 'XSS Prevention' ],
+  test_rerun_name: ' bs-firefox-win11 tests/security.spec.ts Security XSS Prevention color names rendered in the UI do not trigger script execution'
+}
+2026-07-19 02:12:39 - info: [GrpcClient] Sending TestSessionEvent
+2026-07-19 02:12:39 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
