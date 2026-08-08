@@ -1,85 +1,207 @@
-name: Gemini AI Pipeline Investigator
+name: Codex AI Pipeline Fixer
 
 on:
   pull_request:
     types: [labeled]
 
+# This workflow intentionally runs only when a repository collaborator labels
+# a same-repository PR with AI-Fix. Do not expose the OpenAI secret to fork PRs.
 permissions:
   contents: write
   pull-requests: write
-  actions: read # Required to download the failed logs
+  actions: read
+
+concurrency:
+  group: codex-ai-fix-pr-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
 
 jobs:
   investigate-and-fix:
-    if: contains(github.event.pull_request.labels.*.name, 'AI-Fix')
+    if: >-
+      github.event.label.name == 'AI-Fix' &&
+      github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v6
+      - name: Mark AI fix as running
+        uses: actions/github-script@v7
         with:
-          fetch-depth: 0 # Fetch all history so Gemini can understand the codebase
+          github-token: ${{ github.token }}
+          script: |
+            await github.rest.issues.addLabels({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              labels: ['ai-fix-running']
+            });
+
+      - name: Checkout PR branch
+        uses: actions/checkout@v5
+        with:
           ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
 
       - name: Setup Node Environment
         uses: ./.github/actions/setup-node-env
 
-      - name: Install Gemini CLI
-        run: npm install --ignore-scripts -g @google/gemini-cli
-
-      - name: Fetch Failed Pipeline Logs
+      - name: Fetch PR base and failure logs
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
         run: |
-          # Find the failed CI run for this PR's HEAD commit
-          RUN_ID=$(gh run list --commit ${{ github.event.pull_request.head.sha }} --workflow "CI" --status failure --json databaseId -q '.[0].databaseId')
+          set -euo pipefail
 
-          if [ -z "$RUN_ID" ] || [ "$RUN_ID" == "null" ]; then
-            echo "Error: Could not find a failed CI run for this PR."
-            echo "Placeholder: Log extraction failed or no logs were found." > failed_logs.txt
+          git fetch --no-tags origin "$BASE_SHA" "$HEAD_SHA"
+
+          RUN_ID=$(gh run list \
+            --commit "$HEAD_SHA" \
+            --json databaseId,workflowName,status,conclusion,createdAt \
+            --limit 20 \
+            -q '[.[] | select(.conclusion == "failure") | .databaseId] | .[0] // empty')
+
+          if [ -n "$RUN_ID" ]; then
+            echo "Using failed workflow run: $RUN_ID"
+            gh run view "$RUN_ID" --log-failed > failed_logs.txt || true
           else
-            if ! gh run view $RUN_ID --log-failed > failed_logs.txt; then
-              echo "Error: gh run view failed to extract logs for run $RUN_ID"
-              echo "Placeholder: Log extraction failed or no logs were found." > failed_logs.txt
-            fi
+            echo "No failed workflow run was found for $HEAD_SHA."
+            echo "Inspect the PR checks and repository state to determine the failure." > failed_logs.txt
           fi
 
-          # Optional: truncate if logs are massively huge (over 100k lines)
-          if [ -s failed_logs.txt ]; then
-            tail -n 500 failed_logs.txt > failed_logs_trimmed.txt
-          else
-            echo "Placeholder: failed_logs.txt is empty or does not exist." > failed_logs_trimmed.txt
-          fi
+          # Keep the prompt bounded while retaining the end of the logs where
+          # the most actionable failure is normally reported.
+          tail -n 1200 failed_logs.txt > failed_logs_trimmed.txt
 
-      - name: Analyze Logs and Generate Fix
-        env:
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-        run: |
-          LOGS=$(cat failed_logs_trimmed.txt)
+          cat > codex-pr-fix-prompt.md <<EOF
+          You are the senior engineer responsible for fixing GitHub PR #${PR_NUMBER}.
 
-          echo "Asking Gemini to investigate the pipeline failure..."
+          Repository: ${GITHUB_REPOSITORY}
+          PR head: ${HEAD_SHA}
+          PR base: ${BASE_SHA}
 
-          # Sleep to prevent hitting 5-requests-per-minute rate limits too quickly
-          sleep 60
+          The PR was explicitly labeled AI-Fix by a repository collaborator.
+          Your job is to investigate the CI failure, identify the ROOT CAUSE, and
+          make the smallest safe fix directly in the current PR branch.
 
-          # Run the Gemini CLI Agent to analyze the logs and edit the local files
-          gemini -y --prompt "The GitHub Actions CI pipeline just failed. Here are the logs: $LOGS. Analyze the issue and modify the files locally. Only make targeted fixes related to the error, do not launch open-ended extensive searches."
+          IMPORTANT RULES:
+          1. Work ONLY on the current PR branch. Do not create another branch or PR.
+          2. Do not modify tests merely to hide or weaken a failure.
+          3. Do not make unrelated refactors, dependency upgrades, formatting sweeps,
+             or architectural changes.
+          4. Prefer fixing the underlying cause over changing assertions/selectors.
+          5. Inspect the PR diff against the base commit before changing code.
+          6. Treat failed_logs_trimmed.txt as evidence, not as unquestionable truth.
+             Trace the first meaningful failure and ignore cascading errors.
+          7. Use the repository's existing conventions and AGENTS.md instructions if present.
+          8. Run the most relevant available tests/checks after the fix.
+          9. If the failure cannot be reproduced because a required external service,
+             emulator, simulator, secret, or network resource is unavailable, do not
+             invent a fix. Make only evidence-backed changes and explain the limitation.
+          10. Do not commit generated artifacts, credentials, logs, or temporary files.
 
-      - name: Create Pull Request with the AI Fix
-        uses: peter-evans/create-pull-request@v8
+          FAILURE LOGS:
+          Read failed_logs_trimmed.txt in the repository root.
+
+          PR DIFF:
+          Compare ${BASE_SHA}...${HEAD_SHA} and focus on files changed by this PR.
+
+          FINAL RESPONSE:
+          Report:
+          - root cause
+          - files changed and why
+          - tests/checks executed and their results
+          - anything that could not be verified
+          - whether the fix is ready for the PR CI to rerun
+          EOF
+
+      - name: Run Codex
+        id: codex
+        uses: openai/codex-action@v1
         with:
-          token: ${{ secrets.GH_PAT_WORKFLOWS }}
-          commit-message: "fix: resolve pipeline failure for PR #${{ github.event.pull_request.number }}"
-          title: "🚨 AI Fix: Resolved Pipeline Failure in PR #${{ github.event.pull_request.number }}"
-          body: |
-            ### 🤖 Gemini AI Pipeline Investigator
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          permission-profile: ":workspace"
+          effort: high
+          output-file: codex-result.md
+          prompt-file: codex-pr-fix-prompt.md
 
-            This Pull Request was automatically generated because the pipeline failed on PR #${{ github.event.pull_request.number }}.
+      - name: Remove temporary AI files
+        if: always()
+        run: |
+          rm -f failed_logs.txt failed_logs_trimmed.txt codex-pr-fix-prompt.md codex-result.md
 
-            **Gemini Pro** analyzed the failed logs, found the root cause in the codebase, and generated this patch. 
+      - name: Commit and push fix to the existing PR
+        id: push-fix
+        env:
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          set -euo pipefail
 
-            **Next Steps:**
-            1. Review the code changes.
-            2. Check if the newly triggered CI passes on this branch.
-            3. Approve and merge if the fix looks good!
-          branch: "gemini-fix/pipeline-failure-pr-${{ github.event.pull_request.number }}"
-          base: ${{ github.event.pull_request.head.ref }}
+          if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Codex did not make any repository changes."
+            exit 0
+          fi
+
+          git status --short
+          git config user.name "codex[bot]"
+          git config user.email "codex[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "fix: resolve pipeline failure for PR #${PR_NUMBER}"
+          git push origin "HEAD:${PR_BRANCH}"
+          echo "changed=true" >> "$GITHUB_OUTPUT"
+
+      - name: Comment on the PR
+        if: always()
+        uses: actions/github-script@v7
+        env:
+          CODEX_RESULT: ${{ steps.codex.outputs.final-message }}
+          CHANGED: ${{ steps.push-fix.outputs.changed }}
+          CODEx_OUTCOME: ${{ steps.codex.outcome }}
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const result = process.env.CODEX_RESULT || 'Codex did not return a final report.';
+            const changed = process.env.CHANGED === 'true';
+            const outcome = process.env.CODEx_OUTCOME;
+
+            const body = [
+              '## 🤖 Codex AI Pipeline Fixer',
+              '',
+              outcome === 'success'
+                ? (changed
+                    ? 'Codex investigated the failure and pushed a targeted fix directly to this PR branch.'
+                    : 'Codex investigated the failure but did not make repository changes.')
+                : 'Codex did not complete successfully. No automatic fix should be assumed.',
+              '',
+              result
+            ].join('\n');
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.payload.pull_request.number,
+              body
+            });
+
+      - name: Mark AI fix as completed
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ github.token }}
+          script: |
+            const labels = ['ai-fix-running'];
+            for (const label of labels) {
+              try {
+                await github.rest.issues.removeLabel({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  issue_number: context.payload.pull_request.number,
+                  name: label
+                });
+              } catch (error) {
+                if (error.status !== 404) throw error;
+              }
+            }
