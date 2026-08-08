@@ -8,11 +8,11 @@
     "server"
   ],
   "overrides": {
-    "undici": "^6.27.0",
+    "undici": "^6.28.0",
     "form-data": "^4.0.6",
-    "shell-quote": "^1.8.4",
+    "shell-quote": "^1.9.0",
     "nth-check": "^2.1.1",
-    "postcss": "^8.4.31",
+    "postcss": "^8.5.23",
     "serialize-javascript": "^7.0.5",
     "@tootallnate/once": "^3.0.1",
     "picomatch": "^2.3.2",
@@ -27,15 +27,35 @@
     "webpack": "^5.94.0",
     "webpack-dev-server": "^5.2.4",
     "ws": "^8.20.1",
-    "ip-address": "^10.1.1",
+    "ip-address": "^10.3.1",
     "uuid": "^11.1.1",
     "lodash": "^4.18.1",
     "lodash-es": "^4.18.1",
     "node-forge": "^1.3.0",
-    "js-yaml": "^4.1.1",
-    "axios": ">=1.15.2",
+    "js-yaml": "^4.3.1",
+    "axios": ">=1.18.1",
     "underscore": "^1.13.8",
-    "tmp": "^0.2.6"
+    "tmp": "^0.2.6",
+    "fast-uri": "^3.1.5",
+    "brace-expansion": "^5.0.9",
+    "websocket-driver": "^0.7.5",
+    "nanoid": "^3.3.17",
+    "tar": "^7.5.21",
+    "tsup": {
+      "esbuild": "^0.28.1"
+    },
+    "minimatch@^3": {
+      "brace-expansion": "^1.1.18"
+    },
+    "minimatch@^5": {
+      "brace-expansion": "^2.1.4"
+    },
+    "minimatch@^9": {
+      "brace-expansion": "^2.1.4"
+    },
+    "minimatch@^10": {
+      "brace-expansion": "^2.1.4"
+    }
   },
   "dependencies": {
     "@color-app/shared": "*",
@@ -128,8 +148,8 @@
     ]
   },
   "optionalDependencies": {
-    "@esbuild/linux-arm64": "0.28.0",
-    "@esbuild/linux-x64": "0.27.7",
+    "@esbuild/linux-arm64": "0.28.1",
+    "@esbuild/linux-x64": "0.28.1",
     "@rollup/rollup-linux-arm64-musl": "4.61.0",
     "@rollup/rollup-linux-x64-gnu": "4.60.2",
     "@rollup/rollup-linux-x64-musl": "4.60.2"
@@ -154,7 +174,7 @@
     "@xmldom/xmldom": "^0.8.13",
     "allure-playwright": "^3.6.0",
     "browserstack-node-sdk": "^1.55.4",
-    "esbuild": "~0.28.0",
+    "esbuild": "~0.28.1",
     "http-proxy-middleware": "^3.0.7",
     "husky": "^9.1.7",
     "jest-junit": "^17.0.0",
@@ -164,7 +184,7 @@
     "playwright-lighthouse": "^4.0.0",
     "react-refresh": "~0.14.0",
     "semantic-release": "^25.0.3",
-    "sonarqube-scanner": "^4.3.6",
+    "sonarqube-scanner": "^5.0.0",
     "zod": "^4.4.3"
   },
   "lint-staged": {
