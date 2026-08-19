@@ -249,7 +249,10 @@ jobs:
           ignore-unfixed: true
           severity: "CRITICAL,HIGH"
           # Skip npm's own bundled toolchain deps (node-gyp/undici) — not our application code
-          skip-dirs: "node_modules/npm/node_modules"
+          # Mobile has its own lockfile and its own security scan in
+          # mobile-e2e.yml (only runs when mobile/** changes), so it is
+          # excluded here rather than scanned on every unrelated PR.
+          skip-dirs: "node_modules/npm/node_modules,mobile"
           # Fail the pipeline and output as JUnit for Allure
           exit-code: "1"
           format: "template"
@@ -1171,7 +1174,7 @@ jobs:
 
       # Consolidates new and historical results into a new interactive Allure build report
       - name: Build Allure report
-        uses: simple-elf/allure-report-action@v1.14
+        uses: simple-elf/allure-report-action@v1.15
         with:
           gh_pages: gh-pages
           allure_history: allure-history

@@ -16,6 +16,62 @@ permissions:
 
 jobs:
   # ==========================================
+  # SECURITY TESTING (Mobile)
+  # Runs only when mobile/** changes (see `on.pull_request.paths` above),
+  # scoped to mobile's own package-lock.json rather than the root Trivy fs
+  # scan in ci.yml, which explicitly skips mobile for this reason.
+  # ==========================================
+  mobile-security:
+    name: Security Tests (Mobile)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: "22"
+          cache: "npm"
+          cache-dependency-path: "mobile/package-lock.json"
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm ci --ignore-scripts
+
+      - name: NPM Vulnerability Audit (Mobile)
+        working-directory: mobile
+        run: npm audit --audit-level=high
+        continue-on-error: true
+
+      - name: Create Allure results directory
+        run: mkdir -p allure-results
+
+      - name: Download Trivy JUnit template
+        run: curl -sSfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/junit.tpl -o junit.tpl
+
+      - name: Run Trivy vulnerability scanner on mobile
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25
+        with:
+          scan-type: "fs"
+          scan-ref: "mobile"
+          ignore-unfixed: true
+          severity: "CRITICAL,HIGH"
+          skip-dirs: "node_modules/npm/node_modules"
+          exit-code: "1"
+          format: "template"
+          template: "@${{ github.workspace }}/junit.tpl"
+          output: "allure-results/trivy-mobile.xml"
+
+      - name: Upload Trivy Mobile Allure Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: allure-results-security-mobile
+          path: allure-results/
+          retention-days: 1
+
+  # ==========================================
   # STATIC ANALYSIS (Mobile)
   # ==========================================
   mobile-static-analysis:
