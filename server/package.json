@@ -40,13 +40,16 @@
   "overrides": {
     "picomatch": "^4.0.4",
     "lodash": "^4.18.1",
-    "ip-address": "^10.2.0",
-    "brace-expansion": "^5.0.6",
+    "ip-address": "^10.5.0",
+    "brace-expansion": "^5.0.9",
     "protobufjs": "^7.5.6",
     "@protobufjs/utf8": "^1.1.1",
     "uuid": "^11.1.1",
     "qs": "^6.15.2",
-    "tmp": "^0.2.6"
+    "tmp": "^0.2.6",
+    "body-parser": "^2.3.0",
+    "fast-uri": "^3.1.5",
+    "js-yaml": "^4.3.1"
   },
   "standard": {
     "env": [
