@@ -28,7 +28,7 @@
     "@color-app/shared": "file:../packages/shared",
     "@react-native-community/slider": "5.0.1",
     "@react-native-picker/picker": "2.11.1",
-    "expo": "~54.0.33",
+    "expo": "~57.0.14",
     "expo-constants": "~18.0.13",
     "expo-dev-client": "~6.0.20",
     "expo-linear-gradient": "~15.0.8",
