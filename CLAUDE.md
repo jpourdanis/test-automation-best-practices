@@ -22,22 +22,6 @@ mobile/           # React Native workspace
 
 The normal dev/test flow runs everything via Docker Compose.
 
-## Context Tooling (lean-ctx)
-
-ALWAYS prefer the `ctx_*` MCP tools over native equivalents when they are listed in this
-session — this is a hard requirement, not a soft preference. Load deferred `ctx_*` tools
-via ToolSearch proactively at the start of any exploration/search/shell task rather than
-defaulting to native Read/Grep/Bash/Glob first.
-
-- `ctx_read` instead of `Read` / `cat` for exploration
-- `ctx_shell` instead of `bash` / `Shell`
-- `ctx_search` instead of `Grep` / `rg`
-- `ctx_tree` instead of `ls` / `find`
-- Edits: `ctx_read(mode="anchored")` → `ctx_patch`. `ctx_edit` (str_replace) is the legacy fallback.
-
-Native `Read` → `Edit`/`StrReplace` stays fully supported. Write, Delete, Glob — use normally.
-If no `ctx_*` tools are listed in this session, use the native tools throughout.
-
 ## Commands
 
 ### Development
