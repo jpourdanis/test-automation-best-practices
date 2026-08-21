@@ -1,0 +1,2 @@
+[NETWORK INFO] shows 409 duplicate error from server inside the picker: 200 GET https://test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] shows 409 duplicate error from server inside the picker: 204 GET https://test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app/.well-known/vercel/jwe

@@ -1,0 +1,6 @@
+[NETWORK INFO] deleting the active color switches background to the first remaining: 204 GET https://test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] deleting the active color switches background to the first remaining: 200 GET https://test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] deleting the active color switches background to the first remaining: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app&deploymentId=dpl_3uwnR4jxKnd4AZWC3xLu1P11KRxx
+[NETWORK INFO] deleting the active color switches background to the first remaining: 204 HEAD https://test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app/
+[NETWORK INFO] deleting the active color switches background to the first remaining: 200 DELETE https://test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app/api/colors/Turquoise
+[NETWORK INFO] deleting the active color switches background to the first remaining: 200 GET https://test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app/api/colors

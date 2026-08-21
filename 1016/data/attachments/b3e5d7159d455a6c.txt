@@ -1,0 +1,4 @@
+[NETWORK INFO] handle color selection fetch error: 204 GET https://test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] handle color selection fetch error: 200 GET https://test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] handle color selection fetch error: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app&deploymentId=dpl_3uwnR4jxKnd4AZWC3xLu1P11KRxx
+[NETWORK INFO] handle color selection fetch error: 204 HEAD https://test-automation-best-practices-28avbhb60-jpourdanis-projects.vercel.app/
