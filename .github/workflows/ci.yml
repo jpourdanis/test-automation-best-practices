@@ -586,7 +586,7 @@ jobs:
           config-file: schemathesis.toml
           args: --suppress-health-check=filter_too_much --phases=examples,coverage,fuzzing --report-junit-path=allure-results/schemathesis-junit.xml
           wait-for-schema: 2
-          version: latest
+          version: "4.25.0"
           coverage: true
           coverage-report: true
           coverage-report-path: schema-coverage.html
