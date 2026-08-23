@@ -1,0 +1,19 @@
+2026-08-23 01:03:37 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-08-23 01:03:37 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-08-23 01:03:37 - info: [GrpcClient] Sending TestSessionEvent
+2026-08-23 01:03:37 - info: [GrpcClient] TestSessionEvent request successful
+2026-08-23 01:03:37 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] successfully adds a new color and shows its chip: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] successfully adds a new color and shows its chip: 201 POST https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] successfully adds a new color and shows its chip: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-08-23 01:03:38 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-08-23 01:03:38 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-08-23 01:03:38 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-08-23 01:03:38 - info: Accessibility testing for this test case has ended.
+2026-08-23 01:03:38 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-08-23 01:03:38 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-08-23 01:03:38 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-7a9cf2d7bfdeabcf73fa
+2026-08-23 01:03:38 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '5ad80a66-79fd-52be-8995-1dce23996acb' }
+2026-08-23 01:03:38 - info: [GrpcClient] Sending TestSessionEvent
+2026-08-23 01:03:38 - info: [GrpcClient] TestSessionEvent request successful
+2026-08-23 01:03:38 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
