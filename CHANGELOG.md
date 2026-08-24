@@ -1,3 +1,19 @@
+## [1.0.5](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.4...v1.0.5) (2026-08-24)
+
+
+### Bug Fixes
+
+* **ci:** bump allure-report-action to v1.14 -> v1.15 to fix xargs missing error ([b904c0d](https://github.com/jpourdanis/test-automation-best-practices/commit/b904c0d2ed54752c56d2e3ddb165ba3720ede1da))
+* **ci:** pin schemathesis action version to 4.25.0 ([adfa16d](https://github.com/jpourdanis/test-automation-best-practices/commit/adfa16d820470e7531501c3e0d31baf1bd759ab0))
+* **deps:** regenerate lockfile to keep npm ci in sync ([8dff303](https://github.com/jpourdanis/test-automation-best-practices/commit/8dff3039a0e57a9f076acc5bb3d9dfbeb090aefc))
+* **docker:** stop shipping build-time npm CLI and shared-package tooling in API image ([b422bed](https://github.com/jpourdanis/test-automation-best-practices/commit/b422bedc2a7625ec9fd3a633a6b6f6427befe68c))
+* **lint:** add sigstore to cspell dictionary ([813fc8f](https://github.com/jpourdanis/test-automation-best-practices/commit/813fc8ff34877c37653eaa53ad7854075da45dbd))
+* **security:** bump brace-expansion and svgo to patched versions ([7ffad59](https://github.com/jpourdanis/test-automation-best-practices/commit/7ffad59dd78baa9e94d3345bee83ae0eb222f8d5)), closes [HI#severity](https://github.com/HI/issues/severity)
+* **security:** bump postcss, shell-quote, tar, and websocket-driver to patched versions ([5b3998d](https://github.com/jpourdanis/test-automation-best-practices/commit/5b3998dcca2d17ccb0ece154d4acbe99ccfed7b6))
+* **security:** bump root fast-uri to patched 3.1.5 ([ef55c27](https://github.com/jpourdanis/test-automation-best-practices/commit/ef55c2726f1d781ac64175e2c1df8a6179b07ab9))
+* **security:** bump stale override floors to patch high/critical CVEs ([e41e435](https://github.com/jpourdanis/test-automation-best-practices/commit/e41e4352572e07758efdcfdd597397e5f9d0c7d1))
+* sync package-lock.json with undici 6.28.0 ([1d3e0c0](https://github.com/jpourdanis/test-automation-best-practices/commit/1d3e0c0e0eaae092cdc5ff1ee413ff0ee2ce738d))
+
 ## [1.0.4](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.3...v1.0.4) (2026-06-24)
 
 
