@@ -79,7 +79,7 @@
     "@xmldom/xmldom": "^0.8.10",
     "serialize-javascript": "^7.0.5",
     "ws": "^8.21.0",
-    "undici": "^6.27.0",
+    "undici": "^6.28.0",
     "shell-quote": "^1.8.4",
     "postcss": "^8.5.10",
     "@tootallnate/once": "^3.0.1",
