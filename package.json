@@ -170,6 +170,7 @@
     "allure-playwright": "^3.6.0",
     "browserstack-node-sdk": "^1.55.4",
     "esbuild": "~0.28.0",
+    "eslint": "^9.0.0",
     "http-proxy-middleware": "^3.0.7",
     "husky": "^9.1.7",
     "jest-junit": "^17.0.0",
