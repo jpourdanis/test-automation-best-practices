@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","","[HIGH] CVE-2026-14456","","","failed","","","test-automation-best-practices-app:latest (alpine 3.24.1)","libcrypto3-3.5.7-r0",""
+"","","[HIGH] CVE-2026-14456","","","failed","","","test-automation-best-practices-app:latest (alpine 3.24.1)","libssl3-3.5.7-r0",""
