@@ -234,7 +234,6 @@ jobs:
 
       - name: NPM Vulnerability Audit
         run: npm audit --audit-level=high
-        continue-on-error: true
 
       - name: Create Allure results directory
         run: mkdir -p allure-results
@@ -294,6 +293,8 @@ jobs:
           image-ref: "test-automation-best-practices-app:latest"
           ignore-unfixed: true
           severity: "CRITICAL,HIGH"
+          # Fail the pipeline on findings, matching the fs and API image scans
+          exit-code: "1"
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-frontend.xml"
