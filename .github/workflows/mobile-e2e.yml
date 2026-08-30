@@ -350,6 +350,15 @@ jobs:
           retention-days: 7
           if-no-files-found: ignore
 
+      - name: Upload Metro log
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-ios-metro-log
+          path: mobile/e2e/metro.log
+          retention-days: 7
+          if-no-files-found: ignore
+
       - name: Upload failure videos
         if: failure()
         uses: actions/upload-artifact@v7
@@ -594,6 +603,15 @@ jobs:
         with:
           name: mobile-android-logcat
           path: mobile/e2e/logcat.txt
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload Metro log
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-android-metro-log
+          path: mobile/e2e/metro.log
           retention-days: 7
           if-no-files-found: ignore
 
