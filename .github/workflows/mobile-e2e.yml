@@ -241,17 +241,17 @@ jobs:
       - name: Start Metro dev server + Expo Go
         working-directory: mobile
         run: |
-          npx expo start --ios --non-interactive > e2e/metro.log 2>&1 &
+          CI=1 npx expo start --ios --go > e2e/metro.log 2>&1 &
           echo "METRO_PID=$!" >> $GITHUB_ENV
-          for i in {1..60}; do
+          for i in {1..150}; do
             if curl -s http://127.0.0.1:8081/status > /dev/null; then
               echo "Metro is ready (attempt $i)"
               exit 0
             fi
-            echo "Waiting for Metro... attempt $i/60"
+            echo "Waiting for Metro... attempt $i/150"
             sleep 2
           done
-          echo "::error::Metro failed to start within 120 seconds. Log output:"
+          echo "::error::Metro failed to start within 300 seconds. Log output:"
           cat e2e/metro.log
           exit 1
 
@@ -468,17 +468,17 @@ jobs:
       - name: Start Metro dev server + Expo Go
         working-directory: mobile
         run: |
-          npx expo start --android --non-interactive > e2e/metro.log 2>&1 &
+          CI=1 npx expo start --android --go > e2e/metro.log 2>&1 &
           echo "METRO_PID=$!" >> $GITHUB_ENV
-          for i in {1..60}; do
+          for i in {1..150}; do
             if curl -s http://127.0.0.1:8081/status > /dev/null; then
               echo "Metro is ready (attempt $i)"
               exit 0
             fi
-            echo "Waiting for Metro... attempt $i/60"
+            echo "Waiting for Metro... attempt $i/150"
             sleep 2
           done
-          echo "::error::Metro failed to start within 120 seconds. Log output:"
+          echo "::error::Metro failed to start within 300 seconds. Log output:"
           cat e2e/metro.log
           exit 1
 
