@@ -246,6 +246,10 @@ jobs:
           for i in {1..150}; do
             if curl -s http://127.0.0.1:8081/status > /dev/null; then
               echo "Metro is ready (attempt $i)"
+              # Pre-warm the JS bundle so Expo Go's first request (triggered by the
+              # deep link in wdio's `before` hook) doesn't hit a cold Metro compile
+              # and blow past the element-wait timeout in the page object.
+              curl -s --max-time 240 "http://127.0.0.1:8081/index.bundle?platform=ios&dev=true" -o /dev/null
               exit 0
             fi
             echo "Waiting for Metro... attempt $i/150"
@@ -473,6 +477,10 @@ jobs:
           for i in {1..150}; do
             if curl -s http://127.0.0.1:8081/status > /dev/null; then
               echo "Metro is ready (attempt $i)"
+              # Pre-warm the JS bundle so Expo Go's first request (triggered by the
+              # deep link in wdio's `before` hook) doesn't hit a cold Metro compile
+              # and blow past the element-wait timeout in the page object.
+              curl -s --max-time 240 "http://127.0.0.1:8081/index.bundle?platform=android&dev=true" -o /dev/null
               exit 0
             fi
             echo "Waiting for Metro... attempt $i/150"

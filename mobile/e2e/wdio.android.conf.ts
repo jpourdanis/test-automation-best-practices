@@ -11,7 +11,6 @@ const VIDEO_DIR = path.resolve(__dirname, 'videos')
 // the deep link in `before` below is what actually loads our project.
 const EXPO_HOST = process.env.EXPO_HOST ?? '10.0.2.2'
 const EXPO_GO_PACKAGE = 'host.exp.exponent'
-const EXPO_GO_ACTIVITY = 'host.exp.exponent.MainActivity'
 
 export const config: WebdriverIO.Config = {
   runner: 'local',
@@ -27,9 +26,9 @@ export const config: WebdriverIO.Config = {
       'appium:deviceName': DEVICE,
       'appium:platformVersion': ANDROID_VERSION,
       'appium:appPackage': EXPO_GO_PACKAGE,
-      'appium:appActivity': EXPO_GO_ACTIVITY,
       'appium:newCommandTimeout': 240,
-      'appium:noReset': false,
+      'appium:noReset': true,
+      'appium:autoLaunch': false,
       'appium:autoGrantPermissions': true
     }
   ],
