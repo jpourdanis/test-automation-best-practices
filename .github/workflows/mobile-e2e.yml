@@ -413,7 +413,7 @@ jobs:
 
           if ! BUILD_JSON=$(eas build \
             --platform android \
-            --profile preview \
+            --profile simulator \
             --non-interactive \
             --json); then
             echo "::error::EAS build failed or did not finish successfully."
