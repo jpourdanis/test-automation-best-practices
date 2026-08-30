@@ -249,6 +249,8 @@ jobs:
       # open our project inside it. No EAS build/binary is needed to test.
       - name: Start Metro dev server + Expo Go
         working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           CI=1 npx expo start --ios --go > e2e/metro.log 2>&1 &
           echo "METRO_PID=$!" >> $GITHUB_ENV
@@ -507,6 +509,8 @@ jobs:
       # open our project inside it. No EAS build/binary is needed to test.
       - name: Start Metro dev server + Expo Go
         working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
         run: |
           CI=1 npx expo start --android --go > e2e/metro.log 2>&1 &
           echo "METRO_PID=$!" >> $GITHUB_ENV
