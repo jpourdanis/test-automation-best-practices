@@ -234,6 +234,15 @@ jobs:
           echo "Booting simulator: $UDID"
           xcrun simctl boot "$UDID" 2>/dev/null || echo "Already booted"
           xcrun simctl bootstatus "$UDID" -b
+          echo "SIMULATOR_UDID=$UDID" >> $GITHUB_ENV
+
+      # Capture the simulator's system log around Expo Go / expo-updates so a
+      # failed deep link (e.g. a failed manifest fetch) is diagnosable instead
+      # of just showing up as "element never appeared" in the wdio output.
+      - name: Start iOS system log capture
+        run: |
+          xcrun simctl spawn "$SIMULATOR_UDID" log stream --level debug --predicate 'process == "Exponent" OR eventMessage CONTAINS[c] "expo"' > mobile/e2e/ios-simulator.log 2>&1 &
+          echo "IOSLOG_PID=$!" >> $GITHUB_ENV
 
       # Starts Metro and, since the simulator is already booted, has Expo
       # CLI auto-install Expo Go (matching this project's SDK version) and
@@ -319,6 +328,9 @@ jobs:
           if [ -n "$METRO_PID" ]; then
             kill "$METRO_PID" || true
           fi
+          if [ -n "$IOSLOG_PID" ]; then
+            kill "$IOSLOG_PID" || true
+          fi
 
       - name: Upload Appium server log
         if: always()
@@ -326,6 +338,15 @@ jobs:
         with:
           name: mobile-ios-appium-log
           path: mobile/e2e/appium.log
+          retention-days: 7
+          if-no-files-found: ignore
+
+      - name: Upload iOS simulator log
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-ios-simulator-log
+          path: mobile/e2e/ios-simulator.log
           retention-days: 7
           if-no-files-found: ignore
 
@@ -465,6 +486,12 @@ jobs:
           $ANDROID_HOME/platform-tools/adb shell settings put global animator_duration_scale 0
           # Give system services a moment to settle after boot before Appium connects
           sleep 5
+
+      # Forward the emulator's view of localhost:8081 to the host's Metro
+      # process. More reliable in CI than the 10.0.2.2 NAT alias, and it's
+      # what a real device connected over USB would use too.
+      - name: adb reverse Metro port
+        run: $ANDROID_HOME/platform-tools/adb reverse tcp:8081 tcp:8081
 
       # Starts Metro and, since the emulator is already booted, has Expo
       # CLI auto-install Expo Go (matching this project's SDK version) and

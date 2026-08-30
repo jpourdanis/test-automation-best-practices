@@ -5,11 +5,10 @@ const DEVICE = process.env.ANDROID_DEVICE ?? 'Pixel_6_API_35'
 const ANDROID_VERSION = process.env.ANDROID_VERSION ?? '15'
 const VIDEO_DIR = path.resolve(__dirname, 'videos')
 
-// Metro dev server the app loads its JS bundle from. 10.0.2.2 is the
-// emulator's alias for the host loopback interface. Testing against Expo Go
-// instead of an EAS-built binary means there is nothing to install here —
-// the deep link in `before` below is what actually loads our project.
-const EXPO_HOST = process.env.EXPO_HOST ?? '10.0.2.2'
+// Metro dev server the app loads its JS bundle from. CI runs `adb reverse
+// tcp:8081 tcp:8081` so the emulator can reach it via plain localhost.
+// The deep link in the before hook below is what actually loads our project.
+const EXPO_HOST = process.env.EXPO_HOST ?? '127.0.0.1'
 const EXPO_GO_PACKAGE = 'host.exp.exponent'
 
 export const config: WebdriverIO.Config = {
