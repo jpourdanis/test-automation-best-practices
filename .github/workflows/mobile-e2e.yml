@@ -278,6 +278,15 @@ jobs:
           path: mobile/e2e/.wda-derived-data
           key: wda-${{ runner.os }}-ios18.5-${{ hashFiles('mobile/package.json') }}
 
+      # Expo Go's first-ever launch on a fresh simulator shows its own
+      # onboarding screen before anything else, which would swallow our
+      # deep link. Pre-mark onboarding as finished so it goes straight
+      # to loading whatever project is deep-linked to it.
+      - name: Skip Expo Go onboarding
+        run: |
+          xcrun simctl spawn "$SIMULATOR_UDID" defaults write host.exp.Exponent EXHomeIsNuxFinishedDefaultsKey -bool YES
+          xcrun simctl spawn "$SIMULATOR_UDID" defaults write host.exp.Exponent EXKernelDisableNuxDefaultsKey -bool YES
+
       # Install the XCUITest driver into a project-local APPIUM_HOME so the
       # version is pinned to the repo and isolated from any global Appium install.
       - name: Install Appium XCUITest driver
