@@ -215,52 +215,6 @@ jobs:
       - name: Build shared package
         run: npm run build -w packages/shared
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli@18.13.0 --ignore-scripts
-
-      # Submits a new iOS simulator build to EAS for the exact commit under
-      # test and blocks until it finishes (eas build waits by default). This
-      # guarantees the binary under test matches this PR's code, instead of
-      # trusting whatever build happened to be "latest finished" on EAS.
-      - name: Build iOS Simulator app on EAS
-        working-directory: mobile
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          mkdir -p e2e/artifacts
-
-          if ! BUILD_JSON=$(eas build \
-            --platform ios \
-            --profile simulator \
-            --non-interactive \
-            --json); then
-            echo "::error::EAS build failed or did not finish successfully."
-            exit 1
-          fi
-
-          STATUS=$(echo "$BUILD_JSON" | jq -r '.[0].status')
-          BUILD_URL=$(echo "$BUILD_JSON" | jq -r '.[0].artifacts.buildUrl // empty')
-
-          if [ "$STATUS" != "FINISHED" ] || [ -z "$BUILD_URL" ]; then
-            echo "::error::EAS build did not finish successfully (status: $STATUS). Response: $BUILD_JSON"
-            exit 1
-          fi
-
-          echo "Downloading artifact: $BUILD_URL"
-          curl -L "$BUILD_URL" \
-            -H "Authorization: Bearer $EXPO_TOKEN" \
-            -o e2e/artifacts/ios-simulator.tar.gz
-          cd e2e/artifacts && tar -xzf ios-simulator.tar.gz
-
-          APP=$(ls -d ./*.app 2>/dev/null | head -1 | sed 's|^\./||')
-          if [ -z "$APP" ]; then
-            echo "::error::No .app found after extracting the EAS artifact."
-            exit 1
-          fi
-
-          echo "APP_PATH=${{ github.workspace }}/mobile/e2e/artifacts/$APP" >> $GITHUB_ENV
-          echo "Found app: $APP"
-
       # Point xcode-select at the full Xcode app so simctl and
       # the XCUITest driver have access to the simulator runtime.
       - name: Select Xcode
@@ -280,6 +234,26 @@ jobs:
           echo "Booting simulator: $UDID"
           xcrun simctl boot "$UDID" 2>/dev/null || echo "Already booted"
           xcrun simctl bootstatus "$UDID" -b
+
+      # Starts Metro and, since the simulator is already booted, has Expo
+      # CLI auto-install Expo Go (matching this project's SDK version) and
+      # open our project inside it. No EAS build/binary is needed to test.
+      - name: Start Metro dev server + Expo Go
+        working-directory: mobile
+        run: |
+          npx expo start --ios --non-interactive > e2e/metro.log 2>&1 &
+          echo "METRO_PID=$!" >> $GITHUB_ENV
+          for i in {1..60}; do
+            if curl -s http://127.0.0.1:8081/status > /dev/null; then
+              echo "Metro is ready (attempt $i)"
+              exit 0
+            fi
+            echo "Waiting for Metro... attempt $i/60"
+            sleep 2
+          done
+          echo "::error::Metro failed to start within 120 seconds. Log output:"
+          cat e2e/metro.log
+          exit 1
 
       # Cache the compiled WDA binary so it only builds from source on the
       # first run or after the xcuitest driver version changes.
@@ -327,7 +301,6 @@ jobs:
       - name: Run iOS E2E tests
         working-directory: mobile
         env:
-          APP_PATH: ${{ env.APP_PATH }}
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
           IOS_DEVICE: "iPhone 16"
           IOS_VERSION: "18.5"
@@ -338,6 +311,9 @@ jobs:
         run: |
           if [ -n "$APPIUM_PID" ]; then
             kill "$APPIUM_PID" || true
+          fi
+          if [ -n "$METRO_PID" ]; then
+            kill "$METRO_PID" || true
           fi
 
       - name: Upload Appium server log
@@ -396,45 +372,6 @@ jobs:
 
       - name: Build shared package
         run: npm run build -w packages/shared
-
-      - name: Install EAS CLI
-        run: npm install -g eas-cli@18.13.0 --ignore-scripts
-
-      # Submits a new Android preview build to EAS for the exact commit under
-      # test and blocks until it finishes (eas build waits by default). This
-      # guarantees the binary under test matches this PR's code, instead of
-      # trusting whatever build happened to be "latest finished" on EAS.
-      - name: Build Android app on EAS
-        working-directory: mobile
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: |
-          mkdir -p e2e/artifacts
-
-          if ! BUILD_JSON=$(eas build \
-            --platform android \
-            --profile simulator \
-            --non-interactive \
-            --json); then
-            echo "::error::EAS build failed or did not finish successfully."
-            exit 1
-          fi
-
-          STATUS=$(echo "$BUILD_JSON" | jq -r '.[0].status')
-          BUILD_URL=$(echo "$BUILD_JSON" | jq -r '.[0].artifacts.buildUrl // empty')
-
-          if [ "$STATUS" != "FINISHED" ] || [ -z "$BUILD_URL" ]; then
-            echo "::error::EAS build did not finish successfully (status: $STATUS). Response: $BUILD_JSON"
-            exit 1
-          fi
-
-          echo "Downloading artifact: $BUILD_URL"
-          curl -L "$BUILD_URL" \
-            -H "Authorization: Bearer $EXPO_TOKEN" \
-            -o e2e/artifacts/android.apk
-
-          echo "APK_PATH=${{ github.workspace }}/mobile/e2e/artifacts/android.apk" >> $GITHUB_ENV
-          echo "Downloaded APK"
 
       # Enable KVM so the emulator gets hardware acceleration and boots in a
       # reasonable amount of time on the Linux runner.
@@ -525,6 +462,26 @@ jobs:
           # Give system services a moment to settle after boot before Appium connects
           sleep 5
 
+      # Starts Metro and, since the emulator is already booted, has Expo
+      # CLI auto-install Expo Go (matching this project's SDK version) and
+      # open our project inside it. No EAS build/binary is needed to test.
+      - name: Start Metro dev server + Expo Go
+        working-directory: mobile
+        run: |
+          npx expo start --android --non-interactive > e2e/metro.log 2>&1 &
+          echo "METRO_PID=$!" >> $GITHUB_ENV
+          for i in {1..60}; do
+            if curl -s http://127.0.0.1:8081/status > /dev/null; then
+              echo "Metro is ready (attempt $i)"
+              exit 0
+            fi
+            echo "Waiting for Metro... attempt $i/60"
+            sleep 2
+          done
+          echo "::error::Metro failed to start within 120 seconds. Log output:"
+          cat e2e/metro.log
+          exit 1
+
       # Install the UiAutomator2 driver into a project-local APPIUM_HOME so the
       # version is pinned to the repo and isolated from any global Appium install.
       - name: Install Appium UiAutomator2 driver
@@ -569,7 +526,6 @@ jobs:
       - name: Run Android E2E tests
         working-directory: mobile
         env:
-          APK_PATH: ${{ env.APK_PATH }}
           APPIUM_HOME: ${{ github.workspace }}/mobile/.appium
           ANDROID_DEVICE: "Pixel_6_API_35"
           ANDROID_VERSION: "15" # Android OS version (API 35 = Android 15)
@@ -580,6 +536,9 @@ jobs:
         run: |
           if [ -n "$APPIUM_PID" ]; then
             kill "$APPIUM_PID" || true
+          fi
+          if [ -n "$METRO_PID" ]; then
+            kill "$METRO_PID" || true
           fi
           if [ -n "$LOGCAT_PID" ]; then
             kill "$LOGCAT_PID" || true
