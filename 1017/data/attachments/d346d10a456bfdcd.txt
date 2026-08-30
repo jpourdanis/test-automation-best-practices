@@ -1,2 +1,0 @@
-[NETWORK ERROR] handle initial fetch with empty data: GET https://test-automation-best-practices.vercel.app/api/colors - net::ERR_ABORTED
-[NETWORK ERROR] handle initial fetch with empty data: GET https://test-automation-best-practices.vercel.app/static/media/logo.103b5fa18196d5665a7e12318285c916.svg - net::ERR_ABORTED
