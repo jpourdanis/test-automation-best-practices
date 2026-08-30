@@ -1,0 +1,14 @@
+2026-08-30 03:08:00 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-08-30 03:08:01 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-08-30 03:08:01 - info: [GrpcClient] Sending TestSessionEvent
+2026-08-30 03:08:01 - info: [GrpcClient] TestSessionEvent request successful
+2026-08-30 03:08:01 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] shows client-side "Name is required" when submitting empty name: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-08-30 03:08:08 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-08-30 03:08:09 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-08-30 03:08:09 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-08-30 03:08:09 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-3ad21939f218dcdf8048
+2026-08-30 03:08:09 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: 'f692e1d8-213f-5520-acf7-7d13ec71274a' }
+2026-08-30 03:08:09 - info: [GrpcClient] Sending TestSessionEvent
+2026-08-30 03:08:09 - info: [GrpcClient] TestSessionEvent request successful
+2026-08-30 03:08:09 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

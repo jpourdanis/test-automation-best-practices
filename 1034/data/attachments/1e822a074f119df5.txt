@@ -1,0 +1,6 @@
+[API ERROR] handle initial fetch error: 500 GET https://test-automation-best-practices.vercel.app/api/colors
+[CONSOLE ERROR] handle initial fetch error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
+[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices.vercel.app/_vercel/speed-insights/script.js - Load request cancelled
+[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices.vercel.app/_vercel/insights/script.js - Load request cancelled
+[API ERROR] handle initial fetch error: 500 GET https://test-automation-best-practices.vercel.app/api/colors
+[CONSOLE ERROR] handle initial fetch error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
