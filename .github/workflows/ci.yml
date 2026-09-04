@@ -238,7 +238,6 @@ jobs:
         # this, npm's workspace hoisting pulls mobile-only deps (expo,
         # appium, webdriverio) into this scan too.
         run: npm audit --audit-level=high --include-workspace-root --workspace=packages/shared --workspace=server
-        continue-on-error: true
 
       - name: Create Allure results directory
         run: mkdir -p allure-results
@@ -298,6 +297,8 @@ jobs:
           image-ref: "test-automation-best-practices-app:latest"
           ignore-unfixed: true
           severity: "CRITICAL,HIGH"
+          # Fail the pipeline on findings, matching the fs and API image scans
+          exit-code: "1"
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-frontend.xml"

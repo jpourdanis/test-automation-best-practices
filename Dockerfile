@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/playwright:v1.60.0-noble AS base
+FROM mcr.microsoft.com/playwright:v1.62.1-noble AS base
 
 WORKDIR /app
 ENV CI=true
@@ -29,7 +29,7 @@ RUN npm run build
 
 # ---- App stage: serves the production build using Nginx ----
 FROM nginx:alpine AS app
-RUN apk add --no-cache curl
+RUN apk upgrade --no-cache && apk add --no-cache curl
 COPY --from=build /app/build /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 EXPOSE 3000
