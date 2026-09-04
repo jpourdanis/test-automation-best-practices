@@ -36,4 +36,6 @@ DISABLE_LINTERS:
 SPELL_CSPELL_FILTER_REGEX_EXCLUDE: "(src/locales/.*)"
 SPELL_LYCHEE_FILTER_REGEX_EXCLUDE: '(server/package.*\.json)'
 
-REPOSITORY_GITLEAKS_CONFIG_FILE: ".gitleaks.toml"
+# gitleaks is deprecated upstream in favor of betterleaks (same author, faster/
+# more accurate); betterleaks reads the existing .gitleaks.toml directly.
+REPOSITORY_BETTERLEAKS_CONFIG_FILE: ".gitleaks.toml"
