@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
@@ -64,7 +64,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
@@ -114,7 +114,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
         with:
@@ -154,7 +154,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
         with:
@@ -193,7 +193,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
 
@@ -228,7 +228,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
 
@@ -279,7 +279,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Build Frontend Docker image for container scanning
         run: docker compose build web
@@ -320,7 +320,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
 
       - name: Build API Docker image for container scanning
         run: docker compose build api
@@ -359,7 +359,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Sets up Node.js for the mutation testing environment
       - uses: ./.github/actions/setup-node-env
@@ -414,7 +414,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Sets up Node.js for the mutation testing environment
       - uses: ./.github/actions/setup-node-env
@@ -457,14 +457,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the code
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
 
       # Restores the Playwright browsers (if cached) or installs them if missing
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
@@ -574,7 +574,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-buildx
 
@@ -625,14 +625,14 @@ jobs:
         shardTotal: [4]
     steps:
       # Checks out the code for this specific shard runner
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
 
       # Restores the Playwright browsers (if cached) or installs them if missing
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
@@ -717,7 +717,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-buildx
 
@@ -755,7 +755,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the repository code
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-buildx
 
@@ -801,7 +801,7 @@ jobs:
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Installs k6 performance testing tool
       - name: Setup k6
@@ -837,7 +837,7 @@ jobs:
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install DBus for Headless Browser
         run: sudo apt-get update && sudo apt-get install -y dbus dbus-x11
@@ -894,14 +894,14 @@ jobs:
       contents: read
       pull-requests: write
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
 
       - name: Cache Playwright browsers
         if: env.VERCEL_TOKEN != ''
         id: playwright-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
@@ -953,7 +953,7 @@ jobs:
     if: github.event_name == 'schedule'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
 
@@ -964,7 +964,7 @@ jobs:
 
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
@@ -1010,14 +1010,14 @@ jobs:
     env:
       PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
 
       - name: Cache Playwright browsers
         if: env.PERCY_TOKEN != ''
         id: playwright-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
@@ -1076,7 +1076,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Checks out the code to gather reporting logic
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       # Sets up Node JS and installs reporting dependencies
       - uses: ./.github/actions/setup-node-env
@@ -1171,7 +1171,7 @@ jobs:
 
       # Checks out the gh-pages branch to access historical Allure test data
       - name: Load test report history
-        uses: actions/checkout@v6
+        uses: actions/checkout@v7
         continue-on-error: true
         with:
           ref: gh-pages

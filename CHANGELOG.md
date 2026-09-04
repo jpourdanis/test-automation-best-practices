@@ -1,3 +1,46 @@
+# [1.1.0](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.5...v1.1.0) (2026-09-04)
+
+### Bug Fixes
+
+- **ci:** enforce security scan gate, don't let it silently pass ([69ab84f](https://github.com/jpourdanis/test-automation-best-practices/commit/69ab84f5795eb877d7dd482fc966c8c4a303fa98)), closes [hi#severity](https://github.com/hi/issues/severity)
+- **ci:** replace deprecated MegaLinter gitleaks with betterleaks ([b24a2b9](https://github.com/jpourdanis/test-automation-best-practices/commit/b24a2b92deee8119cd1e96703e506e2b435e284f))
+- **ci:** resync Playwright container image and unblock BDD tests ([9cb7063](https://github.com/jpourdanis/test-automation-best-practices/commit/9cb706378f1fa14391f1496f04e84511272fbafa))
+- **ci:** scope npm audit away from mobile workspace ([478191e](https://github.com/jpourdanis/test-automation-best-practices/commit/478191e857007cb62e6fee52442d5e0ed084d2b5))
+- **ci:** scope npm audit away from mobile workspace ([0be741d](https://github.com/jpourdanis/test-automation-best-practices/commit/0be741d20dda2e4d1f9d2c67e05ff1d445e3da40))
+- **deps:** add eslint as an explicit root devDependency ([9d46f56](https://github.com/jpourdanis/test-automation-best-practices/commit/9d46f568d9b2f89f8c72a4960bf89d5b954fd7fb))
+- **deps:** scope brace-expansion CVE override to the exact broken consumer ([034cd18](https://github.com/jpourdanis/test-automation-best-practices/commit/034cd18d78c82fe02b5168a221c623bcd79af08b))
+- **deps:** scope esbuild platform binary to tsup's pinned version ([f82970c](https://github.com/jpourdanis/test-automation-best-practices/commit/f82970c6f1eb8541a1f60cae9f6d176116b2073a))
+- **deps:** sync package-lock.json (missing picomatch@4.0.7 entry broke npm ci) ([78a483c](https://github.com/jpourdanis/test-automation-best-practices/commit/78a483c583280df9c56b6b74128fc386f58bac53))
+- **docker:** upgrade alpine packages in frontend image to patch OpenSSL CVE ([79c5017](https://github.com/jpourdanis/test-automation-best-practices/commit/79c5017104e5582e011909ed621783c01d84470e))
+- **mobile:** capture Metro log on any E2E failure, not just startup ([f4ce7ef](https://github.com/jpourdanis/test-automation-best-practices/commit/f4ce7ef9951b2da8ee7fc9cedf28eb0820af46d8))
+- **mobile:** force Expo Go mode in CI, not dev-client lookup ([0e946cd](https://github.com/jpourdanis/test-automation-best-practices/commit/0e946cd1619c3670d5e0a6d1d9bad0c6f69cf3fe))
+- **mobile:** pass EXPO_TOKEN to the Expo Go start step ([e4adf5f](https://github.com/jpourdanis/test-automation-best-practices/commit/e4adf5fe76c2c378dc02b26cfa4ecca3da049286))
+- **mobile:** pin react/react-dom to 19.1.0 for react-native 0.81.5 compat ([94961e9](https://github.com/jpourdanis/test-automation-best-practices/commit/94961e9030b5cad99837799afd09b78928b3886c))
+- **mobile:** pre-dismiss Expo Go onboarding on iOS simulator ([8be6b74](https://github.com/jpourdanis/test-automation-best-practices/commit/8be6b74a55b66d361276e006030b46715c34d6fe))
+- **mobile:** reach Metro via adb reverse on Android, add iOS log capture ([e555f81](https://github.com/jpourdanis/test-automation-best-practices/commit/e555f81f81132bec1d962ec6816197e0bb7b1646))
+- **mobile:** reload via deep link instead of native app restart ([86aa787](https://github.com/jpourdanis/test-automation-best-practices/commit/86aa787cbb732438f1e0e8d354dbd4ccebe0f1b2))
+- **mobile:** remove brace-expansion override breaking EAS native builds ([ec4bf77](https://github.com/jpourdanis/test-automation-best-practices/commit/ec4bf77fd71bea215fb5853aa1f35fac5fb96073))
+- **mobile:** resolve unit test and security scan failures from react version pin ([22921c2](https://github.com/jpourdanis/test-automation-best-practices/commit/22921c289c757366c69c946bd7f657801a166fe8))
+- **mobile:** run E2E against Expo Go instead of EAS-built binaries ([d65485d](https://github.com/jpourdanis/test-automation-best-practices/commit/d65485db6f2debb5f82d7165f05aa0ef5b8f58d0))
+- **mobile:** stop Appium auto-launch racing deep link ([ea2a499](https://github.com/jpourdanis/test-automation-best-practices/commit/ea2a49904154f9406fd27bfea402567c947894c8))
+- **security:** bump sonarqube-scanner to 5.0.0 to clear adm-zip high finding ([596f596](https://github.com/jpourdanis/test-automation-best-practices/commit/596f5961220e9283c0cb07a5389b15293bab366d))
+- **security:** resolve remaining container/npm audit high findings ([027a42b](https://github.com/jpourdanis/test-automation-best-practices/commit/027a42b87df4ce0130a5efebcfc7d2861bcf165b))
+- **vercel:** use npm ci for deterministic installs ([d00bf80](https://github.com/jpourdanis/test-automation-best-practices/commit/d00bf804c3f9998ecae9fd2d610f0f7d423526bf))
+
+### Features
+
+- **mobile:** add Android APK build to the simulator EAS profile ([7c7676c](https://github.com/jpourdanis/test-automation-best-practices/commit/7c7676cdfd9267e5781bd02c356783801ab6d153))
+
+### Performance Improvements
+
+- **ci:** actually disable gitleaks — it was still running alongside betterleaks ([fccd294](https://github.com/jpourdanis/test-automation-best-practices/commit/fccd2948e81ac48776d625f5a353a5f9dd179c81))
+- **ci:** trim redundant/heavy MegaLinter linters and reporters ([9d5d8ee](https://github.com/jpourdanis/test-automation-best-practices/commit/9d5d8ee4eae7404547fa386f8eed2f9459ce94da))
+
+### Reverts
+
+- **deps:** restore brace-expansion override to ^5.0.9 ([28de9b9](https://github.com/jpourdanis/test-automation-best-practices/commit/28de9b9b717dcbbe6dda392fb1a09601a4692f06))
+- **mobile:** switch mobile E2E back to EAS-built binaries ([1c1d01e](https://github.com/jpourdanis/test-automation-best-practices/commit/1c1d01ebc5f65879b446019f6177c5ea0c90ab8b))
+
 ## [1.0.5](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.4...v1.0.5) (2026-08-24)
 
 ### Bug Fixes

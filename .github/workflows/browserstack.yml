@@ -16,7 +16,7 @@ jobs:
     name: E2E Tests (BrowserStack - Production)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
 
@@ -25,7 +25,7 @@ jobs:
 
       - name: Cache Playwright browsers
         id: playwright-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
@@ -61,14 +61,14 @@ jobs:
     env:
       PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - uses: ./.github/actions/setup-node-env
 
       - name: Cache Playwright browsers
         if: env.PERCY_TOKEN != ''
         id: playwright-cache
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ hashFiles('package-lock.json') }}
@@ -103,7 +103,7 @@ jobs:
     needs: [visual-regression-percy]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup k6
         uses: grafana/setup-k6-action@v1
@@ -134,7 +134,7 @@ jobs:
     needs: [performance-testing-api-prod]
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Install DBus for Headless Browser
         run: sudo apt-get update && sudo apt-get install -y dbus dbus-x11
