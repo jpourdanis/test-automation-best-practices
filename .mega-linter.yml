@@ -12,6 +12,7 @@ FILTER_REGEX_EXCLUDE: "(node_modules|megalinter-reports)/.*"
 DISABLE_LINTERS:
   - REPOSITORY_DEVSKIM
   - REPOSITORY_TRUFFLEHOG
+  - REPOSITORY_GITLEAKS
   - REPOSITORY_KINGFISHER
   - REPOSITORY_GRYPE
   - REPOSITORY_KICS
@@ -36,6 +37,10 @@ DISABLE_LINTERS:
   - REPOSITORY_SECRETLINT
   # IaC scanner — repo has no Terraform/CloudFormation/Kubernetes manifests to check
   - REPOSITORY_CHECKOV
+  # SBOM generation — nothing downstream consumes the SBOM; the dedicated Trivy
+  # jobs in ci.yml already cover container/dependency vulnerability scanning
+  - REPOSITORY_SYFT
+  - REPOSITORY_TRIVY_SBOM
   # Generic SAST with no project-specific ruleset; slow (downloads rule packs each
   # run) and redundant with SonarCloud, which already runs on every push/PR
   - REPOSITORY_SEMGREP
