@@ -1,15 +1,10 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
+const APK = process.env.APK_PATH ?? path.resolve(__dirname, 'artifacts/android.apk')
 const DEVICE = process.env.ANDROID_DEVICE ?? 'Pixel_6_API_35'
 const ANDROID_VERSION = process.env.ANDROID_VERSION ?? '15'
 const VIDEO_DIR = path.resolve(__dirname, 'videos')
-
-// Metro dev server the app loads its JS bundle from. CI runs `adb reverse
-// tcp:8081 tcp:8081` so the emulator can reach it via plain localhost.
-// The deep link in the before hook below is what actually loads our project.
-const EXPO_HOST = process.env.EXPO_HOST ?? '127.0.0.1'
-const EXPO_GO_PACKAGE = 'host.exp.exponent'
 
 export const config: WebdriverIO.Config = {
   runner: 'local',
@@ -24,10 +19,9 @@ export const config: WebdriverIO.Config = {
       'appium:automationName': 'UiAutomator2',
       'appium:deviceName': DEVICE,
       'appium:platformVersion': ANDROID_VERSION,
-      'appium:appPackage': EXPO_GO_PACKAGE,
+      'appium:app': APK,
       'appium:newCommandTimeout': 240,
-      'appium:noReset': true,
-      'appium:autoLaunch': false,
+      'appium:noReset': false,
       'appium:autoGrantPermissions': true
     }
   ],
@@ -59,15 +53,6 @@ export const config: WebdriverIO.Config = {
   waitforTimeout: 30000,
   connectionRetryTimeout: 300000,
   connectionRetryCount: 3,
-
-  // Expo Go opens to its own home screen on launch; deep-link into our
-  // project's Metro bundle before any spec runs.
-  before: async function () {
-    await browser.execute('mobile: deepLink', {
-      url: `exp://${EXPO_HOST}:8081`,
-      package: EXPO_GO_PACKAGE
-    })
-  },
 
   beforeTest: async function () {
     try {

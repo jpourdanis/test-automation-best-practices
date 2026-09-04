@@ -4,7 +4,7 @@
 import { colorPickerScreen } from '../pageObjects/ColorPickerScreen'
 import { createApiClient } from '@color-app/shared'
 
-const EXPO_HOST = process.env.EXPO_HOST ?? '127.0.0.1'
+const BUNDLE_ID = 'com.jpourdanis.colorpicker'
 const api = createApiClient({ baseUrl: 'https://test-automation-best-practices.vercel.app' })
 
 describe('Color Picker App', () => {
@@ -56,14 +56,9 @@ describe('Color Picker App', () => {
     const createRes = await api.createColor({ name, hex: '#3498db' })
     expect(createRes.ok).toBe(true)
 
-    // 2. Act — reload the app via deep link so the useEffect re-fetches and
-    // picks up the new color. Running under Expo Go, there is no standalone
-    // app binary to terminate/reactivate by bundle id — reloading the JS is
-    // the equivalent restart.
-    await browser.execute('mobile: deepLink', {
-      url: `exp://${EXPO_HOST}:8081`,
-      ...(driver.isIOS ? { bundleId: 'host.exp.Exponent' } : { package: 'host.exp.exponent' })
-    })
+    // 2. Act — restart the app so the useEffect re-fetches and picks up the new color
+    await driver.terminateApp(BUNDLE_ID)
+    await driver.activateApp(BUNDLE_ID)
     await colorPickerScreen.waitForLoad()
 
     // 3. Assert — scroll horizontally to reveal the chip, then assert
