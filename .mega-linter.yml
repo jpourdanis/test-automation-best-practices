@@ -32,6 +32,24 @@ DISABLE_LINTERS:
   - TYPESCRIPT_PRETTIER
   # Link checker — slow network I/O in CI, high false-positive rate, no code quality value
   - SPELL_LYCHEE
+  # Secret scanning — redundant with REPOSITORY_BETTERLEAKS below (same job, same purpose)
+  - REPOSITORY_SECRETLINT
+  # IaC scanner — repo has no Terraform/CloudFormation/Kubernetes manifests to check
+  - REPOSITORY_CHECKOV
+  # Generic SAST with no project-specific ruleset; slow (downloads rule packs each
+  # run) and redundant with SonarCloud, which already runs on every push/PR
+  - REPOSITORY_SEMGREP
+  # Spell checkers — cspell (configured via .cspell.json) already covers this;
+  # proselint/vale/codespell are redundant extra passes over the same files
+  - SPELL_PROSELINT
+  - SPELL_VALE
+  - SPELL_CODESPELL
+  # Markdown — markdownlint alone is enough; table-formatter/rumdl are redundant
+  # extra passes over the same *.md files
+  - MARKDOWN_MARKDOWN_TABLE_FORMATTER
+  - MARKDOWN_RUMDL
+  # HTML — htmlhint alone is enough for the handful of html files in src/
+  - HTML_DJLINT
 
 SPELL_CSPELL_FILTER_REGEX_EXCLUDE: "(src/locales/.*)"
 SPELL_LYCHEE_FILTER_REGEX_EXCLUDE: '(server/package.*\.json)'
@@ -39,3 +57,16 @@ SPELL_LYCHEE_FILTER_REGEX_EXCLUDE: '(server/package.*\.json)'
 # gitleaks is deprecated upstream in favor of betterleaks (same author, faster/
 # more accurate); betterleaks reads the existing .gitleaks.toml directly.
 REPOSITORY_BETTERLEAKS_CONFIG_FILE: ".gitleaks.toml"
+
+# ------------------------------------------------------------------------------
+# PERFORMANCE
+# ------------------------------------------------------------------------------
+# Per-linter GitHub commit statuses add one API call per active linter on every
+# run; the single MegaLinter job status already surfaces pass/fail in checks.
+GITHUB_STATUS_REPORTER: false
+# PR comment summary is redundant with the job's own log/annotations and adds
+# an extra API round-trip per run.
+GITHUB_COMMENT_REPORTER: false
+# SARIF output isn't consumed anywhere (no code scanning upload step) — skip
+# generating it.
+SARIF_REPORTER: false
