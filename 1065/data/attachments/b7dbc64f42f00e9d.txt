@@ -1,0 +1,4 @@
+[NETWORK INFO] delete API error shows alert banner: 200 GET https://test-automation-best-practices-po1eu72c4-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] delete API error shows alert banner: 204 GET https://test-automation-best-practices-po1eu72c4-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] delete API error shows alert banner: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-po1eu72c4-jpourdanis-projects.vercel.app&deploymentId=dpl_8msstRe5JuSd3CFX2R8AHGp9nhX1
+[NETWORK INFO] delete API error shows alert banner: 204 HEAD https://test-automation-best-practices-po1eu72c4-jpourdanis-projects.vercel.app/
