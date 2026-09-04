@@ -1,0 +1,35 @@
+     █ Catalog Browsing
+
+       ✓ List colors status is 200
+       ✓ Response is an array
+       ✓ Contains at least one color
+
+     █ Color Management
+
+       ✓ Color creation status is 201
+       ✓ Retrieve color status is 200
+       ✓ Retrieved correct hex
+       ✓ Update color status is 200
+       ✓ Updated hex matches
+       ✓ Delete color status is 200
+
+     checks.........................: 100.00% ✓ 9        ✗ 0  
+     data_received..................: 2.0 kB  663 B/s
+     data_sent......................: 705 B   239 B/s
+     group_duration.................: avg=21.32ms min=2.89ms  med=21.32ms max=39.76ms  p(90)=36.07ms  p(95)=37.92ms 
+     http_req_blocked...............: avg=59.13µs min=3.62µs  med=4.83µs  max=187.89µs p(90)=168.8µs  p(95)=178.34µs
+     http_req_connecting............: avg=34.68µs min=0s      med=0s      max=115.24µs p(90)=104.05µs p(95)=109.64µs
+   ✓ http_req_duration..............: avg=7.6ms   min=2.54ms  med=3.58ms  max=24.21ms  p(90)=16.59ms  p(95)=20.4ms  
+       { expected_response:true }...: avg=7.6ms   min=2.54ms  med=3.58ms  max=24.21ms  p(90)=16.59ms  p(95)=20.4ms  
+     http_req_failed................: 0.00%   ✓ 0        ✗ 6  
+     http_req_receiving.............: avg=61.93µs min=39.17µs med=50.76µs max=98.45µs  p(90)=92.99µs  p(95)=95.72µs 
+     http_req_sending...............: avg=36.92µs min=10.13µs med=37.56µs max=60.24µs  p(90)=57.62µs  p(95)=58.93µs 
+     http_req_tls_handshaking.......: avg=0s      min=0s      med=0s      max=0s       p(90)=0s       p(95)=0s      
+     http_req_waiting...............: avg=7.5ms   min=2.44ms  med=3.48ms  max=24.09ms  p(90)=16.48ms  p(95)=20.28ms 
+     http_reqs......................: 6       2.032346/s
+     iteration_duration.............: avg=2.94s   min=2.94s   med=2.94s   max=2.94s    p(90)=2.94s    p(95)=2.94s   
+     iterations.....................: 1       0.338724/s
+     successful_actions_count.......: 1       0.338724/s
+   ✓ successful_actions_rate........: 100.00% ✓ 1        ✗ 0  
+     vus............................: 1       min=1      max=1
+     vus_max........................: 1       min=1      max=1
