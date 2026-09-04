@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "installCommand": "npm install",
+  "installCommand": "npm ci",
   "rewrites": [
     {
       "source": "/api-docs/swagger-ui.css",

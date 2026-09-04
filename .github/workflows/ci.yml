@@ -233,7 +233,11 @@ jobs:
       - uses: ./.github/actions/setup-node-env
 
       - name: NPM Vulnerability Audit
-        run: npm audit --audit-level=high
+        # Scoped to exclude the mobile workspace, which has its own
+        # standalone lockfile and its own audit in mobile-e2e.yml — without
+        # this, npm's workspace hoisting pulls mobile-only deps (expo,
+        # appium, webdriverio) into this scan too.
+        run: npm audit --audit-level=high --include-workspace-root --workspace=packages/shared --workspace=server
         continue-on-error: true
 
       - name: Create Allure results directory
