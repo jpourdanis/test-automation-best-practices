@@ -282,7 +282,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Build Frontend Docker image for container scanning
-        run: docker compose build web
+        run: docker compose build --no-cache web
 
       - name: Create Allure results directory
         run: mkdir -p allure-results
@@ -302,6 +302,7 @@ jobs:
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
           output: "allure-results/trivy-frontend.xml"
+          trivyignores: ".trivyignore"
 
       - name: Upload Trivy Frontend Allure Results
         if: always()
@@ -323,7 +324,7 @@ jobs:
         uses: actions/checkout@v7
 
       - name: Build API Docker image for container scanning
-        run: docker compose build api
+        run: docker compose build --no-cache api
 
       - name: Create Allure results directory
         run: mkdir -p allure-results

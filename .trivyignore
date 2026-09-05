@@ -24,3 +24,19 @@ GHSA-g7r4-m6w7-qqqr
 # Fix requires major bump 1.x -> 2.x; affected only via lighthouse -> @sentry/node
 # (dev/perf toolchain dependency, not production application code)
 GHSA-8988-4f7v-96qf
+
+# util-linux/libuuid mount(8) TOCTOU flaws in the frontend's
+# alpine:3.24 base image. Alpine has published a fix (libuuid 2.42.3-r0) but as of
+# 2026-09-05 it exists only for the aarch64 build, not amd64/x86_64 (the arch our
+# CI runners and production image use) - apk upgrade on amd64 cannot install it
+# yet. All of these also require local unprivileged shell access plus SUID mount(8)
+# and attacker-controlled /etc/fstab entries, neither of which apply to this image
+# (static Nginx serving a built SPA, no shell access, no fstab). Remove this block
+# once Alpine ships the amd64 build.
+CVE-2026-53612
+CVE-2026-53613
+CVE-2026-53614
+CVE-2026-76642
+CVE-2026-78408
+CVE-2026-78409
+CVE-2026-78410
