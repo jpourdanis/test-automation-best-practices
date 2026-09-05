@@ -1,0 +1,5 @@
+[NETWORK INFO] should create color via API and verify through UI: 204 GET https://test-automation-best-practices-jr3g304zp-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] should create color via API and verify through UI: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-jr3g304zp-jpourdanis-projects.vercel.app&deploymentId=dpl_HnQftHMgU9QHcTcCQqL7Qw7gF6S9
+[NETWORK INFO] should create color via API and verify through UI: 204 HEAD https://test-automation-best-practices-jr3g304zp-jpourdanis-projects.vercel.app/
+[NETWORK INFO] should create color via API and verify through UI: 200 GET https://test-automation-best-practices-jr3g304zp-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] should create color via API and verify through UI: 200 GET https://test-automation-best-practices-jr3g304zp-jpourdanis-projects.vercel.app/api/colors/QVE9geE2WoqoXAk

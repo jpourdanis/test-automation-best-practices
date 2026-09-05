@@ -1,0 +1,5 @@
+[NETWORK INFO] should maintain accessibility in es language and verify resilient locators: 204 GET https://test-automation-best-practices-jr3g304zp-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] should maintain accessibility in es language and verify resilient locators: 200 GET https://test-automation-best-practices-jr3g304zp-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] should maintain accessibility in es language and verify resilient locators: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-jr3g304zp-jpourdanis-projects.vercel.app&deploymentId=dpl_HnQftHMgU9QHcTcCQqL7Qw7gF6S9
+[NETWORK INFO] should maintain accessibility in es language and verify resilient locators: 204 HEAD https://test-automation-best-practices-jr3g304zp-jpourdanis-projects.vercel.app/
+[NETWORK INFO] should maintain accessibility in es language and verify resilient locators: 200 GET https://test-automation-best-practices-jr3g304zp-jpourdanis-projects.vercel.app/api/colors/Turquoise
