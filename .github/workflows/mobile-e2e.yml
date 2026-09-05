@@ -218,10 +218,11 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli@18.13.0 --ignore-scripts
 
-      # Submits a new iOS simulator build to EAS for the exact commit under
-      # test and blocks until it finishes (eas build waits by default). This
-      # guarantees the binary under test matches this PR's code, instead of
-      # trusting whatever build happened to be "latest finished" on EAS.
+      # Reuses an existing finished EAS build for this exact commit when one
+      # exists, instead of always submitting a new one. This still guarantees
+      # the binary under test matches this PR's code (the lookup is keyed on
+      # commit SHA), while avoiding unnecessary EAS build-minute usage when a
+      # matching build already exists (e.g. a workflow re-run).
       - name: Build iOS Simulator app on EAS
         working-directory: mobile
         env:
@@ -229,13 +230,30 @@ jobs:
         run: |
           mkdir -p e2e/artifacts
 
-          if ! BUILD_JSON=$(eas build \
+          echo "Looking for an existing finished build for commit ${GITHUB_SHA} (ios/simulator)..."
+          EXISTING_JSON=$(eas build:list \
             --platform ios \
-            --profile simulator \
+            --build-profile simulator \
+            --status finished \
+            --git-commit-hash "$GITHUB_SHA" \
             --non-interactive \
-            --json); then
-            echo "::error::EAS build failed or did not finish successfully."
-            exit 1
+            --json \
+            --limit 1 2>/dev/null || echo '[]')
+
+          BUILD_JSON=$(echo "$EXISTING_JSON" | jq '.[0:1]')
+
+          if [ "$(echo "$BUILD_JSON" | jq 'length')" -gt 0 ]; then
+            echo "Reusing existing EAS build for commit ${GITHUB_SHA}."
+          else
+            echo "No existing build found for this commit, submitting a new one."
+            if ! BUILD_JSON=$(eas build \
+              --platform ios \
+              --profile simulator \
+              --non-interactive \
+              --json); then
+              echo "::error::EAS build failed or did not finish successfully."
+              exit 1
+            fi
           fi
 
           STATUS=$(echo "$BUILD_JSON" | jq -r '.[0].status')
@@ -400,10 +418,11 @@ jobs:
       - name: Install EAS CLI
         run: npm install -g eas-cli@18.13.0 --ignore-scripts
 
-      # Submits a new Android preview build to EAS for the exact commit under
-      # test and blocks until it finishes (eas build waits by default). This
-      # guarantees the binary under test matches this PR's code, instead of
-      # trusting whatever build happened to be "latest finished" on EAS.
+      # Reuses an existing finished EAS build for this exact commit when one
+      # exists, instead of always submitting a new one. This still guarantees
+      # the binary under test matches this PR's code (the lookup is keyed on
+      # commit SHA), while avoiding unnecessary EAS build-minute usage when a
+      # matching build already exists (e.g. a workflow re-run).
       - name: Build Android app on EAS
         working-directory: mobile
         env:
@@ -411,13 +430,30 @@ jobs:
         run: |
           mkdir -p e2e/artifacts
 
-          if ! BUILD_JSON=$(eas build \
+          echo "Looking for an existing finished build for commit ${GITHUB_SHA} (android/simulator)..."
+          EXISTING_JSON=$(eas build:list \
             --platform android \
-            --profile simulator \
+            --build-profile simulator \
+            --status finished \
+            --git-commit-hash "$GITHUB_SHA" \
             --non-interactive \
-            --json); then
-            echo "::error::EAS build failed or did not finish successfully."
-            exit 1
+            --json \
+            --limit 1 2>/dev/null || echo '[]')
+
+          BUILD_JSON=$(echo "$EXISTING_JSON" | jq '.[0:1]')
+
+          if [ "$(echo "$BUILD_JSON" | jq 'length')" -gt 0 ]; then
+            echo "Reusing existing EAS build for commit ${GITHUB_SHA}."
+          else
+            echo "No existing build found for this commit, submitting a new one."
+            if ! BUILD_JSON=$(eas build \
+              --platform android \
+              --profile simulator \
+              --non-interactive \
+              --json); then
+              echo "::error::EAS build failed or did not finish successfully."
+              exit 1
+            fi
           fi
 
           STATUS=$(echo "$BUILD_JSON" | jq -r '.[0].status')
