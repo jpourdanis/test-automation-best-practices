@@ -1,0 +1,19 @@
+2026-09-05 13:43:12 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:43:12 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:43:12 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 13:43:12 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 13:43:12 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] deleting the active color switches background to the first remaining: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] deleting the active color switches background to the first remaining: 200 DELETE https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+[NETWORK INFO] deleting the active color switches background to the first remaining: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-09-05 13:43:13 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-09-05 13:43:13 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-09-05 13:43:13 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-09-05 13:43:13 - info: Accessibility testing for this test case has ended.
+2026-09-05 13:43:13 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 13:43:13 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:43:13 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-6b441db2f2d33d6e9a77
+2026-09-05 13:43:13 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '9fefb5df-3485-59d3-a50a-7cb42f82d172' }
+2026-09-05 13:43:13 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 13:43:13 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 13:43:13 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

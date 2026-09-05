@@ -1,0 +1,15 @@
+2026-09-05 13:44:05 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:44:06 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:44:06 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 13:44:06 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 13:44:06 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] changing color to Red should reflect in UI and DOM: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] changing color to Red should reflect in UI and DOM: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Red
+2026-09-05 13:44:07 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-09-05 13:44:10 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 13:44:10 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:44:10 - info: [PlaywrightDriverModule] testId: 00b11043fe1f1d2b9864-75055016369a13032cba
+2026-09-05 13:44:10 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '58fe066d-f6d0-5b62-a3c7-12096c834f18' }
+2026-09-05 13:44:10 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 13:44:10 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 13:44:10 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
