@@ -1,0 +1,16 @@
+2026-09-05 07:29:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 07:29:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 07:29:42 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 07:29:42 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 07:29:42 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+2026-09-05 07:29:42 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-09-05 07:29:42 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-09-05 07:29:42 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-09-05 07:29:42 - info: Accessibility testing for this test case has ended.
+2026-09-05 07:29:43 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 07:29:43 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 07:29:43 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-8bfd086b07b342f2f4d6
+2026-09-05 07:29:43 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '2e9bc275-eb1c-50b2-9631-beefab9717a8' }
+2026-09-05 07:29:43 - info: [GrpcClient] Sending TestSessionEvent

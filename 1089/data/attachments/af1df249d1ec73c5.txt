@@ -1,0 +1,16 @@
+2026-09-05 07:30:01 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 07:30:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 07:30:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 07:30:02 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 07:30:02 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-09-05 07:30:02 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-09-05 07:30:02 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-09-05 07:30:02 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-09-05 07:30:02 - info: Accessibility testing for this test case has ended.
+2026-09-05 07:30:02 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 07:30:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 07:30:02 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-6ee6b39ce1f006d7a918
+2026-09-05 07:30:02 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '820550c9-a71e-5e34-8266-c47ab50439ef' }
+2026-09-05 07:30:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 07:30:02 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 07:30:02 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
