@@ -1,0 +1,60 @@
+name: Dependabot Lockfile Sync
+
+# This repo uses npm workspaces (packages/*, mobile, server) but server/ and
+# mobile/ also carry their own standalone lockfiles for isolated installs
+# (server/Dockerfile's `npm ci --no-workspaces`, mobile-e2e.yml's `npm ci`
+# scoped to mobile/). Dependabot's directory-scoped npm entries for /server
+# and /mobile update only that directory's package.json + local lockfile in
+# a given PR -- they cannot also update the root package-lock.json, which
+# npm's workspace auto-detection means *every* other `npm ci` in this repo
+# resolves against. Left alone, every /server or /mobile Dependabot PR fails
+# CI immediately with `npm ci` EUSAGE ("lock file is out of sync").
+#
+# This workflow closes that gap: on every Dependabot PR, it regenerates the
+# root lockfile and pushes a fixup commit before the rest of CI runs.
+#
+# Uses pull_request_target (not pull_request) because GITHUB_TOKEN on a
+# pull_request event from dependabot[bot] is read-only by default in this
+# repo, and this job needs to push. Only Dependabot-authored branches on
+# this repo are ever checked out and only `npm install --package-lock-only
+# --ignore-scripts` is run against them -- no install scripts execute, no
+# node_modules are written, and nothing else about the PR's code runs.
+on:
+  pull_request_target:
+    types: [opened, synchronize]
+
+permissions:
+  contents: write
+
+jobs:
+  sync-root-lockfile:
+    if: >
+      github.actor == 'dependabot[bot]' &&
+      github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Use Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: "22"
+
+      - name: Resync root lockfile only (no scripts, no node_modules)
+        run: npm install --package-lock-only --ignore-scripts
+
+      - name: Commit and push if the lockfile changed
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "Root lockfile already in sync, nothing to do."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore: resync root lockfile [dependabot-lockfile-sync]"
+          git push origin HEAD:"${{ github.event.pull_request.head.ref }}"
