@@ -33,7 +33,7 @@
     "expo-dev-client": "~57.0.16",
     "expo-linear-gradient": "~15.0.8",
     "expo-linking": "~8.0.11",
-    "expo-localization": "~17.0.8",
+    "expo-localization": "~57.0.1",
     "expo-status-bar": "~3.0.9",
     "i18next": "^26.0.6",
     "react": "19.1.0",
