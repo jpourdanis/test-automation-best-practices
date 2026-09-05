@@ -1,3 +1,10 @@
+## [1.1.2](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.1...v1.1.2) (2026-09-05)
+
+
+### Bug Fixes
+
+* **ci:** use correct eas build:list flags and filter by commit server-side ([dc3260e](https://github.com/jpourdanis/test-automation-best-practices/commit/dc3260e349e46d287c48e228e71d7aed775d6c92))
+
 ## [1.1.1](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.0...v1.1.1) (2026-09-05)
 
 
