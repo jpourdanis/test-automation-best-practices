@@ -1,0 +1,19 @@
+2026-09-05 10:39:08 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 10:39:08 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 10:39:08 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 10:39:08 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 10:39:08 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] successful delete removes the chip: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] successful delete removes the chip: 200 DELETE https://test-automation-best-practices.vercel.app/api/colors/Red
+[NETWORK INFO] successful delete removes the chip: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-09-05 10:39:09 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-09-05 10:39:09 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-09-05 10:39:09 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-09-05 10:39:09 - info: Accessibility testing for this test case has ended.
+2026-09-05 10:39:09 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 10:39:09 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 10:39:09 - info: [PlaywrightDriverModule] testId: 4efad2053de5fe3c73f7-72eb2c9355e4b943c623
+2026-09-05 10:39:09 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: 'b9eb2cd9-ccb1-540d-9c58-ae50e90da5e0' }
+2026-09-05 10:39:09 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 10:39:09 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 10:39:09 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
