@@ -233,14 +233,14 @@ jobs:
           echo "Looking for an existing finished build for commit ${GITHUB_SHA} (ios/simulator)..."
           EXISTING_JSON=$(eas build:list \
             --platform ios \
-            --buildProfile simulator \
+            --build-profile simulator \
             --status finished \
-            --nonInteractive \
+            --git-commit-hash "$GITHUB_SHA" \
+            --non-interactive \
             --json \
-            --limit 30 2>/dev/null || echo '[]')
+            --limit 1 2>/dev/null || echo '[]')
 
-          BUILD_JSON=$(echo "$EXISTING_JSON" | jq --arg sha "$GITHUB_SHA" \
-            '[.[] | select(.gitCommitHash == $sha)] | .[0:1]')
+          BUILD_JSON=$(echo "$EXISTING_JSON" | jq '.[0:1]')
 
           if [ "$(echo "$BUILD_JSON" | jq 'length')" -gt 0 ]; then
             echo "Reusing existing EAS build for commit ${GITHUB_SHA}."
@@ -433,14 +433,14 @@ jobs:
           echo "Looking for an existing finished build for commit ${GITHUB_SHA} (android/simulator)..."
           EXISTING_JSON=$(eas build:list \
             --platform android \
-            --buildProfile simulator \
+            --build-profile simulator \
             --status finished \
-            --nonInteractive \
+            --git-commit-hash "$GITHUB_SHA" \
+            --non-interactive \
             --json \
-            --limit 30 2>/dev/null || echo '[]')
+            --limit 1 2>/dev/null || echo '[]')
 
-          BUILD_JSON=$(echo "$EXISTING_JSON" | jq --arg sha "$GITHUB_SHA" \
-            '[.[] | select(.gitCommitHash == $sha)] | .[0:1]')
+          BUILD_JSON=$(echo "$EXISTING_JSON" | jq '.[0:1]')
 
           if [ "$(echo "$BUILD_JSON" | jq 'length')" -gt 0 ]; then
             echo "Reusing existing EAS build for commit ${GITHUB_SHA}."
