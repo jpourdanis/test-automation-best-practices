@@ -4,7 +4,6 @@
   "private": true,
   "workspaces": [
     "packages/*",
-    "mobile",
     "server"
   ],
   "overrides": {
@@ -78,8 +77,8 @@
     "build:shared": "npm run build -w packages/shared",
     "generate:openapi": "npm run generate:openapi --prefix server",
     "generate:client": "npm run generate:openapi --prefix server && npm run generate:client -w packages/shared",
-    "lint": "eslint src e2e performance mobile && npx prettier --check .",
-    "lint:fix": "eslint --fix src e2e performance mobile && npx prettier --write .",
+    "lint": "eslint src e2e performance && npx prettier --check .",
+    "lint:fix": "eslint --fix src e2e performance && npx prettier --write .",
     "format": "npx prettier --write .",
     "start": "react-app-rewired start",
     "build": "react-app-rewired build",
@@ -117,18 +116,7 @@
     "test:browserstack": "cross-env BROWSERSTACK=true browserstack-node-sdk playwright test"
   },
   "eslintConfig": {
-    "extends": "react-app",
-    "overrides": [
-      {
-        "files": [
-          "mobile/**/*.ts",
-          "mobile/**/*.tsx"
-        ],
-        "parserOptions": {
-          "project": "./mobile/tsconfig.json"
-        }
-      }
-    ]
+    "extends": "react-app"
   },
   "browserslist": {
     "production": [
@@ -150,6 +138,10 @@
     "@rollup/rollup-linux-x64-musl": "4.60.2"
   },
   "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.69.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "eslint-plugin-react-hooks": "^5.0.0",
     "@axe-core/playwright": "^4.11.3",
     "@cucumber/cucumber": "^12.8.2",
     "@faker-js/faker": "^10.4.0",
@@ -221,9 +213,7 @@
       "src/setupProxy.js",
       "src/index.tsx",
       "src/setupTests.ts",
-      "src/react-app-env.d.ts",
-      "mobile/src/api/client.ts",
-      "mobile/src/i18n.ts"
+      "src/react-app-env.d.ts"
     ]
   }
 }
