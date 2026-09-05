@@ -1,0 +1,2 @@
+[NETWORK INFO] Escape key closes the confirm dialog: 200 GET https://test-automation-best-practices-dzjtnjjn0-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] Escape key closes the confirm dialog: 204 GET https://test-automation-best-practices-dzjtnjjn0-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
