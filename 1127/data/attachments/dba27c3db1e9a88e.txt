@@ -1,0 +1,20 @@
+2026-09-05 12:40:36 - info: [BrowserstackCLI] Starting as child process with session ID: 0dfbb5c5-53b3-4e87-b005-0cab278e9bb6
+2026-09-05 12:40:36 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-09-05 12:40:36 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=15983:0, state=AutomationFrameworkState.CREATE
+2026-09-05 12:40:36 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=57ec5c1bcc6422a2dbe1129c28cb758f70b023e5adcd1db45bf1db70e89a8d06 target=15983:0
+2026-09-05 12:40:36 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:40:36 - info: [GrpcClient] Sending DriverInit
+2026-09-05 12:40:36 - info: [GrpcClient] DriverInit request successful
+2026-09-05 12:40:36 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:40:36 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:40:36 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:40:36 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 12:40:36 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-09-05 12:41:06 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-09-05 12:41:07 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 12:41:07 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:41:07 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-5af9945c9e11147f9bba
+2026-09-05 12:41:07 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '3ec0a9f8-9504-5829-9c4b-b75053a7cc8f' }
+2026-09-05 12:41:07 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:41:07 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 12:41:07 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

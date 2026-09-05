@@ -1,0 +1,2 @@
+[API ERROR] should not have any automatically detectable accessibility issues: 500 GET https://test-automation-best-practices.vercel.app/api/colors
+[CONSOLE ERROR] should not have any automatically detectable accessibility issues: Failed to load resource: the server responded with a status of 500 ()

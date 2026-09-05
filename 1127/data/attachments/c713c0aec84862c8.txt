@@ -1,0 +1,20 @@
+2026-09-05 12:32:02 - info: [BrowserstackCLI] Starting as child process with session ID: 0dfbb5c5-53b3-4e87-b005-0cab278e9bb6
+2026-09-05 12:32:02 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-09-05 12:32:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=12232:0, state=AutomationFrameworkState.CREATE
+2026-09-05 12:32:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=310e6272c6d7db5bbebd590c8c5a534966123325e3db462b6e5783b7c05459c7 target=12232:0
+2026-09-05 12:32:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:32:02 - info: [GrpcClient] Sending DriverInit
+2026-09-05 12:32:02 - info: [GrpcClient] DriverInit request successful
+2026-09-05 12:32:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:32:02 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:32:02 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:32:02 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 12:32:02 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-09-05 12:32:32 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-09-05 12:32:33 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 12:32:33 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:32:33 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-c1c47995ee56ad37e503
+2026-09-05 12:32:33 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '3dc87290-e4c1-5f56-a5bc-402dcb6af51d' }
+2026-09-05 12:32:33 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:32:33 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
+2026-09-05 12:32:33 - info: [GrpcClient] TestSessionEvent request successful

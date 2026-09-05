@@ -1,0 +1,24 @@
+2026-09-05 13:10:24 - info: [BrowserstackCLI] Starting as child process with session ID: 0dfbb5c5-53b3-4e87-b005-0cab278e9bb6
+2026-09-05 13:10:24 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-09-05 13:10:24 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=27773:0, state=AutomationFrameworkState.CREATE
+2026-09-05 13:10:24 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=a01a5496452e9947c8bb49ff66b1509eb0647c4d2c68c282f812ed6742ed567e target=27773:0
+2026-09-05 13:10:24 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:10:24 - info: [GrpcClient] Sending DriverInit
+2026-09-05 13:10:24 - info: [GrpcClient] DriverInit request successful
+2026-09-05 13:10:24 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:10:24 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:10:24 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 13:10:24 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 13:10:24 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should show loading state when API returns empty colors: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-09-05 13:10:25 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-09-05 13:10:25 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-09-05 13:10:25 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-09-05 13:10:25 - info: Accessibility testing for this test case has ended.
+2026-09-05 13:10:25 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 13:10:25 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:10:25 - info: [PlaywrightDriverModule] testId: 791bdff6f908e1de6c18-b0afe372f6e1c56524d4
+2026-09-05 13:10:25 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: 'a783a09a-cba4-5a9d-b3eb-1e3967e8fb19' }
+2026-09-05 13:10:25 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 13:10:25 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 13:10:25 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

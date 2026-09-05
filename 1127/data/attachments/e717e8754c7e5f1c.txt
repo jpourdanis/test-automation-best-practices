@@ -1,0 +1,21 @@
+2026-09-05 12:47:11 - info: [BrowserstackCLI] Starting as child process with session ID: 0dfbb5c5-53b3-4e87-b005-0cab278e9bb6
+2026-09-05 12:47:11 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-09-05 12:47:11 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=19051:0, state=AutomationFrameworkState.CREATE
+2026-09-05 12:47:11 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=58eea84e6094c636648f453695dfd61e81fa7c1cae0ba2f70ddf6e2090e7eabb target=19051:0
+2026-09-05 12:47:11 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:47:11 - info: [GrpcClient] Sending DriverInit
+2026-09-05 12:47:11 - info: [GrpcClient] DriverInit request successful
+2026-09-05 12:47:11 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:47:11 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:47:11 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:47:11 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 12:47:11 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should show loading state when API returns empty colors: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-09-05 12:47:12 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-09-05 12:47:12 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 12:47:12 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:47:12 - info: [PlaywrightDriverModule] testId: 791bdff6f908e1de6c18-9bef7a1eb70742ab16da
+2026-09-05 12:47:12 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '480657d9-16ca-5d95-ab77-1046dacc5f2b' }
+2026-09-05 12:47:12 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:47:12 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 12:47:12 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

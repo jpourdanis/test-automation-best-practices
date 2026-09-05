@@ -1,0 +1,2 @@
+[API ERROR] should meet the accessibility threshold using Google Lighthouse: 500 GET https://test-automation-best-practices.vercel.app/api/colors
+[CONSOLE ERROR] should meet the accessibility threshold using Google Lighthouse: Failed to load resource: the server responded with a status of 500 ()

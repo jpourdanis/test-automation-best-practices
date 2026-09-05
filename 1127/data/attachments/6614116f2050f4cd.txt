@@ -1,0 +1,22 @@
+2026-09-05 12:25:25 - info: [BrowserstackCLI] Starting as child process with session ID: 0dfbb5c5-53b3-4e87-b005-0cab278e9bb6
+2026-09-05 12:25:25 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-09-05 12:25:25 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=7030:0, state=AutomationFrameworkState.CREATE
+2026-09-05 12:25:25 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=1defa4c37ca1ebd5ccc412ef12314af4566dde8635656b2fde2fd4dfd8379a6c target=7030:0
+2026-09-05 12:25:26 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:25:26 - info: [GrpcClient] Sending DriverInit
+2026-09-05 12:25:26 - info: [GrpcClient] DriverInit request successful
+2026-09-05 12:25:26 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:25:26 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:25:26 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:25:26 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 12:25:26 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+2026-09-05 12:25:28 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-09-05 12:25:29 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 12:25:29 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:25:29 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-efff6f2304b15df9ac9b
+2026-09-05 12:25:29 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '658789e9-307f-55db-ad61-3c26a5b57b32' }
+2026-09-05 12:25:29 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:25:29 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 12:25:29 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

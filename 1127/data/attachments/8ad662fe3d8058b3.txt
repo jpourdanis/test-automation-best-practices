@@ -1,0 +1,1 @@
+[API ERROR] verify Yellow ( #f1c40f ) is applied as the background color: 500 GET https://test-automation-best-practices.vercel.app/api/colors

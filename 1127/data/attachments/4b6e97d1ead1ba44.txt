@@ -1,0 +1,2 @@
+[API ERROR] changing color to Red should reflect in UI and DOM: 500 GET https://test-automation-best-practices.vercel.app/api/colors
+[CONSOLE ERROR] changing color to Red should reflect in UI and DOM: Failed to load resource: the server responded with a status of 500 (Internal Server Error)

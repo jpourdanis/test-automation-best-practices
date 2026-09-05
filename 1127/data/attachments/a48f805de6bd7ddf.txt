@@ -1,0 +1,47 @@
+2026-09-05 12:25:22 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:25:22 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:25:22 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:25:22 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 12:25:22 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-09-05 12:25:23 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-09-05 12:25:23 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-09-05 12:25:23 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-09-05 12:25:23 - info: Accessibility testing for this test case has ended.
+2026-09-05 12:25:23 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 12:25:23 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 12:25:23 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-84e7fc48d03688f9cec4
+2026-09-05 12:25:23 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  uuid: '7f3f3dfb-5b07-5160-b32f-0ee50fccb62c',
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.62.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '7f3f3dfb-5b07-5160-b32f-0ee50fccb62c',
+  test_result: 'pending',
+  automate_session_name: 'XSS Prevention - color names rendered in the UI do not trigger script execution',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-84e7fc48d03688f9cec4',
+  test_name: 'color names rendered in the UI do not trigger script execution',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      page\n' +
+    '    }) => {\n' +
+    '      // Navigate to the live app and confirm no dialog fires from rendered content\n' +
+    '      let alerted = false;\n' +
+    "      page.on('dialog', () => {\n" +
+    '        alerted = true;\n' +
+    '      });\n' +
+    "      await page.goto('/');\n" +
+    '      await page.waitForTimeout(1000);\n' +
+    '      (0, _test.expect)(alerted).toBe(false);\n' +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-09-05T12:25:22.215Z',
+  test_scope: 'XSS Prevention - color names rendered in the UI do not trigger script execution',
+  test_scopes: [ 'Security', 'XSS Prevention' ],
+  test_rerun_name: ' bs-chrome-win11 tests/security.spec.ts Security XSS Prevention color names rendered in the UI do not trigger script execution'
+}
+2026-09-05 12:25:23 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:25:23 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 12:25:23 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

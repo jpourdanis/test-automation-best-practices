@@ -1,0 +1,9 @@
+2026-09-05 12:37:14 - info: [BrowserstackCLI] Starting as child process with session ID: 0dfbb5c5-53b3-4e87-b005-0cab278e9bb6
+2026-09-05 12:37:14 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-09-05 12:37:44 - info: [Accessibility] afterTestHook state: accessibilityPlatform=undefined, bstackA11yShouldScan=true
+2026-09-05 12:37:44 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=13791:0, state=AutomationFrameworkState.CREATE
+2026-09-05 12:37:44 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=1a8f4a9429a75c53312bc10626021ce0a5533273010b687c852c876c47e09896 target=13791:0
+2026-09-05 12:37:44 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-35e3717e3333d2e0e446
+2026-09-05 12:37:44 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '25d244f0-466b-53e0-a22a-1f2ce4ab669d' }
+2026-09-05 12:37:44 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 12:37:45 - info: [GrpcClient] TestSessionEvent request successful

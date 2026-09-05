@@ -1,0 +1,23 @@
+2026-09-05 13:02:34 - info: [BrowserstackCLI] Starting as child process with session ID: 0dfbb5c5-53b3-4e87-b005-0cab278e9bb6
+2026-09-05 13:02:34 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-09-05 13:02:34 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=24826:0, state=AutomationFrameworkState.CREATE
+2026-09-05 13:02:34 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=8f784773a90cda3f13f2862fb1a1ca9cd123fcec1aa5c62fe858fc97987379b1 target=24826:0
+2026-09-05 13:02:34 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:02:34 - info: [GrpcClient] Sending DriverInit
+2026-09-05 13:02:34 - info: [GrpcClient] DriverInit request successful
+2026-09-05 13:02:34 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:02:34 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:02:34 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 13:02:34 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 13:02:34 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-09-05 13:03:04 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-09-05 13:03:04 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-09-05 13:03:04 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-09-05 13:03:04 - info: Accessibility testing for this test case has ended.
+2026-09-05 13:03:05 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 13:03:05 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:03:05 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-b7010ac50f551c932a06
+2026-09-05 13:03:05 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '5b020ac5-994e-58b6-95e9-c1a77c87a57d' }
+2026-09-05 13:03:05 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 13:03:05 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
+2026-09-05 13:03:05 - info: [GrpcClient] TestSessionEvent request successful

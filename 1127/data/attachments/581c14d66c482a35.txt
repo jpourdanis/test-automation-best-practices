@@ -1,0 +1,2 @@
+[API ERROR] handle color response missing hex property: 500 GET https://test-automation-best-practices.vercel.app/api/colors
+[CONSOLE ERROR] handle color response missing hex property: Failed to load resource: the server responded with a status of 500 (Internal Server Error)

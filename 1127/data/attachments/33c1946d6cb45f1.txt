@@ -1,0 +1,2 @@
+[API ERROR] verify Turquoise ( #1abc9c ) is applied as the background color: 500 GET https://test-automation-best-practices.vercel.app/api/colors
+[CONSOLE ERROR] verify Turquoise ( #1abc9c ) is applied as the background color: Failed to load resource: the server responded with a status of 500 (Internal Server Error)

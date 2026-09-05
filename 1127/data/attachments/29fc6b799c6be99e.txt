@@ -1,0 +1,1 @@
+[API ERROR] handle color selection fetch error: 500 GET https://test-automation-best-practices.vercel.app/api/colors/Red

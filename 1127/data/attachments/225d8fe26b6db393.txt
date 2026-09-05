@@ -1,0 +1,6 @@
+2026-09-05 13:00:23 - info: [Accessibility] afterTestHook state: accessibilityPlatform=undefined, bstackA11yShouldScan=true
+2026-09-05 13:00:23 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 13:00:23 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-a0a9cd4c3abfae43b265
+2026-09-05 13:00:23 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '9248b921-45bb-5ee6-bc47-3d0e03779933' }
+2026-09-05 13:00:23 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 13:00:23 - info: [GrpcClient] TestSessionEvent request successful
