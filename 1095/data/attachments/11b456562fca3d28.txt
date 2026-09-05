@@ -1,0 +1,1 @@
+[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices.vercel.app/api/colors - NS_BINDING_ABORTED

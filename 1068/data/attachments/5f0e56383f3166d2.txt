@@ -1,5 +1,0 @@
-[NETWORK INFO] should not have any automatically detectable accessibility issues: 204 GET https://test-automation-best-practices-qsi4r2u2j-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
-[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-qsi4r2u2j-jpourdanis-projects.vercel.app&deploymentId=dpl_Fe7B1ESrKNgCuUGDok6nyo4yH6vY
-[NETWORK INFO] should not have any automatically detectable accessibility issues: 204 HEAD https://test-automation-best-practices-qsi4r2u2j-jpourdanis-projects.vercel.app/
-[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices-qsi4r2u2j-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices-qsi4r2u2j-jpourdanis-projects.vercel.app/api/colors/Turquoise

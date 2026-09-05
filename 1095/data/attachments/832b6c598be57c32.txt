@@ -1,0 +1,14 @@
+2026-09-05 09:20:20 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 09:20:21 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 09:20:21 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 09:20:21 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 09:20:21 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-09-05 09:20:21 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+[NETWORK INFO] should handle missing image gracefully by showing alt text: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-09-05 09:20:21 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 09:20:21 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 09:20:21 - info: [PlaywrightDriverModule] testId: 3519c5209bc58d4ab510-4dd721301b3b53b99f64
+2026-09-05 09:20:21 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '1da11650-cf71-5780-994b-22e1cd68bdc3' }
+2026-09-05 09:20:21 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 09:20:21 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 09:20:21 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

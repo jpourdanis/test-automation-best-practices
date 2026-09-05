@@ -1,0 +1,13 @@
+2026-09-05 09:19:28 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 09:19:28 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 09:19:28 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 09:19:28 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 09:19:28 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should meet the accessibility threshold using Google Lighthouse: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+2026-09-05 09:19:29 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-09-05 09:19:29 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 09:19:29 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 09:19:29 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-c72985c98907641e1458
+2026-09-05 09:19:29 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '3148f9f9-b662-5aaf-abef-273da22d9ea7' }
+2026-09-05 09:19:29 - info: [GrpcClient] Sending TestSessionEvent
