@@ -797,8 +797,8 @@ jobs:
   performance-testing-api-prod:
     name: Performance Tests (API - Production)
     needs: [visual-regression-percy]
-    # Runs only on the weekly schedule to avoid hammering production on every push/PR
-    if: github.event_name == 'schedule'
+    # Runs on the weekly schedule and on push to main
+    if: github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -833,8 +833,8 @@ jobs:
   performance-testing-ui-prod:
     name: Performance Tests (UI - Production)
     needs: [performance-testing-api-prod]
-    # Runs only on the weekly schedule
-    if: github.event_name == 'schedule'
+    # Runs on the weekly schedule and on push to main
+    if: github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -948,9 +948,8 @@ jobs:
   e2e-production:
     name: E2E Tests (BrowserStack - Production)
     needs: [e2e-sharded]
-    # Runs on manual dispatch (when opted in) or on the weekly schedule.
-    # Never runs on push/PR — those use the Docker-based sharded suite instead.
-    if: github.event_name == 'schedule'
+    # Runs on manual dispatch (when opted in), the weekly schedule, or push to main.
+    if: github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -1005,7 +1004,7 @@ jobs:
   visual-regression-percy:
     name: Visual Regression (Percy - Production)
     needs: [e2e-production]
-    if: github.event_name == 'schedule'
+    if: github.event_name == 'schedule' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     env:
       PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
