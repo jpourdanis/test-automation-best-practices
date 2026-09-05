@@ -1,0 +1,13 @@
+2026-09-05 16:25:43 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 16:25:43 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 16:25:43 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 16:25:43 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 16:25:43 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+2026-09-05 16:25:43 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-09-05 16:25:44 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 16:25:44 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 16:25:44 - info: [PlaywrightDriverModule] testId: 791bdff6f908e1de6c18-1b588e211c1ca7f69631
+2026-09-05 16:25:44 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: 'f7dd2218-28ec-59c5-9c48-77a47714eff2' }
+2026-09-05 16:25:44 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 16:25:44 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 16:25:44 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

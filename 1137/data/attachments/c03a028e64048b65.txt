@@ -1,0 +1,25 @@
+2026-09-05 16:22:48 - info: [BrowserstackCLI] Starting as child process with session ID: 566aadaa-01e5-42d7-9480-284034851d46
+2026-09-05 16:22:48 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-09-05 16:22:48 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=6114:0, state=AutomationFrameworkState.CREATE
+2026-09-05 16:22:48 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=619f4f0152f8d443f99185ecf72932a39684e55aca8274ade195e2557658636d target=6114:0
+2026-09-05 16:22:48 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 16:22:48 - info: [GrpcClient] Sending DriverInit
+2026-09-05 16:22:48 - info: [GrpcClient] DriverInit request successful
+2026-09-05 16:22:48 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 16:22:48 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 16:22:48 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 16:22:48 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 16:22:48 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+2026-09-05 16:22:55 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-09-05 16:22:55 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-09-05 16:22:55 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-09-05 16:22:55 - info: Accessibility testing for this test case has ended.
+2026-09-05 16:22:55 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-05 16:22:55 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-05 16:22:55 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-0450478b5c26b4d4fa45
+2026-09-05 16:22:55 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: 'db244759-b8b4-5265-a178-82813e8e64f9' }
+2026-09-05 16:22:55 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-05 16:22:55 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-05 16:22:55 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
