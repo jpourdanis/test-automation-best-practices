@@ -1,3 +1,10 @@
+## [1.1.3](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.2...v1.1.3) (2026-09-05)
+
+
+### Bug Fixes
+
+* bump @playwright/test to 1.63.0 to match Docker image ([c403b1d](https://github.com/jpourdanis/test-automation-best-practices/commit/c403b1d8ec40d173876bb868945bca9651539894))
+
 ## [1.1.2](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.1...v1.1.2) (2026-09-05)
 
 
