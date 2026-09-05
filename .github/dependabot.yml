@@ -7,31 +7,71 @@ updates:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - "dependencies"
       - "frontend"
 
   # 2. Update server-side npm packages
+  # server/ keeps its own lockfile (server/package-lock.json) because
+  # server/Dockerfile installs production deps with `npm ci --no-workspaces`
+  # scoped to this directory, independent of the root workspace lockfile.
+  # This entry is what keeps that nested lockfile in sync; the root entry
+  # above independently keeps the root lockfile in sync with the same
+  # package.json. Both must be reviewed together when either opens a PR.
   - package-ecosystem: "npm"
     directory: "/server"
     schedule:
       interval: "weekly"
       day: "monday"
     open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - "dependencies"
       - "backend"
 
-  # 3. Update GitHub Actions (e.g., actions/checkout@v4)
+  # 3. Update mobile npm packages
+  # mobile/ keeps its own lockfile (mobile/package-lock.json), installed
+  # directly via `npm ci` scoped to mobile/ in mobile-e2e.yml and by EAS
+  # builds - independent of the root workspace lockfile.
+  - package-ecosystem: "npm"
+    directory: "/mobile"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 5
+    groups:
+      minor-and-patch:
+        update-types:
+          - "minor"
+          - "patch"
+    labels:
+      - "dependencies"
+      - "mobile"
+
+  # 4. Update GitHub Actions (e.g., actions/checkout@v4)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
       interval: "monthly"
+    groups:
+      github-actions:
+        update-types:
+          - "minor"
+          - "patch"
     labels:
       - "dependencies"
       - "ci"
 
-  # 4. Update Docker base images (e.g., mcr.microsoft.com/playwright)
+  # 5. Update Docker base images (e.g., mcr.microsoft.com/playwright)
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
@@ -40,6 +80,7 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
+      - "frontend"
       - "docker"
 
   - package-ecosystem: "docker"
@@ -50,4 +91,5 @@ updates:
     open-pull-requests-limit: 5
     labels:
       - "dependencies"
+      - "backend"
       - "docker"
