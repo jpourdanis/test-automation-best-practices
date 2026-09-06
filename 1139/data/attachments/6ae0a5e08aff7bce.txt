@@ -1,0 +1,17 @@
+2026-09-06 02:30:12 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-06 02:30:12 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-06 02:30:12 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-06 02:30:12 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-06 02:30:12 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] changing color to Red should reflect in UI and DOM: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] changing color to Red should reflect in UI and DOM: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Red
+2026-09-06 02:30:13 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-09-06 02:30:13 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-09-06 02:30:13 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-09-06 02:30:13 - info: Accessibility testing for this test case has ended.
+2026-09-06 02:30:13 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-06 02:30:13 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-06 02:30:13 - info: [PlaywrightDriverModule] testId: 00b11043fe1f1d2b9864-157768036a947d1bd013
+2026-09-06 02:30:13 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: '62f56754-b80d-5dcb-812a-c4c9c7c9ab26' }
+2026-09-06 02:30:13 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-06 02:30:13 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

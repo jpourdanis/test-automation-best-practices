@@ -1,0 +1,36 @@
+     █ Catalog Browsing
+
+       ✓ List colors status is 200
+       ✓ Response is an array
+       ✓ Contains at least one color
+
+     █ Color Management
+
+       ✓ Color creation status is 201
+       ✓ Retrieve color status is 200
+       ✓ Retrieved correct hex
+       ✓ Update color status is 200
+       ✓ Updated hex matches
+       ✓ Delete color status is 200
+
+     checks.........................: 100.00% ✓ 390      ✗ 0  
+     data_received..................: 77 kB   246 B/s
+     data_sent......................: 22 kB   70 B/s
+     group_duration.................: avg=1.06s    min=182.08ms med=645.13ms max=12.22s   p(90)=980.78ms p(95)=1.05s   
+     http_req_blocked...............: avg=736.62µs min=250ns    med=501ns    max=55.81ms  p(90)=621ns    p(95)=672ns   
+     http_req_connecting............: avg=176.52µs min=0s       med=0s       max=14.46ms  p(90)=0s       p(95)=0s      
+   ✓ http_req_duration..............: avg=229.28ms min=91.07ms  med=198.47ms max=388.3ms  p(90)=291.73ms p(95)=299.17ms
+       { expected_response:true }...: avg=231.16ms min=176.85ms med=198.52ms max=388.3ms  p(90)=292.04ms p(95)=299.35ms
+     http_req_failed................: 1.82%   ✓ 4        ✗ 215
+     http_req_receiving.............: avg=75.2µs   min=30.14µs  med=68.58µs  max=393.56µs p(90)=96.9µs   p(95)=114.01µs
+     http_req_sending...............: avg=89.1µs   min=45.47µs  med=90.17µs  max=154.7µs  p(90)=118.86µs p(95)=127µs   
+     http_req_tls_handshaking.......: avg=445.03µs min=0s       med=0s       max=27.02ms  p(90)=0s       p(95)=0s      
+     http_req_waiting...............: avg=229.11ms min=90.87ms  med=198.35ms max=388.11ms p(90)=291.53ms p(95)=299ms   
+     http_reqs......................: 219     0.699953/s
+     iteration_duration.............: avg=17.41s   min=13.21s   med=17.14s   max=28s      p(90)=18.9s    p(95)=26.61s  
+     iterations.....................: 46      0.147022/s
+   ✓ rate_limited_requests..........: 4       0.012785/s
+     successful_actions_count.......: 42      0.134238/s
+   ✓ successful_actions_rate........: 91.30%  ✓ 42       ✗ 4  
+     vus............................: 1       min=1      max=3
+     vus_max........................: 3       min=3      max=3
