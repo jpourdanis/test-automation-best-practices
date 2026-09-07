@@ -1,0 +1,7 @@
+2026-09-07 16:41:39 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-07 16:41:39 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-07 16:41:39 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-fa6fa630ca5e1cb3665b
+2026-09-07 16:41:39 - info: [PlaywrightDriverModule] testData from onAfterTest: { uuid: 'b365b2b1-26f1-59dd-a7da-84c26de3c0e2' }
+2026-09-07 16:41:39 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-07 16:41:39 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-07 16:41:39 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

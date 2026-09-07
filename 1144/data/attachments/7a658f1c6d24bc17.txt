@@ -1,0 +1,1 @@
+[API ERROR] shows 409 duplicate error from server inside the picker: 409 POST https://test-automation-best-practices.vercel.app/api/colors
