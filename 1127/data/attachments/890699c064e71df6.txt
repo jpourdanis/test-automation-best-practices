@@ -1,1 +1,0 @@
-[NETWORK ERROR] should handle missing image gracefully by showing alt text: GET https://test-automation-best-practices.vercel.app/static/media/logo.103b5fa18196d5665a7e12318285c916.svg - NS_ERROR_FAILURE
