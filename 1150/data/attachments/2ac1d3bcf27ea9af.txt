@@ -1,0 +1,32 @@
+2026-09-09 08:48:26 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-09 08:48:26 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 08:48:26 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-4c7c988a0800895c6c00
+2026-09-09 08:48:26 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.63.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'f980d64c-61c9-52e1-9c67-a6577679f95c',
+  test_result: 'pending',
+  automate_session_name: 'HTTP Method Restrictions - PATCH /api/colors/:name returns 405',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-4c7c988a0800895c6c00',
+  test_name: 'PATCH /api/colors/:name returns 405',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.patch('/api/colors/Turquoise');\n" +
+    '      (0, _test.expect)(res.status()).toBe(405);\n' +
+    "      (0, _test.expect)(res.headers()['allow']).toContain('PUT');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-09-09T08:48:26.785Z',
+  test_scope: 'HTTP Method Restrictions - PATCH /api/colors/:name returns 405',
+  test_scopes: [ 'Security', 'HTTP Method Restrictions' ],
+  test_rerun_name: ' bs-pixel-7 tests/security.spec.ts Security HTTP Method Restrictions PATCH /api/colors/:name returns 405'
+}
+2026-09-09 08:48:26 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-09 08:48:26 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-09 08:48:26 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

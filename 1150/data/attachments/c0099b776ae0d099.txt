@@ -1,0 +1,55 @@
+2026-09-09 08:46:40 - info: [BrowserstackCLI] Starting as child process with session ID: 6955e7c7-bbdd-415f-904b-f923efff01d4
+2026-09-09 08:46:40 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-09-09 08:46:40 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=8761:0, state=AutomationFrameworkState.CREATE
+2026-09-09 08:46:40 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=8ebf8dbb674d2185fc957bf961c98bc0f210a22096c84ced7c5b9f7bfa0d1fab target=8761:0
+2026-09-09 08:46:41 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 08:46:41 - info: [GrpcClient] Sending DriverInit
+2026-09-09 08:46:41 - info: [GrpcClient] DriverInit request successful
+2026-09-09 08:46:41 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 08:46:47 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 08:46:47 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-09 08:46:47 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-09 08:46:47 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+2026-09-09 08:46:50 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-09-09 08:46:51 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-09 08:46:51 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 08:46:51 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-218a88132400aaa67483
+2026-09-09 08:46:51 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.63.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'd2f731a8-b0d6-578b-bcb8-30a74fe7d8e5',
+  test_result: 'pending',
+  automate_session_name: 'Accessibility Tests - should not have any automatically detectable accessibility issues',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_id: 'b7be152566087f10fae4-218a88132400aaa67483',
+  test_name: 'should not have any automatically detectable accessibility issues',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Wait for the main elements to render\n' +
+    '    await (0, _baseFixtures.expect)(homePage.header).toBeVisible();\n' +
+    '\n' +
+    '    // Run Axe to check for accessibility violations\n' +
+    '    const accessibilityScanResults = await new _playwright.default({\n' +
+    '      page\n' +
+    '    }).analyze();\n' +
+    '\n' +
+    '    // Verify there are no violations\n' +
+    '    (0, _baseFixtures.expect)(accessibilityScanResults.violations).toEqual([]);\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-09-09T08:46:40.549Z',
+  test_scope: 'Accessibility Tests - should not have any automatically detectable accessibility issues',
+  test_scopes: [ 'Accessibility Tests' ],
+  test_rerun_name: ' bs-safari-ventura tests/a11y.spec.ts Accessibility Tests should not have any automatically detectable accessibility issues'
+}
+2026-09-09 08:46:51 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-09 08:46:51 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-09 08:46:51 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

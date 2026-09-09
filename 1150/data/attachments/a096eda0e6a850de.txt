@@ -1,0 +1,55 @@
+2026-09-09 08:46:55 - info: [BrowserstackCLI] Starting as child process with session ID: 6955e7c7-bbdd-415f-904b-f923efff01d4
+2026-09-09 08:46:55 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-09-09 08:46:55 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=9142:0, state=AutomationFrameworkState.CREATE
+2026-09-09 08:46:55 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=e7ddf2a5c4dea66331da1411abc09ac5caabd44b46a1d14b82b0ab070005eee4 target=9142:0
+2026-09-09 08:46:55 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 08:46:55 - info: [GrpcClient] Sending DriverInit
+2026-09-09 08:46:55 - info: [GrpcClient] DriverInit request successful
+2026-09-09 08:46:55 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 08:46:56 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 08:46:56 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-09 08:46:56 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-09 08:46:56 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should not have any automatically detectable accessibility issues: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+2026-09-09 08:46:59 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-09-09 08:47:00 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-09 08:47:00 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 08:47:00 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-218a88132400aaa67483
+2026-09-09 08:47:00 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.63.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'cf255377-da49-598d-91c7-e2b89711747f',
+  test_result: 'pending',
+  automate_session_name: 'Accessibility Tests - should not have any automatically detectable accessibility issues',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_id: 'b7be152566087f10fae4-218a88132400aaa67483',
+  test_name: 'should not have any automatically detectable accessibility issues',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Wait for the main elements to render\n' +
+    '    await (0, _baseFixtures.expect)(homePage.header).toBeVisible();\n' +
+    '\n' +
+    '    // Run Axe to check for accessibility violations\n' +
+    '    const accessibilityScanResults = await new _playwright.default({\n' +
+    '      page\n' +
+    '    }).analyze();\n' +
+    '\n' +
+    '    // Verify there are no violations\n' +
+    '    (0, _baseFixtures.expect)(accessibilityScanResults.violations).toEqual([]);\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-09-09T08:46:40.549Z',
+  test_scope: 'Accessibility Tests - should not have any automatically detectable accessibility issues',
+  test_scopes: [ 'Accessibility Tests' ],
+  test_rerun_name: ' bs-safari-ventura tests/a11y.spec.ts Accessibility Tests should not have any automatically detectable accessibility issues'
+}
+2026-09-09 08:47:00 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-09 08:47:00 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
+2026-09-09 08:47:00 - info: [GrpcClient] TestSessionEvent request successful

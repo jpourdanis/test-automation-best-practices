@@ -1,0 +1,32 @@
+2026-09-09 08:48:27 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-09 08:48:27 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 08:48:27 - info: [PlaywrightDriverModule] testId: f5433c5fd4a2092d439d-46e66395c2c8a6c3e3c8
+2026-09-09 08:48:27 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.63.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'a44e8fcb-df1c-58c7-b1b4-5584dc910400',
+  test_result: 'pending',
+  automate_session_name: 'HTTP Method Restrictions - POST /api-docs returns 405',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_id: 'f5433c5fd4a2092d439d-46e66395c2c8a6c3e3c8',
+  test_name: 'POST /api-docs returns 405',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/security.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    "      const res = await request.post('/api-docs');\n" +
+    '      (0, _test.expect)(res.status()).toBe(405);\n' +
+    "      (0, _test.expect)(res.headers()['allow']).toBe('GET');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-09-09T08:48:26.962Z',
+  test_scope: 'HTTP Method Restrictions - POST /api-docs returns 405',
+  test_scopes: [ 'Security', 'HTTP Method Restrictions' ],
+  test_rerun_name: ' bs-pixel-7 tests/security.spec.ts Security HTTP Method Restrictions POST /api-docs returns 405'
+}
+2026-09-09 08:48:27 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-09 08:48:27 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
+2026-09-09 08:48:27 - info: [GrpcClient] TestSessionEvent request successful
