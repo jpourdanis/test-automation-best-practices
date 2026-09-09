@@ -1,12 +1,12 @@
 module.exports = {
-  preset: 'react-native',
+  preset: '@react-native/jest-preset',
   setupFilesAfterEnv: [],
   testMatch: ['<rootDir>/src/**/*.test.(ts|tsx|js|jsx)'],
   moduleNameMapper: {
-    '^react$': '<rootDir>/node_modules/react',
-    '^react/(.*)$': '<rootDir>/node_modules/react/$1',
-    '^react-test-renderer$': require('path').join(__dirname, '..', 'node_modules', 'react-test-renderer'),
-    '^react-test-renderer/(.*)$': require('path').join(__dirname, '..', 'node_modules', 'react-test-renderer') + '/$1',
+    '^react$': require.resolve('react'),
+    '^react/(.*)$': require.resolve('react') + '/../$1',
+    '^react-test-renderer$': require.resolve('react-test-renderer'),
+    '^react-test-renderer/(.*)$': require.resolve('react-test-renderer') + '/../$1',
     '^@testing-library/react-native$': require.resolve('@testing-library/react-native')
   },
   transformIgnorePatterns: [

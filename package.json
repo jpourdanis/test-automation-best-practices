@@ -50,7 +50,7 @@
     "minimatch@3.1.5": {
       "brace-expansion": "^1.1.18"
     },
-    "react-test-renderer": "19.1.0"
+    "react-test-renderer": "19.2.8"
   },
   "dependencies": {
     "@color-app/shared": "*",
