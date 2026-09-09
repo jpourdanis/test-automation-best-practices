@@ -1,3 +1,11 @@
+## [1.1.4](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.3...v1.1.4) (2026-09-09)
+
+
+### Bug Fixes
+
+* **mobile:** stop relying on mobile's hoisted devDependencies at root ([b4275f2](https://github.com/jpourdanis/test-automation-best-practices/commit/b4275f212ad708f14ebb772ffa0b78e5df2afe8f))
+* **server:** bump @stryker-mutator/jest-runner to 10.0.0 to match core ([c500770](https://github.com/jpourdanis/test-automation-best-practices/commit/c5007704284b02af9aa6b3c9e73739cd1689704b))
+
 ## [1.1.3](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.2...v1.1.3) (2026-09-05)
 
 ### Bug Fixes
