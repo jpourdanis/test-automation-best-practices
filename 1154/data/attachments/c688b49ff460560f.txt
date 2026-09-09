@@ -1,0 +1,48 @@
+2026-09-09 10:35:44 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 10:35:44 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 10:35:44 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-09 10:35:44 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-09 10:35:44 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-09-09 10:35:45 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Red
+2026-09-09 10:35:46 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-09 10:35:46 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 10:35:46 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-537fb671cd7282bdcccd
+2026-09-09 10:35:46 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.63.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '77a42ccf-b658-565c-9947-c07a8d395208',
+  test_result: 'pending',
+  automate_session_name: 'Background color tests - verify Red ( #e74c3c ) is applied as the background color',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_id: '3300dcb2e635619af3f7-537fb671cd7282bdcccd',
+  test_name: 'verify Red ( #e74c3c ) is applied as the background color',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_code: 'async ({\n' +
+    '      page\n' +
+    '    }) => {\n' +
+    '      // Click the color name to change the background color\n' +
+    '      await page.click(`text=${color.name}`);\n' +
+    '\n' +
+    '      // Wait for React to fetch and update DOM\n' +
+    "      await (0, _baseFixtures.expect)(page.locator('text=Current color:')).toContainText(color.hex);\n" +
+    '\n' +
+    '      // Convert hex to RGB for CSS validation\n' +
+    '      const rgb = (0, _helper.convertHexToRGB)(`#${color.hex}`);\n' +
+    '\n' +
+    '      // Verify the header background color matches the expected RGB value\n' +
+    "      await (0, _baseFixtures.expect)(page.locator('header')).toHaveCSS('background-color', `rgb(${rgb.red}, ${rgb.green}, ${rgb.blue})`);\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-09-09T10:35:44.473Z',
+  test_scope: 'Background color tests - verify Red ( #e74c3c ) is applied as the background color',
+  test_scopes: [ 'Background color tests' ],
+  test_rerun_name: ' bs-safari-ventura tests/coverage.spec.ts Background color tests verify Red ( #e74c3c ) is applied as the background color'
+}
+2026-09-09 10:35:46 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-09 10:35:46 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-09 10:35:46 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

@@ -1,0 +1,54 @@
+2026-09-09 10:36:09 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 10:36:09 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 10:36:09 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-09 10:36:09 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-09 10:36:09 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should maintain accessibility after state change (color update): 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should maintain accessibility after state change (color update): 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+[NETWORK INFO] should maintain accessibility after state change (color update): 200 GET https://test-automation-best-practices.vercel.app/api/colors/Yellow
+2026-09-09 10:36:11 - info: Automate test case execution has ended. Processing for accessibility testing is underway. 
+2026-09-09 10:36:11 - warn: Not a valid Accessibility Automation session for playwright-page, cannot perform scan with retry.
+2026-09-09 10:36:11 - warn: Not a valid Accessibility Automation session for playwright-page, cannot save accessibility results with retry.
+2026-09-09 10:36:11 - info: Accessibility testing for this test case has ended.
+2026-09-09 10:36:11 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-09 10:36:11 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-09 10:36:11 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-22ed0b91c0fee8194234
+2026-09-09 10:36:11 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.63.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'cb6472f1-2376-5c95-81d1-310d59e34576',
+  test_result: 'pending',
+  automate_session_name: 'Accessibility Tests - should maintain accessibility after state change (color update)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_id: 'b7be152566087f10fae4-22ed0b91c0fee8194234',
+  test_name: 'should maintain accessibility after state change (color update)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Change color to verify contrast and other rules still pass\n' +
+    "    await homePage.clickColorButton('Yellow');\n" +
+    '\n' +
+    '    // Wait for the color change to apply (indicated by the text changing)\n' +
+    "    await (0, _baseFixtures.expect)(homePage.currentColorText).toContainText('#f1c40f');\n" +
+    '    const accessibilityScanResults = await new _playwright.default({\n' +
+    '      page\n' +
+    '    }).analyze();\n' +
+    '\n' +
+    '    // We specifically check contrast rules after a background color change\n' +
+    "    const contrastViolations = accessibilityScanResults.violations.filter(v => v.id === 'color-contrast');\n" +
+    '    (0, _baseFixtures.expect)(contrastViolations).toEqual([]);\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-09-09T10:36:09.096Z',
+  test_scope: 'Accessibility Tests - should maintain accessibility after state change (color update)',
+  test_scopes: [ 'Accessibility Tests' ],
+  test_rerun_name: ' bs-pixel-7 tests/a11y.spec.ts Accessibility Tests should maintain accessibility after state change (color update)'
+}
+2026-09-09 10:36:11 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-09 10:36:11 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-09 10:36:11 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
