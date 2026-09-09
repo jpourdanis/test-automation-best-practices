@@ -20,7 +20,7 @@
     "appium:install-drivers:android": "appium driver install uiautomator2",
     "test:ios": "wdio run e2e/wdio.ios.conf.ts",
     "test:android": "wdio run e2e/wdio.android.conf.ts",
-    "test:unit": "cross-env JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-mobile-unit-tests.xml jest --coverage",
+    "test:unit": "cross-env NODE_PATH=./node_modules JEST_JUNIT_OUTPUT_DIR=allure-results JEST_JUNIT_OUTPUT_NAME=junit-mobile-unit-tests.xml jest --coverage",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix"
   },
@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
+    "@react-native/jest-preset": "^0.87.1",
     "@testing-library/react-native": "^13.0.1",
     "@types/jest": "^29.5.14",
     "@types/react": "~19.2.18",
