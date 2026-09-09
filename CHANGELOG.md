@@ -1,24 +1,21 @@
 ## [1.1.3](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.2...v1.1.3) (2026-09-05)
 
-
 ### Bug Fixes
 
-* bump @playwright/test to 1.63.0 to match Docker image ([c403b1d](https://github.com/jpourdanis/test-automation-best-practices/commit/c403b1d8ec40d173876bb868945bca9651539894))
+- bump @playwright/test to 1.63.0 to match Docker image ([c403b1d](https://github.com/jpourdanis/test-automation-best-practices/commit/c403b1d8ec40d173876bb868945bca9651539894))
 
 ## [1.1.2](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.1...v1.1.2) (2026-09-05)
 
-
 ### Bug Fixes
 
-* **ci:** use correct eas build:list flags and filter by commit server-side ([dc3260e](https://github.com/jpourdanis/test-automation-best-practices/commit/dc3260e349e46d287c48e228e71d7aed775d6c92))
+- **ci:** use correct eas build:list flags and filter by commit server-side ([dc3260e](https://github.com/jpourdanis/test-automation-best-practices/commit/dc3260e349e46d287c48e228e71d7aed775d6c92))
 
 ## [1.1.1](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.0...v1.1.1) (2026-09-05)
 
-
 ### Bug Fixes
 
-* suppress libuuid CVEs unpatchable on amd64 in frontend Trivy scan ([fcf236f](https://github.com/jpourdanis/test-automation-best-practices/commit/fcf236f3f191277f6a4192053d44fb864853577d))
-* sync root package-lock.json with server jest 30.5.1 bump ([ca070e7](https://github.com/jpourdanis/test-automation-best-practices/commit/ca070e7bea16c9993a5b77379c1c921d1536920a))
+- suppress libuuid CVEs unpatchable on amd64 in frontend Trivy scan ([fcf236f](https://github.com/jpourdanis/test-automation-best-practices/commit/fcf236f3f191277f6a4192053d44fb864853577d))
+- sync root package-lock.json with server jest 30.5.1 bump ([ca070e7](https://github.com/jpourdanis/test-automation-best-practices/commit/ca070e7bea16c9993a5b77379c1c921d1536920a))
 
 # [1.1.0](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.5...v1.1.0) (2026-09-04)
 
