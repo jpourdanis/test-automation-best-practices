@@ -1,3 +1,10 @@
+## [1.1.5](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.4...v1.1.5) (2026-09-09)
+
+
+### Bug Fixes
+
+* **server:** resync standalone lockfile with mongoose 9.9.5 bump ([fd18dc1](https://github.com/jpourdanis/test-automation-best-practices/commit/fd18dc1394dc7e8fae4e4e39150bc1703fbe8e8e))
+
 ## [1.1.4](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.3...v1.1.4) (2026-09-09)
 
 
