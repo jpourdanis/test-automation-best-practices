@@ -1,0 +1,3 @@
+[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices.vercel.app/_vercel/insights/script.js - Load request cancelled
+[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices.vercel.app/_vercel/speed-insights/script.js - Load request cancelled
+[NETWORK ERROR] check Turquoise ( #1abc9c) is the default background color.: GET https://test-automation-best-practices.vercel.app/api/colors - Load request cancelled

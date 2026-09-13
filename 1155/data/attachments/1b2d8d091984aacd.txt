@@ -1,0 +1,40 @@
+2026-09-13 02:39:15 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-13 02:39:15 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-13 02:39:15 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-3b71e99ca9a282310491
+2026-09-13 02:39:15 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.63.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'a64fdc51-5987-5e90-b6a1-a716593a7abd',
+  test_result: 'pending',
+  automate_session_name: 'PUT /api/colors/:name Schema Validation - should return 404 when updating non-existent color',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-3b71e99ca9a282310491',
+  test_name: 'should return 404 when updating non-existent color',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const response = await request.put(`/api/colors/DoesNotExist`, {\n' +
+    '        data: {\n' +
+    "          hex: '#222222'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(response.status()).toBe(404);\n' +
+    '      const data = await response.json();\n' +
+    "      (0, _test.expect)(data.error).toBe('Color not found');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-09-13T02:39:15.140Z',
+  test_scope: 'PUT /api/colors/:name Schema Validation - should return 404 when updating non-existent color',
+  test_scopes: [
+    'Backend API Integration',
+    'PUT /api/colors/:name Schema Validation'
+  ],
+  test_rerun_name: ' bs-chrome-win11 tests/api.spec.ts Backend API Integration PUT /api/colors/:name Schema Validation should return 404 when updating non-existent color'
+}
+2026-09-13 02:39:15 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-13 02:39:15 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-13 02:39:15 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
