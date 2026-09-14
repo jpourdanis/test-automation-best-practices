@@ -1,3 +1,0 @@
-[NETWORK INFO] successful delete removes the chip: 200 GET http://localhost:3000/api/colors
-[NETWORK INFO] successful delete removes the chip: 200 DELETE http://localhost:3000/api/colors/Red
-[NETWORK INFO] successful delete removes the chip: 200 GET http://localhost:3000/api/colors
