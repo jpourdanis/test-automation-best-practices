@@ -22,7 +22,7 @@
     "generate:client": "node scripts/generate-api.js"
   },
   "dependencies": {
-    "zod": "^4.4.3"
+    "zod": "^4.6.2"
   },
   "devDependencies": {
     "esbuild": "~0.28.1",
