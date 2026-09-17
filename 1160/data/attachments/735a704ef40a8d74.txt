@@ -1,0 +1,2 @@
+[NETWORK INFO] should display all core elements and handle button interaction: 200 GET http://web:3000/api/colors
+[NETWORK INFO] should display all core elements and handle button interaction: 200 GET http://web:3000/api/colors/Yellow
