@@ -1,0 +1,37 @@
+2026-09-20 02:58:03 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-09-20 02:58:03 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-09-20 02:58:03 - info: [PlaywrightDriverModule] testId: 48e6f0aa6123723a9eff-9a688e1b29217bb705c9
+2026-09-20 02:58:03 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.63.0',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: '6b233b0a-aeff-5c62-9fd1-9f5de93e83b3',
+  test_result: 'pending',
+  automate_session_name: 'POST /api/colors Schema Validation - should reject missing hex',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_id: '48e6f0aa6123723a9eff-9a688e1b29217bb705c9',
+  test_name: 'should reject missing hex',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/api.spec.ts',
+  test_code: 'async ({\n' +
+    '      request\n' +
+    '    }) => {\n' +
+    '      const response = await request.post(`/api/colors`, {\n' +
+    '        data: {\n' +
+    "          name: 'Orange'\n" +
+    '        }\n' +
+    '      });\n' +
+    '      (0, _test.expect)(response.status()).toBe(400);\n' +
+    '      const data = await response.json();\n' +
+    "      (0, _test.expect)(data.error).toBe('Invalid input: expected string, received undefined');\n" +
+    '    }',
+  test_tags: [],
+  test_started_at: '2026-09-20T02:58:02.995Z',
+  test_scope: 'POST /api/colors Schema Validation - should reject missing hex',
+  test_scopes: [ 'Backend API Integration', 'POST /api/colors Schema Validation' ],
+  test_rerun_name: ' bs-iphone-15 tests/api.spec.ts Backend API Integration POST /api/colors Schema Validation should reject missing hex'
+}
+2026-09-20 02:58:03 - info: [GrpcClient] Sending TestSessionEvent
+2026-09-20 02:58:03 - info: [GrpcClient] TestSessionEvent request successful
+2026-09-20 02:58:03 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED
