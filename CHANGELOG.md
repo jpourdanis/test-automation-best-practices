@@ -1,3 +1,11 @@
+## [1.1.6](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.5...v1.1.6) (2026-09-25)
+
+
+### Bug Fixes
+
+* **deps:** hold mongoose at 9.9.x and @percy/cli at 1.32.8; resync server lockfile ([f4b164a](https://github.com/jpourdanis/test-automation-best-practices/commit/f4b164a5dad60c8b904e9ab3719c29255a5b5c25)), closes [hi#severity](https://github.com/hi/issues/severity)
+* **deps:** override adm-zip to ^0.6.1 ([b73045d](https://github.com/jpourdanis/test-automation-best-practices/commit/b73045d726a2bdc00967e84b64e72e673b95d876))
+
 ## [1.1.5](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.4...v1.1.5) (2026-09-09)
 
 
