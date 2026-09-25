@@ -4,6 +4,7 @@
 //   node scripts/vendor-shared.js          re-vendor + refresh mobile lockfile
 //   node scripts/vendor-shared.js --check  fail if the vendored tarball is stale
 const { execFileSync } = require('node:child_process')
+const crypto = require('node:crypto')
 const fs = require('node:fs')
 const os = require('node:os')
 const path = require('node:path')
@@ -38,6 +39,13 @@ try {
     } catch (e) {
       console.error(e.stdout?.toString())
       console.error(`${path.relative(root, vendored)} is stale. Run: npm run vendor:shared`)
+      process.exit(1)
+    }
+    const integrity = 'sha512-' + crypto.createHash('sha512').update(fs.readFileSync(vendored)).digest('base64')
+    const lock = JSON.parse(fs.readFileSync(path.join(mobileDir, 'package-lock.json'), 'utf8'))
+    const locked = lock.packages?.['node_modules/@color-app/shared']?.integrity
+    if (locked !== integrity) {
+      console.error(`mobile/package-lock.json does not match the vendored tarball. Run: npm run vendor:shared`)
       process.exit(1)
     }
     console.log('Vendored shared package is up to date.')
