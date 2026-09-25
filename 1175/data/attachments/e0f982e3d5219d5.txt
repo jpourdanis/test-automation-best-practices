@@ -1,0 +1,2 @@
+[API ERROR] delete API error shows alert banner: 500 DELETE http://localhost:3000/api/colors/Red
+[CONSOLE ERROR] delete API error shows alert banner: Failed to load resource: the server responded with a status of 500 (Internal Server Error)

@@ -1,0 +1,1 @@
+[NETWORK INFO] clicking the backdrop closes the picker: 200 GET http://localhost:3000/api/colors
