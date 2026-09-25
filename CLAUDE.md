@@ -161,7 +161,7 @@ npm run generate:client    # Generate TypeScript API client from OpenAPI spec
 
 ### Mobile App (`mobile/`)
 
-- React Native 0.81 + Expo 54
+- React Native 0.86 + Expo 57
 - Depends on `@color-app/shared` via `file:vendor/color-app-shared.tgz` only — no imports or Metro paths reach outside `mobile/`
 - i18n support (EN/ES/EL) using shared locales
 - E2E testing: WebdriverIO 9 + Appium 3 (XCUITest for iOS, UiAutomator2 for Android)

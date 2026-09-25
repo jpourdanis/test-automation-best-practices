@@ -57,7 +57,7 @@ Every pattern here solves a real problem that teams hit in production:
 | Security         | Trivy, npm audit, Playwright security suite                     |
 | CI/CD            | GitHub Actions, Docker Compose, Vercel Preview                  |
 | Quality Gates    | SonarCloud, Coveralls, NYC (80% threshold), MegaLinter          |
-| Mobile           | React Native 0.81, Expo 54, TypeScript, i18next (EN / ES / EL)  |
+| Mobile           | React Native 0.86, Expo 57, TypeScript, i18next (EN / ES / EL)  |
 | Mobile E2E       | WebdriverIO 9, Appium 3, XCUITest (iOS), UiAutomator2 (Android) |
 | Mobile Builds    | EAS Build, Expo Dev Client, EAS Workflows                       |
 
@@ -121,7 +121,7 @@ The **mobile app** connects to the same Express 5 backend — locally via `EXPO_
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│                   React Native Mobile App (Expo 54)              │
+│                   React Native Mobile App (Expo 57)              │
 │                                                                  │
 │  ┌─────────────────────────┐    ┌──────────────────────────────┐ │
 │  │       iOS App           │    │       Android App            │ │
@@ -141,7 +141,7 @@ The **mobile app** connects to the same Express 5 backend — locally via `EXPO_
          └────────────────────────────────────┘
 ```
 
-**React Native app** (`mobile/`) — Expo 54 + React Native 0.81 color-picker for iOS and Android. Mirrors the web app's feature set: fetch colors from the API, render color chips, open an HSL color-picker modal to add a color, delete with confirmation, and switch between English, Spanish, and Greek via i18next + expo-localization. Accessibility labels and `testID` props are applied throughout, providing stable selectors for Appium.
+**React Native app** (`mobile/`) — Expo 57 + React Native 0.86 color-picker for iOS and Android. Mirrors the web app's feature set: fetch colors from the API, render color chips, open an HSL color-picker modal to add a color, delete with confirmation, and switch between English, Spanish, and Greek via i18next + expo-localization. Accessibility labels and `testID` props are applied throughout, providing stable selectors for Appium.
 
 **Shared monorepo package** (`packages/shared/`) — The `@color-app/shared` package is consumed by both the web app and the mobile app. It provides the `createApiClient` factory, the `STRICT_NAME_REGEX` color-name validation rule, and all three translation files (EN / ES / EL). This guarantees that both surfaces validate identically and never translate a string differently.
 
