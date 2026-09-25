@@ -235,14 +235,10 @@ jobs:
 
       - uses: ./.github/actions/setup-node-env
 
-      # Mobile is not an npm workspace (it has its own standalone lockfile
-      # and its own audit in mobile-e2e.yml), so these cover only the root
-      # project, packages/shared, and server.
-      - name: NPM Vulnerability Audit (shipped dependencies)
-        run: npm audit --omit=dev --audit-level=high
-
-      - name: NPM Vulnerability Audit (dev tooling, report only)
-        continue-on-error: true
+      - name: NPM Vulnerability Audit
+        # Mobile is not an npm workspace (it has its own standalone lockfile
+        # and its own audit in mobile-e2e.yml), so this naturally covers only
+        # the root project, packages/shared, and server.
         run: npm audit --audit-level=high
 
       - name: Create Allure results directory
