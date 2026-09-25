@@ -34,7 +34,10 @@
     "web": {
       "favicon": "./assets/favicon.png"
     },
-    "plugins": ["expo-localization"],
+    "plugins": [
+      "expo-localization",
+      "expo-status-bar"
+    ],
     "owner": "jpourdanis"
   }
 }

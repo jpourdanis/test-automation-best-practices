@@ -120,6 +120,9 @@ jobs:
         with:
           working-directory: server
 
+      - name: Check mobile's vendored shared package is up to date
+        run: npm run vendor:shared:check
+
       - name: Run Backend Unit Tests
         env:
           JEST_JUNIT_OUTPUT_NAME: junit-api-unit-tests.xml
