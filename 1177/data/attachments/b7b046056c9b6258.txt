@@ -1,0 +1,1 @@
+[NETWORK INFO] should show loading state when API returns empty colors: 200 GET http://localhost:3000/api/colors
