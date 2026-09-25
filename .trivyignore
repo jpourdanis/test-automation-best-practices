@@ -40,3 +40,11 @@ CVE-2026-76642
 CVE-2026-78408
 CVE-2026-78409
 CVE-2026-78410
+
+# image-size 1.2.1 DoS via crafted image buffer (fixed only in 2.x), pulled in by
+# Metro. It runs at bundle time on the repo's own assets and is not shipped in the
+# app. Metro dropped image-size in 0.83.8 / 0.87.1, but Expo SDK 54 pins
+# metro 0.83.3 (@expo/metro 54.2.0, the last SDK 54 release). Remove once the Expo
+# SDK upgrade brings metro >= 0.83.8.
+CVE-2025-71329
+CVE-2025-71330
