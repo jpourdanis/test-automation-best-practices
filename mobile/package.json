@@ -3,8 +3,6 @@
   "version": "1.0.0",
   "main": "index.ts",
   "scripts": {
-    "build:shared": "npm run build --prefix ../packages/shared",
-    "eas-build-pre-install": "cd ../packages/shared && npm install --ignore-scripts --workspaces false --legacy-peer-deps --include=dev && npm run build",
     "start": "expo start",
     "android": "expo start --android",
     "ios": "expo start --ios",
@@ -25,7 +23,7 @@
     "lint:fix": "eslint src --fix"
   },
   "dependencies": {
-    "@color-app/shared": "file:../packages/shared",
+    "@color-app/shared": "file:vendor/color-app-shared.tgz",
     "@react-native-community/slider": "5.0.1",
     "@react-native-picker/picker": "2.11.1",
     "expo": "~54.0.33",

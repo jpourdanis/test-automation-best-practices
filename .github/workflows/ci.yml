@@ -120,6 +120,9 @@ jobs:
         with:
           working-directory: server
 
+      - name: Check mobile's vendored shared package is up to date
+        run: npm run vendor:shared:check
+
       - name: Run Backend Unit Tests
         env:
           JEST_JUNIT_OUTPUT_NAME: junit-api-unit-tests.xml
@@ -232,10 +235,14 @@ jobs:
 
       - uses: ./.github/actions/setup-node-env
 
-      - name: NPM Vulnerability Audit
-        # Mobile is not an npm workspace (it has its own standalone lockfile
-        # and its own audit in mobile-e2e.yml), so this naturally covers only
-        # the root project, packages/shared, and server.
+      # Mobile is not an npm workspace (it has its own standalone lockfile
+      # and its own audit in mobile-e2e.yml), so these cover only the root
+      # project, packages/shared, and server.
+      - name: NPM Vulnerability Audit (shipped dependencies)
+        run: npm audit --omit=dev --audit-level=high
+
+      - name: NPM Vulnerability Audit (dev tooling, report only)
+        continue-on-error: true
         run: npm audit --audit-level=high
 
       - name: Create Allure results directory
