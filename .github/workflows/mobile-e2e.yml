@@ -58,7 +58,6 @@ jobs:
           ignore-unfixed: true
           severity: "CRITICAL,HIGH"
           skip-dirs: "node_modules/npm/node_modules"
-          trivyignores: ".trivyignore"
           exit-code: "1"
           format: "template"
           template: "@${{ github.workspace }}/junit.tpl"
