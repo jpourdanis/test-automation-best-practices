@@ -1,1 +1,0 @@
-[NETWORK INFO] first color chip is active on load (aria-pressed=true): 200 GET http://localhost:3000/api/colors

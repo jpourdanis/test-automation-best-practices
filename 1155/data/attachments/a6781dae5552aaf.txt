@@ -1,3 +1,0 @@
-[NETWORK INFO] successfully adds a new color and shows its chip: 200 GET http://localhost:3000/api/colors
-[NETWORK INFO] successfully adds a new color and shows its chip: 201 POST http://localhost:3000/api/colors
-[NETWORK INFO] successfully adds a new color and shows its chip: 200 GET http://localhost:3000/api/colors

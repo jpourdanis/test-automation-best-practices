@@ -1,1 +1,0 @@
-[NETWORK INFO] verify language switcher changes document language: 200 GET http://localhost:3000/api/colors

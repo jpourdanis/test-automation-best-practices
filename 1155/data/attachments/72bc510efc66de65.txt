@@ -1,1 +1,0 @@
-[NETWORK INFO] Escape key closes the confirm dialog: 200 GET http://localhost:3000/api/colors
