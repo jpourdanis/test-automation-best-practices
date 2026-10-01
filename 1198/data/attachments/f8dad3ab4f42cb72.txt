@@ -1,0 +1,2 @@
+[API ERROR] shows server-error message on 500 inside the picker: 500 POST http://localhost:3000/api/colors
+[CONSOLE ERROR] shows server-error message on 500 inside the picker: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
