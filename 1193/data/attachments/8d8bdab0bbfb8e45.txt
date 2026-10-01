@@ -1,0 +1,1 @@
+[NETWORK ERROR] should handle color click network failure gracefully: GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise - Blocked by Web Inspector
