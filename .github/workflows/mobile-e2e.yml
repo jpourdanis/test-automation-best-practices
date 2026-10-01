@@ -86,16 +86,11 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci --ignore-scripts
+          cache-dependency-path: "mobile/package-lock.json"
 
       - name: Install mobile dependencies
         working-directory: mobile
         run: npm ci --ignore-scripts
-
-      - name: Build shared package
-        run: npm run build -w packages/shared
 
       - name: Run ESLint (Mobile)
         working-directory: mobile
@@ -116,16 +111,11 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci --ignore-scripts
+          cache-dependency-path: "mobile/package-lock.json"
 
       - name: Install mobile dependencies
         working-directory: mobile
         run: npm ci --ignore-scripts
-
-      - name: Build shared package
-        run: npm run build -w packages/shared
 
       - name: Run Mobile Unit Tests
         run: npm run test:unit
@@ -204,16 +194,11 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci --ignore-scripts
+          cache-dependency-path: "mobile/package-lock.json"
 
       - name: Install mobile dependencies
         working-directory: mobile
         run: npm ci --ignore-scripts
-
-      - name: Build shared package
-        run: npm run build -w packages/shared
 
       - name: Install EAS CLI
         run: npm install -g eas-cli@18.13.0 --ignore-scripts
@@ -404,16 +389,11 @@ jobs:
         with:
           node-version: "22"
           cache: "npm"
-
-      - name: Install dependencies
-        run: npm ci --ignore-scripts
+          cache-dependency-path: "mobile/package-lock.json"
 
       - name: Install mobile dependencies
         working-directory: mobile
         run: npm ci --ignore-scripts
-
-      - name: Build shared package
-        run: npm run build -w packages/shared
 
       - name: Install EAS CLI
         run: npm install -g eas-cli@18.13.0 --ignore-scripts
