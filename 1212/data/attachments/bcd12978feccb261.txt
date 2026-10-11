@@ -1,0 +1,2 @@
+[NETWORK INFO] homepage after color change: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] homepage after color change: 200 GET https://test-automation-best-practices.vercel.app/api/colors/Yellow
