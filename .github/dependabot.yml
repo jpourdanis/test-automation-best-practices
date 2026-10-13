@@ -1,6 +1,8 @@
 version: 2
 updates:
-  # 1. Update root frontend/misc npm packages
+  # 1. Web + server + shared: one npm workspace, one lockfile (package-lock.json).
+  # Runtime and tooling updates are grouped separately so a bad dev-tool release
+  # cannot hold back runtime patches, and vice versa.
   - package-ecosystem: "npm"
     directory: "/"
     schedule:
@@ -8,40 +10,31 @@ updates:
       day: "monday"
     open-pull-requests-limit: 5
     groups:
-      minor-and-patch:
+      production:
+        dependency-type: "production"
         update-types:
           - "minor"
           - "patch"
-    labels:
-      - "dependencies"
-      - "frontend"
-
-  # 2. Update server-side npm packages
-  # server/ keeps its own lockfile (server/package-lock.json) because
-  # server/Dockerfile installs production deps with `npm ci --no-workspaces`
-  # scoped to this directory, independent of the root workspace lockfile.
-  # This entry is what keeps that nested lockfile in sync; the root entry
-  # above independently keeps the root lockfile in sync with the same
-  # package.json. Both must be reviewed together when either opens a PR.
-  - package-ecosystem: "npm"
-    directory: "/server"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-    open-pull-requests-limit: 5
-    groups:
-      minor-and-patch:
+      development:
+        dependency-type: "development"
         update-types:
           - "minor"
           - "patch"
+    ignore:
+      # mongoose 9.10 requires mongodb ~7.6; mongodb 7.6.0 breaks the handshake
+      # under Jest (NODE-7832). Drop once a fixed 7.6.x ships.
+      - dependency-name: "mongoose"
+        versions: [">=9.10.0"]
+      # 1.32.10 adds @percy/cli-pdf -> pdfjs-dist@2 (GHSA-wgrm-67xf-hhpq, high).
+      # Drop once a release no longer pulls in a vulnerable pdfjs-dist.
+      - dependency-name: "@percy/cli"
+        versions: [">=1.32.10"]
     labels:
       - "dependencies"
-      - "backend"
 
-  # 3. Update mobile npm packages
-  # mobile/ keeps its own lockfile (mobile/package-lock.json), installed
-  # directly via `npm ci` scoped to mobile/ in mobile-e2e.yml and by EAS
-  # builds - independent of the root workspace lockfile.
+  # 2. Mobile: standalone project with its own lockfile (mobile/package-lock.json).
+  # It consumes the shared package only via mobile/vendor/color-app-shared.tgz,
+  # regenerated with `npm run vendor:shared` from the repo root.
   - package-ecosystem: "npm"
     directory: "/mobile"
     schedule:
@@ -57,7 +50,7 @@ updates:
       - "dependencies"
       - "mobile"
 
-  # 4. Update GitHub Actions (e.g., actions/checkout@v4)
+  # 3. Update GitHub Actions (e.g., actions/checkout@v4)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -71,7 +64,7 @@ updates:
       - "dependencies"
       - "ci"
 
-  # 5. Update Docker base images (e.g., mcr.microsoft.com/playwright)
+  # 4. Update Docker base images (e.g., mcr.microsoft.com/playwright)
   - package-ecosystem: "docker"
     directory: "/"
     schedule:

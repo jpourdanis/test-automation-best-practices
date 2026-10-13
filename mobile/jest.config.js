@@ -5,8 +5,8 @@ module.exports = {
   moduleNameMapper: {
     '^react$': '<rootDir>/node_modules/react',
     '^react/(.*)$': '<rootDir>/node_modules/react/$1',
-    '^react-test-renderer$': require('path').join(__dirname, '..', 'node_modules', 'react-test-renderer'),
-    '^react-test-renderer/(.*)$': require('path').join(__dirname, '..', 'node_modules', 'react-test-renderer') + '/$1',
+    '^react-test-renderer$': '<rootDir>/node_modules/react-test-renderer',
+    '^react-test-renderer/(.*)$': '<rootDir>/node_modules/react-test-renderer/$1',
     '^@testing-library/react-native$': require.resolve('@testing-library/react-native')
   },
   transformIgnorePatterns: [

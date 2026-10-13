@@ -1,26 +1,30 @@
-FROM node:26-alpine3.23
+FROM node:26-alpine3.23 AS build
 
-RUN apk upgrade --no-cache
-
-# Copy workspace root manifests so npm ci can resolve shared package deps from lockfile.
-# /app/node_modules is build-time only (tsup, typescript, etc. for compiling
-# packages/shared) and must not leak into the final image, so we keep just
-# the runtime dep (zod) the built dist/ actually requires and drop the rest.
+# Everything resolves from the single root lockfile. The shared package is built
+# with its dev toolchain first; then node_modules is wiped and reinstalled with
+# only the server workspace's production tree, which is all the runtime copies.
 WORKDIR /app
 ENV CI=true
 COPY package.json package-lock.json ./
 COPY packages/shared ./packages/shared
+COPY server/package.json ./server/
 RUN npm ci --ignore-scripts --legacy-peer-deps --workspace=packages/shared && \
     npm run build --workspace=packages/shared && \
-    mkdir -p packages/shared/node_modules && \
-    cp -R node_modules/zod packages/shared/node_modules/zod && \
-    rm -rf node_modules
+    rm -rf node_modules packages/shared/node_modules && \
+    npm ci --ignore-scripts --omit=dev --legacy-peer-deps --workspace=server && \
+    mkdir -p server/node_modules packages/shared/node_modules
 
-WORKDIR /app/server
-COPY server/package*.json ./
-RUN npm ci --ignore-scripts --omit=dev --legacy-peer-deps --no-workspaces
+FROM node:26-alpine3.23
 
-COPY server/ ./
+RUN apk upgrade --no-cache
+
+WORKDIR /app
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/packages/shared/package.json ./packages/shared/
+COPY --from=build /app/packages/shared/dist ./packages/shared/dist
+COPY --from=build /app/packages/shared/node_modules ./packages/shared/node_modules
+COPY --from=build /app/server/node_modules ./server/node_modules
+COPY server/ ./server/
 
 # The image only ever runs `node index.js` -- npm/npx/corepack are build-time
 # tools, not runtime dependencies. Removing them drops their bundled
@@ -29,6 +33,8 @@ COPY server/ ./
 # each new CVE disclosed against Node's vendored npm CLI.
 RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/lib/node_modules/corepack && \
     rm -f /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/corepack
+
+WORKDIR /app/server
 
 EXPOSE 5001
 

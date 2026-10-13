@@ -1,10 +1,44 @@
-## [1.1.1](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.0...v1.1.1) (2026-09-05)
+## [1.1.6](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.5...v1.1.6) (2026-09-25)
 
 
 ### Bug Fixes
 
-* suppress libuuid CVEs unpatchable on amd64 in frontend Trivy scan ([fcf236f](https://github.com/jpourdanis/test-automation-best-practices/commit/fcf236f3f191277f6a4192053d44fb864853577d))
-* sync root package-lock.json with server jest 30.5.1 bump ([ca070e7](https://github.com/jpourdanis/test-automation-best-practices/commit/ca070e7bea16c9993a5b77379c1c921d1536920a))
+* **deps:** hold mongoose at 9.9.x and @percy/cli at 1.32.8; resync server lockfile ([f4b164a](https://github.com/jpourdanis/test-automation-best-practices/commit/f4b164a5dad60c8b904e9ab3719c29255a5b5c25)), closes [hi#severity](https://github.com/hi/issues/severity)
+* **deps:** override adm-zip to ^0.6.1 ([b73045d](https://github.com/jpourdanis/test-automation-best-practices/commit/b73045d726a2bdc00967e84b64e72e673b95d876))
+
+## [1.1.5](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.4...v1.1.5) (2026-09-09)
+
+
+### Bug Fixes
+
+* **server:** resync standalone lockfile with mongoose 9.9.5 bump ([fd18dc1](https://github.com/jpourdanis/test-automation-best-practices/commit/fd18dc1394dc7e8fae4e4e39150bc1703fbe8e8e))
+
+## [1.1.4](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.3...v1.1.4) (2026-09-09)
+
+
+### Bug Fixes
+
+* **mobile:** stop relying on mobile's hoisted devDependencies at root ([b4275f2](https://github.com/jpourdanis/test-automation-best-practices/commit/b4275f212ad708f14ebb772ffa0b78e5df2afe8f))
+* **server:** bump @stryker-mutator/jest-runner to 10.0.0 to match core ([c500770](https://github.com/jpourdanis/test-automation-best-practices/commit/c5007704284b02af9aa6b3c9e73739cd1689704b))
+
+## [1.1.3](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.2...v1.1.3) (2026-09-05)
+
+### Bug Fixes
+
+- bump @playwright/test to 1.63.0 to match Docker image ([c403b1d](https://github.com/jpourdanis/test-automation-best-practices/commit/c403b1d8ec40d173876bb868945bca9651539894))
+
+## [1.1.2](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.1...v1.1.2) (2026-09-05)
+
+### Bug Fixes
+
+- **ci:** use correct eas build:list flags and filter by commit server-side ([dc3260e](https://github.com/jpourdanis/test-automation-best-practices/commit/dc3260e349e46d287c48e228e71d7aed775d6c92))
+
+## [1.1.1](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.0...v1.1.1) (2026-09-05)
+
+### Bug Fixes
+
+- suppress libuuid CVEs unpatchable on amd64 in frontend Trivy scan ([fcf236f](https://github.com/jpourdanis/test-automation-best-practices/commit/fcf236f3f191277f6a4192053d44fb864853577d))
+- sync root package-lock.json with server jest 30.5.1 bump ([ca070e7](https://github.com/jpourdanis/test-automation-best-practices/commit/ca070e7bea16c9993a5b77379c1c921d1536920a))
 
 # [1.1.0](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.0.5...v1.1.0) (2026-09-04)
 
