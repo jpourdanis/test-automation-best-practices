@@ -90,7 +90,7 @@ jobs:
           npx nyc report --temp-dir=coverage/merged --reporter=lcov --report-dir=coverage
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v8.2.1
+        uses: SonarSource/sonarqube-scan-action@v8.2.2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -239,7 +239,9 @@ jobs:
         # Mobile is not an npm workspace (it has its own standalone lockfile
         # and its own audit in mobile-e2e.yml), so this naturally covers only
         # the root project, packages/shared, and server.
-        run: npm audit --audit-level=high
+        # Fails on high/critical like `npm audit --audit-level=high`, except
+        # advisories with no patched release that .npmauditignore documents.
+        run: node scripts/npm-audit.js
 
       - name: Create Allure results directory
         run: mkdir -p allure-results
