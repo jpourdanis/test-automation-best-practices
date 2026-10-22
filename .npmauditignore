@@ -1,0 +1,9 @@
+# Advisories scripts/npm-audit.js tolerates. Only list an advisory that has NO
+# patched version published (so no upgrade or override can fix it), say which
+# dependency path pulls it in, and remove it as soon as a fix ships.
+
+# braces <=3.0.3 stack-exhaustion DoS on deeply nested patterns. Patched: none
+# (3.0.3 is the latest release). Dev-only, via micromatch/chokidar in the
+# build/test toolchain (react-scripts, jest, tailwindcss, webpack-dev-server);
+# it only ever expands glob patterns from our own config, never user input.
+GHSA-vfj7-8cjw-p6xm
