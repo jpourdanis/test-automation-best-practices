@@ -32,12 +32,15 @@ mkdir -p "$GH_PAGES" "$ALLURE_HISTORY" "$ALLURE_RESULTS"
 cp -r "$GH_PAGES/." "$ALLURE_HISTORY"
 
 # Keep the newest $KEEP_REPORTS run folders (same pruning as the action).
-count=$(find "$ALLURE_HISTORY" -mindepth 1 -maxdepth 1 | wc -l)
+# Hidden entries (.git from the gh-pages checkout, .nojekyll) are skipped,
+# as the action's `ls` did, so they are neither counted nor deleted.
+list_entries() { find "$ALLURE_HISTORY" -mindepth 1 -maxdepth 1 -not -name '.*' -printf '%f\n'; }
+count=$(list_entries | wc -l)
 if ((count > KEEP_REPORTS + 1)); then
   echo "Pruning old reports: $count entries, keeping $KEEP_REPORTS"
   rm -rf "$ALLURE_HISTORY/index.html" "$ALLURE_HISTORY/last-history"
-  (cd "$ALLURE_HISTORY" && find . -mindepth 1 -maxdepth 1 -printf '%f\n' | sort -n | grep -v 'CNAME' |
-    head -n -$((KEEP_REPORTS - 1)) | xargs -r rm -rf)
+  list_entries | sort -n | grep -v 'CNAME' | head -n -$((KEEP_REPORTS - 1)) |
+    (cd "$ALLURE_HISTORY" && xargs -r rm -rf)
 fi
 
 cat >"$ALLURE_HISTORY/index.html" <<EOF
