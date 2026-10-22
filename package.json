@@ -9,7 +9,7 @@
   "overrides": {
     "undici": "^6.27.0",
     "form-data": "^4.0.6",
-    "shell-quote": "^1.10.0",
+    "shell-quote": "^1.11.0",
     "nth-check": "^2.1.1",
     "postcss": "^8.5.18",
     "serialize-javascript": "^7.0.5",
@@ -49,7 +49,14 @@
     "minimatch@3.1.5": {
       "brace-expansion": "^1.1.18"
     },
-    "react-test-renderer": "19.1.0"
+    "react-test-renderer": "19.1.0",
+    "proxy-addr": "^2.0.8",
+    "compression": "^1.8.2",
+    "follow-redirects": "^1.16.1",
+    "source-map-js": "^1.2.2",
+    "launch-editor": "^2.14.2",
+    "http-cache-semantics": "^4.3.0",
+    "basic-ftp": "^6.2.1"
   },
   "dependencies": {
     "@color-app/shared": "*",
@@ -100,7 +107,7 @@
     "sonar:scan": "sonar-scanner-npm",
     "mutation:frontend": "stryker run",
     "docker:up": "docker-compose up -d --build",
-    "security:audit": "npm audit --audit-level=high",
+    "security:audit": "node scripts/npm-audit.js",
     "security:scan:code": "docker run --rm -v $(pwd):/app aquasec/trivy:0.69.3 fs /app",
     "security:scan:container:app": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:0.69.3 image test-automation-best-practices-app:latest",
     "security:scan:container:api": "docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v $(pwd)/.trivyignore:/.trivyignore aquasec/trivy:0.69.3 image --ignorefile /.trivyignore test-automation-best-practices-api:latest",
@@ -153,7 +160,7 @@
     "@xmldom/xmldom": "^0.9.12",
     "allure-playwright": "^3.12.2",
     "babel-plugin-istanbul": "^8.0.0",
-    "browserstack-node-sdk": "^1.70.2",
+    "browserstack-node-sdk": "^1.74.0",
     "cross-env": "^10.1.0",
     "customize-cra": "^1.0.0",
     "esbuild": "~0.28.0",
