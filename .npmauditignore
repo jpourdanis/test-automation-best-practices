@@ -7,9 +7,3 @@
 # build/test toolchain (react-scripts, jest, tailwindcss, webpack-dev-server);
 # it only ever expands glob patterns from our own config, never user input.
 GHSA-vfj7-8cjw-p6xm
-
-# node-forge <=1.4.0 RSA PKCS#1 v1.5 signature verification flaw. Patched: none
-# (1.4.0 is the latest release). Dev-only, pinned exactly by sonarqube-scanner,
-# which uses it for TLS to SonarCloud; nothing in the app verifies signatures
-# with it.
-GHSA-86w9-cpqp-85rv
