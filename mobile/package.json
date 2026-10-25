@@ -77,6 +77,7 @@
   "private": true,
   "overrides": {
     "@xmldom/xmldom": "^0.8.10",
+    "zod": "^4.6.6",
     "serialize-javascript": "^7.0.5",
     "ws": "^8.21.0",
     "undici": "^6.27.0",
