@@ -179,7 +179,7 @@
     "react-scripts": "5.0.1",
     "sonarqube-scanner": "^5.0.1",
     "typescript": "^6.0.3",
-    "zod": "^4.6.5"
+    "zod": "^4.6.7"
   },
   "lint-staged": {
     "*.{ts,tsx,js,jsx}": [
