@@ -1,0 +1,5 @@
+[NETWORK INFO] verify Yellow ( #f1c40f ) is applied as the background color: 204 GET https://test-automation-best-practices-c99hu0cx7-jpourdanis-projects.vercel.app/.well-known/vercel/jwe
+[NETWORK INFO] verify Yellow ( #f1c40f ) is applied as the background color: 200 GET https://test-automation-best-practices-c99hu0cx7-jpourdanis-projects.vercel.app/api/colors
+[NETWORK INFO] verify Yellow ( #f1c40f ) is applied as the background color: 200 POST https://vercel.live/login/validate?hostname=test-automation-best-practices-c99hu0cx7-jpourdanis-projects.vercel.app&deploymentId=dpl_A9C2KQ3RwCsUH8P7XspNBvRC9u2g
+[NETWORK INFO] verify Yellow ( #f1c40f ) is applied as the background color: 204 HEAD https://test-automation-best-practices-c99hu0cx7-jpourdanis-projects.vercel.app/
+[NETWORK INFO] verify Yellow ( #f1c40f ) is applied as the background color: 200 GET https://test-automation-best-practices-c99hu0cx7-jpourdanis-projects.vercel.app/api/colors/Yellow
