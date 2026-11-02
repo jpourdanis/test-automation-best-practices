@@ -13,3 +13,9 @@ GHSA-vfj7-8cjw-p6xm
 # which uses it for TLS to SonarCloud; nothing in the app verifies signatures
 # with it.
 GHSA-86w9-cpqp-85rv
+
+# zod <4.6.6 memory exhaustion on oversized constrained collections. Patched: none
+# for the v3 line (latest is 3.25.76). Nested inside chromium-bidi@17.0.2 which
+# is pulled by the old @playwright/test version on this branch; the top-level zod
+# is v4 (patched). chromium-bidi@17 is not exposed to untrusted input.
+GHSA-mrhx-c7xc-m3w5
