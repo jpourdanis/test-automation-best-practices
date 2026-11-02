@@ -91,6 +91,7 @@
     "fast-uri": "^4.1.2",
     "nanoid": "^5.1.16",
     "react-test-renderer": "19.2.3",
-    "@puppeteer/browsers": "^3.2.3"
+    "@puppeteer/browsers": "^3.2.3",
+    "node-forge": "^1.4.2"
   }
 }
