@@ -1,1 +1,0 @@
-[NETWORK INFO] shows client-side validation error for invalid name chars: 200 GET http://localhost:3000/api/colors
