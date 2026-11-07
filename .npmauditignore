@@ -1,21 +1,3 @@
 # Advisories scripts/npm-audit.js tolerates. Only list an advisory that has NO
 # patched version published (so no upgrade or override can fix it), say which
 # dependency path pulls it in, and remove it as soon as a fix ships.
-
-# braces <=3.0.3 stack-exhaustion DoS on deeply nested patterns. Patched: none
-# (3.0.3 is the latest release). Dev-only, via micromatch/chokidar in the
-# build/test toolchain (react-scripts, jest, tailwindcss, webpack-dev-server);
-# it only ever expands glob patterns from our own config, never user input.
-GHSA-vfj7-8cjw-p6xm
-
-# node-forge <=1.4.0 RSA PKCS#1 v1.5 signature verification flaw. Patched: none
-# (1.4.0 is the latest release). Dev-only, pinned exactly by sonarqube-scanner,
-# which uses it for TLS to SonarCloud; nothing in the app verifies signatures
-# with it.
-GHSA-86w9-cpqp-85rv
-
-# zod <4.6.6 memory exhaustion on oversized constrained collections. Patched: none
-# for the v3 line (latest is 3.25.76). Nested inside chromium-bidi@17.0.2 which
-# is pulled by the old @playwright/test version on this branch; the top-level zod
-# is v4 (patched). chromium-bidi@17 is not exposed to untrusted input.
-GHSA-mrhx-c7xc-m3w5
