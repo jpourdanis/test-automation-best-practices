@@ -64,11 +64,11 @@
     "@color-app/shared": "*",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
-    "i18next": "^26.5.12",
-    "i18next-browser-languagedetector": "^8.2.4",
+    "i18next": "^26.7.1",
+    "i18next-browser-languagedetector": "^8.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-i18next": "^17.1.9"
+    "react-i18next": "^17.1.12"
   },
   "scripts": {
     "prepare": "node -e \"if (!process.env.CI) { try { require('child_process').execFileSync('husky', [], {stdio: 'inherit'}) } catch (e) { if (e.code !== 'ENOENT') throw e } }\"",
@@ -134,9 +134,9 @@
   "optionalDependencies": {
     "@esbuild/linux-arm64": "0.28.2",
     "@esbuild/linux-x64": "0.28.2",
-    "@rollup/rollup-linux-arm64-musl": "4.67.0",
-    "@rollup/rollup-linux-x64-gnu": "4.66.0",
-    "@rollup/rollup-linux-x64-musl": "4.66.0"
+    "@rollup/rollup-linux-arm64-musl": "4.67.5",
+    "@rollup/rollup-linux-x64-gnu": "4.67.5",
+    "@rollup/rollup-linux-x64-musl": "4.67.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
