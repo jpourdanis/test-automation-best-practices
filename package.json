@@ -172,7 +172,7 @@
     "husky": "^9.1.7",
     "jest-junit": "^17.0.0",
     "lighthouse": "^13.5.0",
-    "lint-staged": "^16.4.0",
+    "lint-staged": "^17.6.0",
     "nyc": "^18.0.0",
     "playwright-bdd": "^9.2.1",
     "playwright-lighthouse": "^4.0.0",
