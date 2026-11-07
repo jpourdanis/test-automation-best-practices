@@ -46,6 +46,22 @@ updates:
         update-types:
           - "minor"
           - "patch"
+    ignore:
+      # Versions pinned by the Expo SDK (expo/bundledNativeModules.json). Moving
+      # them past what the SDK supports breaks jest-expo's peers (ERESOLVE on
+      # @react-native/jest-preset) and the native builds. Bump them together with
+      # the SDK via `npx expo install --fix` instead.
+      - dependency-name: "react"
+      - dependency-name: "react-dom"
+      - dependency-name: "react-test-renderer"
+      - dependency-name: "@types/react"
+      - dependency-name: "react-native"
+      - dependency-name: "@react-native/*"
+      - dependency-name: "react-native-reanimated"
+      - dependency-name: "react-native-worklets"
+      - dependency-name: "react-native-svg"
+      - dependency-name: "@react-native-community/slider"
+      - dependency-name: "@react-native-picker/picker"
     labels:
       - "dependencies"
       - "mobile"
