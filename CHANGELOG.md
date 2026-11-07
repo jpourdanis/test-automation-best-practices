@@ -1,3 +1,11 @@
+## [1.2.1](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.2.0...v1.2.1) (2026-11-07)
+
+
+### Bug Fixes
+
+* **mobile:** override node-forge to ^1.4.2 for the mobile Trivy scan ([6e63840](https://github.com/jpourdanis/test-automation-best-practices/commit/6e63840df4d7e69cd08287bb6bc7d5b2460f6a7a))
+* **mobile:** pin Appium drivers to the last Appium 3 releases ([03584ea](https://github.com/jpourdanis/test-automation-best-practices/commit/03584ea2bd4c70b31eaceb67c296a3f92bb6427a))
+
 # [1.2.0](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.6...v1.2.0) (2026-11-02)
 
 
