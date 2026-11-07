@@ -1,2 +1,0 @@
-[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 200 GET http://localhost:3000/api/colors
-[NETWORK INFO] verify Red ( #e74c3c ) is applied as the background color: 200 GET http://localhost:3000/api/colors/Red
