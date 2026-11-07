@@ -19,5 +19,8 @@ i18n
       el: { translation: elTranslations }
     }
   })
+  .catch((error: unknown) => {
+    console.error('i18n initialization failed', error)
+  })
 
 export default i18n

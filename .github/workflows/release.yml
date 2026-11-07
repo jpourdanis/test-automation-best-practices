@@ -49,4 +49,13 @@ jobs:
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: npx semantic-release
+        # Release tooling is installed here, pinned, instead of living in
+        # devDependencies: semantic-release depends on @semantic-release/npm,
+        # which pulls in npm with its own bundled deps that overrides cannot
+        # patch, and those would otherwise fail the CI npm audit gate.
+        run: >-
+          npx --yes
+          -p semantic-release@25.0.9
+          -p @semantic-release/changelog@6.0.3
+          -p @semantic-release/git@10.0.1
+          semantic-release

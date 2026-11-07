@@ -1,3 +1,26 @@
+# [1.2.0](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.6...v1.2.0) (2026-11-02)
+
+
+### Bug Fixes
+
+* **deps:** bump vulnerable transitive deps flagged by npm audit and Trivy ([ea36827](https://github.com/jpourdanis/test-automation-best-practices/commit/ea36827d71f7ee636c8acff5633a4439a7a3848a))
+* **deps:** clear new npm audit and Trivy findings blocking CI ([13eb205](https://github.com/jpourdanis/test-automation-best-practices/commit/13eb205a72a4321a3cb8ab7637a9d725979a7e6e))
+* **deps:** patch body-parser and undici advisories failing the security gates ([292d4b8](https://github.com/jpourdanis/test-automation-best-practices/commit/292d4b8f3af55fe4347f737878598865f26efc7c))
+* **i18n:** handle rejection of the i18next init promise ([c368a07](https://github.com/jpourdanis/test-automation-best-practices/commit/c368a07d43b7a1497798b3a028c87eba46387898))
+* **mobile:** bump vulnerable transitive deps flagged by Trivy ([4b1682c](https://github.com/jpourdanis/test-automation-best-practices/commit/4b1682c52c938b0cb806900ebb4fb377a941f108))
+* **mobile:** clear high npm audit findings in the test toolchain ([2955c2d](https://github.com/jpourdanis/test-automation-best-practices/commit/2955c2d99cc4ab35f60fee026f06b92580aac9f2))
+* **mobile:** override zod to ^4.6.6 for CVE-2023-54404 ([664515d](https://github.com/jpourdanis/test-automation-best-practices/commit/664515d58a83fa6b9c0751dcafd2b55132407c2e))
+* **mobile:** pin React Native peer deps so lockfile keeps them ([8deca91](https://github.com/jpourdanis/test-automation-best-practices/commit/8deca91084efc33c581b7c619eac42108be23397))
+* **scripts:** vendor:shared:check also verifies the mobile lockfile ([ee2cb90](https://github.com/jpourdanis/test-automation-best-practices/commit/ee2cb901ce7de68776a7bf6d7035412f8bdfb039))
+* **security:** resolve npm audit advisories on github-actions branch ([8f7f829](https://github.com/jpourdanis/test-automation-best-practices/commit/8f7f8291733131ee1c9d9dbe9446a5ee9a1ea95f))
+* **security:** resolve npm audit advisories on multi branch ([e90f861](https://github.com/jpourdanis/test-automation-best-practices/commit/e90f861c0e2ce09109e5a7b6a6393b0aed6ebd05))
+* update mobile vendored shared tarball for zod bump ([81cbd2e](https://github.com/jpourdanis/test-automation-best-practices/commit/81cbd2e540659888765f2b47c00bbcbce4cde3e0))
+
+
+### Features
+
+* **mobile:** upgrade to Expo SDK 57 (React Native 0.86, React 19.2) ([4920b3a](https://github.com/jpourdanis/test-automation-best-practices/commit/4920b3a37676e701586ea54b6905180f7239341c))
+
 ## [1.1.6](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.1.5...v1.1.6) (2026-09-25)
 
 

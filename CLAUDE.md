@@ -12,13 +12,15 @@ A full-stack reference project for modern test automation best practices. It com
 React 19 (port 3000)  ←→  Express 5 (port 5001)  ←→  MongoDB (port 27017)
 ```
 
-**Monorepo structure (npm workspaces):**
+**Repository structure:**
 
 ```
-packages/shared   # Shared Zod schemas, types, locales, generated API client
-server/           # Express backend workspace
-mobile/           # React Native workspace
+packages/shared   # npm workspace — shared Zod schemas, types, locales, generated API client
+server/           # npm workspace — Express backend
+mobile/           # standalone React Native project (not a workspace, own lockfile)
 ```
+
+Web, server, and shared form one npm workspace with a single root `package-lock.json` (server has no lockfile of its own; its Docker image installs from the root one). Mobile consumes shared only as the vendored tarball `mobile/vendor/color-app-shared.tgz`: after changing `packages/shared`, run `npm run vendor:shared` and commit the tarball and `mobile/package-lock.json` — CI fails via `npm run vendor:shared:check` otherwise.
 
 The normal dev/test flow runs everything via Docker Compose.
 
@@ -159,7 +161,8 @@ npm run generate:client    # Generate TypeScript API client from OpenAPI spec
 
 ### Mobile App (`mobile/`)
 
-- React Native 0.81 + Expo 54
+- React Native 0.86 + Expo 57
+- Depends on `@color-app/shared` via `file:vendor/color-app-shared.tgz` only — no imports or Metro paths reach outside `mobile/`
 - i18n support (EN/ES/EL) using shared locales
 - E2E testing: WebdriverIO 9 + Appium 3 (XCUITest for iOS, UiAutomator2 for Android)
 - Config files: `wdio.ios.conf.ts`, `wdio.android.conf.ts`
