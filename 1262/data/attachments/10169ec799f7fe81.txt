@@ -1,0 +1,1 @@
+[NETWORK INFO] Cancel button closes the picker: 200 GET http://localhost:3000/api/colors
