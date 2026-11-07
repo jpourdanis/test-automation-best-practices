@@ -1,3 +1,10 @@
+## [1.2.2](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.2.1...v1.2.2) (2026-11-07)
+
+
+### Bug Fixes
+
+* **security:** resolve npm audit advisories on fast-uri branch ([feb00c3](https://github.com/jpourdanis/test-automation-best-practices/commit/feb00c346b0433cda1c2386ca38c091afd7cefc2))
+
 ## [1.2.1](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.2.0...v1.2.1) (2026-11-07)
 
 
