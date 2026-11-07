@@ -378,7 +378,9 @@ jobs:
   android-e2e:
     name: Android E2E Tests (Appium + Emulator)
     needs: [mobile-unit-tests, mobile-static-analysis]
-    runs-on: ubuntu-latest
+    # Pinned: on the ubuntu-26.04 image that ubuntu-latest moved to, the wdio
+    # worker dies at startup with "write EINVAL" before any spec runs.
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout Code
