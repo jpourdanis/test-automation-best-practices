@@ -1,1 +1,0 @@
-[API ERROR] delete API error shows alert banner: 500 DELETE https://test-automation-best-practices.vercel.app/api/colors/Red
