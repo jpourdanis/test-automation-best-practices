@@ -1,0 +1,2 @@
+[API ERROR] shows 409 duplicate error from server inside the picker: 409 POST http://localhost:3000/api/colors
+[CONSOLE ERROR] shows 409 duplicate error from server inside the picker: Failed to load resource: the server responded with a status of 409 (Conflict)
