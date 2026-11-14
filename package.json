@@ -1,6 +1,6 @@
 {
   "name": "test-automation-best-practices",
-  "version": "1.2.2",
+  "version": "1.2.3",
   "private": true,
   "workspaces": [
     "packages/*",
@@ -63,12 +63,12 @@
   "dependencies": {
     "@color-app/shared": "*",
     "@vercel/analytics": "^2.0.1",
-    "@vercel/speed-insights": "^2.0.0",
-    "i18next": "^26.5.12",
-    "i18next-browser-languagedetector": "^8.2.4",
+    "@vercel/speed-insights": "^2.1.0",
+    "i18next": "^26.7.2",
+    "i18next-browser-languagedetector": "^8.3.0",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-i18next": "^17.1.9"
+    "react-i18next": "^17.1.13"
   },
   "scripts": {
     "prepare": "node -e \"if (!process.env.CI) { try { require('child_process').execFileSync('husky', [], {stdio: 'inherit'}) } catch (e) { if (e.code !== 'ENOENT') throw e } }\"",
@@ -134,13 +134,13 @@
   "optionalDependencies": {
     "@esbuild/linux-arm64": "0.28.2",
     "@esbuild/linux-x64": "0.28.2",
-    "@rollup/rollup-linux-arm64-musl": "4.67.0",
-    "@rollup/rollup-linux-x64-gnu": "4.66.0",
-    "@rollup/rollup-linux-x64-musl": "4.66.0"
+    "@rollup/rollup-linux-arm64-musl": "4.67.5",
+    "@rollup/rollup-linux-x64-gnu": "4.67.5",
+    "@rollup/rollup-linux-x64-musl": "4.67.5"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.11.3",
-    "@cucumber/cucumber": "^12.8.2",
+    "@cucumber/cucumber": "^13.3.0",
     "@eslint/js": "^9.0.0",
     "@faker-js/faker": "^10.4.0",
     "@percy/cli": "1.32.8",
@@ -172,7 +172,7 @@
     "husky": "^9.1.7",
     "jest-junit": "^17.0.0",
     "lighthouse": "^13.5.0",
-    "lint-staged": "^16.4.0",
+    "lint-staged": "^17.6.0",
     "nyc": "^18.0.0",
     "playwright-bdd": "^9.2.1",
     "playwright-lighthouse": "^4.0.0",
