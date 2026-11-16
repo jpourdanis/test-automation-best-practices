@@ -4,6 +4,11 @@ const { MongoDBContainer } = require('@testcontainers/mongodb')
 const mongoose = require('mongoose')
 const fs = require('node:fs')
 const path = require('node:path')
+// mongodb driver >=7.6 loads `os` with a dynamic import('os'), which fails
+// silently under Jest and leaves the handshake metadata empty; the server then
+// rejects the connection ("Missing required sub-document 'driver'"). Pass the
+// adapter explicitly until NODE-7832 ships.
+const mongooseOptions = { runtimeAdapters: { os: require('node:os') } }
 
 let app, seedDatabase, Color, mongodbContainer
 
@@ -34,7 +39,7 @@ describe('Server Integration Tests (Testcontainers)', () => {
     process.env.MONGO_URI = uri
 
     // Connect mongoose
-    await mongoose.connect(uri)
+    await mongoose.connect(uri, mongooseOptions)
 
     // Import the app. Since it uses require(index), it will now use our MONGO_URI
     const server = require('./index')
