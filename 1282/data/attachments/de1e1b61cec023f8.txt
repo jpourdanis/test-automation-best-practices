@@ -1,1 +1,0 @@
-[NETWORK INFO] clicking "+ Add color" opens the picker modal: 200 GET http://localhost:3000/api/colors
