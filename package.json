@@ -134,9 +134,9 @@
   "optionalDependencies": {
     "@esbuild/linux-arm64": "0.28.2",
     "@esbuild/linux-x64": "0.28.2",
-    "@rollup/rollup-linux-arm64-musl": "4.67.5",
-    "@rollup/rollup-linux-x64-gnu": "4.67.5",
-    "@rollup/rollup-linux-x64-musl": "4.67.5"
+    "@rollup/rollup-linux-arm64-musl": "4.68.4",
+    "@rollup/rollup-linux-x64-gnu": "4.68.4",
+    "@rollup/rollup-linux-x64-musl": "4.68.4"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
