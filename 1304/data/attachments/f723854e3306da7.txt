@@ -1,0 +1,1 @@
+[NETWORK ERROR] handle initial fetch with empty data: POST https://vercel.live/login/validate?hostname=test-automation-best-practices-bupjb3b31-jpourdanis-projects.vercel.app&deploymentId=dpl_CrZyVcd8zJaSQ8tGWvohtRmm8vzF - net::ERR_ABORTED
