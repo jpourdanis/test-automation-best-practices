@@ -1,0 +1,2 @@
+[NETWORK ERROR] verify Turquoise ( #1abc9c ) is applied as the background color: GET https://vercel.live/_next-live/feedback/feedback.js - net::ERR_CONNECTION_RESET
+[CONSOLE ERROR] verify Turquoise ( #1abc9c ) is applied as the background color: Failed to load resource: net::ERR_CONNECTION_RESET

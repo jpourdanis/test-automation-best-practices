@@ -1,0 +1,2 @@
+[NETWORK ERROR] cancel in confirm dialog closes it without deleting: GET https://vercel.live/_next-live/feedback/feedback.js - net::ERR_CONNECTION_RESET
+[CONSOLE ERROR] cancel in confirm dialog closes it without deleting: Failed to load resource: net::ERR_CONNECTION_RESET
