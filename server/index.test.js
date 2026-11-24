@@ -2,6 +2,11 @@
 const request = require('supertest')
 const { MongoMemoryServer } = require('mongodb-memory-server')
 const mongoose = require('mongoose')
+// mongodb driver >=7.6 loads `os` with a dynamic import('os'), which fails
+// silently under Jest and leaves the handshake metadata empty; the server then
+// rejects the connection ("Missing required sub-document 'driver'"). Pass the
+// adapter explicitly until NODE-7832 ships.
+const mongooseOptions = { runtimeAdapters: { os: require('node:os') } }
 
 let app, seedDatabase, Color, mongoServer
 
@@ -9,7 +14,7 @@ describe('Server Unit Tests', () => {
   beforeAll(async () => {
     mongoServer = await MongoMemoryServer.create()
     const uri = mongoServer.getUri()
-    await mongoose.connect(uri)
+    await mongoose.connect(uri, mongooseOptions)
 
     // Import after mongoose is connected so the app uses our in-memory DB
     const server = require('./index')
