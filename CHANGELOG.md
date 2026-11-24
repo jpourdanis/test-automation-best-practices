@@ -1,3 +1,11 @@
+## [1.2.3](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.2.2...v1.2.3) (2026-11-08)
+
+
+### Bug Fixes
+
+* **deps:** patch new critical/high advisories failing the security gates ([0c9e776](https://github.com/jpourdanis/test-automation-best-practices/commit/0c9e77663fb432e6574f4f859e9239c753dd0205)), closes [#282](https://github.com/jpourdanis/test-automation-best-practices/issues/282)
+* **mobile:** keep Expo SDK 57 pins out of the minor-and-patch group ([aa80c57](https://github.com/jpourdanis/test-automation-best-practices/commit/aa80c5709c3900156a0044c768cd8c3494bf9c21))
+
 ## [1.2.2](https://github.com/jpourdanis/test-automation-best-practices/compare/v1.2.1...v1.2.2) (2026-11-07)
 
 

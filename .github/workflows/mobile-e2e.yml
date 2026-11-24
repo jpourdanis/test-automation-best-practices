@@ -3,8 +3,17 @@ name: Mobile E2E Tests
 on:
   pull_request:
     branches: [main, react_native]
-    paths: ["mobile/**"]
+    paths:
+      - "mobile/**"
+      - ".github/workflows/mobile-e2e.yml"
+      - ".github/workflows/mobile-native-build.yml"
   workflow_dispatch:
+    inputs:
+      ios-build-source:
+        description: "Where to build the iOS simulator app"
+        type: choice
+        options: [local, eas]
+        default: local
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -158,7 +167,7 @@ jobs:
           path: mobile/coverage
 
       - name: SonarCloud Scan
-        uses: SonarSource/sonarqube-scan-action@v8.4.0
+        uses: SonarSource/sonarqube-scan-action@v8.4.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
@@ -178,11 +187,39 @@ jobs:
           skipSignatureVerification: true
 
   # ==========================================
+  # NATIVE BUILDS (local, on GitHub runners)
+  # Replaces the EAS cloud builds. Starts right away, in parallel with the
+  # checks above, and hands the binary to the E2E jobs as a workflow artifact.
+  # ==========================================
+  build-android:
+    name: Build Android
+    uses: ./.github/workflows/mobile-native-build.yml
+    with:
+      platform: android
+
+  # iOS is manual-only on PRs for now: macOS jobs in this repo have not been
+  # getting a hosted runner (queued ~15 min, then cancelled), which kept every
+  # mobile PR red. Run it from the Actions tab ("Run workflow" on this branch),
+  # choosing ios-build-source `local` (macOS runner) or `eas` (Expo cloud build);
+  # main still builds iOS via mobile-build.yml. Drop these `if:`s once macOS
+  # runners start again.
+  build-ios:
+    name: Build iOS
+    if: github.event_name == 'workflow_dispatch'
+    uses: ./.github/workflows/mobile-native-build.yml
+    with:
+      platform: ios
+      ios-build-source: ${{ inputs.ios-build-source || 'local' }}
+    secrets:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+
+  # ==========================================
   # iOS E2E TESTS (Appium + iOS Simulator)
   # ==========================================
   ios-e2e:
     name: iOS E2E Tests (Appium + Simulator)
-    needs: [mobile-unit-tests, mobile-static-analysis]
+    if: github.event_name == 'workflow_dispatch'
+    needs: [mobile-unit-tests, mobile-static-analysis, build-ios]
     runs-on: macos-15
 
     steps:
@@ -200,67 +237,21 @@ jobs:
         working-directory: mobile
         run: npm ci --ignore-scripts
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli@18.13.0 --ignore-scripts
+      - name: Download iOS Simulator app
+        uses: actions/download-artifact@v8
+        with:
+          name: mobile-ios-simulator-app
+          path: mobile/e2e/artifacts
 
-      # Reuses an existing finished EAS build for this exact commit when one
-      # exists, instead of always submitting a new one. This still guarantees
-      # the binary under test matches this PR's code (the lookup is keyed on
-      # commit SHA), while avoiding unnecessary EAS build-minute usage when a
-      # matching build already exists (e.g. a workflow re-run).
-      - name: Build iOS Simulator app on EAS
-        working-directory: mobile
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      - name: Extract iOS Simulator app
+        working-directory: mobile/e2e/artifacts
         run: |
-          mkdir -p e2e/artifacts
-
-          echo "Looking for an existing finished build for commit ${GITHUB_SHA} (ios/simulator)..."
-          EXISTING_JSON=$(eas build:list \
-            --platform ios \
-            --build-profile simulator \
-            --status finished \
-            --git-commit-hash "$GITHUB_SHA" \
-            --non-interactive \
-            --json \
-            --limit 1 2>/dev/null || echo '[]')
-
-          BUILD_JSON=$(echo "$EXISTING_JSON" | jq '.[0:1]')
-
-          if [ "$(echo "$BUILD_JSON" | jq 'length')" -gt 0 ]; then
-            echo "Reusing existing EAS build for commit ${GITHUB_SHA}."
-          else
-            echo "No existing build found for this commit, submitting a new one."
-            if ! BUILD_JSON=$(eas build \
-              --platform ios \
-              --profile simulator \
-              --non-interactive \
-              --json); then
-              echo "::error::EAS build failed or did not finish successfully."
-              exit 1
-            fi
-          fi
-
-          STATUS=$(echo "$BUILD_JSON" | jq -r '.[0].status')
-          BUILD_URL=$(echo "$BUILD_JSON" | jq -r '.[0].artifacts.buildUrl // empty')
-
-          if [ "$STATUS" != "FINISHED" ] || [ -z "$BUILD_URL" ]; then
-            echo "::error::EAS build did not finish successfully (status: $STATUS). Response: $BUILD_JSON"
-            exit 1
-          fi
-
-          echo "Downloading artifact: $BUILD_URL"
-          curl -L "$BUILD_URL" \
-            -H "Authorization: Bearer $EXPO_TOKEN" \
-            -o e2e/artifacts/ios-simulator.tar.gz
-          cd e2e/artifacts && tar -xzf ios-simulator.tar.gz
-
+          tar -xzf ios-simulator.tar.gz
           APP=$(ls -d ./*.app 2>/dev/null | head -1 | sed 's|^\./||')
           if [ -z "$APP" ]; then
-            echo "::error::No .app found after extracting the EAS artifact."
+            echo "::error::No .app found in the build artifact."
             exit 1
           fi
-
           echo "APP_PATH=${{ github.workspace }}/mobile/e2e/artifacts/$APP" >> $GITHUB_ENV
           echo "Found app: $APP"
 
@@ -377,7 +368,7 @@ jobs:
   # ==========================================
   android-e2e:
     name: Android E2E Tests (Appium + Emulator)
-    needs: [mobile-unit-tests, mobile-static-analysis]
+    needs: [mobile-unit-tests, mobile-static-analysis, build-android]
     # Pinned: on the ubuntu-26.04 image that ubuntu-latest moved to, the wdio
     # worker dies at startup with "write EINVAL" before any spec runs.
     runs-on: ubuntu-24.04
@@ -397,62 +388,16 @@ jobs:
         working-directory: mobile
         run: npm ci --ignore-scripts
 
-      - name: Install EAS CLI
-        run: npm install -g eas-cli@18.13.0 --ignore-scripts
+      - name: Download Android APK
+        uses: actions/download-artifact@v8
+        with:
+          name: mobile-android-apk
+          path: mobile/e2e/artifacts
 
-      # Reuses an existing finished EAS build for this exact commit when one
-      # exists, instead of always submitting a new one. This still guarantees
-      # the binary under test matches this PR's code (the lookup is keyed on
-      # commit SHA), while avoiding unnecessary EAS build-minute usage when a
-      # matching build already exists (e.g. a workflow re-run).
-      - name: Build Android app on EAS
-        working-directory: mobile
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+      - name: Set APK path
         run: |
-          mkdir -p e2e/artifacts
-
-          echo "Looking for an existing finished build for commit ${GITHUB_SHA} (android/simulator)..."
-          EXISTING_JSON=$(eas build:list \
-            --platform android \
-            --build-profile simulator \
-            --status finished \
-            --git-commit-hash "$GITHUB_SHA" \
-            --non-interactive \
-            --json \
-            --limit 1 2>/dev/null || echo '[]')
-
-          BUILD_JSON=$(echo "$EXISTING_JSON" | jq '.[0:1]')
-
-          if [ "$(echo "$BUILD_JSON" | jq 'length')" -gt 0 ]; then
-            echo "Reusing existing EAS build for commit ${GITHUB_SHA}."
-          else
-            echo "No existing build found for this commit, submitting a new one."
-            if ! BUILD_JSON=$(eas build \
-              --platform android \
-              --profile simulator \
-              --non-interactive \
-              --json); then
-              echo "::error::EAS build failed or did not finish successfully."
-              exit 1
-            fi
-          fi
-
-          STATUS=$(echo "$BUILD_JSON" | jq -r '.[0].status')
-          BUILD_URL=$(echo "$BUILD_JSON" | jq -r '.[0].artifacts.buildUrl // empty')
-
-          if [ "$STATUS" != "FINISHED" ] || [ -z "$BUILD_URL" ]; then
-            echo "::error::EAS build did not finish successfully (status: $STATUS). Response: $BUILD_JSON"
-            exit 1
-          fi
-
-          echo "Downloading artifact: $BUILD_URL"
-          curl -L "$BUILD_URL" \
-            -H "Authorization: Bearer $EXPO_TOKEN" \
-            -o e2e/artifacts/android.apk
-
+          test -f mobile/e2e/artifacts/android.apk
           echo "APK_PATH=${{ github.workspace }}/mobile/e2e/artifacts/android.apk" >> $GITHUB_ENV
-          echo "Downloaded APK"
 
       # Enable KVM so the emulator gets hardware acceleration and boots in a
       # reasonable amount of time on the Linux runner.
