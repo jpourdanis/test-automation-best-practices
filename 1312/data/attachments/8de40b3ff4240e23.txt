@@ -1,2 +1,0 @@
-[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 200 GET https://test-automation-best-practices-rcd8ub54g-jpourdanis-projects.vercel.app/api/colors
-[NETWORK INFO] verify Turquoise ( #1abc9c ) is applied as the background color: 200 GET https://test-automation-best-practices-rcd8ub54g-jpourdanis-projects.vercel.app/api/colors/Turquoise
