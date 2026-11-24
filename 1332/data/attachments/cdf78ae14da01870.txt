@@ -1,0 +1,58 @@
+2026-11-24 14:44:17 - info: [BrowserstackCLI] Starting as child process with session ID: 2c62446a-84cc-446a-bb25-fef2fe9a2d2b
+2026-11-24 14:44:17 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-11-24 14:44:17 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=8164:0, state=AutomationFrameworkState.CREATE
+2026-11-24 14:44:17 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=0b4b1ad56b97718c8288a71374ec1364726a193d978f62aa2640cf28cc40a656 target=8164:0
+2026-11-24 14:44:17 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-11-24 14:44:17 - info: [GrpcClient] Sending DriverInit
+2026-11-24 14:44:17 - info: [GrpcClient] DriverInit request successful
+2026-11-24 14:44:17 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-11-24 14:44:18 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-11-24 14:44:18 - info: [GrpcClient] Sending TestSessionEvent
+2026-11-24 14:44:18 - info: [GrpcClient] TestSessionEvent request successful
+2026-11-24 14:44:18 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] should maintain accessibility after state change (color update): 200 GET https://test-automation-best-practices.vercel.app/api/colors
+[NETWORK INFO] should maintain accessibility after state change (color update): 200 GET https://test-automation-best-practices.vercel.app/api/colors/Turquoise
+[NETWORK INFO] should maintain accessibility after state change (color update): 200 GET https://test-automation-best-practices.vercel.app/api/colors/Yellow
+2026-11-24 14:44:23 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-11-24 14:44:24 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-11-24 14:44:24 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-11-24 14:44:24 - info: [PlaywrightDriverModule] testId: b7be152566087f10fae4-24440882514295571dec
+2026-11-24 14:44:24 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.65.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'bca12580-2463-592f-bef0-10984378e224',
+  test_result: 'pending',
+  automate_session_name: 'Accessibility Tests - should maintain accessibility after state change (color update)',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_id: 'b7be152566087f10fae4-24440882514295571dec',
+  test_name: 'should maintain accessibility after state change (color update)',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/a11y.spec.ts',
+  test_code: 'async ({\n' +
+    '    homePage,\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Change color to verify contrast and other rules still pass\n' +
+    "    await homePage.clickColorButton('Yellow');\n" +
+    '\n' +
+    '    // Wait for the color change to apply (indicated by the text changing)\n' +
+    "    await (0, _baseFixtures.expect)(homePage.currentColorText).toContainText('#f1c40f');\n" +
+    '    const accessibilityScanResults = await new _playwright.default({\n' +
+    '      page\n' +
+    '    }).analyze();\n' +
+    '\n' +
+    '    // We specifically check contrast rules after a background color change\n' +
+    "    const contrastViolations = accessibilityScanResults.violations.filter(v => v.id === 'color-contrast');\n" +
+    '    (0, _baseFixtures.expect)(contrastViolations).toEqual([]);\n' +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-11-24T14:44:17.659Z',
+  test_scope: 'Accessibility Tests - should maintain accessibility after state change (color update)',
+  test_scopes: [ 'Accessibility Tests' ],
+  test_rerun_name: ' bs-safari-ventura tests/a11y.spec.ts Accessibility Tests should maintain accessibility after state change (color update)'
+}
+2026-11-24 14:44:24 - info: [GrpcClient] Sending TestSessionEvent
+2026-11-24 14:44:24 - info: [GrpcClient] TestSessionEvent request successful
+2026-11-24 14:44:24 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

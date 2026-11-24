@@ -1,0 +1,49 @@
+2026-11-24 14:45:41 - info: [BrowserstackCLI] Starting as child process with session ID: 2c62446a-84cc-446a-bb25-fef2fe9a2d2b
+2026-11-24 14:45:41 - info: [BrowserstackCLI] startChild: client and channel already exist, stopping here
+2026-11-24 14:45:41 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: created instance for target=10628:0, state=AutomationFrameworkState.CREATE
+2026-11-24 14:45:41 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: saved instance contextId=0958ac09ef99e79b808868b4fb7895ff5c332b3eef1413494de90b303095a9c1 target=10628:0
+2026-11-24 14:45:41 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-11-24 14:45:41 - info: [GrpcClient] Sending DriverInit
+2026-11-24 14:45:41 - info: [GrpcClient] DriverInit request successful
+2026-11-24 14:45:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-11-24 14:45:42 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-11-24 14:45:42 - info: [GrpcClient] Sending TestSessionEvent
+2026-11-24 14:45:42 - info: [GrpcClient] TestSessionEvent request successful
+2026-11-24 14:45:42 - info: [ObservabilityModule] onBeforeTest: TEST REPORTING AND ANALYTICS sync done
+[NETWORK INFO] handle color selection fetch error: 200 GET https://test-automation-best-practices.vercel.app/api/colors
+2026-11-24 14:45:43 - warn: Accessibility Automation will run only on Chrome or ChromeForTesting browsers.
+2026-11-24 14:45:43 - info: [Accessibility] afterTestHook state: accessibilityPlatform=false, bstackA11yShouldScan=true
+2026-11-24 14:45:43 - info: [PlaywrightAutomationFramework] trackPlaywrightInstance: instance already exists
+2026-11-24 14:45:43 - info: [PlaywrightDriverModule] testId: 3300dcb2e635619af3f7-528a30c5397f7802e191
+2026-11-24 14:45:43 - info: [PlaywrightDriverModule] testData from onAfterTest: {
+  test_framework_name: 'Playwright',
+  test_framework_version: '1.65.1',
+  test_logs: [],
+  test_hooks_finished: {},
+  test_hooks_started: {},
+  test_uuid: 'dedad09f-d51d-5918-b754-f3f218d52491',
+  test_result: 'pending',
+  automate_session_name: 'Edge cases and error handling - handle color selection fetch error',
+  test_file_path: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_id: '3300dcb2e635619af3f7-528a30c5397f7802e191',
+  test_name: 'handle color selection fetch error',
+  test_location: '/home/runner/work/test-automation-best-practices/test-automation-best-practices/e2e/tests/coverage.spec.ts',
+  test_code: 'async ({\n' +
+    '    page\n' +
+    '  }) => {\n' +
+    '    // Mock 500 error for specific color fetch\n' +
+    "    await page.route('/api/colors/Red', route => route.fulfill({\n" +
+    '      status: 500\n' +
+    '    }));\n' +
+    "    await page.click('text=Red');\n" +
+    "    await (0, _baseFixtures.expect)(page.locator('.error-message')).toHaveText('Failed to load color: Red');\n" +
+    '  }',
+  test_tags: [],
+  test_started_at: '2026-11-24T14:45:08.536Z',
+  test_scope: 'Edge cases and error handling - handle color selection fetch error',
+  test_scopes: [ 'Edge cases and error handling' ],
+  test_rerun_name: ' bs-safari-ventura tests/coverage.spec.ts Edge cases and error handling handle color selection fetch error'
+}
+2026-11-24 14:45:43 - info: [GrpcClient] Sending TestSessionEvent
+2026-11-24 14:45:43 - info: [GrpcClient] TestSessionEvent request successful
+2026-11-24 14:45:43 - error: [PlaywrightDriverModule] markSessionStatus: page closed and no hashed_id — session will remain UNMARKED

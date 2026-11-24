@@ -1,0 +1,2 @@
+[API ERROR] mobile color picker workflow: 500 GET https://test-automation-best-practices.vercel.app/api/colors
+[CONSOLE ERROR] mobile color picker workflow: Failed to load resource: the server responded with a status of 500 ()
