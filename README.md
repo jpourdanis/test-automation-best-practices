@@ -441,7 +441,7 @@ describe('Color Picker App', () => {
 })
 ```
 
-**Platform configurations** — separate config files pass the correct Appium capabilities for each platform. App paths are resolved from environment variables so CI can inject the binary path built by EAS without changing source:
+**Platform configurations** — separate config files pass the correct Appium capabilities for each platform. App paths are resolved from environment variables so CI can inject the binary path built in GitHub Actions (`mobile-native-build.yml`) without changing source:
 
 ```typescript
 // mobile/e2e/wdio.ios.conf.ts
