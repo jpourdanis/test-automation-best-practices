@@ -191,8 +191,14 @@ jobs:
     with:
       platform: android
 
+  # iOS is manual-only on PRs for now: macOS jobs in this repo have not been
+  # getting a hosted runner (queued ~15 min, then cancelled), which kept every
+  # mobile PR red. Run it from the Actions tab ("Run workflow" on this branch);
+  # main still builds iOS via mobile-build.yml. Drop these `if:`s once macOS
+  # runners start again.
   build-ios:
     name: Build iOS
+    if: github.event_name == 'workflow_dispatch'
     uses: ./.github/workflows/mobile-native-build.yml
     with:
       platform: ios
@@ -202,6 +208,7 @@ jobs:
   # ==========================================
   ios-e2e:
     name: iOS E2E Tests (Appium + Simulator)
+    if: github.event_name == 'workflow_dispatch'
     needs: [mobile-unit-tests, mobile-static-analysis, build-ios]
     runs-on: macos-15
 
