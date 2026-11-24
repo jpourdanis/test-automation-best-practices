@@ -1,0 +1,221 @@
+name: Mobile Native Build (local)
+
+# Reusable workflow that builds the Expo app on GitHub-hosted runners with
+# `expo prebuild` + Gradle (Android) / xcodebuild (iOS), instead of Expo's EAS
+# cloud builders. It uses runner minutes rather than EAS build credits and needs
+# no EXPO_TOKEN.
+#
+# Output artifacts keep the same shape the EAS builds had, so E2E jobs only swap
+# "download from EAS" for "download the workflow artifact":
+#   - android: `mobile-android-apk`        -> android.apk (release, debug-signed)
+#   - ios:     `mobile-ios-simulator-app`  -> ios-simulator.tar.gz containing <Name>.app
+#
+# Caching layers:
+#   1. The finished binary, keyed on every input that ends up inside the app
+#      (JS/TS sources minus tests, assets, app config, lockfile). Re-runs and
+#      test-only changes skip the build entirely.
+#   2. Gradle caches (Android) and CocoaPods `Pods/` (iOS), keyed on the native
+#      inputs (lockfile + app config), so JS-only changes rebuild quickly.
+#   3. npm via actions/setup-node.
+# Caches written on `main` (mobile-build.yml) are readable by every PR.
+
+on:
+  workflow_call:
+    inputs:
+      platform:
+        description: "android or ios"
+        required: true
+        type: string
+      android-architectures:
+        description: "ABIs to compile for Android (comma separated). x86_64 matches the CI emulator."
+        required: false
+        type: string
+        default: "x86_64"
+
+permissions:
+  contents: read
+
+env:
+  CI: "1"
+  EXPO_NO_TELEMETRY: "1"
+  NODE_VERSION: "22"
+
+jobs:
+  # ==========================================
+  # ANDROID (ubuntu runner, Gradle)
+  # ==========================================
+  android:
+    name: Android APK (Gradle)
+    if: inputs.platform == 'android'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Restore cached APK
+        id: bin-cache
+        uses: actions/cache@v6
+        with:
+          path: mobile/build-output
+          key: mobile-android-apk-${{ inputs.android-architectures }}-${{ hashFiles('mobile/package-lock.json', 'mobile/app.json', 'mobile/eas.json', 'mobile/index.ts', 'mobile/App.tsx', 'mobile/src/**', '!mobile/src/**/*.test.*', '!mobile/src/**/__tests__/**', 'mobile/assets/**', 'mobile/babel.config.js', 'mobile/metro.config.js', 'mobile/vendor/**', '.github/workflows/mobile-native-build.yml') }}
+
+      - name: Setup Node.js
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: "mobile/package-lock.json"
+
+      - name: Install mobile dependencies
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        working-directory: mobile
+        run: npm ci --ignore-scripts
+
+      - name: Set up JDK
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Cache Gradle
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@v6
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: gradle-${{ runner.os }}-${{ hashFiles('mobile/package-lock.json', 'mobile/app.json') }}
+          restore-keys: |
+            gradle-${{ runner.os }}-
+
+      - name: Generate native Android project (expo prebuild)
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        working-directory: mobile
+        run: npx --no-install expo prebuild --platform android --no-install
+
+      # Release build so the JS bundle is embedded (same as the EAS `preview`
+      # / `simulator` profiles). The Expo template signs release with the debug
+      # keystore, which is fine for emulator testing.
+      - name: Build release APK
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        working-directory: mobile/android
+        run: |
+          ./gradlew assembleRelease \
+            --no-daemon \
+            --build-cache \
+            -PreactNativeArchitectures=${{ inputs.android-architectures }}
+          mkdir -p ../build-output
+          cp app/build/outputs/apk/release/app-release.apk ../build-output/android.apk
+          ls -lh ../build-output
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-android-apk
+          path: mobile/build-output/android.apk
+          retention-days: 7
+          if-no-files-found: error
+
+  # ==========================================
+  # iOS SIMULATOR (macOS runner, xcodebuild)
+  # ==========================================
+  ios:
+    name: iOS Simulator App (xcodebuild)
+    if: inputs.platform == 'ios'
+    runs-on: macos-15
+    timeout-minutes: 75
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Restore cached simulator app
+        id: bin-cache
+        uses: actions/cache@v6
+        with:
+          path: mobile/build-output
+          key: mobile-ios-sim-app-${{ hashFiles('mobile/package-lock.json', 'mobile/app.json', 'mobile/eas.json', 'mobile/index.ts', 'mobile/App.tsx', 'mobile/src/**', '!mobile/src/**/*.test.*', '!mobile/src/**/__tests__/**', 'mobile/assets/**', 'mobile/babel.config.js', 'mobile/metro.config.js', 'mobile/vendor/**', '.github/workflows/mobile-native-build.yml') }}
+
+      - name: Setup Node.js
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: "mobile/package-lock.json"
+
+      - name: Install mobile dependencies
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        working-directory: mobile
+        run: npm ci --ignore-scripts
+
+      # Same Xcode the iOS E2E job selects, so the build targets the same SDK.
+      - name: Select Xcode
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        run: |
+          sudo xcode-select -s /Applications/Xcode.app
+          xcodebuild -version
+
+      - name: Generate native iOS project (expo prebuild)
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        working-directory: mobile
+        run: npx --no-install expo prebuild --platform ios --no-install
+
+      - name: Cache CocoaPods
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        uses: actions/cache@v6
+        with:
+          path: mobile/ios/Pods
+          key: pods-${{ runner.os }}-${{ hashFiles('mobile/package-lock.json', 'mobile/app.json', 'mobile/ios/Podfile') }}
+          restore-keys: |
+            pods-${{ runner.os }}-
+
+      - name: Install CocoaPods
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        working-directory: mobile/ios
+        run: pod install
+
+      # Release configuration so the JS bundle is embedded (same as the EAS
+      # `simulator` profile). Simulator builds need no code signing. arm64 only:
+      # macos-15 runners are Apple Silicon, so the simulator is arm64 too.
+      - name: Build simulator app
+        if: steps.bin-cache.outputs.cache-hit != 'true'
+        working-directory: mobile/ios
+        run: |
+          set -o pipefail
+          WORKSPACE=$(ls -d ./*.xcworkspace | head -1)
+          SCHEME=$(basename "$WORKSPACE" .xcworkspace)
+          echo "Building scheme $SCHEME from $WORKSPACE"
+          xcodebuild \
+            -workspace "$WORKSPACE" \
+            -scheme "$SCHEME" \
+            -configuration Release \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            -derivedDataPath build \
+            ARCHS=arm64 \
+            ONLY_ACTIVE_ARCH=NO \
+            CODE_SIGNING_ALLOWED=NO \
+            COMPILER_INDEX_STORE_ENABLE=NO \
+            -quiet \
+            build
+          PRODUCTS=build/Build/Products/Release-iphonesimulator
+          APP=$(cd "$PRODUCTS" && ls -d ./*.app | head -1 | sed 's|^\./||')
+          if [ -z "$APP" ]; then
+            echo "::error::xcodebuild finished but no .app was produced."
+            exit 1
+          fi
+          mkdir -p ../build-output
+          # tar keeps the executable bit, which upload-artifact's zip would drop.
+          tar -czf ../build-output/ios-simulator.tar.gz -C "$PRODUCTS" "$APP"
+          ls -lh ../build-output
+
+      - name: Upload simulator app
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-ios-simulator-app
+          path: mobile/build-output/ios-simulator.tar.gz
+          retention-days: 7
+          if-no-files-found: error

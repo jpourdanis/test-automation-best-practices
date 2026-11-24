@@ -1,10 +1,12 @@
-name: Mobile Build (EAS)
+name: Mobile Build
 
 on:
   push:
     branches: [main]
     paths:
       - "mobile/**"
+      - ".github/workflows/mobile-build.yml"
+      - ".github/workflows/mobile-native-build.yml"
   workflow_dispatch:
 
 concurrency:
@@ -41,63 +43,20 @@ jobs:
         run: npm run lint
 
   # ==========================================
-  # iOS SIMULATOR BUILD
+  # NATIVE BUILDS (local, on GitHub runners, no EAS credits)
+  # Running on main also seeds the binary/Gradle/Pods caches that PR runs of
+  # mobile-e2e.yml can read.
   # ==========================================
   build-ios:
-    name: iOS Simulator Build (EAS)
-    runs-on: ubuntu-latest
+    name: iOS Simulator Build
     needs: lint
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
+    uses: ./.github/workflows/mobile-native-build.yml
+    with:
+      platform: ios
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: "mobile/package-lock.json"
-
-      - name: Install mobile dependencies
-        working-directory: mobile
-        run: npm ci --ignore-scripts
-
-      - name: Install EAS CLI
-        run: npm install -g eas-cli@18.13.0 --ignore-scripts
-
-      - name: Submit iOS Simulator Build to EAS
-        working-directory: mobile
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: npm run build:ios
-
-  # ==========================================
-  # ANDROID APK BUILD
-  # ==========================================
   build-android:
-    name: Android APK Build (EAS)
-    runs-on: ubuntu-latest
+    name: Android APK Build
     needs: lint
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: "22"
-          cache: "npm"
-          cache-dependency-path: "mobile/package-lock.json"
-
-      - name: Install mobile dependencies
-        working-directory: mobile
-        run: npm ci --ignore-scripts
-
-      - name: Install EAS CLI
-        run: npm install -g eas-cli@18.13.0 --ignore-scripts
-
-      - name: Submit Android APK Build to EAS
-        working-directory: mobile
-        env:
-          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
-        run: npm run build:android
+    uses: ./.github/workflows/mobile-native-build.yml
+    with:
+      platform: android
