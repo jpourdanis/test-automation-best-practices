@@ -8,6 +8,12 @@ on:
       - ".github/workflows/mobile-e2e.yml"
       - ".github/workflows/mobile-native-build.yml"
   workflow_dispatch:
+    inputs:
+      ios-build-source:
+        description: "Where to build the iOS simulator app"
+        type: choice
+        options: [local, eas]
+        default: local
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -193,7 +199,8 @@ jobs:
 
   # iOS is manual-only on PRs for now: macOS jobs in this repo have not been
   # getting a hosted runner (queued ~15 min, then cancelled), which kept every
-  # mobile PR red. Run it from the Actions tab ("Run workflow" on this branch);
+  # mobile PR red. Run it from the Actions tab ("Run workflow" on this branch),
+  # choosing ios-build-source `local` (macOS runner) or `eas` (Expo cloud build);
   # main still builds iOS via mobile-build.yml. Drop these `if:`s once macOS
   # runners start again.
   build-ios:
@@ -202,6 +209,9 @@ jobs:
     uses: ./.github/workflows/mobile-native-build.yml
     with:
       platform: ios
+      ios-build-source: ${{ inputs.ios-build-source || 'local' }}
+    secrets:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
   # ==========================================
   # iOS E2E TESTS (Appium + iOS Simulator)

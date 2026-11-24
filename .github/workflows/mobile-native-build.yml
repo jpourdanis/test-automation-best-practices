@@ -1,9 +1,10 @@
-name: Mobile Native Build (local)
+name: Mobile Native Build
 
 # Reusable workflow that builds the Expo app on GitHub-hosted runners with
 # `expo prebuild` + Gradle (Android) / xcodebuild (iOS), instead of Expo's EAS
 # cloud builders. It uses runner minutes rather than EAS build credits and needs
-# no EXPO_TOKEN.
+# no EXPO_TOKEN. For iOS, `ios-build-source: eas` switches back to an EAS cloud
+# build (uses EAS credits) and produces the same artifact.
 #
 # Output artifacts keep the same shape the EAS builds had, so E2E jobs only swap
 # "download from EAS" for "download the workflow artifact":
@@ -31,6 +32,15 @@ on:
         required: false
         type: string
         default: "x86_64"
+      ios-build-source:
+        description: "local (xcodebuild on a GitHub macOS runner) or eas (Expo cloud build, uses EAS credits and EXPO_TOKEN)"
+        required: false
+        type: string
+        default: "local"
+    secrets:
+      EXPO_TOKEN:
+        description: "Only needed when ios-build-source is eas"
+        required: false
 
 permissions:
   contents: read
@@ -124,7 +134,7 @@ jobs:
   # ==========================================
   ios:
     name: iOS Simulator App (xcodebuild)
-    if: inputs.platform == 'ios'
+    if: inputs.platform == 'ios' && inputs.ios-build-source != 'eas'
     # macos-26: Expo SDK 57 needs Xcode 26.4+, and macos-15 only goes up to 26.3.
     # The app's deployment target is well below iOS 18.5, so the build still
     # runs on the iPhone 16 / iOS 18.5 simulator the E2E job boots on macos-15.
@@ -215,6 +225,90 @@ jobs:
           # tar keeps the executable bit, which upload-artifact's zip would drop.
           tar -czf ../build-output/ios-simulator.tar.gz -C "$PRODUCTS" "$APP"
           ls -lh ../build-output
+
+      - name: Upload simulator app
+        uses: actions/upload-artifact@v7
+        with:
+          name: mobile-ios-simulator-app
+          path: mobile/build-output/ios-simulator.tar.gz
+          retention-days: 7
+          if-no-files-found: error
+
+  # ==========================================
+  # iOS SIMULATOR (Expo EAS cloud build, opt-in)
+  # The previous EAS path, kept as a manual option. Runs on Linux (EAS does the
+  # build) and uploads the same artifact as the local job, so E2E is unchanged.
+  # Uses EAS build credits.
+  # ==========================================
+  ios-eas:
+    name: iOS Simulator App (EAS)
+    if: inputs.platform == 'ios' && inputs.ios-build-source == 'eas'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v7
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "npm"
+          cache-dependency-path: "mobile/package-lock.json"
+
+      - name: Install mobile dependencies
+        working-directory: mobile
+        run: npm ci --ignore-scripts
+
+      - name: Install EAS CLI
+        run: npm install -g eas-cli@18.13.0 --ignore-scripts
+
+      # Reuses a finished EAS build for this exact commit when one exists
+      # (e.g. a re-run), otherwise submits a new one and waits for it.
+      - name: Build iOS Simulator app on EAS
+        working-directory: mobile
+        env:
+          EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
+        run: |
+          if [ -z "$EXPO_TOKEN" ]; then
+            echo "::error::EXPO_TOKEN is not available to this workflow."
+            exit 1
+          fi
+
+          EXISTING_JSON=$(eas build:list \
+            --platform ios \
+            --build-profile simulator \
+            --status finished \
+            --git-commit-hash "$GITHUB_SHA" \
+            --non-interactive \
+            --json \
+            --limit 1 2>/dev/null || echo '[]')
+          BUILD_JSON=$(echo "$EXISTING_JSON" | jq '.[0:1]')
+
+          if [ "$(echo "$BUILD_JSON" | jq 'length')" -gt 0 ]; then
+            echo "Reusing existing EAS build for commit ${GITHUB_SHA}."
+          else
+            echo "No existing build for this commit, submitting a new one."
+            if ! BUILD_JSON=$(eas build --platform ios --profile simulator --non-interactive --json); then
+              echo "::error::EAS build failed or did not finish successfully."
+              exit 1
+            fi
+          fi
+
+          STATUS=$(echo "$BUILD_JSON" | jq -r '.[0].status')
+          BUILD_URL=$(echo "$BUILD_JSON" | jq -r '.[0].artifacts.buildUrl // empty')
+          if [ "$STATUS" != "FINISHED" ] || [ -z "$BUILD_URL" ]; then
+            echo "::error::EAS build did not finish successfully (status: $STATUS)."
+            exit 1
+          fi
+
+          mkdir -p build-output
+          curl -fL "$BUILD_URL" -H "Authorization: Bearer $EXPO_TOKEN" -o build-output/ios-simulator.tar.gz
+          tar -tzf build-output/ios-simulator.tar.gz | grep -q '\.app/' || {
+            echo "::error::EAS artifact does not contain a .app bundle."
+            exit 1
+          }
+          ls -lh build-output
 
       - name: Upload simulator app
         uses: actions/upload-artifact@v7

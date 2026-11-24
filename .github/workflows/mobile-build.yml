@@ -8,6 +8,12 @@ on:
       - ".github/workflows/mobile-build.yml"
       - ".github/workflows/mobile-native-build.yml"
   workflow_dispatch:
+    inputs:
+      ios-build-source:
+        description: "Where to build the iOS simulator app"
+        type: choice
+        options: [local, eas]
+        default: local
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -53,6 +59,9 @@ jobs:
     uses: ./.github/workflows/mobile-native-build.yml
     with:
       platform: ios
+      ios-build-source: ${{ inputs.ios-build-source || 'local' }}
+    secrets:
+      EXPO_TOKEN: ${{ secrets.EXPO_TOKEN }}
 
   build-android:
     name: Android APK Build
