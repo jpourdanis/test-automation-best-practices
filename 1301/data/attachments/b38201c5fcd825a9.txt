@@ -1,2 +1,0 @@
-[NETWORK ERROR] handle initial fetch with empty data: GET https://test-automation-best-practices.vercel.app/api/colors - NS_BINDING_ABORTED
-[NETWORK ERROR] handle initial fetch with empty data: GET https://test-automation-best-practices.vercel.app/logo192.png - NS_BINDING_ABORTED
