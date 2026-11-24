@@ -141,7 +141,7 @@
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
     "@cucumber/cucumber": "^13.3.0",
-    "@eslint/js": "^9.0.0",
+    "@eslint/js": "^10.0.1",
     "@faker-js/faker": "^10.4.0",
     "@percy/cli": "1.32.8",
     "@percy/playwright": "^1.1.0",
