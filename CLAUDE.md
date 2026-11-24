@@ -166,7 +166,7 @@ npm run generate:client    # Generate TypeScript API client from OpenAPI spec
 - i18n support (EN/ES/EL) using shared locales
 - E2E testing: WebdriverIO 9 + Appium 3 (XCUITest for iOS, UiAutomator2 for Android)
 - Config files: `wdio.ios.conf.ts`, `wdio.android.conf.ts`
-- Cloud builds via EAS (Expo Application Services)
+- CI builds run locally on GitHub runners (`expo prebuild` + Gradle / xcodebuild, reusable `mobile-native-build.yml`); EAS profiles remain for manual cloud builds
 
 ### E2E Tests (`e2e/`)
 
@@ -219,13 +219,14 @@ Four services: `mongo` → `api` → `web` → `playwright`. The `playwright` se
 
 ### CI/CD (`.github/workflows/`)
 
-Six workflow files:
+Seven workflow files:
 
 | Workflow                    | Purpose                                                                              |
 | --------------------------- | ------------------------------------------------------------------------------------ |
 | `ci.yml`                    | Main pipeline: MegaLinter, SonarCloud, Jest, E2E, Percy, k6, Trivy, mutation, Allure |
 | `release.yml`               | Semantic release (runs after CI success on `main`)                                   |
-| `mobile-build.yml`          | iOS/Android builds via EAS                                                           |
+| `mobile-build.yml`          | iOS/Android builds on GitHub runners (via `mobile-native-build.yml`)                 |
+| `mobile-native-build.yml`   | Reusable local native build (prebuild + Gradle/xcodebuild), no EAS credits           |
 | `mobile-e2e.yml`            | Mobile E2E tests with WebdriverIO + Appium                                           |
 | `browserstack.yml`          | BrowserStack cloud cross-browser testing                                             |
 | `gemini-pipeline-fixer.yml` | CI pipeline maintenance automation                                                   |
