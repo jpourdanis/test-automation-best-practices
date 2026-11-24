@@ -1,5 +1,5 @@
 module.exports = {
-  preset: 'react-native',
+  preset: '@react-native/jest-preset',
   setupFilesAfterEnv: [],
   testMatch: ['<rootDir>/src/**/*.test.(ts|tsx|js|jsx)'],
   moduleNameMapper: {

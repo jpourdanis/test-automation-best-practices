@@ -31,7 +31,9 @@ export function ConfirmDialog({
       visible={visible}
       transparent
       animationType='fade'
-      onRequestClose={() => !busy && onCancel()}
+      onRequestClose={() => {
+        if (!busy) onCancel()
+      }}
     >
       <View style={styles.backdrop}>
         <View style={styles.card} accessibilityRole='alert' accessibilityViewIsModal>
