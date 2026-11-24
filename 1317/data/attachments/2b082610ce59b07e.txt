@@ -1,0 +1,3 @@
+[NETWORK ERROR] handle initial fetch error: GET https://test-automation-best-practices-hzss5eh57-jpourdanis-projects.vercel.app/api/colors - net::ERR_ABORTED
+[API ERROR] handle initial fetch error: 500 GET https://test-automation-best-practices-hzss5eh57-jpourdanis-projects.vercel.app/api/colors
+[CONSOLE ERROR] handle initial fetch error: Failed to load resource: the server responded with a status of 500 (Internal Server Error)
