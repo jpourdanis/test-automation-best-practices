@@ -1,0 +1,1 @@
+[API ERROR] shows server-error message on 500 inside the picker: 500 POST https://test-automation-best-practices.vercel.app/api/colors
