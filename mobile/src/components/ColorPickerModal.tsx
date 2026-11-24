@@ -97,7 +97,14 @@ export function ColorPickerModal({
   }
 
   return (
-    <Modal visible={visible} transparent animationType='slide' onRequestClose={() => !saving && onCancel()}>
+    <Modal
+      visible={visible}
+      transparent
+      animationType='slide'
+      onRequestClose={() => {
+        if (!saving) onCancel()
+      }}
+    >
       <KeyboardAvoidingView behavior={Platform.OS === 'ios' ? 'padding' : 'height'} style={styles.overlay}>
         <View style={styles.sheet}>
           <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps='handled'>
